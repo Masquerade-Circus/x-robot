@@ -1,0 +1,148 @@
+{
+  "name": "x-robot",
+  "version": "0.0.0",
+  "description": "XRobot is a finite state machine library for nodejs and for the web.",
+  "source": "lib/index.ts",
+  "main": "dist/index.min.js",
+  "module": "dist/index.mjs",
+  "unpkg": "dist/index.min.js",
+  "browser": "dist/index.min.js",
+  "types": "types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Masquerade-Circus/x-robot.git"
+  },
+  "author": "Masquerade-Circus <christian@masquerade-circus.net>",
+  "license": "Apache-2.0",
+  "private": false,
+  "scripts": {
+    "test": "mocha --recursive --no-timeouts --exit --file register.js --enable-source-maps tests/**/*.test.ts",
+    "test-cjs": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.js",
+    "test-mjs": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.mjs",
+    "dev:test": "nodemon -e ts,js -w ./tests -w ./lib --exec 'yarn test && yarn test-cjs && yarn test-mjs'",
+    "build": "node build.js",
+    "remark": "remark . -o",
+    "commit": "git add . && git-cz",
+    "release": "release-it --verbose",
+    "release-test": "release-it --dry-run --verbose"
+  },
+  "files": [
+    "lib",
+    "dist",
+    "types",
+    "vendor"
+  ],
+  "keywords": [
+    "finite state machine",
+    "fsm",
+    "state machine",
+    "state",
+    "machine",
+    "functional",
+    "functional programming",
+    "frozen state",
+    "pure ui",
+    "user interface",
+    "statechart",
+    "finite automata",
+    "immutable"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^3.3.0",
+    "@types/node": "^16.10.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "esbuild": "^0.13.4",
+    "expect": "^27.2.4",
+    "gzip-size": "^6.0.0",
+    "mocha": "^9.1.2",
+    "nodemon": "^2.0.13",
+    "pirates": "^4.0.1",
+    "release-it": "^14.11.7",
+    "remark-cli": "^10.0.0",
+    "terser": "^5.9.0",
+    "tsc": "^2.0.3",
+    "tsc-prog": "^2.2.1",
+    "typescript": "^4.4.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "release-it": {
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "infile": "CHANGELOG.md",
+        "preset": {
+          "name": "conventionalcommits",
+          "types": [
+            {
+              "type": "feat",
+              "section": "Features"
+            },
+            {
+              "type": "feature",
+              "section": "Features"
+            },
+            {
+              "type": "fix",
+              "section": "Bug Fixes"
+            },
+            {
+              "type": "perf",
+              "section": "Performance Improvements"
+            },
+            {
+              "type": "revert",
+              "section": "Reverts"
+            },
+            {
+              "type": "docs",
+              "section": "Documentation"
+            },
+            {
+              "type": "style",
+              "section": "Styles"
+            },
+            {
+              "type": "chore",
+              "section": "Miscellaneous Chores"
+            },
+            {
+              "type": "refactor",
+              "section": "Code Refactoring"
+            },
+            {
+              "type": "test",
+              "section": "Tests"
+            },
+            {
+              "type": "build",
+              "section": "Build System"
+            },
+            {
+              "type": "ci",
+              "section": "Continuous Integration"
+            }
+          ]
+        }
+      }
+    },
+    "git": {
+      "requireCleanWorkingDir": false
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": true
+    },
+    "hooks": {
+      "after:@release-it/conventional-changelog": [
+        "yarn remark",
+        "yarn build"
+      ]
+    }
+  }
+}
