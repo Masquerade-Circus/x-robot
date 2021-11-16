@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="190px" preserveAspectRatio="none" style="width:198px;height:190px;background:#FFFFFF;" version="1.1" viewBox="0 0 198 190" width="198px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacing" textLength="56" x="64.805" y="16.708">toggle</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="39.61" y="27.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="16" x="56.61" y="52.7998">on</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="84.61" y="144.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="24" x="97.61" y="169.7998">off</text><ellipse cx="182.61" cy="47.9531" fill="#000000" rx="10" ry="10" style="stroke:none;stroke-width:1.0;"/><!--MD5=[dd88e4a4063e85185b84625068c64b3b]
+link *start to off--><path d="M178.93,57.3731 C173.16,70.2031 161.35,95.2531 148.61,114.9531 C143.03,123.5831 136.26,132.5131 129.93,140.3531 " fill="none" id="*start-to-off" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="126.47,144.5931,135.2578,140.1463,129.63,140.7182,129.058,135.0904,126.47,144.5931" style="stroke:#708090;stroke-width:2.0;"/><!--MD5=[cb43b10e14da3cf2cba8f54ea679b7c8]
+link on to off--><path d="M39.38,65.4931 C22.81,78.5231 6,97.3631 16.61,114.9531 C30.2,137.4731 57.96,150.1631 79.63,156.9531 " fill="none" id="on-to-off" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="84.43,158.4031,76.9677,151.9755,79.6428,156.9598,74.6585,159.6349,84.43,158.4031" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="48" x="17.61" y="111.02">toggle</text><!--MD5=[a09c072d895b2a91f60f915da7fab549]
+link off to on--><path d="M102.06,144.6431 C94.32,124.8831 82.3,94.1431 73.97,72.8631 " fill="none" id="off-to-on" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="72.15,68.2031,71.6898,78.0412,73.965,72.8621,79.1441,75.1372,72.15,68.2031" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="48" x="91.61" y="111.02">toggle</text><!--MD5=[39f3e61dc69f0b89febc12ba49fb0abd]
+@startuml
+
+title toggle
+
+state on<<default>>
+state off<<default>>
+
+[*] - -> off
+on -[#slategray]-> off: toggle
+off -[#slategray]-> on: toggle
+
+hide empty description
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam note {
+  BackgroundColor white
+  BorderColor slategray
+  FontName monospaced
+}
+skinparam ArrowFontName monospaced
+skinparam state {
+  FontName monospaced
+  AttributeFontName monospaced
+  BackgroundColor white
+  BorderColor slategray
+  ArrowColor slategray
+  ArrowThickness 2
+  MessageAlignment left
+  BackgroundColor<<danger>> Implementation
+  BorderColor<<danger>> indianred
+  BackgroundColor<<info>> Application
+  BorderColor<<info>> skyblue
+  BackgroundColor<<warning>> Strategy
+  BorderColor<<warning>> tan
+  BackgroundColor<<success>> Technology
+  BorderColor<<success>> mediumseagreen
+  BackgroundColor<<primary>> Motivation
+  BorderColor<<primary>> lightsteelblue
+}
+@enduml
+
+PlantUML version 1.2021.12(Tue Oct 05 11:01:58 CDT 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: es
+Country: MX
+--></g></svg>

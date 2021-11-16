@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="609px" preserveAspectRatio="none" style="width:254px;height:609px;background:#FFFFFF;" version="1.1" viewBox="0 0 254 609" width="254px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacing" textLength="79" x="81.25" y="16.708">Stoplight</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="73.5" y="107.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="40" x="78.5" y="132.7998">green</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="58" x="20.5" y="224.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="48" x="25.5" y="249.7998">yellow</text><ellipse cx="98.5" cy="36.9531" fill="#000000" rx="10" ry="10" style="stroke:none;stroke-width:1.0;"/><rect fill="#FFFFFF" height="261.2656" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="183.5" x="7" y="341.9531"/><rect fill="#FFFFFF" height="210" rx="12.5" ry="12.5" style="stroke:#FFFFFF;stroke-width:1.0;" width="177.5" x="10" y="390.2188"/><line style="stroke:#708090;stroke-width:1.5;" x1="7" x2="190.5" y1="387.2188" y2="387.2188"/><line style="stroke:#708090;stroke-width:1.5;" x1="7" x2="190.5" y1="368.25" y2="368.25"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="24" x="86.75" y="359.9482">red</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="126" x="12" y="379.3887">└ T:Stopwalk.start</text><path d="M18,398.2188 L18,423.3516 L103,423.3516 L103,408.2188 L93,398.2188 L18,398.2188 " fill="#FFFFFF" style="stroke:#708090;stroke-width:1.0;"/><path d="M93,398.2188 L93,408.2188 L103,408.2188 L93,398.2188 " fill="#FFFFFF" style="stroke:#708090;stroke-width:1.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="64" x="24" y="415.2856">Stopwalk</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="106.5" y="460.2188"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="32" x="115.5" y="485.0654">wait</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="106.5" y="553.2188"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="32" x="115.5" y="578.0654">walk</text><ellipse cx="131.5" cy="410.7188" fill="#000000" rx="10" ry="10" style="stroke:none;stroke-width:1.0;"/><!--MD5=[1a23eab611d0b900d4287ba31b899936]
+link *start*red to RedStopwalkWait--><path d="M131.5,420.8188 C131.5,429.4988 131.5,442.9488 131.5,454.7587 " fill="none" id="*start*red-to-RedStopwalkWait" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="131.5,460.0488,135.5,451.0488,131.5,455.0488,127.5,451.0488,131.5,460.0488" style="stroke:#708090;stroke-width:2.0;"/><!--MD5=[b334c0a958504a44e010f7267c32eadc]
+link RedStopwalkWait to RedStopwalkWalk--><path d="M111.26,500.3088 C106.87,505.6388 102.85,511.7588 100.5,518.2188 C96.66,528.7887 101.06,539.6888 107.64,548.9088 " fill="none" id="RedStopwalkWait-to-RedStopwalkWalk" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="110.8,553.0088,108.5014,543.4319,107.759,549.0398,102.1511,548.2974,110.8,553.0088" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="40" x="101.5" y="531.2856">start</text><!--MD5=[62917db50c9a0ad4be771bf94a6efc45]
+link RedStopwalkWalk to RedStopwalkWait--><path d="M138.4,552.8688 C140.09,547.2488 141.65,541.0588 142.5,535.2188 C143.59,527.7388 143.59,525.6988 142.5,518.2188 C141.89,514.0288 140.91,509.6488 139.78,505.4288 " fill="none" id="RedStopwalkWalk-to-RedStopwalkWait" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="138.4,500.5688,137.0187,510.3203,139.7698,505.3774,144.7127,508.1285,138.4,500.5688" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="32" x="143.5" y="531.2856">stop</text><!--MD5=[397c3c162c5ddd0df8d14a2dad30eea6]
+link *start to green--><path d="M98.5,47.1431 C98.5,60.1331 98.5,84.3331 98.5,102.6831 " fill="none" id="*start-to-green" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="98.5,107.6931,102.5,98.6931,98.5,102.6931,94.5,98.6931,98.5,107.6931" style="stroke:#708090;stroke-width:2.0;"/><!--MD5=[60c397a31d3ce1e4617a22248cdb91c6]
+link green to yellow--><path d="M90.3,148.2031 C81.89,167.9331 68.79,198.6731 59.71,219.9831 " fill="none" id="green-to-yellow" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="57.73,224.6431,64.9342,217.9276,59.6875,220.0422,57.5728,214.7955,57.73,224.6431" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="32" x="78.5" y="191.02">next</text><!--MD5=[a0b3bed8ff2e82c3931a1a345a88ba4b]
+link yellow to red--><path d="M53.68,265.1831 C57.36,282.1431 63.1,308.5131 69.24,336.8031 " fill="none" id="yellow-to-red" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="70.31,341.7331,72.3162,332.0908,69.2526,336.8462,64.4971,333.7826,70.31,341.7331" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="32" x="64.5" y="308.02">next</text><!--MD5=[a5e0655705b84d40306bb9a9e3b7bcfd]
+link red to green--><path d="M110.39,341.8031 C114.09,295.5131 117.68,242.9431 119.5,194.9531 C119.79,187.4031 121.02,185.3531 119.5,177.9531 C117.77,169.5431 114.54,160.7931 111.12,153.0631 " fill="none" id="red-to-green" style="stroke:#708090;stroke-width:2.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#708090" points="108.98,148.3831,109.1,158.2313,111.0662,152.9271,116.3704,154.8933,108.98,148.3831" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="40" x="118.5" y="242.02">green</text><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="128" x="118.5" y="257.1528">└ G:canGoToGreen</text><!--MD5=[0b1023b8c99c43612cac342e515075a2]
+@startuml
+
+title Stoplight
+
+state green<<default>>
+state yellow<<default>>
+state red<<default>>
+
+state red {
+  note "Stopwalk" as NRedStopwalk
+
+  state "wait" as RedStopwalkWait<<default>>
+  state "walk" as RedStopwalkWalk<<default>>
+
+  [*] - -> RedStopwalkWait
+  RedStopwalkWait -[#slategray]-> RedStopwalkWalk: start
+  RedStopwalkWalk -[#slategray]-> RedStopwalkWait: stop
+}
+
+red: └ T:Stopwalk.start
+
+[*] - -> green
+green -[#slategray]-> yellow: next
+yellow -[#slategray]-> red: next
+red -[#slategray,dashed]-> green: green\n└ G:canGoToGreen
+
+hide empty description
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam note {
+  BackgroundColor white
+  BorderColor slategray
+  FontName monospaced
+}
+skinparam ArrowFontName monospaced
+skinparam state {
+  FontName monospaced
+  AttributeFontName monospaced
+  BackgroundColor white
+  BorderColor slategray
+  ArrowColor slategray
+  ArrowThickness 2
+  MessageAlignment left
+  BackgroundColor<<danger>> Implementation
+  BorderColor<<danger>> indianred
+  BackgroundColor<<info>> Application
+  BorderColor<<info>> skyblue
+  BackgroundColor<<warning>> Strategy
+  BorderColor<<warning>> tan
+  BackgroundColor<<success>> Technology
+  BorderColor<<success>> mediumseagreen
+  BackgroundColor<<primary>> Motivation
+  BorderColor<<primary>> lightsteelblue
+}
+@enduml
+
+PlantUML version 1.2021.12(Tue Oct 05 11:01:58 CDT 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: es
+Country: MX
+--></g></svg>
