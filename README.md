@@ -8,7 +8,7 @@ Not only for user interfaces but also for server side applications.
 
 ### Simple example
 
-![Toggle machine diagram](./documentation/images/toggle-machine-diagram.svg)
+![Toggle machine diagram](./docs/images/toggle-machine-diagram.svg)
 
 ```javascript 
 import {machine, states, state, initial, transition, invoke} from 'x-robot';
@@ -29,7 +29,7 @@ invoke(toggleMachine, 'toggle'); // toggleMachine.current === 'off'
 
 ### Async example
 
-![Fetch machine diagram](./documentation/images/fetch-machine-diagram.svg)
+![Fetch machine diagram](./docs/images/fetch-machine-diagram.svg)
 
 ```javascript
 import {machine, states, state, initial, transition, invoke, action, producer} from 'x-robot';
@@ -80,7 +80,7 @@ await invoke(fetchMachine, 'fetch');
 
 ### Nested machines
 
-![Stoplight machine diagram](./documentation/images/stoplight-machine-diagram.svg)
+![Stoplight machine diagram](./docs/images/stoplight-machine-diagram.svg)
 
 ```javascript
 import {machine, states, state, initial, transition, invoke, nested, guard} from 'x-robot';
