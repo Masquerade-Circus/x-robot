@@ -1,5 +1,13 @@
-import { SerializedAction, SerializedGuard, SerializedMachine, SerializedNestedMachine, SerializedProducer, serialize } from '../serialize';
-import { isNestedMachineDirective, isValidObject, isValidString } from '../utils';
+import {
+  SerializedAction,
+  SerializedGuard,
+  SerializedImmediate,
+  SerializedMachine,
+  SerializedNestedMachine,
+  SerializedProducer,
+  serialize
+} from '../serialize';
+import { isImmediate, isNestedMachineDirective, isNestedTransition, isParallelTransition, isValidObject, isValidString, titleToId } from '../utils';
 
 import { Machine } from '../machine/interfaces';
 import { exec } from 'child_process';
@@ -7,7 +15,8 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
-interface SerializedCollectionWithGuards extends Array<SerializedGuard | SerializedAction | SerializedProducer | SerializedNestedMachine> {}
+interface SerializedCollectionWithGuards
+  extends Array<SerializedGuard | SerializedAction | SerializedProducer | SerializedNestedMachine | SerializedImmediate> {}
 
 export const VISUALIZATION_LEVEL = {
   LOW: 'low',
@@ -92,8 +101,24 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
     plantUmlCode += `\n${space}${nestedMachines.trim()}\n`;
   }
 
+  // Add the parallel states if they exist
+  let parallelStates = '';
+  if (Object.keys(serializedMachine.parallel).length > 0) {
+    parallelStates += `\n${space}state "Parallel states" as ${cammelCasedTitle}ParallelStates {\n`;
+    for (const parallel in serializedMachine.parallel) {
+      const parallelState = serializedMachine.parallel[parallel];
+      parallelStates += getInnerPlantUmlCode(parallelState, options, cammelCasedTitle, childLevel + 1);
+      parallelStates += `\n${space}  --\n\n`;
+    }
+    parallelStates = parallelStates.replace(/\n\s+--\n\n$/, '\n') + `${space}}\n`;
+  }
+
+  if (parallelStates.trim().length > 0) {
+    plantUmlCode += `\n${space}${parallelStates.trim()}\n`;
+  }
+
+  // If visualization level is high, add the state descriptions
   if (level === VISUALIZATION_LEVEL.HIGH) {
-    // Add the state descriptions
     let stateDescriptionsPlantUmlCode = '';
 
     for (const stateName in serializedMachine.states) {
@@ -120,7 +145,7 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
       if (state.nested) {
         for (let nested of state.nested) {
           if (nested.transition) {
-            let nestedCammelCasedTitle = toCammelCase(nested.machine.title || '');
+            let nestedCammelCasedTitle = titleToId(nested.machine.title || '');
             let nestedTransition = `${nestedCammelCasedTitle}.${nested.transition}`;
             run.push({ ...nested, transition: nestedTransition });
           }
@@ -128,6 +153,15 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
       }
 
       run.push(...(state.run || []));
+
+      // Add the immediate transitions if they exist and are not normal transitions
+      if (state.immediate && state.immediate.length > 0) {
+        for (let immediate of state.immediate) {
+          if (isNestedTransition(immediate.immediate) || isParallelTransition(immediate.immediate)) {
+            run.push(immediate);
+          }
+        }
+      }
 
       let asciiTree = getAsciiTree(run);
       if (asciiTree.length) {
@@ -143,8 +177,10 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
 
   // Add transitions
   let transitions = '';
-  // Add the initial transition
-  transitions += `\n${space}[*] --> ${stateNames[serializedMachine.initial]}\n`;
+  if (isValidString(serializedMachine.initial)) {
+    // Add the initial transition
+    transitions += `\n${space}[*] --> ${stateNames[serializedMachine.initial]}\n`;
+  }
 
   for (const stateName in serializedMachine.states) {
     const state = serializedMachine.states[stateName];
@@ -174,7 +210,7 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
             break;
         }
 
-        let isImmediate = transitionName === state.immediate;
+        let isImmediate = state.immediate && state.immediate.find((immediate) => immediate.immediate === transitionName);
 
         if (isImmediate) {
           arrow += ',dashed';
@@ -256,33 +292,11 @@ ${skinparam}`;
   return plantUmlCode;
 }
 
-/***
-This function will get a collection of guards, producers and actions and will return a ascii art tree representation of them.
-
-Example:
-let collection = [
-{
-  guard: "titleIsValid",
-  failure: {
-    producer: "updateError"
-  }
-},
-{
-  action: "saveTitle",
-  success: "preview",
-  failure: {
-    producer: "updateError",
-    transition: "error"
-  }
-}
-]
-let result = "G:'titleIsValid'\n│ └failure\n│   └M:'updateError'\n└A:'saveTitle'\n  ├success\n  │ └T:'preview'\n  └failure\n    ├M:'updateError'\n    └T:'error"
-
-***/
-export function getAsciiTree(collection: SerializedCollectionWithGuards): string {
+function getTree(collection: SerializedCollectionWithGuards): { name: string; children: any[] } | null {
   if (collection.length === 0) {
-    return '';
+    return null;
   }
+
   let tree = {
     name: '',
     children: [] as any
@@ -308,6 +322,9 @@ export function getAsciiTree(collection: SerializedCollectionWithGuards): string
     }
     if ('producer' in item) {
       obj.name = producer(item.producer);
+    }
+    if ('immediate' in item) {
+      obj.name = transition(item.immediate);
     }
 
     if ('success' in item) {
@@ -348,7 +365,48 @@ export function getAsciiTree(collection: SerializedCollectionWithGuards): string
       obj.name = transition(item.transition);
     }
 
+    if ('guards' in item) {
+      if (Array.isArray(item.guards) && item.guards.length > 0) {
+        let guards = getTree(item.guards);
+        if (guards) {
+          obj.children.push(...guards.children);
+        }
+      }
+    }
+
     tree.children.push(obj);
+  }
+
+  return tree;
+}
+
+/***
+This function will get a collection of guards, producers and actions and will return a ascii art tree representation of them.
+
+Example:
+let collection = [
+{
+  guard: "titleIsValid",
+  failure: {
+    producer: "updateError"
+  }
+},
+{
+  action: "saveTitle",
+  success: "preview",
+  failure: {
+    producer: "updateError",
+    transition: "error"
+  }
+}
+]
+let result = "G:'titleIsValid'\n│ └failure\n│   └M:'updateError'\n└A:'saveTitle'\n  ├success\n  │ └T:'preview'\n  └failure\n    ├M:'updateError'\n    └T:'error"
+
+***/
+export function getAsciiTree(collection: SerializedCollectionWithGuards): string {
+  let tree = getTree(collection);
+  if (!tree) {
+    return '';
   }
 
   return stringifyTree(

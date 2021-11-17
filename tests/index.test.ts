@@ -3,6 +3,7 @@ import {
   context,
   dangerState,
   description,
+  getState,
   guard,
   immediate,
   infoState,
@@ -162,7 +163,7 @@ describe('XRobot', () => {
         name: 'idle',
         nested: [],
         args: [], // This are the arguments passed to the state when it is invoked,
-        immediate: undefined,
+        immediate: [],
         on: {}, // This object will keep the transitions that are triggered by the state
         run: [], // This is the list of actions/producers that will be executed when the state is entered
         type: 'default', // This is the type of the state, it will be used to determine the style of the state in the visualization or to listen to events
@@ -267,18 +268,18 @@ describe('XRobot', () => {
     it('should move between states invoking the correct event', () => {
       const myMachine = machine('My machine', states(state('idle', transition('load', 'loading')), state('loading')), initial('idle'));
 
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       invoke(myMachine, 'load');
 
-      expect(myMachine.current).toEqual('loading');
+      expect(getState(myMachine)).toEqual('loading');
     });
 
     it('should validate that the event can be handled from the current state', () => {
       let myMachine = machine('My machine', states(state('idle', transition('load', 'loading')), state('loading')), initial('idle'));
 
       invoke(myMachine, 'load');
-      expect(myMachine.current).toEqual('loading');
+      expect(getState(myMachine)).toEqual('loading');
 
       expect(() => {
         invoke(myMachine, 'load');
@@ -303,7 +304,7 @@ describe('XRobot', () => {
           transition: 'loading'
         }
       });
-      expect(myMachine.states.idle.immediate).toEqual('loading');
+      expect(myMachine.states.idle.immediate).toEqual([{ immediate: 'loading', guards: [] }]);
     });
 
     it('should validate that the immediate transition has a target state', () => {
@@ -318,12 +319,6 @@ describe('XRobot', () => {
       }).toThrowError("The immediate transition of the state 'idle' has a target state 'loading' that does not exists.");
     });
 
-    it('should not allow to create multiple immediate transitions for the same state', () => {
-      expect(() => {
-        validate(machine('My machine', states(state('idle', immediate('loading'), immediate('loading2'))), initial('idle')));
-      }).toThrowError("The state 'idle' has multiple immediate transitions.");
-    });
-
     it('should move between transitions with the correct event for immediate transitions', () => {
       const myMachine = machine(
         'My machine',
@@ -333,7 +328,7 @@ describe('XRobot', () => {
 
       invoke(myMachine, 'load');
 
-      expect(myMachine.current).toEqual('loaded');
+      expect(getState(myMachine)).toEqual('loaded');
     });
   });
 
@@ -451,7 +446,7 @@ describe('XRobot', () => {
 
       invoke(myMachine, 'updateTitle', 'Hello');
 
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should move to a fatal state if a fatal error ocurred in a producer and we have a fatal state', () => {
@@ -467,7 +462,7 @@ describe('XRobot', () => {
 
       invoke(myMachine, 'updateTitle', 'Hello');
 
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
     });
 
     it('should be able to get the catched error if a fatal error ocurred in a producer and we have a fatal state', () => {
@@ -561,20 +556,20 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updating');
+      expect(getState(myMachine)).toEqual('updating');
       expect(actionFired).toBe(false);
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
 
       // The machine is in the idle state and the action was resolved
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
       expect(actionFired).toBe(true);
     });
 
@@ -593,12 +588,12 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
       // Invoke the transition and wait for the action to be resolved
       await invoke(myMachine, 'updateTitle');
 
       // The machine is in the idle state again and the action was resolved
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
       expect(actionFired).toBe(true);
     });
 
@@ -624,13 +619,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition and wait for the actions to be resolved
       await invoke(myMachine, 'updateTitle');
 
       // The machine is in the idle state again
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
       expect(nextActionFired).toBe(true);
     });
 
@@ -646,7 +641,7 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition and wait for the actions to be resolved
       await expect(invoke(myMachine, 'updateTitle')).rejects.toThrow(new Error('Error'));
@@ -664,13 +659,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition and wait for the actions to be resolved
       await expect(invoke(myMachine, 'updateTitle')).resolves.toBeUndefined();
 
       // The machine is in the fatal state
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should move to a fatal state if a fatal error ocurred in an action and we have a fatal state', async () => {
@@ -685,13 +680,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition and wait for the actions to be resolved
       await expect(invoke(myMachine, 'updateTitle')).resolves.toBeUndefined();
 
       // The machine is in the fatal state
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
     });
 
     it('should be able to get the catched error if a fatal error ocurred in an action and we have a fatal state', async () => {
@@ -706,13 +701,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition and wait for the actions to be resolved
       await expect(invoke(myMachine, 'updateTitle')).resolves.toBeUndefined();
 
       // The machine is in the fatal state
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
       expect(myMachine.fatal).toEqual(new Error('Error'));
     });
 
@@ -754,19 +749,19 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
 
       // The machine is in the done state
-      expect(myMachine.current).toEqual('done');
+      expect(getState(myMachine)).toEqual('done');
     });
 
     it('should be able to pass a producer as done handler to update the context if the action is successfull', async () => {
@@ -792,13 +787,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
@@ -807,7 +802,7 @@ describe('XRobot', () => {
       expect(myMachine.context.title).toEqual('Updated');
 
       // The machine is in the updating state
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
     });
 
     it('should be able to pass a transition to the producer done handler', async () => {
@@ -866,13 +861,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
@@ -881,7 +876,7 @@ describe('XRobot', () => {
       expect(myMachine.context.title).toEqual('Updated');
 
       // The machine is in the done state
-      expect(myMachine.current).toEqual('done');
+      expect(getState(myMachine)).toEqual('done');
     });
 
     it('should throw a fatal error if an error ocurred in the done producer', async () => {
@@ -900,13 +895,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
     });
 
     it('should go to an error state if an error ocurred in the done producer and we have an error transition', async () => {
@@ -930,7 +925,7 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
@@ -939,7 +934,7 @@ describe('XRobot', () => {
       await new Promise((resolve) => setTimeout(resolve, 110));
 
       // The machine is in the error state
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should move to a fatal state if an error ocurred in the done producer and we have a fatal state', async () => {
@@ -963,7 +958,7 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
@@ -972,7 +967,7 @@ describe('XRobot', () => {
       await new Promise((resolve) => setTimeout(resolve, 110));
 
       // The machine is in the fatal state
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
     });
 
     it('should be able to get the catched error if an error ocurred in the done producer and we have a fatal state', async () => {
@@ -996,7 +991,7 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
@@ -1055,19 +1050,19 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Await for the error transition to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
 
       // The machine is in the error state
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should be able to pass a producer as error handler to update the context if the action throws an error', async () => {
@@ -1094,13 +1089,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
@@ -1109,7 +1104,7 @@ describe('XRobot', () => {
       expect(myMachine.context.error).toEqual(new Error('Error'));
 
       // The machine is in the updated state
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
     });
 
     it('should be able to pass a transition to the error handler', async () => {
@@ -1184,13 +1179,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
@@ -1199,7 +1194,7 @@ describe('XRobot', () => {
       expect(myMachine.context.error).toEqual(new Error('Error'));
 
       // The machine is in the error state
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should throw a fatal error if an error ocurred in the error producer', async () => {
@@ -1222,13 +1217,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error handler error');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
@@ -1237,7 +1232,7 @@ describe('XRobot', () => {
       expect(myMachine.context.error).toBeUndefined();
 
       // The machine is still in the updated state
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // The error should be in the machine fatal property
       expect(myMachine.fatal).toEqual(new Error('Error handler error'));
@@ -1264,13 +1259,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
@@ -1279,7 +1274,7 @@ describe('XRobot', () => {
       expect(myMachine.context.error).toBeUndefined();
 
       // The machine is in the error state
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should move to a fatal state if an error ocurred in the error producer and we have a fatal state', async () => {
@@ -1303,13 +1298,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(invoke(myMachine, 'updateTitle')).rejects.toThrow('Error');
 
       // The machine is in the updating state and the action was fired but not yet resolved
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
 
       // Wait for the action to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
@@ -1318,7 +1313,7 @@ describe('XRobot', () => {
       expect(myMachine.context.error).toBeUndefined();
 
       // The machine is in the fatal state
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
 
       // The error should be in the machine fatal property
       expect(myMachine.fatal).toEqual(new Error('Error handler error'));
@@ -1435,13 +1430,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', 'Title');
 
       // The machine is in the updated state
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
     });
 
     it('should not move to the next state if the guard returns other than true', () => {
@@ -1460,19 +1455,19 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', null);
 
       // The machine is in the idle state still
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', 'Title2');
 
       // The machine is in the updated state
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
     });
 
     it('should not change the state if the guard returns other than true', () => {
@@ -1491,20 +1486,20 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', null);
 
       // The machine is in the idle state still and the context was not updated
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
       expect(myMachine.context.title).toBeUndefined();
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', 'Title2');
 
       // The machine is in the updated state and the context was updated
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
       expect(myMachine.context.title).toEqual('Title2');
     });
 
@@ -1520,13 +1515,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(() => invoke(myMachine, 'updateTitle', 'Title')).toThrow(new Error('Error'));
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // The error should be in the machine fatal property
       expect(myMachine.fatal).toEqual(new Error('Error'));
@@ -1544,13 +1539,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(() => invoke(myMachine, 'updateTitle', 'Title')).not.toThrow(new Error('Error'));
 
       // The machine is in the error state
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should move to a fatal state if a fatal error ocurred in a guard and we have a fatal state', () => {
@@ -1565,13 +1560,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(() => invoke(myMachine, 'updateTitle', 'Title')).not.toThrow(new Error('Error'));
 
       // The machine is in the fatal state
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
     });
 
     it('should be able to get the catched error if a fatal error ocurred in a guard and we have a fatal state', () => {
@@ -1586,13 +1581,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', 'Title');
 
       // The machine is in the fatal state
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
 
       // The error should be in the machine fatal property
       expect(myMachine.fatal).toEqual(new Error('Error'));
@@ -1679,20 +1674,20 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', null);
 
       // The machine is in the idle state still and the context was not updated but the error was
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
       expect(myMachine.context.error).toEqual('Must pass a valid title');
 
       // Invoke the transition
       invoke(myMachine, 'updateTitle', 'Title2');
 
       // The machine is in the updated state and the context was updated
-      expect(myMachine.current).toEqual('updated');
+      expect(getState(myMachine)).toEqual('updated');
       expect(myMachine.context.error).toBeNull();
     });
 
@@ -1715,13 +1710,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(() => invoke(myMachine, 'updateTitle', null)).toThrow(new Error('Error'));
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // The error should be in the machine fatal property
       expect(myMachine.fatal).toEqual(new Error('Error'));
@@ -1744,13 +1739,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(() => invoke(myMachine, 'updateTitle', null)).not.toThrow(new Error('Error'));
 
       // The machine is in the error state
-      expect(myMachine.current).toEqual('error');
+      expect(getState(myMachine)).toEqual('error');
     });
 
     it('should move to a fatal state if an error ocurred in the guard producer and we have a fatal state', () => {
@@ -1773,13 +1768,13 @@ describe('XRobot', () => {
       );
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       expect(() => invoke(myMachine, 'updateTitle', null)).not.toThrow(new Error('Error'));
 
       // The machine is in the error state
-      expect(myMachine.current).toEqual('fatal');
+      expect(getState(myMachine)).toEqual('fatal');
 
       // The error should be in the machine fatal property
       expect(myMachine.fatal).toEqual(new Error('Error'));
@@ -1807,13 +1802,13 @@ describe('XRobot', () => {
       await invoke(myMachine, 'updateTitle', '');
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // Invoke the transition
       await invoke(myMachine, 'updateTitle', 'Title');
 
       // The machine is in the idle state
-      expect(myMachine.current).toEqual('idle');
+      expect(getState(myMachine)).toEqual('idle');
 
       // The history should be an array with the current state and the initial state
       expect(myMachine.history).toEqual([

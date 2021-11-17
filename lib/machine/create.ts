@@ -13,6 +13,7 @@ import {
   Machine,
   NestedGuardDirective,
   NestedMachineDirective,
+  ParallelDirective,
   Producer,
   ProducerDirective,
   ProducerDirectiveWithoutTransition,
@@ -31,14 +32,18 @@ import {
   isDescriptionDirective,
   isImmediate,
   isInitialDirective,
+  isNestedImmediateDirective,
   isNestedMachineDirective,
+  isParallelDirective,
+  isParallelImmediateDirective,
   isProducer,
   isProducerWithTransition,
   isShouldFreezeDirective,
   isStatesDirective,
   isTransition,
   isValidObject,
-  isValidString
+  isValidString,
+  titleToId
 } from '../utils';
 
 /**
@@ -49,7 +54,7 @@ import {
  * And it must be able to be serialized and return a JSON object representing the state machine
  * */
 
-interface MachineArguments extends Array<string | ContextDirective | InitialDirective | ShouldFreezeDirective | StatesDirective | GuardDirective> {}
+interface MachineArguments extends Array<string | ContextDirective | InitialDirective | ShouldFreezeDirective | StatesDirective | ParallelDirective> {}
 
 // Creates a new state machine manager
 // @param {Object} states
@@ -57,13 +62,19 @@ interface MachineArguments extends Array<string | ContextDirective | InitialDire
 // @param {String} initialState
 // @returns {Machine}
 export function machine(title: string, ...args: MachineArguments): Machine {
-  let states: StatesDirective = {};
-  let context: Context = {};
-  let initial: string = '';
-  let current: string = '';
-  let frozen: boolean = true;
-  let isAsync: boolean = false;
-  let history: string[] = [];
+  // Create the machine
+  let myMachine: Machine = {
+    id: titleToId(title || 'x-robot'),
+    title,
+    states: {},
+    context: {},
+    initial: '',
+    current: '',
+    frozen: true,
+    isAsync: false,
+    history: [],
+    parallel: {}
+  };
 
   for (let arg of args) {
     // If arg is a string then it is the title
@@ -73,7 +84,12 @@ export function machine(title: string, ...args: MachineArguments): Machine {
 
     // If the argument is a states directive then merge it into the states
     if (isStatesDirective(arg)) {
-      states = { ...states, ...arg };
+      myMachine.states = { ...myMachine.states, ...arg };
+    }
+
+    // If the argument is a parallel directive then merge it into the parallel
+    if (isParallelDirective(arg)) {
+      myMachine.parallel = { ...myMachine.parallel, ...arg.parallel };
     }
 
     // If the argument is a context directive then merge it into the context
@@ -83,47 +99,47 @@ export function machine(title: string, ...args: MachineArguments): Machine {
         throw new Error('The context passed to the machine must be an object or a function that returns an object.');
       }
 
-      context = { ...context, ...newContext };
+      myMachine.context = { ...myMachine.context, ...newContext };
     }
 
     // If the argument is an initial directive then set the initial state
     if (isInitialDirective(arg)) {
-      initial = arg.initial;
-      current = initial;
-      history.push(`${HistoryType.State}: ${initial}`);
+      myMachine.initial = arg.initial;
+      myMachine.current = myMachine.initial;
+      myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
     }
 
     // If the argument is a shouldFreeze directive then set the freeze flag
     if (isShouldFreezeDirective(arg)) {
-      frozen = arg.freeze;
+      myMachine.frozen = arg.freeze;
     }
   }
 
   // If freeze is true, we will deep freeze the context
-  if (frozen) {
-    deepFreeze(context);
+  if (myMachine.frozen) {
+    deepFreeze(myMachine.context);
   }
 
   // Find if the machine is async, if so, add the async property
   // Machin is async if there is a state with an action in the run array
-  for (let state in states) {
-    if (states[state].run.length > 0) {
+  for (let state in myMachine.states) {
+    if (myMachine.states[state].run.length > 0) {
       // Find an action in the run array
-      let action = states[state].run.find(isAction);
+      let action = myMachine.states[state].run.find(isAction);
       if (action) {
-        isAsync = true;
+        myMachine.isAsync = true;
         break;
       }
     }
   }
 
   // If machine isn't async, we should check if there are any nested machines that are async, if so, we should turn the async flag on
-  if (isAsync === false) {
-    for (let state in states) {
-      if (states[state].nested.length > 0) {
-        for (let nestedMachine of states[state].nested) {
+  if (myMachine.isAsync === false) {
+    for (let state in myMachine.states) {
+      if (myMachine.states[state].nested.length > 0) {
+        for (let nestedMachine of myMachine.states[state].nested) {
           if (nestedMachine.machine.isAsync) {
-            isAsync = true;
+            myMachine.isAsync = true;
             break;
           }
         }
@@ -131,17 +147,15 @@ export function machine(title: string, ...args: MachineArguments): Machine {
     }
   }
 
-  // Create the machine
-  let myMachine: Machine = {
-    title,
-    states,
-    context,
-    initial,
-    current,
-    frozen,
-    isAsync,
-    history
-  };
+  // If machine isn't async, we should check if there are any parallel machines that are async, if so, we should turn the async flag on
+  if (myMachine.isAsync === false) {
+    for (let parallel in myMachine.parallel) {
+      if (myMachine.parallel[parallel].isAsync) {
+        myMachine.isAsync = true;
+        break;
+      }
+    }
+  }
 
   // Return the machine
   return myMachine;
@@ -155,6 +169,16 @@ export function states(...states: StateDirective[]): StatesDirective {
   }
 
   return newStates;
+}
+
+export function parallel(...machines: Machine[]): ParallelDirective {
+  let obj: ParallelDirective = { parallel: {} };
+
+  for (let machine of machines) {
+    obj.parallel[machine.id] = machine;
+  }
+
+  return obj;
 }
 
 export function context(context: Context | Function): ContextDirective {
@@ -181,7 +205,7 @@ export function shouldFreeze(freeze: boolean): ShouldFreezeDirective {
 export function state(name: string, ...args: RunCollection): StateDirective {
   let run: (ActionDirective | ProducerDirective)[] = [];
   let on: TransitionsDirective = {};
-  let immediate;
+  let immediate: ImmediateDirective[] = [];
   let nested: NestedMachineDirective[] = [];
   let description;
 
@@ -211,19 +235,17 @@ export function state(name: string, ...args: RunCollection): StateDirective {
 
       // If is immediate transition
     } else if (isImmediate(arg)) {
-      // We have an immediate transition already set so we turn it into an array to let the machine know that we have multiple immediate transitions
-      if (immediate) {
-        if (Array.isArray(immediate)) {
-          immediate.push(arg.immediate);
-          continue;
-        }
-        immediate = [immediate, arg.immediate];
-        continue;
-      }
+      // Add the immediate transition to the immediate array
+      immediate.push(arg);
 
-      immediate = arg.immediate;
-      // We turn the immediate transition into a normal transition so that the machine can handle it
-      on[immediate] = { target: immediate, transition: immediate, guards: arg.guards };
+      let transition = arg.immediate;
+      let guards = arg.guards;
+
+      // If the immediate transition is not a nested or parallel machine then add it to the on object
+      if (!isNestedImmediateDirective(arg) && !isParallelImmediateDirective(arg)) {
+        // We turn the immediate transition into a normal transition so that the machine can handle it
+        on[transition] = { target: transition, transition: transition, guards };
+      }
 
       // if is a transition
     } else if (isTransition(arg)) {

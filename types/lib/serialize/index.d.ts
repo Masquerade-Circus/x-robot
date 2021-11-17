@@ -15,19 +15,23 @@ export interface SerializedGuard {
 }
 interface SerializedCollection extends Array<SerializedAction | SerializedProducer> {
 }
-interface SerializedTransition {
+export interface SerializedTransition {
     target: string;
     guards?: SerializedGuard[];
 }
 interface SerializedTransitions {
     [key: string]: SerializedTransition;
 }
+export interface SerializedImmediate {
+    immediate: string;
+    guards?: SerializedGuard[];
+}
 interface SerializedState {
     name: string;
     nested?: SerializedNestedMachine[];
     on?: SerializedTransitions;
     run?: SerializedCollection;
-    immediate?: string;
+    immediate?: SerializedImmediate[];
     type?: string;
     description?: string;
 }
@@ -37,6 +41,7 @@ interface SerializedStates {
 export interface SerializedMachine {
     title?: string;
     states: SerializedStates;
+    parallel: Record<string, SerializedMachine>;
     context: any;
     initial: any;
 }

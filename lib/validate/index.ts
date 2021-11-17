@@ -1,15 +1,34 @@
 import { ActionDirective, Machine, ProducerDirective, StateDirective } from '../machine/interfaces';
 import { Result, err, ok } from './result';
-import { hasState, hasTransition, isAction, isGuard, isProducer, isProducerWithTransition, isTransition, isValidString } from '../utils';
+import {
+  canMakeTransition,
+  hasState,
+  hasTransition,
+  isAction,
+  isGuard,
+  isNestedImmediateDirective,
+  isNestedTransition,
+  isParallelImmediateDirective,
+  isParallelTransition,
+  isProducer,
+  isProducerWithTransition,
+  isTransition,
+  isValidString
+} from '../utils';
 
 function validateInitialState(machine: Machine): Result<void, Error> {
-  // If we dont get a valid initial state, throw an error
-  if (isValidString(machine.initial) === false) {
+  let hasStates = Object.keys(machine.states).length > 0;
+  let hasParallelStates = Object.keys(machine.parallel).length > 0;
+
+  // Only if the machine has states or if there are no parallel states, the initial is required
+  if ((hasStates || !hasParallelStates) && isValidString(machine.initial) === false) {
+    // If we dont get a valid initial state, throw an error
     return err(new Error('The initial state passed to the machine must be a string.'));
   }
 
-  // If the initial state is not in the states, throw an error
-  if (!(machine.initial in machine.states)) {
+  // Validate that the initial state exists if it is defined
+  if (isValidString(machine.initial) && machine.initial in machine.states === false) {
+    // If the initial state is not in the states, throw an error
     return err(new Error(`The initial state '${machine.initial}' is not in the machine's states.`));
   }
 
@@ -78,22 +97,69 @@ function validateThatAllStatesHaveTransitionsToThem(machine: Machine): Result<vo
 function validateImmediateTransitions(machine: Machine): Result<void, Error> {
   for (let stateName in machine.states) {
     let state = machine.states[stateName];
-    let immediate = state.immediate;
 
-    // If immediate is an array then we have multiple immediate transitions and must throw an error
-    if (Array.isArray(immediate)) {
-      return err(new Error(`The state '${stateName}' has multiple immediate transitions.`));
-    }
-
-    if (typeof immediate !== 'undefined') {
+    for (let immediate of state.immediate) {
       // Validate that the target is a valid state
-      if (!isValidString(immediate)) {
+      if (!isValidString(immediate.immediate)) {
         return err(new Error(`The immediate transition of the state '${stateName}' must have a target state.`));
       }
 
-      // Validate that the target exists
-      if (hasState(machine, immediate) === false) {
-        return err(new Error(`The immediate transition of the state '${stateName}' has a target state '${immediate}' that does not exists.`));
+      // If is a nested immediate transition, validate that we can make the transition to the nested machine
+      if (isNestedTransition(immediate.immediate)) {
+        let nestedMachineId = immediate.immediate.split('.')[0];
+        if (canMakeTransition(machine, state, immediate.immediate) === false) {
+          return err(
+            new Error(
+              `The immediate transition '${immediate.immediate}' of the state '${stateName}' cannot be made to the nested machine '${nestedMachineId}'.`
+            )
+          );
+        }
+      }
+
+      // If is a parallel immediate transition, validate that we can make the transition to the parallel machine
+      else if (isParallelTransition(immediate.immediate)) {
+        let transitionParts = immediate.immediate.split('/');
+        let parallelMachineId = transitionParts.shift();
+        let transitionName = transitionParts.join('/');
+
+        // If we have no parallel machine id, throw an error
+        if (!parallelMachineId) {
+          return err(new Error(`The immediate transition '${immediate.immediate}' of the state '${stateName}' is not valid.`));
+        }
+
+        // Check that the parallel machine exists
+        if (machine.parallel[parallelMachineId] === undefined) {
+          return err(
+            new Error(
+              `The immediate transition '${immediate.immediate}' of the state '${stateName}' has a target parallel machine '${parallelMachineId}' that does not exists.`
+            )
+          );
+        }
+
+        // Check that the parallel machine has at least one state or parallel state that can handle the transition
+        let canHandleTransition = false;
+        let parallelMachine = machine.parallel[parallelMachineId];
+
+        for (let otherStateName in parallelMachine.states) {
+          let otherState = parallelMachine.states[otherStateName];
+          if (canMakeTransition(parallelMachine, otherState, transitionName)) {
+            canHandleTransition = true;
+            break;
+          }
+        }
+
+        if (!canHandleTransition) {
+          return err(
+            new Error(
+              `The immediate transition '${immediate.immediate}' of the state '${stateName}' cannot be made to the parallel machine '${parallelMachineId}'.`
+            )
+          );
+        }
+      }
+
+      // If is a normal transition validate that the target exists in the machine
+      else if (hasState(machine, immediate.immediate) === false) {
+        return err(new Error(`The immediate transition of the state '${stateName}' has a target state '${immediate.immediate}' that does not exists.`));
       }
     }
   }
@@ -302,10 +368,29 @@ function validateStates(machine: Machine): Result<void, Error> {
   return ok(void 0);
 }
 
+function validateParallelStates(machine: Machine): Result<void, Error> {
+  // Validate that all parallel states are valid
+  for (let parallelMachine in machine.parallel) {
+    try {
+      validate(machine.parallel[parallelMachine]);
+    } catch (error) {
+      return err(new Error(`The parallel machine '${machine.parallel[parallelMachine].title}' is not valid: ${(error as Error).message}`));
+    }
+  }
+
+  return ok(void 0);
+}
+
 export function validate(machine: Machine) {
   // Validate that the machine has a title
   if (isValidString(machine.title) === false) {
     throw new Error('The machine must have a title.');
+  }
+
+  // Validate the parallel states
+  let allParallelStatesAreValidResult = validateParallelStates(machine);
+  if (allParallelStatesAreValidResult.isErr()) {
+    throw allParallelStatesAreValidResult.unwrapErr();
   }
 
   // Validate initial state

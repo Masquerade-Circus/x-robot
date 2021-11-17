@@ -1,10 +1,10 @@
 import { VISUALIZATION_LEVEL, createSvgFromPlantUmlCode, getPlantUmlCode } from '../dist/visualize/index.mjs';
 import { BirdMachine as bird, LeftWingMachine as leftWing, RightWingMachine as rightWing } from './bird-machine-esm.mjs';
 import { describe, it } from 'mocha';
+import { getState, invoke } from '../dist/index.mjs';
 
 import expect from 'expect';
 import fs from 'fs';
-import { invoke } from '../dist/index.mjs';
 import { serialize } from '../dist/serialize/index.mjs';
 
 // Generate a diagram from a serialized machine
@@ -37,9 +37,9 @@ state takingoff {
   TakingoffLeftWingOpened: The left wing is opened
   TakingoffLeftWingFatal: Is the left wing injured?
 
-  TakingoffLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToclosed
-  TakingoffLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToopened
-  TakingoffLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateLeftWingTofatal\\n└ P:updateError
+  TakingoffLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToClosed
+  TakingoffLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToOpened
+  TakingoffLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateLeftWingToFatal\\n└ P:updateError
 
   [*] --> TakingoffLeftWingClosed
   TakingoffLeftWingClosed -[#slategray]-> TakingoffLeftWingFatal: fatal
@@ -60,9 +60,9 @@ state takingoff {
   TakingoffRightWingOpened: The right wing is opened
   TakingoffRightWingFatal: Is the right wing injured?
 
-  TakingoffRightWingClosed: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToclosed
-  TakingoffRightWingOpened: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToopened
-  TakingoffRightWingFatal: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateRightWingTofatal\\n└ P:updateError
+  TakingoffRightWingClosed: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToClosed
+  TakingoffRightWingOpened: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToOpened
+  TakingoffRightWingFatal: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateRightWingToFatal\\n└ P:updateError
 
   [*] --> TakingoffRightWingClosed
   TakingoffRightWingClosed -[#slategray]-> TakingoffRightWingFatal: fatal
@@ -83,9 +83,9 @@ state landing {
   LandingLeftWingOpened: The left wing is opened
   LandingLeftWingFatal: Is the left wing injured?
 
-  LandingLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToclosed
-  LandingLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToopened
-  LandingLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateLeftWingTofatal\\n└ P:updateError
+  LandingLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToClosed
+  LandingLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToOpened
+  LandingLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateLeftWingToFatal\\n└ P:updateError
 
   [*] --> LandingLeftWingClosed
   LandingLeftWingClosed -[#slategray]-> LandingLeftWingFatal: fatal
@@ -106,9 +106,9 @@ state landing {
   LandingRightWingOpened: The right wing is opened
   LandingRightWingFatal: Is the right wing injured?
 
-  LandingRightWingClosed: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToclosed
-  LandingRightWingOpened: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToopened
-  LandingRightWingFatal: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateRightWingTofatal\\n└ P:updateError
+  LandingRightWingClosed: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToClosed
+  LandingRightWingOpened: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToOpened
+  LandingRightWingFatal: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateRightWingToFatal\\n└ P:updateError
 
   [*] --> LandingRightWingClosed
   LandingRightWingClosed -[#slategray]-> LandingRightWingFatal: fatal
@@ -118,17 +118,51 @@ state landing {
   LandingRightWingFatal -[#slategray]-> LandingRightWingFatal: fatal
 }
 
+state "Parallel states" as BirdParallelStates {
+  note "Flying time" as NBirdFlyingTime
+
+  state "stopped" as BirdFlyingTimeStopped<<default>>
+  state "started" as BirdFlyingTimeStarted<<default>>
+
+  BirdFlyingTimeStopped: The bird is not flying
+  BirdFlyingTimeStarted: The bird is flying
+
+  BirdFlyingTimeStopped: └ P:stopTimer
+  BirdFlyingTimeStarted: └ P:startTimer
+
+  [*] --> BirdFlyingTimeStopped
+  BirdFlyingTimeStopped -[#slategray]-> BirdFlyingTimeStarted: start\\n└ G:isTimeStopped
+  BirdFlyingTimeStarted -[#slategray]-> BirdFlyingTimeStopped: stop\\n└ G:isTimeStarted
+
+  --
+
+  note "Walking time" as NBirdWalkingTime
+
+  state "stopped" as BirdWalkingTimeStopped<<default>>
+  state "started" as BirdWalkingTimeStarted<<default>>
+
+  BirdWalkingTimeStopped: The bird is not walking
+  BirdWalkingTimeStarted: The bird is walking
+
+  BirdWalkingTimeStopped: └ P:stopTimer
+  BirdWalkingTimeStarted: └ P:startTimer
+
+  [*] --> BirdWalkingTimeStopped
+  BirdWalkingTimeStopped -[#slategray]-> BirdWalkingTimeStarted: start\\n└ G:isTimeStopped
+  BirdWalkingTimeStarted -[#slategray]-> BirdWalkingTimeStopped: stop\\n└ G:isTimeStarted
+}
+
 land: The bird is on the ground
 takingoff: The bird is taking off
 flying: The bird is on the air
 landing: The bird is landing
 fatal: Is the bird dead?
 
-land: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateBirdToland
-takingoff: ├ T:LeftWing.open\\n├ T:RightWing.open\\n├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdTotakingoff\\n└ P:updateBirdToland
-flying: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateBirdToflying
-landing: ├ T:LeftWing.close\\n├ T:RightWing.close\\n├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateBirdTolanding
-fatal: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdTofatal\\n└ P:updateError
+land: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdToLand\\n├ T:flyingtime/stop\\n└ T:walkingtime/start
+takingoff: ├ T:leftwing.open\\n├ T:rightwing.open\\n├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateBirdToTakingoff
+flying: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdToFlying\\n├ T:flyingtime/start\\n└ T:walkingtime/stop
+landing: ├ T:leftwing.close\\n├ T:rightwing.close\\n├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateBirdToLanding
+fatal: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdToFatal\\n└ P:updateError
 
 [*] --> land
 land -[#indianred]-> fatal: fatal
@@ -190,48 +224,48 @@ skinparam state {
 
   it('should move the bird states with transitions', async () => {
     // The bird is on the ground
-    expect(bird.current).toEqual('land');
-    expect(leftWing.current).toEqual('closed');
-    expect(rightWing.current).toEqual('closed');
+    expect(getState(bird)).toEqual('land');
+    expect(getState(leftWing)).toEqual('closed');
+    expect(getState(rightWing)).toEqual('closed');
 
     // The bird is taking off
     invoke(bird, 'takeoff');
-    expect(bird.current).toEqual('takingoff');
-    expect(leftWing.current).toEqual('closed');
-    expect(rightWing.current).toEqual('closed');
+    expect(getState(bird)).toEqual('takingoff');
+    expect(getState(leftWing)).toEqual('closed');
+    expect(getState(rightWing)).toEqual('closed');
 
     // Await for the bird to take off
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // The bird is on the air
-    expect(bird.current).toEqual('flying');
-    expect(leftWing.current).toEqual('opened');
-    expect(rightWing.current).toEqual('opened');
+    expect(getState(bird)).toEqual('flying');
+    expect(getState(leftWing)).toEqual('opened');
+    expect(getState(rightWing)).toEqual('opened');
 
     // The bird is landing
     invoke(bird, 'land');
-    expect(bird.current).toEqual('landing');
-    expect(leftWing.current).toEqual('opened');
-    expect(rightWing.current).toEqual('opened');
+    expect(getState(bird)).toEqual('landing');
+    expect(getState(leftWing)).toEqual('opened');
+    expect(getState(rightWing)).toEqual('opened');
 
     // Await for the bird to land
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // The bird is on the ground
-    expect(bird.current).toEqual('land');
-    expect(leftWing.current).toEqual('closed');
-    expect(rightWing.current).toEqual('closed');
+    expect(getState(bird)).toEqual('land');
+    expect(getState(leftWing)).toEqual('closed');
+    expect(getState(rightWing)).toEqual('closed');
 
     // The bird is takingoff and immediately on the air
     await invoke(bird, 'takeoff');
-    expect(bird.current).toEqual('flying');
-    expect(leftWing.current).toEqual('opened');
-    expect(rightWing.current).toEqual('opened');
+    expect(getState(bird)).toEqual('flying');
+    expect(getState(leftWing)).toEqual('opened');
+    expect(getState(rightWing)).toEqual('opened');
 
     // The bird is landing and immediately on the ground
     await invoke(bird, 'land');
-    expect(bird.current).toEqual('land');
-    expect(leftWing.current).toEqual('closed');
-    expect(rightWing.current).toEqual('closed');
+    expect(getState(bird)).toEqual('land');
+    expect(getState(leftWing)).toEqual('closed');
+    expect(getState(rightWing)).toEqual('closed');
   });
 });

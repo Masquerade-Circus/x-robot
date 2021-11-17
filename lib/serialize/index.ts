@@ -2,6 +2,7 @@ import {
   ActionDirective,
   GuardDirective,
   GuardsDirective,
+  ImmediateDirective,
   Machine,
   NestedGuardDirective,
   NestedMachineDirective,
@@ -31,7 +32,7 @@ export interface SerializedGuard {
 
 interface SerializedCollection extends Array<SerializedAction | SerializedProducer> {}
 
-interface SerializedTransition {
+export interface SerializedTransition {
   target: string;
   guards?: SerializedGuard[];
 }
@@ -40,12 +41,17 @@ interface SerializedTransitions {
   [key: string]: SerializedTransition;
 }
 
+export interface SerializedImmediate {
+  immediate: string;
+  guards?: SerializedGuard[];
+}
+
 interface SerializedState {
   name: string;
   nested?: SerializedNestedMachine[];
   on?: SerializedTransitions;
   run?: SerializedCollection;
-  immediate?: string;
+  immediate?: SerializedImmediate[];
   type?: string;
   description?: string;
 }
@@ -57,6 +63,7 @@ interface SerializedStates {
 export interface SerializedMachine {
   title?: string;
   states: SerializedStates;
+  parallel: Record<string, SerializedMachine>;
   context: any;
   initial: any;
 }
@@ -156,6 +163,34 @@ function serializeGuards(guards: GuardsDirective): SerializedGuard[] | null {
   return guards.map((guard) => serializeGuard(guard));
 }
 
+function serializeTransition(transition: TransitionDirective): SerializedTransition {
+  let serialized: SerializedTransition = {
+    target: transition.target
+  };
+
+  let guards = serializeGuards(transition.guards);
+
+  if (guards) {
+    serialized.guards = guards;
+  }
+
+  return serialized;
+}
+
+function serializeImmediate(immediate: ImmediateDirective): SerializedImmediate {
+  let serialized: SerializedImmediate = {
+    immediate: immediate.immediate
+  };
+
+  let guards = serializeGuards(immediate.guards);
+
+  if (guards) {
+    serialized.guards = guards;
+  }
+
+  return serialized;
+}
+
 // Serialize transitions
 // @param {Object} events
 // @returns {Array}
@@ -166,13 +201,7 @@ function serializeTransitions(events: TransitionsDirective): SerializedTransitio
 
   let serialized: SerializedTransitions = {};
   for (let event in events) {
-    let transition: TransitionDirective = events[event];
-    serialized[event] = { target: events[event].target };
-    let guards = serializeGuards(transition.guards);
-
-    if (guards) {
-      serialized[event].guards = guards;
-    }
+    serialized[event] = serializeTransition(events[event]);
   }
 
   return serialized;
@@ -210,6 +239,7 @@ function serializeNested(nested: NestedMachineDirective[]): SerializedNestedMach
 export function serialize(machine: Machine): SerializedMachine {
   let serialized: SerializedMachine = {
     states: {},
+    parallel: {},
     context: serializeContext(machine.context),
     initial: machine.initial
   };
@@ -237,8 +267,12 @@ export function serialize(machine: Machine): SerializedMachine {
     }
 
     let immediate = machine.states[state].immediate;
-    if (isValidString(immediate)) {
-      serialized.states[state].immediate = immediate;
+    if (immediate.length) {
+      let serializedImmediate: SerializedImmediate[] = [];
+      for (let immediateDirective of immediate) {
+        serializedImmediate.push(serializeImmediate(immediateDirective));
+      }
+      serialized.states[state].immediate = serializedImmediate;
     }
 
     if (isValidString(machine.states[state].type)) {
@@ -248,6 +282,10 @@ export function serialize(machine: Machine): SerializedMachine {
     if (isValidString(machine.states[state].description)) {
       serialized.states[state].description = machine.states[state].description;
     }
+  }
+
+  for (let parallel in machine.parallel) {
+    serialized.parallel[parallel] = serialize(machine.parallel[parallel]);
   }
 
   return serialized;

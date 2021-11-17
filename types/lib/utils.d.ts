@@ -1,4 +1,4 @@
-import { ActionDirective, ContextDirective, DescriptionDirective, GuardDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedMachineDirective, NestedMachineWithTransitionDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective } from './machine/interfaces';
+import { ActionDirective, ContextDirective, DescriptionDirective, GuardDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedImmediateDirective, NestedMachineDirective, NestedMachineWithTransitionDirective, ParallelDirective, ParallelImmediateDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective } from './machine/interfaces';
 export declare function isValidString(str?: any): str is string;
 export declare function isValidObject(obj: any): obj is object;
 export declare function isProducer(producer?: any): producer is ProducerDirective;
@@ -17,8 +17,21 @@ export declare function isMachine(machine?: any): machine is Machine;
 export declare function isStateDirective(state?: any): state is StateDirective;
 export declare function isContextDirective(context?: any): context is ContextDirective;
 export declare function isStatesDirective(states?: any): states is StatesDirective;
+export declare function isParallelDirective(parallel?: any): parallel is ParallelDirective;
 export declare function isShouldFreezeDirective(shouldFreeze?: any): shouldFreeze is ShouldFreezeDirective;
 export declare function isInitialDirective(initial?: any): initial is InitialDirective;
 export declare function isDescriptionDirective(description?: any): description is DescriptionDirective;
+export declare function isNestedTransition(transition?: any): boolean;
+export declare function isParallelTransition(transition?: any): boolean;
+export declare function isNestedImmediateDirective(immediate?: any): immediate is NestedImmediateDirective;
+export declare function isParallelImmediateDirective(immediate?: any): immediate is ParallelImmediateDirective;
 export declare function deepFreeze(obj: any): any;
 export declare function cloneContext(context: any, weakMap?: WeakMap<object, any>): any;
+declare type CurrentState = string | null;
+interface AllStates {
+    [key: string]: CurrentState | AllStates;
+}
+export declare function getState(machine: Machine, path?: string): AllStates | CurrentState;
+export declare function canMakeTransition(machine: Machine, currentStateObject: StateDirective, transition: string): boolean;
+export declare const titleToId: (str: string) => string;
+export {};

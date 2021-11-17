@@ -625,7 +625,7 @@ const increaseSuccessfulStoreOrderCount = async (context, payload) => {
   // TODO: Implement action
 };
 
-const MyMachineMachine = machine(
+export const MyMachineMachine = machine(
   "My machine",
   states(
     dangerState(

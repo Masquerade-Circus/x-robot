@@ -1,6 +1,6 @@
-import { SerializedAction, SerializedGuard, SerializedMachine, SerializedNestedMachine, SerializedProducer } from '../serialize';
+import { SerializedAction, SerializedGuard, SerializedImmediate, SerializedMachine, SerializedNestedMachine, SerializedProducer } from '../serialize';
 import { Machine } from '../machine/interfaces';
-interface SerializedCollectionWithGuards extends Array<SerializedGuard | SerializedAction | SerializedProducer | SerializedNestedMachine> {
+interface SerializedCollectionWithGuards extends Array<SerializedGuard | SerializedAction | SerializedProducer | SerializedNestedMachine | SerializedImmediate> {
 }
 export declare const VISUALIZATION_LEVEL: {
     LOW: string;

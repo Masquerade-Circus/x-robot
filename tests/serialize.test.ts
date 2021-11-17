@@ -149,7 +149,7 @@ describe('Serialize', () => {
           on: {
             preview: { target: 'preview' }
           },
-          immediate: 'preview',
+          immediate: [{ immediate: 'preview' }],
           type: 'warning'
         },
         save: {
@@ -173,6 +173,7 @@ describe('Serialize', () => {
           type: 'danger'
         }
       },
+      parallel: {},
       title: 'Title component',
       initial: 'preview',
       context: getState()

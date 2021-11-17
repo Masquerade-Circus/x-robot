@@ -1,9 +1,9 @@
-import { context, guard, immediate, initial, invoke, machine, nested, nestedGuard, producer, state, states, transition } from '../lib';
+import { context, getState, guard, immediate, initial, invoke, machine, nested, nestedGuard, producer, state, states, transition } from '../lib';
 import { describe, it } from 'mocha';
 
 import expect from 'expect';
 
-describe('XRobot', () => {
+describe('Nested states', () => {
   it('should create a machine with a state with a nested machine', () => {
     const stopwalk = machine('Stopwalk', states(state('wait', transition('start', 'walk')), state('walk', transition('stop', 'wait'))), initial('wait'));
 
@@ -34,20 +34,28 @@ describe('XRobot', () => {
       initial('green')
     );
 
-    expect(stoplight.current).toEqual('green');
-    expect(stopwalk.current).toEqual('wait');
+    expect(getState(stoplight)).toEqual('green');
+    expect(getState(stoplight, 'green')).toEqual('wait');
+    expect(getState(stoplight, 'stopwalk')).toEqual('wait');
+    expect(getState(stopwalk)).toEqual('wait');
 
     invoke(stoplight, 'next');
-    expect(stoplight.current).toEqual('yellow');
-    expect(stopwalk.current).toEqual('wait');
+    expect(getState(stoplight)).toEqual('yellow');
+    expect(getState(stoplight, 'yellow')).toEqual(null);
+    expect(getState(stoplight, 'stopwalk')).toEqual('wait');
+    expect(getState(stopwalk)).toEqual('wait');
 
     invoke(stoplight, 'next');
-    expect(stoplight.current).toEqual('red');
-    expect(stopwalk.current).toEqual('walk');
+    expect(getState(stoplight)).toEqual('red');
+    expect(getState(stoplight, 'red')).toEqual('walk');
+    expect(getState(stoplight, 'stopwalk')).toEqual('walk');
+    expect(getState(stopwalk)).toEqual('walk');
 
     invoke(stoplight, 'next');
-    expect(stoplight.current).toEqual('green');
-    expect(stopwalk.current).toEqual('wait');
+    expect(getState(stoplight)).toEqual('green');
+    expect(getState(stoplight, 'green')).toEqual('wait');
+    expect(getState(stoplight, 'stopwalk')).toEqual('wait');
+    expect(getState(stopwalk)).toEqual('wait');
   });
 
   it('should allow to move the nested machine if it is in the correct state', () => {
@@ -92,20 +100,20 @@ describe('XRobot', () => {
     );
 
     // Door is closed
-    expect(doorMachine.current).toEqual('closed');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('closed');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(0);
 
     // Open the door
     invoke(doorMachine, 'open');
-    expect(doorMachine.current).toEqual('opened');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('opened');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(0);
 
     // Person enters the door
     invoke(doorMachine, 'opened.enter');
-    expect(doorMachine.current).toEqual('opened');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('opened');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(1);
   });
 
@@ -151,14 +159,14 @@ describe('XRobot', () => {
     );
 
     // Door is closed
-    expect(doorMachine.current).toEqual('closed');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('closed');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(0);
 
     // Person enters the door
     expect(() => invoke(doorMachine, 'opened.enter')).toThrow("The transition 'opened.enter' does not exist in the current state 'closed'");
-    expect(doorMachine.current).toEqual('closed');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('closed');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(0);
   });
 
@@ -210,29 +218,29 @@ describe('XRobot', () => {
     );
 
     // Door is closed
-    expect(doorMachine.current).toEqual('closed');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('closed');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(0);
     expect(doorMachine.context.error).toBeNull();
 
     // Open the door
     invoke(doorMachine, 'open');
-    expect(doorMachine.current).toEqual('opened');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('opened');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(0);
     expect(doorMachine.context.error).toBeNull();
 
     // Person enters the door
     invoke(doorMachine, 'opened.enter');
-    expect(doorMachine.current).toEqual('opened');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('opened');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(1);
     expect(doorMachine.context.error).toBeNull();
 
     // Close the door
     invoke(doorMachine, 'close');
-    expect(doorMachine.current).toEqual('opened');
-    expect(doorWayMachine.current).toEqual('idle');
+    expect(getState(doorMachine)).toEqual('opened');
+    expect(getState(doorWayMachine)).toEqual('idle');
     expect(doorWayMachine.context.doorWayCount).toEqual(1);
     expect(doorMachine.context.error).toEqual('Doorway is not empty');
   });
@@ -254,20 +262,20 @@ describe('XRobot', () => {
       initial('green')
     );
 
-    expect(stoplight.current).toEqual('green');
-    expect(stopwalk.current).toEqual('wait');
+    expect(getState(stoplight)).toEqual('green');
+    expect(getState(stopwalk)).toEqual('wait');
 
     invoke(stoplight, 'next');
-    expect(stoplight.current).toEqual('yellow');
-    expect(stopwalk.current).toEqual('wait');
+    expect(getState(stoplight)).toEqual('yellow');
+    expect(getState(stopwalk)).toEqual('wait');
 
     invoke(stoplight, 'next');
-    expect(stoplight.current).toEqual('red');
-    expect(stopwalk.current).toEqual('walk');
+    expect(getState(stoplight)).toEqual('red');
+    expect(getState(stopwalk)).toEqual('walk');
 
     invoke(stoplight, 'red.stop');
-    expect(stoplight.current).toEqual('green');
-    expect(stopwalk.current).toEqual('wait');
+    expect(getState(stoplight)).toEqual('green');
+    expect(getState(stopwalk)).toEqual('wait');
   });
 
   it('should allow to move multiple nested machines if they have the same event', () => {
@@ -301,28 +309,49 @@ describe('XRobot', () => {
       initial('land')
     );
 
-    expect(bird.current).toEqual('land');
-    expect(leftWingMachine.current).toEqual('closed');
-    expect(rightWingMachine.current).toEqual('closed');
+    expect(getState(bird)).toEqual('land');
+    expect(getState(bird, 'land')).toEqual(null);
+    expect(getState(bird, 'leftwing')).toEqual('closed');
+    expect(getState(bird, 'rightwing')).toEqual('closed');
+    expect(getState(leftWingMachine)).toEqual('closed');
+    expect(getState(rightWingMachine)).toEqual('closed');
 
     invoke(bird, 'takeoff');
-    expect(bird.current).toEqual('takingoff');
-    expect(leftWingMachine.current).toEqual('closed');
-    expect(rightWingMachine.current).toEqual('closed');
+    expect(getState(bird)).toEqual('takingoff');
+    expect(getState(bird, 'takingoff')).toEqual({
+      leftwing: 'closed',
+      rightwing: 'closed'
+    });
+    expect(getState(bird, 'leftwing')).toEqual('closed');
+    expect(getState(bird, 'rightwing')).toEqual('closed');
+    expect(getState(leftWingMachine)).toEqual('closed');
+    expect(getState(rightWingMachine)).toEqual('closed');
 
     invoke(bird, 'takingoff.open');
-    expect(bird.current).toEqual('flying');
-    expect(leftWingMachine.current).toEqual('opened');
-    expect(rightWingMachine.current).toEqual('opened');
+    expect(getState(bird)).toEqual('flying');
+    expect(getState(bird, 'flying')).toEqual(null);
+    expect(getState(bird, 'leftwing')).toEqual('opened');
+    expect(getState(bird, 'rightwing')).toEqual('opened');
+    expect(getState(leftWingMachine)).toEqual('opened');
+    expect(getState(rightWingMachine)).toEqual('opened');
 
     invoke(bird, 'land');
-    expect(bird.current).toEqual('landing');
-    expect(leftWingMachine.current).toEqual('opened');
-    expect(rightWingMachine.current).toEqual('opened');
+    expect(getState(bird)).toEqual('landing');
+    expect(getState(bird, 'landing')).toEqual({
+      leftwing: 'opened',
+      rightwing: 'opened'
+    });
+    expect(getState(bird, 'leftwing')).toEqual('opened');
+    expect(getState(bird, 'rightwing')).toEqual('opened');
+    expect(getState(leftWingMachine)).toEqual('opened');
+    expect(getState(rightWingMachine)).toEqual('opened');
 
     invoke(bird, 'landing.close');
-    expect(bird.current).toEqual('land');
-    expect(leftWingMachine.current).toEqual('closed');
-    expect(rightWingMachine.current).toEqual('closed');
+    expect(getState(bird)).toEqual('land');
+    expect(getState(bird, 'land')).toEqual(null);
+    expect(getState(bird, 'leftwing')).toEqual('closed');
+    expect(getState(bird, 'rightwing')).toEqual('closed');
+    expect(getState(leftWingMachine)).toEqual('closed');
+    expect(getState(rightWingMachine)).toEqual('closed');
   });
 });

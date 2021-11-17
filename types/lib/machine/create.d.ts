@@ -1,8 +1,9 @@
-import { Action, ActionDirective, Context, ContextDirective, DescriptionDirective, Guard, GuardDirective, GuardsDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedMachineDirective, Producer, ProducerDirective, ProducerDirectiveWithoutTransition, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective } from './interfaces';
-interface MachineArguments extends Array<string | ContextDirective | InitialDirective | ShouldFreezeDirective | StatesDirective | GuardDirective> {
+import { Action, ActionDirective, Context, ContextDirective, DescriptionDirective, Guard, GuardDirective, GuardsDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedMachineDirective, ParallelDirective, Producer, ProducerDirective, ProducerDirectiveWithoutTransition, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective } from './interfaces';
+interface MachineArguments extends Array<string | ContextDirective | InitialDirective | ShouldFreezeDirective | StatesDirective | ParallelDirective> {
 }
 export declare function machine(title: string, ...args: MachineArguments): Machine;
 export declare function states(...states: StateDirective[]): StatesDirective;
+export declare function parallel(...machines: Machine[]): ParallelDirective;
 export declare function context(context: Context | Function): ContextDirective;
 export declare function initial(initial: string): InitialDirective;
 export declare function shouldFreeze(freeze: boolean): ShouldFreezeDirective;

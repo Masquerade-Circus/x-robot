@@ -5,6 +5,7 @@
 
 import { ActionDirective, HistoryType, Machine, ProducerDirective, StateDirective, TransitionDirective } from './interfaces';
 import {
+  canMakeTransition,
   cloneContext,
   deepFreeze,
   hasTransition,
@@ -12,45 +13,13 @@ import {
   isGuard,
   isNestedGuard,
   isNestedMachineWithTransitionDirective,
+  isNestedTransition,
+  isParallelTransition,
   isProducer,
   isProducerWithTransition,
   isValidObject,
   isValidString
 } from '../utils';
-
-// @returns {Any}
-function getProperty(machine: Machine, property: string, defaultValue?: any): any {
-  let result = machine.context;
-
-  if (typeof property === 'undefined') {
-    throw new Error('Property is undefined');
-  }
-
-  let parsed = property.split('.');
-  let next;
-
-  while (parsed.length) {
-    next = parsed.shift();
-
-    if (typeof next === 'undefined') {
-      break;
-    }
-
-    if (next.indexOf('[') > -1) {
-      let idx = next.replace(/\D/gi, '');
-      next = next.split('[')[0];
-      parsed.unshift(idx);
-    }
-
-    if (next in result === false || (parsed.length > 0 && typeof result[next] !== 'object')) {
-      return defaultValue;
-    }
-
-    result = result[next];
-  }
-
-  return typeof result === 'undefined' ? defaultValue : result;
-}
 
 // Run producer
 // @param {Machine} machine
@@ -142,25 +111,20 @@ function catchError(machine: Machine, state: StateDirective, error: Error) {
   throw error;
 }
 
-async function runActionsAndProducers(machine: Machine, state: StateDirective, payload: any, index = 0) {
-  if (index >= state.run.length) {
-    return;
-  }
-
-  try {
-    let item = state.run[index];
-
-    let result;
-    if (isAction(item)) {
-      result = await runAction(machine, item, payload);
-    } else if (isProducer(item)) {
-      runProducer(machine, item, payload);
+async function runActionsAndProducers(machine: Machine, state: StateDirective, payload: any) {
+  for (let i = 0; i < state.run.length; i++) {
+    let item = state.run[i];
+    try {
+      if (isAction(item)) {
+        await runAction(machine, item, payload);
+      } else if (isProducer(item)) {
+        await runProducer(machine, item, payload);
+      }
+    } catch (error) {
+      await catchError(machine, state, error as Error);
+      return;
     }
-  } catch (error) {
-    await catchError(machine, state, error as Error);
   }
-
-  await runActionsAndProducers(machine, state, payload, index + 1);
 }
 
 function runProducers(machine: Machine, state: StateDirective, payload: any, index = 0) {
@@ -241,7 +205,7 @@ function runNestedMachines(machine: Machine, state: StateDirective, payload: any
       // If the nested machine is a nested machine with a transition we run the transition on it
       if (isNestedMachineWithTransitionDirective(nestedMachine)) {
         let transition = nestedMachine.transition;
-        promise.then(() => invoke(nestedMachine.machine, transition, payload));
+        promise = promise.then(() => invoke(nestedMachine.machine, transition, payload));
       }
     }
 
@@ -258,84 +222,122 @@ function runNestedMachines(machine: Machine, state: StateDirective, payload: any
   }
 }
 
-function canMakeTransition(machine: Machine, transition: string): boolean {
-  if (!isValidString(transition)) {
-    throw new Error(`Invalid transition: ${transition}`);
-  }
-
-  let trimmedTransition = transition.trim();
-  let currentStateObject = machine.states[machine.current];
-
-  // Check if we have a normal transition or a nested transition (nested transitions are dot separated)
-  if (trimmedTransition.indexOf('.') > -1) {
-    // Get the nested transition parts
-    let nestedTransitionParts = trimmedTransition.split('.');
-    // The first part must be the current state
-    let stateName = nestedTransitionParts.shift();
-
-    // If the current state name is not the same as the stateName, we throw an error
-    if (stateName !== currentStateObject.name) {
-      return false;
-    }
-
-    // If the current state doesn't have a nested machine we throw an error
-    if (currentStateObject.nested.length === 0) {
-      return false;
-    }
-
-    // All the other parts are the nested states and the transition
-    let nestedStatesAndTransition = nestedTransitionParts.join('.');
-
-    // We loop through the nested machines and check if we can make the transition
-    for (let nestedMachine of currentStateObject.nested) {
-      if (canMakeTransition(nestedMachine.machine, nestedStatesAndTransition)) {
-        return true;
-      }
-    }
-  }
-
-  // If we get here, we have a normal transition
-  return hasTransition(currentStateObject, trimmedTransition);
-}
-
-function runNestedTransition(machine: Machine, transition: string, payload: any) {
+function runNestedTransition(machine: Machine, transition: string, payload: any): Promise<void> | void {
   // We know that we have a nested transition and that the first part is the current state
   // so we get rid of the first part and split the rest
   let nestedTransitionParts = transition.split('.');
-  nestedTransitionParts.shift();
+  let stateName = nestedTransitionParts.shift();
   let nestedTransition = nestedTransitionParts.join('.');
+  let promise = machine.isAsync ? Promise.resolve() : null;
+
+  // If we have no stateName, we can't make a transition
+  if (!stateName) {
+    return;
+  }
+
   let currentStateObject = machine.states[machine.current];
 
-  let immediate = currentStateObject.immediate;
+  // We loop through the nested machines and invoke the transition if we can
+  for (let nestedMachineDirective of currentStateObject.nested) {
+    let nestedMachine = nestedMachineDirective.machine;
+    let currentNestedState = nestedMachine.states[nestedMachine.current];
+    if (canMakeTransition(nestedMachine, currentNestedState, nestedTransition)) {
+      if (promise) {
+        promise = promise.then(() => invoke(nestedMachine, nestedTransition, payload));
+      } else {
+        invoke(nestedMachine, nestedTransition, payload);
+      }
+    }
+  }
 
-  if (machine.isAsync) {
-    let promise = Promise.resolve();
-    // We loop through the nested machines and invoke the transition if we can
-    for (let nestedMachine of currentStateObject.nested) {
-      if (canMakeTransition(nestedMachine.machine, nestedTransition)) {
-        promise.then(() => invoke(nestedMachine.machine, nestedTransition, payload));
+  // If we have an immediate transitions we can run it
+  if (promise) {
+    promise = promise.then(() => invokeImmediateDirectives(machine, currentStateObject, payload));
+  } else {
+    invokeImmediateDirectives(machine, currentStateObject, payload);
+  }
+
+  return promise || void 0;
+}
+
+function runParallelTransition(machine: Machine, transition: string, payload: any): Promise<void> | void {
+  // We know that we have a parallel transition and that the first part is the parallelMachineId
+  // so we get rid of the first part and split the rest
+  let parallelTransitionParts = isNestedTransition(transition) ? transition.split('.') : transition.split('/');
+  let parallelMachineId = parallelTransitionParts.shift();
+  let parallelTransition = parallelTransitionParts.join('/');
+
+  // If we have no stateName, we can't make a transition
+  if (!parallelMachineId) {
+    throw new Error(`Invalid transition ${transition}`);
+  }
+
+  // If there is no parallel machine with the given id, we can't make a transition
+  let parallelMachine = machine.parallel[parallelMachineId];
+  if (!parallelMachine) {
+    throw new Error(`Invalid transition ${transition}`);
+  }
+
+  // If the parallelMachineId is in the parallel object try to run the transition in the parallel machine
+  return invoke(parallelMachine, parallelTransition, payload);
+}
+
+function invokeImmediateDirectives(machine: Machine, state: StateDirective, payload: any): Promise<void> | void {
+  // If there are no immediate directives, we can return
+  if (state.immediate.length === 0) {
+    return;
+  }
+
+  let immediate = state.immediate;
+  let promise = machine.isAsync ? Promise.resolve() : null;
+
+  // For each immediate directive
+  for (let immediateDirective of immediate) {
+    if (hasFatalError(machine)) {
+      return;
+    }
+
+    // If is a parallel transition we run the transition in the parallel machine
+    if (isParallelTransition(immediateDirective.immediate)) {
+      let transitionParts = immediateDirective.immediate.split('/');
+      let parallelMachineId = transitionParts.shift() as string;
+      let parallelTransition = transitionParts.join('/');
+      let parallelMachine = machine.parallel[parallelMachineId];
+      if (promise) {
+        promise.then(() => invoke(parallelMachine, parallelTransition, payload));
+      } else {
+        invoke(parallelMachine, parallelTransition, payload);
       }
     }
 
-    // If immediate is set, invoke the immediate event
-    if (isValidString(immediate) && hasFatalError(machine) === false) {
-      promise = promise.then(() => invoke(machine, immediate as string));
+    // If is a nested transition we run the transition in the nested machine
+    else if (isNestedTransition(immediateDirective.immediate)) {
+      if (promise) {
+        promise.then(() => invoke(machine, immediateDirective.immediate, payload));
+      } else {
+        invoke(machine, immediateDirective.immediate, payload);
+      }
     }
 
-    return promise;
-  }
-
-  // We loop through the nested machines and invoke the transition if we can
-  for (let nestedMachine of currentStateObject.nested) {
-    if (canMakeTransition(nestedMachine.machine, nestedTransition)) {
-      invoke(nestedMachine.machine, nestedTransition, payload);
+    // If is a transition we run the transition
+    else {
+      if (promise) {
+        promise.then(async () => {
+          // Only run the next immediate if the current state is equal to the state we are in now
+          if (machine.current === state.name) {
+            await invoke(machine, immediateDirective.immediate, payload);
+          }
+        });
+      } else {
+        // Only run the next immediate if the current state is equal to the state we are in now
+        if (machine.current === state.name) {
+          invoke(machine, immediateDirective.immediate, payload);
+        }
+      }
     }
   }
 
-  // If immediate is set, invoke the immediate event
-  if (isValidString(immediate) && hasFatalError(machine) === false) {
-    invoke(machine, immediate as string);
-  }
+  return promise || void 0;
 }
 
 // Invokes a transition
@@ -355,23 +357,27 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
 
   let trimmedTransition = transition.trim();
 
-  let hasTransition = canMakeTransition(machine, trimmedTransition);
+  // Get the current state object
+  let currentStateObject = machine.states[machine.current];
+
+  let hasTransition = canMakeTransition(machine, currentStateObject, trimmedTransition);
 
   // Check if the transition exists in the current state and throw an error if not
   if (!hasTransition) {
     throw new Error(`The transition '${trimmedTransition}' does not exist in the current state '${machine.current}'`);
   }
 
-  // Check if we have a nested transition
-  if (trimmedTransition.indexOf('.') > -1) {
+  // Check if we have a nested or parallel transition
+  if (isParallelTransition(trimmedTransition)) {
+    return runParallelTransition(machine, trimmedTransition, payload);
+  }
+
+  if (isNestedTransition(trimmedTransition)) {
     return runNestedTransition(machine, trimmedTransition, payload);
   }
 
   // Add the transition to the history
   machine.history.push(`${HistoryType.Transition}: ${trimmedTransition}`);
-
-  // Get the current state object
-  let currentStateObject = machine.states[machine.current];
 
   // Get the transition object
   let transitionObject = currentStateObject.on[trimmedTransition];
@@ -404,32 +410,28 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
   machine.current = targetState;
   machine.history.push(`${HistoryType.State}: ${targetState}`);
 
-  let immediate = targetStateObject.immediate;
-
   if (machine.isAsync) {
-    // Run the actions and producers
-    let promise = runActionsAndProducers(machine, targetStateObject, payload);
+    let promise = Promise.resolve();
 
     // Try to run nested machines if any
-    promise.then(() => runNestedMachines(machine, targetStateObject, payload));
+    promise = promise.then(() => runNestedMachines(machine, targetStateObject, payload));
 
-    // If immediate is set, invoke the immediate event
-    if (isValidString(immediate) && hasFatalError(machine) === false) {
-      promise = promise.then(() => invoke(machine, immediate as string));
-    }
+    // Run the actions and producers
+    promise = promise.then(() => runActionsAndProducers(machine, targetStateObject, payload));
+
+    // If there are immediate directives, run them
+    promise = promise.then(() => invokeImmediateDirectives(machine, targetStateObject, payload));
 
     // Return the promise
     return promise;
   }
 
-  // Run the actions or producers of the target state
-  runProducers(machine, targetStateObject, payload);
-
   // Try to run nested machines if any
   runNestedMachines(machine, targetStateObject, payload);
 
-  // If immediate is set, invoke the immediate transition
-  if (isValidString(immediate) && hasFatalError(machine) === false) {
-    invoke(machine, immediate);
-  }
+  // Run the actions or producers of the target state
+  runProducers(machine, targetStateObject, payload);
+
+  // If there are immediate directives, run them
+  invokeImmediateDirectives(machine, targetStateObject, payload);
 }

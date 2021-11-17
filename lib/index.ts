@@ -10,6 +10,7 @@ import {
   machine,
   nested,
   nestedGuard,
+  parallel,
   primaryState,
   producer,
   state,
@@ -19,6 +20,7 @@ import {
   warningState
 } from './machine/create';
 
+import { getState } from './utils';
 import { invoke } from './machine/invoke';
 
 export {
@@ -26,6 +28,7 @@ export {
   nested,
   context,
   initial,
+  parallel,
   states,
   state,
   infoState,
@@ -40,5 +43,6 @@ export {
   action,
   transition,
   immediate,
-  invoke
+  invoke,
+  getState
 };

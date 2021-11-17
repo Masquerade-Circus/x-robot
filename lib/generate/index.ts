@@ -1,10 +1,49 @@
+import { SerializedImmediate, SerializedMachine, SerializedTransition } from '../serialize';
 import { isValidObject, isValidString } from '../utils';
-
-import { SerializedMachine } from '../serialize';
 
 export enum Format {
   ESM = 'esm',
   CJS = 'cjs'
+}
+
+function getGuards(
+  transition: SerializedTransition | SerializedImmediate,
+  guards: string[] = [],
+  declaredGuards: string[] = [],
+  producers: string[] = [],
+  declaredProducers: string[] = []
+): string {
+  let code = '';
+  if (transition.guards) {
+    // Add the guards to the list
+    for (let item of transition.guards) {
+      let guardName = item.guard;
+      if (!guards.includes(guardName) && !declaredGuards.includes(guardName)) {
+        guards.push(guardName);
+        declaredGuards.push(guardName);
+      }
+
+      if (item.machine) {
+        let { machineName } = getMachineName(item.machine);
+        code += `, nestedGuard(${machineName}, ${guardName}`;
+      } else {
+        code += `, guard(${guardName}`;
+      }
+
+      // Guards can have producers
+      if (item.failure && typeof item.failure === 'object' && item.failure.producer) {
+        if (!producers.includes(item.failure.producer) && !declaredProducers.includes(item.failure.producer)) {
+          producers.push(item.failure.producer);
+          declaredProducers.push(item.failure.producer);
+        }
+
+        code += `, producer(${item.failure.producer})`;
+      }
+      code += `)`;
+    }
+  }
+
+  return code;
 }
 
 function getCodeParts(
@@ -135,48 +174,25 @@ function getCodeParts(
       }
     }
 
+    // Add the immediate transitions
+    if (state.immediate) {
+      for (let immediate of state.immediate) {
+        stateCode += `      immediate("${immediate.immediate}"`;
+        stateCode += getGuards({ target: immediate.immediate, guards: immediate.guards }, guards, declaredGuards, producers, declaredProducers);
+        stateCode += `),\n`;
+      }
+    }
+
     // Add the state transitions to the code
     for (let transitionName in state.on) {
-      let target = state.on[transitionName].target;
       let transition = state.on[transitionName];
 
-      if (!implicitStateTransitions.includes(target) || transition.guards) {
-        if (state.immediate === target) {
-          stateCode += `      immediate("${target}"`;
-        } else {
-          stateCode += `      transition("${transitionName}", "${target}"`;
+      if (!implicitStateTransitions.includes(transition.target) || transition.guards) {
+        if (!state.immediate || !state.immediate.find((immediate) => immediate.immediate === transition.target)) {
+          stateCode += `      transition("${transitionName}", "${transition.target}"`;
+          stateCode += getGuards(transition, guards, declaredGuards, producers, declaredProducers);
+          stateCode += `),\n`;
         }
-
-        if (transition.guards) {
-          // Add the guards to the list
-          for (let item of transition.guards) {
-            let guardName = item.guard;
-            if (!guards.includes(guardName) && !declaredGuards.includes(guardName)) {
-              guards.push(guardName);
-              declaredGuards.push(guardName);
-            }
-
-            if (item.machine) {
-              let { machineName } = getMachineName(item.machine);
-              stateCode += `, nestedGuard(${machineName}, ${guardName}`;
-            } else {
-              stateCode += `, guard(${guardName}`;
-            }
-
-            // Guards can have producers
-            if (item.failure && typeof item.failure === 'object' && item.failure.producer) {
-              if (!producers.includes(item.failure.producer) && !declaredProducers.includes(item.failure.producer)) {
-                producers.push(item.failure.producer);
-                declaredProducers.push(item.failure.producer);
-              }
-
-              stateCode += `, producer(${item.failure.producer})`;
-            }
-            stateCode += `)`;
-          }
-        }
-
-        stateCode += `),\n`;
       }
     }
 
@@ -233,7 +249,7 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ['
       }
 
       // Check if we need to import the immediate
-      if (isValidString(state.immediate)) {
+      if (state.immediate) {
         addImport('immediate', imports);
       }
 
@@ -307,6 +323,10 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ['
     }
   }
 
+  if (serializedMachine.parallel && Object.keys(serializedMachine.parallel).length > 0) {
+    addImport('parallel', imports);
+  }
+
   return imports;
 }
 
@@ -348,6 +368,16 @@ function getMachineCode(
     }
   }
 
+  // For each parallel machine, add the code first
+  for (let parallelMachineId in serializedMachine.parallel) {
+    let parallelMachine = serializedMachine.parallel[parallelMachineId];
+    let { machineName } = getMachineName(parallelMachine);
+    // We only want to add the machine if it hasn't been added yet
+    if (!machines.has(machineName)) {
+      code += getMachineCode(parallelMachine, format, machines, declaredActions, declaredProducers, declaredGuards);
+    }
+  }
+
   let { machineName, camelizedTitle } = getMachineName(serializedMachine);
   let { actions, producers, guards, states } = getCodeParts(serializedMachine, declaredActions, declaredProducers, declaredGuards);
 
@@ -383,16 +413,36 @@ function getMachineCode(
     code += `${actionCode}\n`;
   }
 
+  // Add export declaration for esm
+  if (format === Format.ESM) {
+    code += `export `;
+  }
+
   // Machine declaration and initial state
   code += `const ${machineName} = machine(
-  "${serializedMachine.title ? serializedMachine.title : ''}",
+  "${serializedMachine.title ? serializedMachine.title : ''}",`;
+  if (Object.keys(states).length > 0) {
+    code += `
   states(\n`;
-  // States
-  for (let stateName in states) {
-    code += `    ${states[stateName]},\n`;
+    // States
+    for (let stateName in states) {
+      code += `    ${states[stateName]},\n`;
+    }
+    code = code.replace(/,\n$/, `\n`);
+    code += `  ),\n`;
   }
-  code = code.replace(/,\n$/, `\n`);
-  code += `  ),\n`;
+
+  // Parallel machines
+  if (Object.keys(serializedMachine.parallel).length > 0) {
+    code += `  parallel(\n`;
+    for (let parallelMachineId in serializedMachine.parallel) {
+      let parallelMachine = serializedMachine.parallel[parallelMachineId];
+      let { machineName } = getMachineName(parallelMachine);
+      code += `    ${machineName},\n`;
+    }
+    code = code.replace(/,\n$/, `\n`);
+    code += `  ),\n`;
+  }
 
   // Initial context
   code += `  context(get${camelizedTitle}Context),\n`;

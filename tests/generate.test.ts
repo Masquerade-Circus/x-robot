@@ -12,11 +12,12 @@ describe('Generate code from a serialized machine', () => {
   };
 
   it('should generate code from a serialized machine in esm format', () => {
-    let expectedCode = `import { machine, states, initial, context, primaryState, description, transition, action, producer, nested, state, guard, infoState, immediate, nestedGuard, successState, warningState, dangerState } from "x-robot";
+    let expectedCode = `import { machine, states, initial, context, primaryState, description, immediate, transition, action, producer, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel } from "x-robot";
 
 /******************** LeftWingMachine Start ********************/
 
 const getLeftWingContext = () => ({
+  "state": null,
   "error": null
 });
 
@@ -35,15 +36,15 @@ const updateError = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateLeftWingToclosed = (context, payload) => {
+const updateLeftWingToClosed = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateLeftWingToopened = (context, payload) => {
+const updateLeftWingToOpened = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateLeftWingTofatal = (context, payload) => {
+const updateLeftWingToFatal = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
@@ -53,28 +54,28 @@ const sendStateToApiForLeftWing = async (context, payload) => {
   // TODO: Implement action
 };
 
-const LeftWingMachine = machine(
+export const LeftWingMachine = machine(
   "Left wing",
   states(
     state(
       "closed",
       description("The left wing is closed"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
-      producer(updateLeftWingToclosed),
+      producer(updateLeftWingToClosed),
       transition("open", "opened", guard(isLeftWingClosed, producer(updateError)))
     ),
     state(
       "opened",
       description("The left wing is opened"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
-      producer(updateLeftWingToopened),
+      producer(updateLeftWingToOpened),
       transition("close", "closed", guard(isLeftWingOpened, producer(updateError)))
     ),
     state(
       "fatal",
       description("Is the left wing injured?"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
-      producer(updateLeftWingTofatal),
+      producer(updateLeftWingToFatal),
       producer(updateError)
     )
   ),
@@ -87,6 +88,7 @@ const LeftWingMachine = machine(
 /******************** RightWingMachine Start ********************/
 
 const getRightWingContext = () => ({
+  "state": null,
   "error": null
 });
 
@@ -101,15 +103,15 @@ const isRightWingOpened = (context, payload) => {
 };
 
 // Producers
-const updateRightWingToclosed = (context, payload) => {
+const updateRightWingToClosed = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateRightWingToopened = (context, payload) => {
+const updateRightWingToOpened = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateRightWingTofatal = (context, payload) => {
+const updateRightWingToFatal = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
@@ -119,28 +121,28 @@ const sendStateToApiForRightWing = async (context, payload) => {
   // TODO: Implement action
 };
 
-const RightWingMachine = machine(
+export const RightWingMachine = machine(
   "Right wing",
   states(
     state(
       "closed",
       description("The right wing is closed"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
-      producer(updateRightWingToclosed),
+      producer(updateRightWingToClosed),
       transition("open", "opened", guard(isRightWingClosed, producer(updateError)))
     ),
     state(
       "opened",
       description("The right wing is opened"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
-      producer(updateRightWingToopened),
+      producer(updateRightWingToOpened),
       transition("close", "closed", guard(isRightWingOpened, producer(updateError)))
     ),
     state(
       "fatal",
       description("Is the right wing injured?"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
-      producer(updateRightWingTofatal),
+      producer(updateRightWingToFatal),
       producer(updateError)
     )
   ),
@@ -150,6 +152,84 @@ const RightWingMachine = machine(
 
 /******************** RightWingMachine End ********************/
 
+/******************** FlyingTimeMachine Start ********************/
+
+const getFlyingTimeContext = () => ({
+  "time": 0,
+  "timer": null
+});
+
+// Guards
+const isTimeStopped = (context, payload) => {
+  // TODO: Implement guard
+  return true;
+};
+const isTimeStarted = (context, payload) => {
+  // TODO: Implement guard
+  return true;
+};
+
+// Producers
+const stopTimer = (context, payload) => {
+  // TODO: Implement producer
+  return {...context};
+};
+const startTimer = (context, payload) => {
+  // TODO: Implement producer
+  return {...context};
+};
+
+export const FlyingTimeMachine = machine(
+  "Flying time",
+  states(
+    state(
+      "stopped",
+      description("The bird is not flying"),
+      producer(stopTimer),
+      transition("start", "started", guard(isTimeStopped))
+    ),
+    state(
+      "started",
+      description("The bird is flying"),
+      producer(startTimer),
+      transition("stop", "stopped", guard(isTimeStarted))
+    )
+  ),
+  context(getFlyingTimeContext),
+  initial("stopped")
+);
+
+/******************** FlyingTimeMachine End ********************/
+
+/******************** WalkingTimeMachine Start ********************/
+
+const getWalkingTimeContext = () => ({
+  "time": 0,
+  "timer": null
+});
+
+export const WalkingTimeMachine = machine(
+  "Walking time",
+  states(
+    state(
+      "stopped",
+      description("The bird is not walking"),
+      producer(stopTimer),
+      transition("start", "started", guard(isTimeStopped))
+    ),
+    state(
+      "started",
+      description("The bird is walking"),
+      producer(startTimer),
+      transition("stop", "stopped", guard(isTimeStarted))
+    )
+  ),
+  context(getWalkingTimeContext),
+  initial("stopped")
+);
+
+/******************** WalkingTimeMachine End ********************/
+
 /******************** BirdMachine Start ********************/
 
 const getBirdContext = () => ({
@@ -158,23 +238,23 @@ const getBirdContext = () => ({
 });
 
 // Producers
-const updateBirdToland = (context, payload) => {
+const updateBirdToLand = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdTotakingoff = (context, payload) => {
+const updateBirdToTakingoff = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdToflying = (context, payload) => {
+const updateBirdToFlying = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdTolanding = (context, payload) => {
+const updateBirdToLanding = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdTofatal = (context, payload) => {
+const updateBirdToFatal = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
@@ -184,14 +264,16 @@ const sendStateToApiForBird = async (context, payload) => {
   // TODO: Implement action
 };
 
-const BirdMachine = machine(
+export const BirdMachine = machine(
   "Bird",
   states(
     primaryState(
       "land",
       description("The bird is on the ground"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdToland),
+      producer(updateBirdToLand),
+      immediate("flyingtime/stop"),
+      immediate("walkingtime/start"),
       transition("takeoff", "takingoff")
     ),
     infoState(
@@ -200,15 +282,16 @@ const BirdMachine = machine(
       nested(LeftWingMachine, "open"),
       nested(RightWingMachine, "open"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdTotakingoff),
-      producer(updateBirdToland),
+      producer(updateBirdToTakingoff),
       immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened, producer(updateError)), nestedGuard(RightWingMachine, isRightWingOpened, producer(updateError)))
     ),
     successState(
       "flying",
       description("The bird is on the air"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdToflying),
+      producer(updateBirdToFlying),
+      immediate("flyingtime/start"),
+      immediate("walkingtime/stop"),
       transition("land", "landing")
     ),
     warningState(
@@ -217,16 +300,20 @@ const BirdMachine = machine(
       nested(LeftWingMachine, "close"),
       nested(RightWingMachine, "close"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdTolanding),
+      producer(updateBirdToLanding),
       immediate("land", nestedGuard(LeftWingMachine, isLeftWingClosed, producer(updateError)), nestedGuard(RightWingMachine, isRightWingClosed, producer(updateError)))
     ),
     dangerState(
       "fatal",
       description("Is the bird dead?"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdTofatal),
+      producer(updateBirdToFatal),
       producer(updateError)
     )
+  ),
+  parallel(
+    FlyingTimeMachine,
+    WalkingTimeMachine
   ),
   context(getBirdContext),
   initial("land")
@@ -234,7 +321,7 @@ const BirdMachine = machine(
 
 /******************** BirdMachine End ********************/
 
-export default { LeftWingMachine, RightWingMachine, BirdMachine };
+export default { LeftWingMachine, RightWingMachine, FlyingTimeMachine, WalkingTimeMachine, BirdMachine };
 `;
     let myMachine = getMachine();
     let code = generateFromSerializedMachine(myMachine, Format.ESM);
@@ -243,11 +330,12 @@ export default { LeftWingMachine, RightWingMachine, BirdMachine };
   });
 
   it('should generate code from a serialized machine in cjs format', () => {
-    let expectedCode = `const { machine, states, initial, context, primaryState, description, transition, action, producer, nested, state, guard, infoState, immediate, nestedGuard, successState, warningState, dangerState } = require("x-robot");
+    let expectedCode = `const { machine, states, initial, context, primaryState, description, immediate, transition, action, producer, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel } = require("x-robot");
 
 /******************** LeftWingMachine Start ********************/
 
 const getLeftWingContext = () => ({
+  "state": null,
   "error": null
 });
 
@@ -266,15 +354,15 @@ const updateError = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateLeftWingToclosed = (context, payload) => {
+const updateLeftWingToClosed = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateLeftWingToopened = (context, payload) => {
+const updateLeftWingToOpened = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateLeftWingTofatal = (context, payload) => {
+const updateLeftWingToFatal = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
@@ -291,21 +379,21 @@ const LeftWingMachine = machine(
       "closed",
       description("The left wing is closed"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
-      producer(updateLeftWingToclosed),
+      producer(updateLeftWingToClosed),
       transition("open", "opened", guard(isLeftWingClosed, producer(updateError)))
     ),
     state(
       "opened",
       description("The left wing is opened"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
-      producer(updateLeftWingToopened),
+      producer(updateLeftWingToOpened),
       transition("close", "closed", guard(isLeftWingOpened, producer(updateError)))
     ),
     state(
       "fatal",
       description("Is the left wing injured?"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
-      producer(updateLeftWingTofatal),
+      producer(updateLeftWingToFatal),
       producer(updateError)
     )
   ),
@@ -318,6 +406,7 @@ const LeftWingMachine = machine(
 /******************** RightWingMachine Start ********************/
 
 const getRightWingContext = () => ({
+  "state": null,
   "error": null
 });
 
@@ -332,15 +421,15 @@ const isRightWingOpened = (context, payload) => {
 };
 
 // Producers
-const updateRightWingToclosed = (context, payload) => {
+const updateRightWingToClosed = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateRightWingToopened = (context, payload) => {
+const updateRightWingToOpened = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateRightWingTofatal = (context, payload) => {
+const updateRightWingToFatal = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
@@ -357,21 +446,21 @@ const RightWingMachine = machine(
       "closed",
       description("The right wing is closed"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
-      producer(updateRightWingToclosed),
+      producer(updateRightWingToClosed),
       transition("open", "opened", guard(isRightWingClosed, producer(updateError)))
     ),
     state(
       "opened",
       description("The right wing is opened"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
-      producer(updateRightWingToopened),
+      producer(updateRightWingToOpened),
       transition("close", "closed", guard(isRightWingOpened, producer(updateError)))
     ),
     state(
       "fatal",
       description("Is the right wing injured?"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
-      producer(updateRightWingTofatal),
+      producer(updateRightWingToFatal),
       producer(updateError)
     )
   ),
@@ -381,6 +470,84 @@ const RightWingMachine = machine(
 
 /******************** RightWingMachine End ********************/
 
+/******************** FlyingTimeMachine Start ********************/
+
+const getFlyingTimeContext = () => ({
+  "time": 0,
+  "timer": null
+});
+
+// Guards
+const isTimeStopped = (context, payload) => {
+  // TODO: Implement guard
+  return true;
+};
+const isTimeStarted = (context, payload) => {
+  // TODO: Implement guard
+  return true;
+};
+
+// Producers
+const stopTimer = (context, payload) => {
+  // TODO: Implement producer
+  return {...context};
+};
+const startTimer = (context, payload) => {
+  // TODO: Implement producer
+  return {...context};
+};
+
+const FlyingTimeMachine = machine(
+  "Flying time",
+  states(
+    state(
+      "stopped",
+      description("The bird is not flying"),
+      producer(stopTimer),
+      transition("start", "started", guard(isTimeStopped))
+    ),
+    state(
+      "started",
+      description("The bird is flying"),
+      producer(startTimer),
+      transition("stop", "stopped", guard(isTimeStarted))
+    )
+  ),
+  context(getFlyingTimeContext),
+  initial("stopped")
+);
+
+/******************** FlyingTimeMachine End ********************/
+
+/******************** WalkingTimeMachine Start ********************/
+
+const getWalkingTimeContext = () => ({
+  "time": 0,
+  "timer": null
+});
+
+const WalkingTimeMachine = machine(
+  "Walking time",
+  states(
+    state(
+      "stopped",
+      description("The bird is not walking"),
+      producer(stopTimer),
+      transition("start", "started", guard(isTimeStopped))
+    ),
+    state(
+      "started",
+      description("The bird is walking"),
+      producer(startTimer),
+      transition("stop", "stopped", guard(isTimeStarted))
+    )
+  ),
+  context(getWalkingTimeContext),
+  initial("stopped")
+);
+
+/******************** WalkingTimeMachine End ********************/
+
 /******************** BirdMachine Start ********************/
 
 const getBirdContext = () => ({
@@ -389,23 +556,23 @@ const getBirdContext = () => ({
 });
 
 // Producers
-const updateBirdToland = (context, payload) => {
+const updateBirdToLand = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdTotakingoff = (context, payload) => {
+const updateBirdToTakingoff = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdToflying = (context, payload) => {
+const updateBirdToFlying = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdTolanding = (context, payload) => {
+const updateBirdToLanding = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
-const updateBirdTofatal = (context, payload) => {
+const updateBirdToFatal = (context, payload) => {
   // TODO: Implement producer
   return {...context};
 };
@@ -422,7 +589,9 @@ const BirdMachine = machine(
       "land",
       description("The bird is on the ground"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdToland),
+      producer(updateBirdToLand),
+      immediate("flyingtime/stop"),
+      immediate("walkingtime/start"),
       transition("takeoff", "takingoff")
     ),
     infoState(
@@ -431,15 +600,16 @@ const BirdMachine = machine(
       nested(LeftWingMachine, "open"),
       nested(RightWingMachine, "open"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdTotakingoff),
-      producer(updateBirdToland),
+      producer(updateBirdToTakingoff),
       immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened, producer(updateError)), nestedGuard(RightWingMachine, isRightWingOpened, producer(updateError)))
     ),
     successState(
       "flying",
       description("The bird is on the air"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdToflying),
+      producer(updateBirdToFlying),
+      immediate("flyingtime/start"),
+      immediate("walkingtime/stop"),
       transition("land", "landing")
     ),
     warningState(
@@ -448,16 +618,20 @@ const BirdMachine = machine(
       nested(LeftWingMachine, "close"),
       nested(RightWingMachine, "close"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdTolanding),
+      producer(updateBirdToLanding),
       immediate("land", nestedGuard(LeftWingMachine, isLeftWingClosed, producer(updateError)), nestedGuard(RightWingMachine, isRightWingClosed, producer(updateError)))
     ),
     dangerState(
       "fatal",
       description("Is the bird dead?"),
       action(sendStateToApiForBird, null, producer(updateError, "fatal")),
-      producer(updateBirdTofatal),
+      producer(updateBirdToFatal),
       producer(updateError)
     )
+  ),
+  parallel(
+    FlyingTimeMachine,
+    WalkingTimeMachine
   ),
   context(getBirdContext),
   initial("land")
@@ -465,7 +639,7 @@ const BirdMachine = machine(
 
 /******************** BirdMachine End ********************/
 
-module.exports = { LeftWingMachine, RightWingMachine, BirdMachine };
+module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, WalkingTimeMachine, BirdMachine };
 `;
     let myMachine = getMachine();
     let code = generateFromSerializedMachine(myMachine, Format.CJS);

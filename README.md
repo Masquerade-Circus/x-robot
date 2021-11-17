@@ -13,18 +13,20 @@ Not only for user interfaces but also for server side applications.
 ```javascript 
 import {machine, states, state, initial, transition, invoke} from 'x-robot';
 
-const toggleMachine = machine(
-  "toggle",
+const stoplight = machine(
+  'Stoplight',
   states(
-    state('on', transition('toggle', 'off')),
-    state('off', transition('toggle', 'on'))
+    state('green', transition('next', 'yellow')),
+    state('yellow', transition('next', 'red')),
+    state('red', transition('next', 'green'))
   ),
-  initial('off')
+  initial('green')
 );
 
-// toggleMachine.current === 'off' because is the initial state
-invoke(toggleMachine, 'toggle'); // toggleMachine.current === 'on'
-invoke(toggleMachine, 'toggle'); // toggleMachine.current === 'off'
+// stoplight.current === 'green' because is the initial state
+invoke(stoplight, 'next'); // stoplight.current === 'yellow'
+invoke(stoplight, 'next'); // stoplight.current === 'red'
+invoke(stoplight, 'next'); // stoplight.current === 'green' 
 ```
 
 ### Async example
@@ -127,4 +129,40 @@ invoke(stoplight, 'next');
 invoke(stoplight, 'red.stop'); // Invoke the stopwalk transition stop from the stoplight machine
 // stopwalk.current === 'wait' because the stop transition was invoked
 // stoplight.current === 'green' because the immediate transition was invoked and the guard was true
+```
+
+### Parallel states
+
+![Word machine diagram](./docs/images/word-machine-diagram.svg)
+
+```javascript
+import {machine, states, state, initial, transition, invoke, parallel} from 'x-robot';
+
+const boldMachine = machine('Bold', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
+const underlineMachine = machine('Underline', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
+const italicsMachine = machine('Italics', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
+const listMachine = machine(
+  'List',
+  states(
+    state('none', transition('bullets', 'bullets'), transition('numbers', 'numbers')),
+    state('bullets', transition('none', 'none')),
+    state('numbers', transition('none', 'none'))
+  ),
+  initial('none')
+);
+
+const wordMachine = machine(
+  'Word Machine',
+  parallel(
+    boldMachine,
+    underlineMachine,
+    italicsMachine,
+    listMachine
+  )
+);
+
+invoke(wordMachine, 'bold/on'); // boldMachine.current === 'on'
+invoke(wordMachine, 'underline/on'); // underlineMachine.current === 'on'
+invoke(wordMachine, 'italics/on'); // italicsMachine.current === 'on'
+invoke(wordMachine, 'list/bullets'); // listMachine.current === 'bullets'
 ```

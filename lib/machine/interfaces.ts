@@ -17,6 +17,16 @@ export interface ImmediateDirective {
   guards: GuardsDirective;
 }
 
+export interface NestedImmediateDirective extends ImmediateDirective {
+  immediate: string;
+  guards: GuardsDirective;
+}
+
+export interface ParallelImmediateDirective extends ImmediateDirective {
+  immediate: string;
+  guards: GuardsDirective;
+}
+
 export interface Producer {
   (context: Context, payload?: any): Context | void;
 }
@@ -72,7 +82,7 @@ export interface StateDirective {
   name: string;
   run: (ActionDirective | ProducerDirective)[];
   on: TransitionsDirective;
-  immediate?: string | string[];
+  immediate: ImmediateDirective[];
   args: (NestedMachineDirective | ActionDirective | ProducerDirective | TransitionDirective | ImmediateDirective | DescriptionDirective)[];
   type: string;
   nested: NestedMachineDirective[];
@@ -83,7 +93,12 @@ export interface StatesDirective {
   [key: string]: StateDirective;
 }
 
+export interface ParallelDirective {
+  parallel: Record<string, Machine>;
+}
+
 export interface Machine {
+  id: string; // This will be the title of the machine in snake case (e.g. 'my-machine')
   title: string | null;
   context: Context;
   isAsync: boolean;
@@ -93,6 +108,7 @@ export interface Machine {
   frozen: boolean;
   fatal?: Error;
   history: string[];
+  parallel: ParallelDirective['parallel'];
 }
 
 export interface NestedMachineDirective {
