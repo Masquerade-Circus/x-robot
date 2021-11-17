@@ -1,3 +1,5 @@
+* feat: implement parallel states (5bad841)
+
 ## 0.1.0 (2021-11-16)
 
 
