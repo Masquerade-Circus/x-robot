@@ -17,11 +17,11 @@ import {
   states,
   successState,
   transition,
-  warningState
-} from './machine/create';
+  warningState,
+} from "./machine/create";
 
-import { getState } from './utils';
-import { invoke } from './machine/invoke';
+import { getState } from "./utils";
+import { invoke } from "./machine/invoke";
 
 export {
   machine,
@@ -44,5 +44,5 @@ export {
   transition,
   immediate,
   invoke,
-  getState
+  getState,
 };

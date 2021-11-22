@@ -1,5 +1,5 @@
-import { ActionDirective, Machine, ProducerDirective, StateDirective } from '../machine/interfaces';
-import { Result, err, ok } from './result';
+import { ActionDirective, Machine, ProducerDirective, StateDirective } from "../machine/interfaces";
+import { Result, err, ok } from "./result";
 import {
   canMakeTransition,
   hasState,
@@ -13,8 +13,8 @@ import {
   isProducer,
   isProducerWithTransition,
   isTransition,
-  isValidString
-} from '../utils';
+  isValidString,
+} from "../utils";
 
 function validateInitialState(machine: Machine): Result<void, Error> {
   let hasStates = Object.keys(machine.states).length > 0;
@@ -23,7 +23,7 @@ function validateInitialState(machine: Machine): Result<void, Error> {
   // Only if the machine has states or if there are no parallel states, the initial is required
   if ((hasStates || !hasParallelStates) && isValidString(machine.initial) === false) {
     // If we dont get a valid initial state, throw an error
-    return err(new Error('The initial state passed to the machine must be a string.'));
+    return err(new Error("The initial state passed to the machine must be a string."));
   }
 
   // Validate that the initial state exists if it is defined
@@ -37,7 +37,7 @@ function validateInitialState(machine: Machine): Result<void, Error> {
 
 function validateThatAllStatesHaveTransitionsToThem(machine: Machine): Result<void, Error> {
   for (let state in machine.states) {
-    if (state !== machine.initial && state !== 'fatal') {
+    if (state !== machine.initial && state !== "fatal") {
       let hasPreviousState = false;
       for (let otherState in machine.states) {
         if (otherState !== state) {
@@ -106,7 +106,7 @@ function validateImmediateTransitions(machine: Machine): Result<void, Error> {
 
       // If is a nested immediate transition, validate that we can make the transition to the nested machine
       if (isNestedTransition(immediate.immediate)) {
-        let nestedMachineId = immediate.immediate.split('.')[0];
+        let nestedMachineId = immediate.immediate.split(".")[0];
         if (canMakeTransition(machine, state, immediate.immediate) === false) {
           return err(
             new Error(
@@ -118,9 +118,9 @@ function validateImmediateTransitions(machine: Machine): Result<void, Error> {
 
       // If is a parallel immediate transition, validate that we can make the transition to the parallel machine
       else if (isParallelTransition(immediate.immediate)) {
-        let transitionParts = immediate.immediate.split('/');
+        let transitionParts = immediate.immediate.split("/");
         let parallelMachineId = transitionParts.shift();
-        let transitionName = transitionParts.join('/');
+        let transitionName = transitionParts.join("/");
 
         // If we have no parallel machine id, throw an error
         if (!parallelMachineId) {
@@ -169,12 +169,12 @@ function validateImmediateTransitions(machine: Machine): Result<void, Error> {
 
 function validateStateProducer(item: ProducerDirective, stateName: string, state: StateDirective): Result<void, Error> {
   // Validate that the producer is a valid function
-  if (typeof item.producer !== 'function') {
+  if (typeof item.producer !== "function") {
     return err(new Error(`The producer '${item.producer}' of the state '${stateName}' must be a function.`));
   }
 
   // Validate that the producer is not an async function or a promise
-  if (item.producer.constructor.name === 'AsyncFunction') {
+  if (item.producer.constructor.name === "AsyncFunction") {
     return err(new Error(`The producer '${item.producer.name}' of the state '${stateName}' must be a synchronous function.`));
   }
 
@@ -197,7 +197,7 @@ function validateStateProducer(item: ProducerDirective, stateName: string, state
 
 function validateAction(machine: Machine, state: StateDirective, stateName: string, item: ActionDirective): Result<void, Error> {
   // Validate that the action is a valid function
-  if (typeof item.action !== 'function') {
+  if (typeof item.action !== "function") {
     return err(new Error(`The action '${item.action}' of the state '${stateName}' must be a function.`));
   }
 
@@ -209,7 +209,7 @@ function validateAction(machine: Machine, state: StateDirective, stateName: stri
   }
 
   // Validate that the action has an error transition, a producer with an error transition or there is an error transition in the state
-  if ('fatal' in machine.states === false && !isProducerWithTransition(item.failure) && !isValidString(item.failure) && !hasTransition(state, 'error')) {
+  if ("fatal" in machine.states === false && !isProducerWithTransition(item.failure) && !isValidString(item.failure) && !hasTransition(state, "error")) {
     return err(
       new Error(
         `The action '${item.action.name}' of the state '${stateName}' must have an error transition, an error producer with a transition or an 'error' transition in the state.`
@@ -223,8 +223,8 @@ function validateAction(machine: Machine, state: StateDirective, stateName: stri
     : isValidString(item.failure)
     ? item.failure
     : isTransition(state.on.error)
-    ? 'error'
-    : 'fatal';
+    ? "error"
+    : "fatal";
   if (!hasState(machine, errorTransition)) {
     return err(new Error(`The action '${item.action.name}' of the state '${stateName}' has an error transition '${errorTransition}' that does not exists.`));
   }
@@ -301,7 +301,7 @@ function validateGuards(machine: Machine): Result<void, Error> {
       for (let guard of transition.guards) {
         if (isGuard(guard)) {
           // Validate that the guard is a function
-          if (typeof guard.guard !== 'function') {
+          if (typeof guard.guard !== "function") {
             return err(new Error(`The guard '${guard.guard}' of the transition '${stateName}.${transitionName}' must be a function.`));
           }
 
@@ -384,7 +384,7 @@ function validateParallelStates(machine: Machine): Result<void, Error> {
 export function validate(machine: Machine) {
   // Validate that the machine has a title
   if (isValidString(machine.title) === false) {
-    throw new Error('The machine must have a title.');
+    throw new Error("The machine must have a title.");
   }
 
   // Validate the parallel states

@@ -18,19 +18,19 @@ import {
   ShouldFreezeDirective,
   StateDirective,
   StatesDirective,
-  TransitionDirective
-} from './machine/interfaces';
+  TransitionDirective,
+} from "./machine/interfaces";
 
 export function isValidString(str?: any): str is string {
-  return str !== null && typeof str === 'string' && str.trim().length > 0;
+  return str !== null && typeof str === "string" && str.trim().length > 0;
 }
 
 export function isValidObject(obj: any): obj is object {
-  return obj !== null && typeof obj === 'object';
+  return obj !== null && typeof obj === "object";
 }
 
 export function isProducer(producer?: any): producer is ProducerDirective {
-  return isValidObject(producer) && 'producer' in producer;
+  return isValidObject(producer) && "producer" in producer;
 }
 
 export function isProducerWithTransition(producer?: any): producer is ProducerDirectiveWithTransition {
@@ -42,23 +42,23 @@ export function isProducerWithoutTransition(producer?: any): producer is Produce
 }
 
 export function isAction(action?: any): action is ActionDirective {
-  return isValidObject(action) && 'action' in action;
+  return isValidObject(action) && "action" in action;
 }
 
 export function isImmediate(immediate?: any): immediate is ImmediateDirective {
-  return isValidObject(immediate) && 'immediate' in immediate;
+  return isValidObject(immediate) && "immediate" in immediate;
 }
 
 export function isGuard(guard?: any): guard is GuardDirective {
-  return isValidObject(guard) && 'guard' in guard;
+  return isValidObject(guard) && "guard" in guard;
 }
 
 export function isNestedGuard(guard?: any): guard is NestedGuardDirective {
-  return isGuard(guard) && 'machine' in guard;
+  return isGuard(guard) && "machine" in guard;
 }
 
 export function isTransition(transition?: any): transition is TransitionDirective {
-  return isValidObject(transition) && 'transition' in transition && 'target' in transition;
+  return isValidObject(transition) && "transition" in transition && "target" in transition;
 }
 
 export function hasTransition(state: StateDirective, transition: string): boolean {
@@ -70,7 +70,7 @@ export function hasState(machine: Machine, state: string): boolean {
 }
 
 export function isNestedMachineDirective(machine?: any): machine is NestedMachineDirective {
-  return isValidObject(machine) && 'machine' in machine;
+  return isValidObject(machine) && "machine" in machine;
 }
 
 export function isNestedMachineWithTransitionDirective(machine?: any): machine is NestedMachineWithTransitionDirective {
@@ -78,15 +78,15 @@ export function isNestedMachineWithTransitionDirective(machine?: any): machine i
 }
 
 export function isMachine(machine?: any): machine is Machine {
-  return isValidObject(machine) && 'states' in machine && 'initial' in machine && 'current' in machine;
+  return isValidObject(machine) && "states" in machine && "initial" in machine && "current" in machine;
 }
 
 export function isStateDirective(state?: any): state is StateDirective {
-  return isValidObject(state) && 'name' in state && 'run' in state && 'on' in state && 'args' in state;
+  return isValidObject(state) && "name" in state && "run" in state && "on" in state && "args" in state;
 }
 
 export function isContextDirective(context?: any): context is ContextDirective {
-  return isValidObject(context) && 'context' in context;
+  return isValidObject(context) && "context" in context;
 }
 
 export function isStatesDirective(states?: any): states is StatesDirective {
@@ -94,19 +94,19 @@ export function isStatesDirective(states?: any): states is StatesDirective {
 }
 
 export function isParallelDirective(parallel?: any): parallel is ParallelDirective {
-  return isValidObject(parallel) && 'parallel' in parallel;
+  return isValidObject(parallel) && "parallel" in parallel;
 }
 
 export function isShouldFreezeDirective(shouldFreeze?: any): shouldFreeze is ShouldFreezeDirective {
-  return isValidObject(shouldFreeze) && 'freeze' in shouldFreeze;
+  return isValidObject(shouldFreeze) && "freeze" in shouldFreeze;
 }
 
 export function isInitialDirective(initial?: any): initial is InitialDirective {
-  return isValidObject(initial) && 'initial' in initial;
+  return isValidObject(initial) && "initial" in initial;
 }
 
 export function isDescriptionDirective(description?: any): description is DescriptionDirective {
-  return isValidObject(description) && 'description' in description;
+  return isValidObject(description) && "description" in description;
 }
 
 export function isNestedTransition(transition?: any): boolean {
@@ -131,7 +131,7 @@ export function isParallelImmediateDirective(immediate?: any): immediate is Para
  * @returns {Object} Object frozen
  */
 export function deepFreeze(obj: any) {
-  if (typeof obj === 'object' && obj !== null && !Object.isFrozen(obj)) {
+  if (typeof obj === "object" && obj !== null && !Object.isFrozen(obj)) {
     if (Array.isArray(obj)) {
       for (let i = 0, l = obj.length; i < l; i++) {
         deepFreeze(obj[i]);
@@ -170,7 +170,7 @@ export function cloneContext(context: any, weakMap = new WeakMap()): any {
   }
 
   // If it is an object, we will clone it recursively
-  else if (typeof context === 'object') {
+  else if (typeof context === "object") {
     result = {} as any;
     for (let key in context) {
       result[key] = cloneContext(context[key], weakMap);
@@ -230,18 +230,26 @@ export function getState(machine: Machine, path?: string): AllStates | CurrentSt
 
   // If there is no path we will return the current state
   if (!isValidString(path)) {
-    if (isValidString(machine.current)) {
-      return machine.current;
-    }
+    let result = {} as AllStates;
 
-    // If there is no current state but there are parallel states we will return an object with all of them
+    // We will iterate over all the parallel states
     if (Object.keys(machine.parallel).length > 0) {
-      let result = {} as AllStates;
-
       for (let parallelName in machine.parallel) {
         result[parallelName] = getState(machine.parallel[parallelName]);
       }
+    }
 
+    if (isValidString(machine.current)) {
+      result.current = machine.current;
+    }
+
+    // If there is only one state and it is the current state we will return it
+    if (isValidString(result.current) && Object.keys(result).length === 1) {
+      return result.current;
+    }
+
+    // If we have more than one state or the state is not the current state we will return the object
+    if (Object.keys(result).length > 0) {
       return result;
     }
 
@@ -249,7 +257,7 @@ export function getState(machine: Machine, path?: string): AllStates | CurrentSt
     return null;
   }
 
-  let pathParts = path.split('.');
+  let pathParts = path.split(".");
   let stateName = pathParts.shift();
 
   // If the state name is not a string we will return null
@@ -259,7 +267,7 @@ export function getState(machine: Machine, path?: string): AllStates | CurrentSt
 
   // Find the state in the parallel states
   if (stateName in machine.parallel) {
-    return getState(machine.parallel[stateName], pathParts.join('.'));
+    return getState(machine.parallel[stateName], pathParts.join("."));
   }
 
   // Find the state in the states
@@ -269,7 +277,7 @@ export function getState(machine: Machine, path?: string): AllStates | CurrentSt
 
     // Find a nested machine in the state
     for (let nested of machine.states[stateName].nested) {
-      obj[nested.machine.id] = getState(nested.machine, pathParts.join('.'));
+      obj[nested.machine.id] = getState(nested.machine, pathParts.join("."));
     }
 
     // If the object is empty we will return null
@@ -293,7 +301,7 @@ export function getState(machine: Machine, path?: string): AllStates | CurrentSt
   for (stateName in machine.states) {
     for (let nested of machine.states[stateName].nested) {
       if (nested.machine.id === nestedMachineId) {
-        return getState(nested.machine, pathParts.join('.'));
+        return getState(nested.machine, pathParts.join("."));
       }
     }
   }
@@ -305,34 +313,34 @@ export function getState(machine: Machine, path?: string): AllStates | CurrentSt
 function getProperty(obj: Record<string | number | symbol, any>, property: string, defaultValue?: any): any {
   let result = obj;
 
-  if (typeof property === 'undefined') {
-    throw new Error('Property is undefined');
+  if (typeof property === "undefined") {
+    throw new Error("Property is undefined");
   }
 
-  let parsed = property.split('.');
+  let parsed = property.split(".");
   let next;
 
   while (parsed.length) {
     next = parsed.shift();
 
-    if (typeof next === 'undefined') {
+    if (typeof next === "undefined") {
       break;
     }
 
-    if (next.indexOf('[') > -1) {
-      let idx = next.replace(/\D/gi, '');
-      next = next.split('[')[0];
+    if (next.indexOf("[") > -1) {
+      let idx = next.replace(/\D/gi, "");
+      next = next.split("[")[0];
       parsed.unshift(idx);
     }
 
-    if (next in result === false || (parsed.length > 0 && typeof result[next] !== 'object')) {
+    if (next in result === false || (parsed.length > 0 && typeof result[next] !== "object")) {
       return defaultValue;
     }
 
     result = result[next];
   }
 
-  return typeof result === 'undefined' ? defaultValue : result;
+  return typeof result === "undefined" ? defaultValue : result;
 }
 
 export function canMakeTransition(machine: Machine, currentStateObject: StateDirective, transition: string): boolean {
@@ -345,11 +353,11 @@ export function canMakeTransition(machine: Machine, currentStateObject: StateDir
   // Check if we have a normal transition or a nested transition (nested transitions are dot separated)
   if (isNestedTransition(trimmedTransition) || isParallelTransition(trimmedTransition)) {
     // Get the nested transition parts
-    let transitionParts = isNestedTransition(trimmedTransition) ? trimmedTransition.split('.') : trimmedTransition.split('/');
+    let transitionParts = isNestedTransition(trimmedTransition) ? trimmedTransition.split(".") : trimmedTransition.split("/");
     // The first part must be the current state
     let stateName = transitionParts.shift();
     // The second part must be the transition
-    let transitionName = isNestedTransition(trimmedTransition) ? transitionParts.join('.') : transitionParts.join('/');
+    let transitionName = isNestedTransition(trimmedTransition) ? transitionParts.join(".") : transitionParts.join("/");
 
     // If we have no stateName, we can't make a transition
     if (!stateName) {
@@ -384,4 +392,4 @@ export function canMakeTransition(machine: Machine, currentStateObject: StateDir
   return hasTransition(currentStateObject, trimmedTransition);
 }
 
-export const titleToId = (str: string) => str.toLowerCase().replace(/(\s|\W)/g, '');
+export const titleToId = (str: string) => str.toLowerCase().replace(/(\s|\W)/g, "");

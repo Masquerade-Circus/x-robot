@@ -3,7 +3,7 @@
 // @param {String} property
 // @param {Any} defaultValue
 
-import { ActionDirective, HistoryType, Machine, ProducerDirective, StateDirective, TransitionDirective } from './interfaces';
+import { ActionDirective, HistoryType, Machine, ProducerDirective, StateDirective, TransitionDirective } from "./interfaces";
 import {
   canMakeTransition,
   cloneContext,
@@ -18,8 +18,8 @@ import {
   isProducer,
   isProducerWithTransition,
   isValidObject,
-  isValidString
-} from '../utils';
+  isValidString,
+} from "../utils";
 
 // Run producer
 // @param {Machine} machine
@@ -93,13 +93,13 @@ function hasFatalError(machine: Machine): boolean {
 
 function catchError(machine: Machine, state: StateDirective, error: Error) {
   // Check if we have a local error transition and invoke it if so
-  if (hasTransition(state, 'error')) {
-    return invoke(machine, 'error', error);
+  if (hasTransition(state, "error")) {
+    return invoke(machine, "error", error);
   }
 
   // Check if we have a fatal state and set it as the current state if so
-  if ('fatal' in machine.states) {
-    machine.current = 'fatal';
+  if ("fatal" in machine.states) {
+    machine.current = "fatal";
     machine.fatal = error as Error;
     return;
   }
@@ -225,9 +225,9 @@ function runNestedMachines(machine: Machine, state: StateDirective, payload: any
 function runNestedTransition(machine: Machine, transition: string, payload: any): Promise<void> | void {
   // We know that we have a nested transition and that the first part is the current state
   // so we get rid of the first part and split the rest
-  let nestedTransitionParts = transition.split('.');
+  let nestedTransitionParts = transition.split(".");
   let stateName = nestedTransitionParts.shift();
-  let nestedTransition = nestedTransitionParts.join('.');
+  let nestedTransition = nestedTransitionParts.join(".");
   let promise = machine.isAsync ? Promise.resolve() : null;
 
   // If we have no stateName, we can't make a transition
@@ -263,9 +263,9 @@ function runNestedTransition(machine: Machine, transition: string, payload: any)
 function runParallelTransition(machine: Machine, transition: string, payload: any): Promise<void> | void {
   // We know that we have a parallel transition and that the first part is the parallelMachineId
   // so we get rid of the first part and split the rest
-  let parallelTransitionParts = isNestedTransition(transition) ? transition.split('.') : transition.split('/');
+  let parallelTransitionParts = isNestedTransition(transition) ? transition.split(".") : transition.split("/");
   let parallelMachineId = parallelTransitionParts.shift();
-  let parallelTransition = parallelTransitionParts.join('/');
+  let parallelTransition = parallelTransitionParts.join("/");
 
   // If we have no stateName, we can't make a transition
   if (!parallelMachineId) {
@@ -299,9 +299,9 @@ function invokeImmediateDirectives(machine: Machine, state: StateDirective, payl
 
     // If is a parallel transition we run the transition in the parallel machine
     if (isParallelTransition(immediateDirective.immediate)) {
-      let transitionParts = immediateDirective.immediate.split('/');
+      let transitionParts = immediateDirective.immediate.split("/");
       let parallelMachineId = transitionParts.shift() as string;
-      let parallelTransition = transitionParts.join('/');
+      let parallelTransition = transitionParts.join("/");
       let parallelMachine = machine.parallel[parallelMachineId];
       if (promise) {
         promise.then(() => invoke(parallelMachine, parallelTransition, payload));

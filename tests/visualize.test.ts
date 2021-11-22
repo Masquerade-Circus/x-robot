@@ -5,8 +5,8 @@ import {
   createPngFromPlantUmlCode,
   createSvgFromMachine,
   createSvgFromPlantUmlCode,
-  getPlantUmlCode
-} from '../lib/visualize';
+  getPlantUmlCode,
+} from "../lib/visualize";
 import {
   action,
   context,
@@ -26,28 +26,28 @@ import {
   states,
   successState,
   transition,
-  warningState
-} from '../lib';
-import { describe, it } from 'mocha';
+  warningState,
+} from "../lib";
+import { describe, it } from "mocha";
 
-import bird from './bird-machine-ts';
-import expect from 'expect';
-import fs from 'fs';
-import { serialize } from '../lib/serialize';
+import bird from "./bird-machine-ts";
+import expect from "expect";
+import fs from "fs";
+import { serialize } from "../lib/serialize";
 
 // Generate a diagram from a serialized machine
-describe('Generate a diagram from a serialized machine', () => {
+describe("Generate a diagram from a serialized machine", () => {
   const getMachine = (title?: string) => {
     const getState = () => ({
-      title: 'Ok',
-      error: null
+      title: "Ok",
+      error: null,
     });
 
     const titleIsValid = (context) => {
       if (context.title.length > 0) {
         return true;
       }
-      return [{ message: 'Title is required' }];
+      return [{ message: "Title is required" }];
     };
 
     async function saveTitle(context) {
@@ -80,22 +80,22 @@ describe('Generate a diagram from a serialized machine', () => {
       title,
       states(
         successState(
-          'preview',
-          description('Initial state'),
+          "preview",
+          description("Initial state"),
           // Save the current title as oldTitle so we can reset later.
           producer(cacheTitle),
-          transition('edit', 'editMode')
+          transition("edit", "editMode")
         ),
         infoState(
-          'editMode',
-          description('The user tries to edit the title'),
+          "editMode",
+          description("The user tries to edit the title"),
           // Update title with the event value
           producer(updateTitle),
-          transition('input', 'editMode'),
-          transition('cancel', 'cancel'),
+          transition("input", "editMode"),
+          transition("cancel", "cancel"),
           transition(
-            'save',
-            'save',
+            "save",
+            "save",
             // Check if the title is valid. If so continue with the state.
             // If not, the machine keeps its current state.
             // In this case we came from editMode, so we keep the editMode state and update the context with the validation error.
@@ -103,31 +103,31 @@ describe('Generate a diagram from a serialized machine', () => {
           )
         ),
         warningState(
-          'cancel',
-          description('The user cancels the edition'),
+          "cancel",
+          description("The user cancels the edition"),
           // Reset the title back to oldTitle
           producer(restoreTitle),
-          immediate('preview')
+          immediate("preview")
         ),
         primaryState(
-          'save',
-          description('The user saves the title'),
+          "save",
+          description("The user saves the title"),
           // If the guard is true, we try to save the title.
           // If the save action succeeds, we immediately go to the preview state.
           // If the save action fails, we update the context with the error and go to the error state.
-          action(saveTitle, 'preview', producer(updateError, 'error'))
+          action(saveTitle, "preview", producer(updateError, "error"))
         ),
-        dangerState('error', description('We failed to save the title to the db'), producer(updateError))
+        dangerState("error", description("We failed to save the title to the db"), producer(updateError))
         // Should we provide a retry or...?
       ),
       context(getState),
-      initial('preview')
+      initial("preview")
     );
 
     return myMachine;
   };
 
-  it('should generate a diagram from a serialized machine in low level plantuml string format', () => {
+  it("should generate a diagram from a serialized machine in low level plantuml string format", () => {
     const plantUmlCode = `
 @startuml
 
@@ -184,7 +184,7 @@ skinparam state {
     expect(getPlantUmlCode(serializedMachine)).toEqual(plantUmlCode);
   });
 
-  it('should generate a diagram from a serialized machine in high level plantuml string format', () => {
+  it("should generate a diagram from a serialized machine in high level plantuml string format", () => {
     const plantUmlCode = `
 @startuml
 
@@ -253,7 +253,7 @@ skinparam state {
     expect(getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH)).toEqual(plantUmlCode);
   });
 
-  it('should allow to pass a title for the plantuml diagram', () => {
+  it("should allow to pass a title for the plantuml diagram", () => {
     const plantUmlCode = `
 @startuml
 
@@ -317,18 +317,18 @@ skinparam state {
 @enduml
 `;
 
-    const myMachine = getMachine('My Awesome PlantUML Machine Diagram');
+    const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
     const serializedMachine = serialize(myMachine);
 
     expect(
       getPlantUmlCode(serializedMachine, {
-        level: VISUALIZATION_LEVEL.HIGH
+        level: VISUALIZATION_LEVEL.HIGH,
       })
     ).toEqual(plantUmlCode);
   });
 
-  it('should allow to pass descriptions for the states of the plantuml diagram', () => {
+  it("should allow to pass descriptions for the states of the plantuml diagram", () => {
     const plantUmlCode = `
 @startuml
 
@@ -392,14 +392,14 @@ skinparam state {
 @enduml
 `;
 
-    const myMachine = getMachine('My Awesome PlantUML Machine Diagram');
+    const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
     const serializedMachine = serialize(myMachine);
 
     expect(getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH)).toEqual(plantUmlCode);
   });
 
-  it('should allow to pass a custom skinparams string to generate a custom style', async () => {
+  it("should allow to pass a custom skinparams string to generate a custom style", async () => {
     const plantUmlCode = `
 @startuml
 
@@ -464,20 +464,20 @@ skinparam backgroundColor red
 @enduml
 `;
 
-    const myMachine = getMachine('My Awesome PlantUML Machine Diagram');
+    const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
     const serializedMachine = serialize(myMachine);
 
     expect(
       getPlantUmlCode(serializedMachine, {
         level: VISUALIZATION_LEVEL.HIGH,
-        skinparam: 'skinparam backgroundColor red'
+        skinparam: "skinparam backgroundColor red",
       })
     ).toEqual(plantUmlCode);
   });
 
-  it('should generate a diagram from a serialized machine in png format', async () => {
-    const myMachine = getMachine('My Awesome PlantUML Machine Diagram');
+  it("should generate a diagram from a serialized machine in png format", async () => {
+    const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
     const plantUmlCode = getPlantUmlCode(serialize(myMachine), VISUALIZATION_LEVEL.HIGH);
 
@@ -492,14 +492,14 @@ skinparam backgroundColor red
     fs.unlinkSync(png);
   });
 
-  it('should generate a diagram from a serialized machine in svg format', async () => {
-    const myMachine = getMachine('My Awesome PlantUML Machine Diagram');
+  it("should generate a diagram from a serialized machine in svg format", async () => {
+    const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
     const plantUmlCode = getPlantUmlCode(serialize(myMachine), VISUALIZATION_LEVEL.HIGH);
 
     const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
-      outDir: './tmp',
-      fileName: 'my-awesome-plantuml-machine-diagram'
+      outDir: "./tmp",
+      fileName: "my-awesome-plantuml-machine-diagram",
     });
 
     expect(svg).toBeDefined();
@@ -511,8 +511,8 @@ skinparam backgroundColor red
     fs.unlinkSync(svg);
   });
 
-  it('should generate a diagram from a machine in plantuml string format', async () => {
-    const myMachine = getMachine('My Awesome PlantUML Machine Diagram');
+  it("should generate a diagram from a machine in plantuml string format", async () => {
+    const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
     const plantUmlCode = `
 @startuml
@@ -582,7 +582,7 @@ skinparam state {
     expect(plantUmlString).toEqual(plantUmlCode);
   });
 
-  it('should generate a diagram from a machine in png format', async () => {
+  it("should generate a diagram from a machine in png format", async () => {
     const myMachine = getMachine();
 
     const png = await createPngFromMachine(myMachine);
@@ -596,7 +596,7 @@ skinparam state {
     fs.unlinkSync(png);
   });
 
-  it('should generate a diagram from a machine in svg format', async () => {
+  it("should generate a diagram from a machine in svg format", async () => {
     const myMachine = getMachine();
 
     const svg = await createSvgFromMachine(myMachine);
@@ -610,20 +610,20 @@ skinparam state {
     fs.unlinkSync(svg);
   });
 
-  it('should generate a diagram for a serialized machine with nested machines', async () => {
+  it("should generate a diagram for a serialized machine with nested machines", async () => {
     let leftWingMachine = machine(
-      'Left wing',
-      states(state('closed', transition('open', 'opened')), state('opened', transition('close', 'closed'))),
-      initial('closed')
+      "Left wing",
+      states(state("closed", transition("open", "opened")), state("opened", transition("close", "closed"))),
+      initial("closed")
     );
     let rightWingMachine = machine(
-      'Right wing',
-      states(state('closed', transition('open', 'opened')), state('opened', transition('close', 'closed'))),
-      initial('closed')
+      "Right wing",
+      states(state("closed", transition("open", "opened")), state("opened", transition("close", "closed"))),
+      initial("closed")
     );
 
     function wingsAreOpened(context) {
-      return leftWingMachine.current === 'opened' && rightWingMachine.current === 'opened';
+      return leftWingMachine.current === "opened" && rightWingMachine.current === "opened";
     }
 
     function wingsAreClosed(context) {
@@ -631,18 +631,18 @@ skinparam state {
     }
 
     let bird = machine(
-      'Bird',
+      "Bird",
       states(
-        state('land', transition('takeoff', 'takingoff')),
-        state('takingoff', nested(leftWingMachine), nested(rightWingMachine), immediate('flying', guard(wingsAreOpened))),
-        state('flying', transition('land', 'landing')),
-        state('landing', nested(leftWingMachine), nested(rightWingMachine), immediate('land', guard(wingsAreClosed)))
+        state("land", transition("takeoff", "takingoff")),
+        state("takingoff", nested(leftWingMachine), nested(rightWingMachine), immediate("flying", guard(wingsAreOpened))),
+        state("flying", transition("land", "landing")),
+        state("landing", nested(leftWingMachine), nested(rightWingMachine), immediate("land", guard(wingsAreClosed)))
       ),
-      initial('land')
+      initial("land")
     );
 
     const plantUmlCode = getPlantUmlCode(serialize(bird), {
-      level: VISUALIZATION_LEVEL.HIGH
+      level: VISUALIZATION_LEVEL.HIGH,
     });
 
     let expectedPlantUmlCode = `
@@ -739,9 +739,9 @@ skinparam state {
     expect(plantUmlCode).toEqual(expectedPlantUmlCode);
   });
 
-  it('should generate a diagram for a serialized machine with all features available', async () => {
+  it("should generate a diagram for a serialized machine with all features available", async () => {
     const plantUmlCode = getPlantUmlCode(serialize(bird), {
-      level: VISUALIZATION_LEVEL.HIGH
+      level: VISUALIZATION_LEVEL.HIGH,
     });
 
     let expectedPlantUmlCode = `
@@ -938,8 +938,8 @@ skinparam state {
     expect(plantUmlCode).toEqual(expectedPlantUmlCode);
 
     const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
-      outDir: './tmp',
-      fileName: 'bird-machine-diagram'
+      outDir: "./tmp",
+      fileName: "bird-machine-diagram",
     });
 
     expect(svg).toBeDefined();
@@ -951,30 +951,30 @@ skinparam state {
     fs.unlinkSync(svg);
   });
 
-  it('should allow to pass an option to display the final mark for the final states');
+  it("should allow to pass an option to display the final mark for the final states");
 });
 
-describe('Readme examples', () => {
-  it('Simple example', async () => {
+describe("Readme examples", () => {
+  it("Simple example", async () => {
     const stoplight = machine(
-      'Stoplight',
-      states(state('green', transition('next', 'yellow')), state('yellow', transition('next', 'red')), state('red', transition('next', 'green'))),
-      initial('green')
+      "Stoplight",
+      states(state("green", transition("next", "yellow")), state("yellow", transition("next", "red")), state("red", transition("next", "green"))),
+      initial("green")
     );
 
     const svg = await createSvgFromMachine(stoplight, {
-      fileName: 'toggle-machine-diagram',
-      outDir: './docs/images',
-      level: VISUALIZATION_LEVEL.HIGH
+      fileName: "toggle-machine-diagram",
+      outDir: "./docs/images",
+      level: VISUALIZATION_LEVEL.HIGH,
     });
 
     expect(svg).toBeDefined();
   });
 
-  it('Async example', async () => {
+  it("Async example", async () => {
     // Action
     async function fetchDog() {
-      let response = await fetch('https://dog.ceo/api/breeds/image/random');
+      let response = await fetch("https://dog.ceo/api/breeds/image/random");
       let json = await response.json();
       return json.data;
     }
@@ -990,75 +990,75 @@ describe('Readme examples', () => {
 
     // Machine definition
     const fetchMachine = machine(
-      'Dog API',
-      initial('idle'),
+      "Dog API",
+      initial("idle"),
       context({
         dog: null,
-        error: null
+        error: null,
       }),
       states(
-        state('idle', transition('fetch', 'loading')),
-        state('loading', action(fetchDog, producer(assignDog, 'resolved'), producer(assignError, 'rejected')), transition('cancel', 'idle')),
-        state('resolved', immediate('idle')),
-        state('rejected')
+        state("idle", transition("fetch", "loading")),
+        state("loading", action(fetchDog, producer(assignDog, "resolved"), producer(assignError, "rejected")), transition("cancel", "idle")),
+        state("resolved", immediate("idle")),
+        state("rejected")
       )
     );
 
     const svg = await createSvgFromMachine(fetchMachine, {
-      fileName: 'fetch-machine-diagram',
-      outDir: './docs/images',
-      level: VISUALIZATION_LEVEL.HIGH
+      fileName: "fetch-machine-diagram",
+      outDir: "./docs/images",
+      level: VISUALIZATION_LEVEL.HIGH,
     });
 
     expect(svg).toBeDefined();
   });
 
-  it('Nested example', async () => {
-    const stopwalk = machine('Stopwalk', states(state('wait', transition('start', 'walk')), state('walk', transition('stop', 'wait'))), initial('wait'));
+  it("Nested example", async () => {
+    const stopwalk = machine("Stopwalk", states(state("wait", transition("start", "walk")), state("walk", transition("stop", "wait"))), initial("wait"));
 
     // Guard to prevent the machine to transition to 'green' if the stopwalk machine is in 'walk' state
     const canGoToGreen = () => {
-      return stopwalk.current === 'wait';
+      return stopwalk.current === "wait";
     };
 
     const stoplight = machine(
-      'Stoplight',
+      "Stoplight",
       states(
-        state('green', transition('next', 'yellow')),
-        state('yellow', transition('next', 'red')),
-        state('red', nested(stopwalk, 'start'), immediate('green', guard(canGoToGreen)))
+        state("green", transition("next", "yellow")),
+        state("yellow", transition("next", "red")),
+        state("red", nested(stopwalk, "start"), immediate("green", guard(canGoToGreen)))
       ),
-      initial('green')
+      initial("green")
     );
 
     const svg = await createSvgFromMachine(stoplight, {
-      fileName: 'stoplight-machine-diagram',
-      outDir: './docs/images',
-      level: VISUALIZATION_LEVEL.HIGH
+      fileName: "stoplight-machine-diagram",
+      outDir: "./docs/images",
+      level: VISUALIZATION_LEVEL.HIGH,
     });
 
     expect(svg).toBeDefined();
   });
 
-  it('Parallel example', async () => {
-    const boldMachine = machine('Bold', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
-    const underlineMachine = machine('Underline', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
-    const italicsMachine = machine('Italics', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
+  it("Parallel example", async () => {
+    const boldMachine = machine("Bold", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off"));
+    const underlineMachine = machine("Underline", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off"));
+    const italicsMachine = machine("Italics", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off"));
     const listMachine = machine(
-      'List',
+      "List",
       states(
-        state('none', transition('bullets', 'bullets'), transition('numbers', 'numbers')),
-        state('bullets', transition('none', 'none')),
-        state('numbers', transition('none', 'none'))
+        state("none", transition("bullets", "bullets"), transition("numbers", "numbers")),
+        state("bullets", transition("none", "none")),
+        state("numbers", transition("none", "none"))
       ),
-      initial('none')
+      initial("none")
     );
 
-    const wordMachine = machine('Word Machine', parallel(boldMachine, underlineMachine, italicsMachine, listMachine));
+    const wordMachine = machine("Word Machine", parallel(boldMachine, underlineMachine, italicsMachine, listMachine));
 
     const svg = await createSvgFromMachine(wordMachine, {
-      fileName: 'word-machine-diagram',
-      outDir: './docs/images'
+      fileName: "word-machine-diagram",
+      outDir: "./docs/images",
     });
 
     expect(svg).toBeDefined();

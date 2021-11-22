@@ -22,8 +22,8 @@ import {
   StateDirective,
   StatesDirective,
   TransitionDirective,
-  TransitionsDirective
-} from './interfaces';
+  TransitionsDirective,
+} from "./interfaces";
 import {
   deepFreeze,
   hasTransition,
@@ -43,8 +43,8 @@ import {
   isTransition,
   isValidObject,
   isValidString,
-  titleToId
-} from '../utils';
+  titleToId,
+} from "../utils";
 
 /**
  * We will create a finite state machine manager
@@ -64,16 +64,16 @@ interface MachineArguments extends Array<string | ContextDirective | InitialDire
 export function machine(title: string, ...args: MachineArguments): Machine {
   // Create the machine
   let myMachine: Machine = {
-    id: titleToId(title || 'x-robot'),
+    id: titleToId(title || "x-robot"),
     title,
     states: {},
     context: {},
-    initial: '',
-    current: '',
+    initial: "",
+    current: "",
     frozen: true,
     isAsync: false,
     history: [],
-    parallel: {}
+    parallel: {},
   };
 
   for (let arg of args) {
@@ -94,9 +94,9 @@ export function machine(title: string, ...args: MachineArguments): Machine {
 
     // If the argument is a context directive then merge it into the context
     if (isContextDirective(arg)) {
-      let newContext = typeof arg.context === 'function' ? arg.context() : arg.context;
+      let newContext = typeof arg.context === "function" ? arg.context() : arg.context;
       if (!isValidObject(newContext)) {
-        throw new Error('The context passed to the machine must be an object or a function that returns an object.');
+        throw new Error("The context passed to the machine must be an object or a function that returns an object.");
       }
 
       myMachine.context = { ...myMachine.context, ...newContext };
@@ -183,19 +183,19 @@ export function parallel(...machines: Machine[]): ParallelDirective {
 
 export function context(context: Context | Function): ContextDirective {
   return {
-    context
+    context,
   };
 }
 
 export function initial(initial: string): InitialDirective {
   return {
-    initial
+    initial,
   };
 }
 
 export function shouldFreeze(freeze: boolean): ShouldFreezeDirective {
   return {
-    freeze
+    freeze,
   };
 }
 
@@ -262,8 +262,8 @@ export function state(name: string, ...args: RunCollection): StateDirective {
     on,
     immediate,
     args,
-    type: 'default',
-    description
+    type: "default",
+    description,
   };
 }
 
@@ -275,7 +275,7 @@ export function transition(transitionName: string, target: string, ...guards: Gu
   return {
     transition: transitionName,
     target,
-    guards
+    guards,
   };
 }
 
@@ -289,7 +289,7 @@ export function action(action: Action, onSuccessProducer?: ProducerDirective | s
   return {
     action,
     success: onSuccessProducer,
-    failure: onFailureProducer
+    failure: onFailureProducer,
   };
 }
 
@@ -298,7 +298,7 @@ export function action(action: Action, onSuccessProducer?: ProducerDirective | s
 export function guard(guard: Guard, onFailureProducer?: ProducerDirectiveWithoutTransition): GuardDirective {
   return {
     guard,
-    failure: onFailureProducer
+    failure: onFailureProducer,
   };
 }
 
@@ -309,14 +309,14 @@ export function guard(guard: Guard, onFailureProducer?: ProducerDirectiveWithout
 export function producer(producer: Producer, transition?: string): ProducerDirective | ProducerDirectiveWithoutTransition {
   return {
     producer,
-    transition
+    transition,
   };
 }
 
 export function immediate(target: string, ...guards: GuardsDirective): ImmediateDirective {
   return {
     immediate: target,
-    guards
+    guards,
   };
 }
 
@@ -324,20 +324,20 @@ export function nestedGuard(machine: Machine, guard: Guard, onFailureProducer?: 
   return {
     guard,
     machine,
-    failure: onFailureProducer
+    failure: onFailureProducer,
   };
 }
 
 export function nested(machine: Machine, transition?: string): NestedMachineDirective {
   return {
     machine,
-    transition
+    transition,
   };
 }
 
 export function description(description: string): DescriptionDirective {
   return {
-    description
+    description,
   };
 }
 
@@ -350,8 +350,8 @@ let makeStateType =
     return stateObject;
   };
 
-export const infoState = makeStateType('info');
-export const primaryState = makeStateType('primary');
-export const successState = makeStateType('success');
-export const warningState = makeStateType('warning');
-export const dangerState = makeStateType('danger');
+export const infoState = makeStateType("info");
+export const primaryState = makeStateType("primary");
+export const successState = makeStateType("success");
+export const warningState = makeStateType("warning");
+export const dangerState = makeStateType("danger");

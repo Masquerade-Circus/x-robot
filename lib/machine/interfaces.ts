@@ -108,7 +108,7 @@ export interface Machine {
   frozen: boolean;
   fatal?: Error;
   history: string[];
-  parallel: ParallelDirective['parallel'];
+  parallel: ParallelDirective["parallel"];
 }
 
 export interface NestedMachineDirective {
@@ -133,9 +133,9 @@ export interface ShouldFreezeDirective {
 }
 
 export enum HistoryType {
-  Transition = 'Transition',
-  Action = 'Action',
-  Producer = 'Producer',
-  State = 'State',
-  Guard = 'Guard'
+  Transition = "Transition",
+  Action = "Action",
+  Producer = "Producer",
+  State = "State",
+  Guard = "Guard",
 }

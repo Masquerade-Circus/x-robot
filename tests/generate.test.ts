@@ -1,17 +1,17 @@
-import { Format, generateFromSerializedMachine } from '../lib/generate';
-import { SerializedMachine, serialize } from '../lib/serialize';
-import { describe, it } from 'mocha';
+import { Format, generateFromSerializedMachine } from "../lib/generate";
+import { SerializedMachine, serialize } from "../lib/serialize";
+import { describe, it } from "mocha";
 
-import bird from './bird-machine-ts';
-import expect from 'expect';
+import bird from "./bird-machine-ts";
+import expect from "expect";
 
 // Generate code from a serialized machine
-describe('Generate code from a serialized machine', () => {
+describe("Generate code from a serialized machine", () => {
   const getMachine = (): SerializedMachine => {
     return serialize(bird);
   };
 
-  it('should generate code from a serialized machine in esm format', () => {
+  it("should generate code from a serialized machine in esm format", () => {
     let expectedCode = `import { machine, states, initial, context, primaryState, description, immediate, transition, action, producer, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel } from "x-robot";
 
 /******************** LeftWingMachine Start ********************/
@@ -329,7 +329,7 @@ export default { LeftWingMachine, RightWingMachine, FlyingTimeMachine, WalkingTi
     expect(code).toEqual(expectedCode);
   });
 
-  it('should generate code from a serialized machine in cjs format', () => {
+  it("should generate code from a serialized machine in cjs format", () => {
     let expectedCode = `const { machine, states, initial, context, primaryState, description, immediate, transition, action, producer, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel } = require("x-robot");
 
 /******************** LeftWingMachine Start ********************/
@@ -646,6 +646,6 @@ module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, Walking
     expect(code).toEqual(expectedCode);
   });
 
-  it('should save the generated code in esm format into a js file');
-  it('should save the generated code in cjs format into a js file');
+  it("should save the generated code in esm format into a js file");
+  it("should save the generated code in cjs format into a js file");
 });

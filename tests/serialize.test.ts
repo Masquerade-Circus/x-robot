@@ -12,26 +12,26 @@ import {
   states,
   successState,
   transition,
-  warningState
-} from '../lib';
-import { describe, it } from 'mocha';
+  warningState,
+} from "../lib";
+import { describe, it } from "mocha";
 
-import expect from 'expect';
-import { serialize } from '../lib/serialize';
+import expect from "expect";
+import { serialize } from "../lib/serialize";
 
 // Serialize
-describe('Serialize', () => {
-  it('should serialize a machine correctly', () => {
+describe("Serialize", () => {
+  it("should serialize a machine correctly", () => {
     const getState = () => ({
-      title: 'Ok',
-      error: null
+      title: "Ok",
+      error: null,
     });
 
     const titleIsValid = (context) => {
       if (context.title.length > 0) {
         return true;
       }
-      return [{ message: 'Title is required' }];
+      return [{ message: "Title is required" }];
     };
 
     async function saveTitle(context) {
@@ -61,23 +61,23 @@ describe('Serialize', () => {
     }
 
     const myMachine = machine(
-      'Title component',
+      "Title component",
       states(
         successState(
-          'preview',
+          "preview",
           // Save the current title as oldTitle so we can reset later.
           producer(cacheTitle),
-          transition('edit', 'editMode')
+          transition("edit", "editMode")
         ),
         infoState(
-          'editMode',
+          "editMode",
           // Update title with the event value
           producer(updateTitle),
-          transition('input', 'editMode'),
-          transition('cancel', 'cancel'),
+          transition("input", "editMode"),
+          transition("cancel", "cancel"),
           transition(
-            'save',
-            'save',
+            "save",
+            "save",
             // Check if the title is valid. If so continue with the state.
             // If not, the machine keeps its current state.
             // In this case we came from editMode, so we keep the editMode state and update the context with the validation error.
@@ -85,23 +85,23 @@ describe('Serialize', () => {
           )
         ),
         warningState(
-          'cancel',
+          "cancel",
           // Reset the title back to oldTitle
           producer(restoreTitle),
-          immediate('preview')
+          immediate("preview")
         ),
         primaryState(
-          'save',
+          "save",
           // If the guard is true, we try to save the title.
           // If the save action succeeds, we immediately go to the preview state.
           // If the save action fails, we update the context with the error and go to the error state.
-          action(saveTitle, 'preview', producer(updateError, 'error'))
+          action(saveTitle, "preview", producer(updateError, "error"))
         ),
-        dangerState('error')
+        dangerState("error")
         // Should we provide a retry or...?
       ),
       context(getState),
-      initial('preview')
+      initial("preview")
     );
 
     let serializedMachine = {
@@ -109,74 +109,74 @@ describe('Serialize', () => {
         preview: {
           run: [
             {
-              producer: 'cacheTitle'
-            }
+              producer: "cacheTitle",
+            },
           ],
           on: {
-            edit: { target: 'editMode' }
+            edit: { target: "editMode" },
           },
-          type: 'success'
+          type: "success",
         },
         editMode: {
           run: [
             {
-              producer: 'updateTitle'
-            }
+              producer: "updateTitle",
+            },
           ],
           on: {
-            input: { target: 'editMode' },
-            cancel: { target: 'cancel' },
+            input: { target: "editMode" },
+            cancel: { target: "cancel" },
             save: {
-              target: 'save',
+              target: "save",
               guards: [
                 {
-                  guard: 'titleIsValid',
+                  guard: "titleIsValid",
                   failure: {
-                    producer: 'updateError'
-                  }
-                }
-              ]
-            }
+                    producer: "updateError",
+                  },
+                },
+              ],
+            },
           },
-          type: 'info'
+          type: "info",
         },
         cancel: {
           run: [
             {
-              producer: 'restoreTitle'
-            }
+              producer: "restoreTitle",
+            },
           ],
           on: {
-            preview: { target: 'preview' }
+            preview: { target: "preview" },
           },
-          immediate: [{ immediate: 'preview' }],
-          type: 'warning'
+          immediate: [{ immediate: "preview" }],
+          type: "warning",
         },
         save: {
           run: [
             {
-              action: 'saveTitle',
-              success: 'preview',
+              action: "saveTitle",
+              success: "preview",
               failure: {
-                producer: 'updateError',
-                transition: 'error'
-              }
-            }
+                producer: "updateError",
+                transition: "error",
+              },
+            },
           ],
           on: {
-            preview: { target: 'preview' },
-            error: { target: 'error' }
+            preview: { target: "preview" },
+            error: { target: "error" },
           },
-          type: 'primary'
+          type: "primary",
         },
         error: {
-          type: 'danger'
-        }
+          type: "danger",
+        },
       },
       parallel: {},
-      title: 'Title component',
-      initial: 'preview',
-      context: getState()
+      title: "Title component",
+      initial: "preview",
+      context: getState(),
     };
 
     expect(serialize(myMachine)).toEqual(serializedMachine);

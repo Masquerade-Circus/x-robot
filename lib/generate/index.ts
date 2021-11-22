@@ -1,9 +1,9 @@
-import { SerializedImmediate, SerializedMachine, SerializedTransition } from '../serialize';
-import { isValidObject, isValidString } from '../utils';
+import { SerializedImmediate, SerializedMachine, SerializedTransition } from "../serialize";
+import { isValidObject, isValidString } from "../utils";
 
 export enum Format {
-  ESM = 'esm',
-  CJS = 'cjs'
+  ESM = "esm",
+  CJS = "cjs",
 }
 
 function getGuards(
@@ -13,7 +13,7 @@ function getGuards(
   producers: string[] = [],
   declaredProducers: string[] = []
 ): string {
-  let code = '';
+  let code = "";
   if (transition.guards) {
     // Add the guards to the list
     for (let item of transition.guards) {
@@ -31,7 +31,7 @@ function getGuards(
       }
 
       // Guards can have producers
-      if (item.failure && typeof item.failure === 'object' && item.failure.producer) {
+      if (item.failure && typeof item.failure === "object" && item.failure.producer) {
         if (!producers.includes(item.failure.producer) && !declaredProducers.includes(item.failure.producer)) {
           producers.push(item.failure.producer);
           declaredProducers.push(item.failure.producer);
@@ -65,11 +65,11 @@ function getCodeParts(
 
   for (let stateName in serializedMachine.states) {
     let state = serializedMachine.states[stateName];
-    let stateCode = '';
+    let stateCode = "";
     let implicitStateTransitions = [];
 
     // Check if we need to add the state type
-    let stateTypeName = state.type === 'default' ? 'state' : `${state.type}State`;
+    let stateTypeName = state.type === "default" ? "state" : `${state.type}State`;
 
     stateCode += `${stateTypeName}(\n      "${stateName}",\n`;
 
@@ -87,7 +87,7 @@ function getCodeParts(
         if (nestedMachine.transition) {
           stateCode += `, "${nestedMachine.transition}"`;
         }
-        stateCode += '),\n';
+        stateCode += "),\n";
       }
     }
 
@@ -95,7 +95,7 @@ function getCodeParts(
     if (state.run && state.run.length > 0) {
       // For each item in the run array, check if we need to add the producer or action
       for (let runItem of state.run) {
-        if ('action' in runItem) {
+        if ("action" in runItem) {
           if (!actions.includes(runItem.action) && !declaredActions.includes(runItem.action)) {
             actions.push(runItem.action);
             declaredActions.push(runItem.action);
@@ -106,7 +106,7 @@ function getCodeParts(
           // Actions can have producers as well, so we need to check if we need to add them
           if (runItem.success) {
             // Success is a producer
-            if (typeof runItem.success === 'object' && 'producer' in runItem.success) {
+            if (typeof runItem.success === "object" && "producer" in runItem.success) {
               if (!producers.includes(runItem.success.producer) && !declaredProducers.includes(runItem.success.producer)) {
                 producers.push(runItem.success.producer);
                 declaredProducers.push(runItem.success.producer);
@@ -124,7 +124,7 @@ function getCodeParts(
             }
 
             // Success is a transition
-            if (typeof runItem.success === 'string') {
+            if (typeof runItem.success === "string") {
               stateCode += `, "${runItem.success}"`;
               implicitStateTransitions.push(runItem.success);
             }
@@ -132,11 +132,11 @@ function getCodeParts(
 
           if (runItem.failure) {
             if (!runItem.success) {
-              stateCode += ', null';
+              stateCode += ", null";
             }
 
             // Failure is a producer
-            if (typeof runItem.failure === 'object' && 'producer' in runItem.failure) {
+            if (typeof runItem.failure === "object" && "producer" in runItem.failure) {
               if (!producers.includes(runItem.failure.producer) && !declaredProducers.includes(runItem.failure.producer)) {
                 producers.push(runItem.failure.producer);
                 declaredProducers.push(runItem.failure.producer);
@@ -154,7 +154,7 @@ function getCodeParts(
             }
 
             // Failure is a transition
-            if (typeof runItem.failure === 'string') {
+            if (typeof runItem.failure === "string") {
               stateCode += `, "${runItem.failure}"`;
               implicitStateTransitions.push(runItem.failure);
             }
@@ -163,7 +163,7 @@ function getCodeParts(
           stateCode += `),\n`;
         }
 
-        if ('producer' in runItem) {
+        if ("producer" in runItem) {
           if (!producers.includes(runItem.producer) && !declaredProducers.includes(runItem.producer)) {
             producers.push(runItem.producer);
             declaredProducers.push(runItem.producer);
@@ -199,40 +199,40 @@ function getCodeParts(
     stateCode = stateCode.replace(/,\n$/, `\n`);
     stateCode += `    )`;
 
-    states[stateName] = stateCode.replace(/\(\n\s+\)$/, '()');
+    states[stateName] = stateCode.replace(/\(\n\s+\)$/, "()");
   }
 
   return { actions, producers, guards, states };
 }
 
-function addImport(importName: string, imports: string[] = ['machine']) {
+function addImport(importName: string, imports: string[] = ["machine"]) {
   if (!imports.includes(importName)) {
     imports.push(importName);
   }
 }
 
-function getImports(serializedMachine: SerializedMachine, imports: string[] = ['machine']) {
+function getImports(serializedMachine: SerializedMachine, imports: string[] = ["machine"]) {
   if (Object.keys(serializedMachine.states).length > 0) {
-    addImport('states', imports);
+    addImport("states", imports);
   }
 
   if (serializedMachine.initial) {
-    addImport('initial', imports);
+    addImport("initial", imports);
   }
 
   if (serializedMachine.context) {
-    addImport('context', imports);
+    addImport("context", imports);
   }
 
   if (isValidObject(serializedMachine.states) && Object.keys(serializedMachine.states).length > 0) {
-    addImport('states', imports);
+    addImport("states", imports);
 
     for (let stateName in serializedMachine.states) {
       let state = serializedMachine.states[stateName];
 
       // Check if we have nested machines
       if (state.nested && state.nested.length > 0) {
-        addImport('nested', imports);
+        addImport("nested", imports);
 
         for (let nestedMachine of state.nested) {
           getImports(nestedMachine.machine, imports);
@@ -240,26 +240,26 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ['
       }
 
       // Check if we need to import the state type
-      let stateImport = state.type !== 'default' ? `${state.type}State` : 'state';
+      let stateImport = state.type !== "default" ? `${state.type}State` : "state";
       addImport(stateImport, imports);
 
       // Check if we need to import the description
       if (isValidString(state.description)) {
-        addImport('description', imports);
+        addImport("description", imports);
       }
 
       // Check if we need to import the immediate
       if (state.immediate) {
-        addImport('immediate', imports);
+        addImport("immediate", imports);
       }
 
       if (isValidObject(state.on)) {
         // Transitions can have guards and guards can have producers
-        if (!imports.includes('transition') || !imports.includes('guards') || !imports.includes('producer')) {
+        if (!imports.includes("transition") || !imports.includes("guards") || !imports.includes("producer")) {
           for (let transitionName in state.on) {
             // Check if we need to import the transition
-            if (!imports.includes('transition') && (!isValidString(state.immediate) || state.immediate !== transitionName)) {
-              addImport('transition', imports);
+            if (!imports.includes("transition") && (!isValidString(state.immediate) || state.immediate !== transitionName)) {
+              addImport("transition", imports);
             }
 
             // Check if we need to import the guards
@@ -267,17 +267,17 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ['
             if (transition.guards) {
               for (let item of transition.guards) {
                 if (item.machine) {
-                  addImport('nestedGuard', imports);
+                  addImport("nestedGuard", imports);
                 } else {
-                  addImport('guard', imports);
+                  addImport("guard", imports);
                 }
               }
 
               // Guards can have producers
-              if (!imports.includes('producer')) {
+              if (!imports.includes("producer")) {
                 for (let guard of transition.guards) {
                   if (isValidObject(guard.failure) && guard.failure.producer) {
-                    addImport('producer', imports);
+                    addImport("producer", imports);
                     break;
                   }
                 }
@@ -292,31 +292,31 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ['
       if (state.run && state.run.length > 0) {
         for (let runItem of state.run) {
           // Check if we need to import the action
-          if ('action' in runItem) {
-            addImport('action', imports);
+          if ("action" in runItem) {
+            addImport("action", imports);
 
             if (isValidString(runItem.success) || isValidString(runItem.failure)) {
-              addImport('transition', imports);
+              addImport("transition", imports);
             }
 
             if (isValidObject(runItem.success)) {
-              addImport('producer', imports);
+              addImport("producer", imports);
               if (isValidString(runItem.success.transition)) {
-                addImport('transition', imports);
+                addImport("transition", imports);
               }
             }
 
             if (isValidObject(runItem.failure)) {
-              addImport('producer', imports);
+              addImport("producer", imports);
               if (isValidString(runItem.failure.transition)) {
-                addImport('transition', imports);
+                addImport("transition", imports);
               }
             }
           }
 
           // Check if we need to import the producer
-          if ('producer' in runItem) {
-            addImport('producer', imports);
+          if ("producer" in runItem) {
+            addImport("producer", imports);
           }
         }
       }
@@ -324,7 +324,7 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ['
   }
 
   if (serializedMachine.parallel && Object.keys(serializedMachine.parallel).length > 0) {
-    addImport('parallel', imports);
+    addImport("parallel", imports);
   }
 
   return imports;
@@ -334,7 +334,7 @@ const toCammelCase = (str: string) =>
   str
     .replace(/(^\w)/g, ($1) => $1.toUpperCase())
     .replace(/\s(.)/g, ($1) => $1.toUpperCase())
-    .replace(/\W/g, '');
+    .replace(/\W/g, "");
 
 function getMachineName(serializedMachine: SerializedMachine) {
   let randomString = Math.random().toString(36).substring(2, 15);
@@ -352,7 +352,7 @@ function getMachineCode(
   declaredProducers: string[] = [],
   declaredGuards: string[] = []
 ): string {
-  let code = '';
+  let code = "";
 
   // For each nested machine, add the code first
   for (let stateName in serializedMachine.states) {
@@ -420,7 +420,7 @@ function getMachineCode(
 
   // Machine declaration and initial state
   code += `const ${machineName} = machine(
-  "${serializedMachine.title ? serializedMachine.title : ''}",`;
+  "${serializedMachine.title ? serializedMachine.title : ""}",`;
   if (Object.keys(states).length > 0) {
     code += `
   states(\n`;
@@ -459,13 +459,13 @@ function getMachineCode(
 }
 
 export function generateFromSerializedMachine(serializedMachine: SerializedMachine, format: Format): string {
-  let code = '';
+  let code = "";
 
   let imports = getImports(serializedMachine);
 
   // Import statements
-  let importCode = '';
-  let importItems = imports.join(', ');
+  let importCode = "";
+  let importItems = imports.join(", ");
   if (format === Format.CJS) {
     importCode += `const { ${importItems} } = require("x-robot");\n`;
   } else {
@@ -481,9 +481,9 @@ export function generateFromSerializedMachine(serializedMachine: SerializedMachi
   code += machineCode;
 
   if (format === Format.CJS) {
-    code += `\nmodule.exports = { ${Array.from(machines.keys()).join(', ')} };\n`;
+    code += `\nmodule.exports = { ${Array.from(machines.keys()).join(", ")} };\n`;
   } else {
-    code += `\nexport default { ${Array.from(machines.keys()).join(', ')} };\n`;
+    code += `\nexport default { ${Array.from(machines.keys()).join(", ")} };\n`;
   }
 
   return code;

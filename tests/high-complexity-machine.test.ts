@@ -1,5 +1,5 @@
-import { Format, generateFromSerializedMachine } from '../lib/generate';
-import { VISUALIZATION_LEVEL, createSvgFromPlantUmlCode, getPlantUmlCode } from '../lib/visualize';
+import { Format, generateFromSerializedMachine } from "../lib/generate";
+import { VISUALIZATION_LEVEL, createSvgFromPlantUmlCode, getPlantUmlCode } from "../lib/visualize";
 import {
   action,
   context,
@@ -13,16 +13,16 @@ import {
   states,
   successState,
   transition,
-  warningState
-} from '../lib';
-import { describe, it } from 'mocha';
+  warningState,
+} from "../lib";
+import { describe, it } from "mocha";
 
-import expect from 'expect';
-import fs from 'fs';
-import { serialize } from '../lib/serialize';
-import { validate } from '../lib/validate';
+import expect from "expect";
+import fs from "fs";
+import { serialize } from "../lib/serialize";
+import { validate } from "../lib/validate";
 
-describe('XRobot', () => {
+describe("XRobot", () => {
   function getMachine() {
     function updateState(context, payload) {
       return { ...context, ...payload };
@@ -70,9 +70,9 @@ describe('XRobot', () => {
     let actionValidatePickupTime = action(validatePickupTime, updateStateProducer);
     let actionGetCard = action(getCard, updateStateProducer);
     let actionCreate = action(create, updateStateProducer);
-    let actionAuthorize = action(authorize, producer(updateState), producer(updateState, 'authorizationFailure'));
-    let actionCapture = action(capture, producer(updateState), producer(updateState, 'captureFailure'));
-    let actionVoidOrRefundOrder = action(voidOrRefundOrder, updateStateProducer, producer(updateState, 'voidOrRefundFailure'));
+    let actionAuthorize = action(authorize, producer(updateState), producer(updateState, "authorizationFailure"));
+    let actionCapture = action(capture, producer(updateState), producer(updateState, "captureFailure"));
+    let actionVoidOrRefundOrder = action(voidOrRefundOrder, updateStateProducer, producer(updateState, "voidOrRefundFailure"));
     let actionUpdate = action(update, updateStateProducer);
     let actionSendNotificationToClient = action(sendNotificationToClient, updateStateProducer);
     let actionSendNotificationToStore = action(sendNotificationToStore, updateStateProducer);
@@ -88,21 +88,21 @@ describe('XRobot', () => {
     let actionSetCancelledById = action(setCancelledById, updateStateProducer);
 
     let myMachine = machine(
-      'My machine',
+      "My machine",
       states(
-        dangerState('fatal', actionUpdate, actionUpdateTransaction),
+        dangerState("fatal", actionUpdate, actionUpdateTransaction),
         state(
-          'draft',
+          "draft",
           actionGetClient,
           actionGetItemsAndTaxes,
           actionGetAmounts,
           actionDraft,
-          transition('expiredDraft', 'expiredDraft'),
-          transition('create', 'created')
+          transition("expiredDraft", "expiredDraft"),
+          transition("create", "created")
         ),
-        warningState('expiredDraft', actionGetClient, actionExpireDraft),
+        warningState("expiredDraft", actionGetClient, actionExpireDraft),
         primaryState(
-          'created',
+          "created",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -115,11 +115,11 @@ describe('XRobot', () => {
           actionAuthorize,
           actionCreateTransaction,
           actionUpdate,
-          immediate('waitingForStore'),
-          transition('expire', 'expired')
+          immediate("waitingForStore"),
+          transition("expire", "expired")
         ),
         warningState(
-          'expired',
+          "expired",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -133,21 +133,21 @@ describe('XRobot', () => {
           actionUpdateTransaction,
           actionSendNotificationToClient
         ),
-        dangerState('authorizationFailure', actionSetError, actionCreateTransaction, actionUpdate, actionSendNotificationToClient, actionThrowError),
+        dangerState("authorizationFailure", actionSetError, actionCreateTransaction, actionUpdate, actionSendNotificationToClient, actionThrowError),
         primaryState(
-          'waitingForStore',
+          "waitingForStore",
           actionSendNotificationToClient,
           actionSetTimeoutTasks,
           actionUpdate,
-          transition('expire', 'expired'),
-          transition('cancel', 'cancelledByStore'),
-          transition('cancelByClient', 'cancelledByClient'),
-          transition('cancelByCustomerSupport', 'cancelledByCustomerSupport'),
-          transition('requestChanges', 'changesRequestedByStore'),
-          transition('process', 'processing')
+          transition("expire", "expired"),
+          transition("cancel", "cancelledByStore"),
+          transition("cancelByClient", "cancelledByClient"),
+          transition("cancelByCustomerSupport", "cancelledByCustomerSupport"),
+          transition("requestChanges", "changesRequestedByStore"),
+          transition("process", "processing")
         ),
         warningState(
-          'cancelledByStore',
+          "cancelledByStore",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -161,7 +161,7 @@ describe('XRobot', () => {
           actionSendNotificationToClient
         ),
         warningState(
-          'cancelledByClient',
+          "cancelledByClient",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -175,7 +175,7 @@ describe('XRobot', () => {
           actionSendNotificationToClient
         ),
         warningState(
-          'cancelledByCustomerSupport',
+          "cancelledByCustomerSupport",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -190,10 +190,10 @@ describe('XRobot', () => {
           actionUpdateTransaction,
           actionSendNotificationToClient
         ),
-        dangerState('voidOrRefundFailure', actionSetError, actionUpdateTransaction, actionUpdate, actionThrowError),
+        dangerState("voidOrRefundFailure", actionSetError, actionUpdateTransaction, actionUpdate, actionThrowError),
 
         state(
-          'changesRequestedByStore',
+          "changesRequestedByStore",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -203,12 +203,12 @@ describe('XRobot', () => {
           actionGetAmounts,
           actionUpdate,
           actionSendNotificationToClient,
-          transition('rejectChanges', 'changesRejectedByClient'),
-          transition('acceptChanges', 'changesAcceptedByClient'),
-          transition('cancelByCustomerSupport', 'cancelledByCustomerSupport')
+          transition("rejectChanges", "changesRejectedByClient"),
+          transition("acceptChanges", "changesAcceptedByClient"),
+          transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
         ),
         warningState(
-          'changesRejectedByClient',
+          "changesRejectedByClient",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -223,7 +223,7 @@ describe('XRobot', () => {
           actionSendNotificationToStore
         ),
         state(
-          'changesAcceptedByClient',
+          "changesAcceptedByClient",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -232,12 +232,12 @@ describe('XRobot', () => {
           actionGetItemsAndTaxes,
           actionUpdate,
           actionSendNotificationToStore,
-          transition('cancelByCustomerSupport', 'cancelledByCustomerSupport'),
-          transition('process', 'processing'),
-          transition('cancel', 'cancelledByStore')
+          transition("cancelByCustomerSupport", "cancelledByCustomerSupport"),
+          transition("process", "processing"),
+          transition("cancel", "cancelledByStore")
         ),
         primaryState(
-          'processing',
+          "processing",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -246,12 +246,12 @@ describe('XRobot', () => {
           actionGetItemsAndTaxes,
           actionUpdate,
           actionSendNotificationToClient,
-          transition('cancelProcessing', 'processingCancelledByStore'),
-          transition('finishProcessing', 'processed'),
-          transition('cancelByCustomerSupport', 'cancelledByCustomerSupport')
+          transition("cancelProcessing", "processingCancelledByStore"),
+          transition("finishProcessing", "processed"),
+          transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
         ),
         warningState(
-          'processingCancelledByStore',
+          "processingCancelledByStore",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -265,7 +265,7 @@ describe('XRobot', () => {
           actionSendNotificationToClient
         ),
         state(
-          'processed',
+          "processed",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -276,10 +276,10 @@ describe('XRobot', () => {
           actionUpdate,
           actionCapture,
           actionUpdateTransaction,
-          immediate('ready')
+          immediate("ready")
         ),
         dangerState(
-          'captureFailure',
+          "captureFailure",
           actionSetError,
           actionVoidOrRefundOrder,
           actionUpdate,
@@ -289,17 +289,17 @@ describe('XRobot', () => {
           actionThrowError
         ),
         primaryState(
-          'ready',
+          "ready",
           actionIncreaseSuccessfulStoreOrderCount,
           actionUpdate,
           actionSendNotificationToClient,
-          transition('complete', 'completed'),
-          transition('cancelReady', 'readyCancelledByStore'),
-          transition('cancelByCustomerSupport', 'cancelledByCustomerSupport'),
-          transition('deliver', 'waitingForDelivery')
+          transition("complete", "completed"),
+          transition("cancelReady", "readyCancelledByStore"),
+          transition("cancelByCustomerSupport", "cancelledByCustomerSupport"),
+          transition("deliver", "waitingForDelivery")
         ),
         warningState(
-          'readyCancelledByStore',
+          "readyCancelledByStore",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -314,7 +314,7 @@ describe('XRobot', () => {
           actionSendNotificationToClient
         ),
         state(
-          'waitingForDelivery',
+          "waitingForDelivery",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -323,12 +323,12 @@ describe('XRobot', () => {
           actionGetItemsAndTaxes,
           actionGetTransaction,
           actionUpdate,
-          transition('complete', 'completed'),
-          transition('cancelWaitingForDelivery', 'waitingForDeliveryCancelledByStore'),
-          transition('cancelByCustomerSupport', 'cancelledByCustomerSupport')
+          transition("complete", "completed"),
+          transition("cancelWaitingForDelivery", "waitingForDeliveryCancelledByStore"),
+          transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
         ),
         warningState(
-          'waitingForDeliveryCancelledByStore',
+          "waitingForDeliveryCancelledByStore",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -343,18 +343,18 @@ describe('XRobot', () => {
           actionSendNotificationToClient
         ),
         successState(
-          'completed',
+          "completed",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
           actionSetI18N,
           actionGetCard,
           actionUpdate,
-          transition('cancelCompleted', 'completedCancelledByStore'),
-          transition('cancelByCustomerSupport', 'cancelledByCustomerSupport')
+          transition("cancelCompleted", "completedCancelledByStore"),
+          transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
         ),
         warningState(
-          'completedCancelledByStore',
+          "completedCancelledByStore",
           actionGetClient,
           actionGetStore,
           actionGetRetailer,
@@ -370,7 +370,7 @@ describe('XRobot', () => {
         )
       ),
       context({}),
-      initial('draft')
+      initial("draft")
     );
 
     validate(myMachine);
@@ -378,7 +378,7 @@ describe('XRobot', () => {
     return myMachine;
   }
 
-  it('should generate a diagram from a very high complexity machine', async () => {
+  it("should generate a diagram from a very high complexity machine", async () => {
     let myMachine = getMachine();
 
     let plantUmlCode = getPlantUmlCode(serialize(myMachine), VISUALIZATION_LEVEL.HIGH);
@@ -514,7 +514,7 @@ skinparam state {
 
     expect(plantUmlCode).toEqual(expectedPlantUmlCode);
 
-    const svg = await createSvgFromPlantUmlCode(plantUmlCode, { outDir: './tmp', fileName: 'test.svg' });
+    const svg = await createSvgFromPlantUmlCode(plantUmlCode, { outDir: "./tmp", fileName: "test.svg" });
 
     expect(svg).toBeDefined();
 
@@ -525,7 +525,7 @@ skinparam state {
     fs.unlinkSync(svg);
   });
 
-  it('should generate esm code from a very high complexity machine', () => {
+  it("should generate esm code from a very high complexity machine", () => {
     let myMachine = getMachine();
     let serializedMachine = serialize(myMachine);
     let esmCode = generateFromSerializedMachine(serializedMachine, Format.ESM);

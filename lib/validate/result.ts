@@ -17,7 +17,7 @@ export class Ok<T, E> {
   }
 
   unwrapErr(): never {
-    throw new Error('Called `unwrapErr()` on an `Ok` value.');
+    throw new Error("Called `unwrapErr()` on an `Ok` value.");
   }
 }
 
@@ -33,7 +33,7 @@ export class Err<T, E> {
   }
 
   unwrap(): never {
-    throw new Error('Called `unwrap()` on an `Err` value.');
+    throw new Error("Called `unwrap()` on an `Err` value.");
   }
 
   unwrapErr(): E {
@@ -48,4 +48,13 @@ export function ok<T>(value: T): Ok<T, never> {
 
 export function err<E>(err: E): Err<never, E> {
   return new Err(err);
+}
+
+export function combine<T, E>(results: Results<T, E>): Result<T, E> | Results<T, E> {
+  for (const result of results) {
+    if (result.isErr()) {
+      return result;
+    }
+  }
+  return results;
 }

@@ -9,9 +9,9 @@ import {
   ProducerDirective,
   RunCollection,
   TransitionDirective,
-  TransitionsDirective
-} from '../machine/interfaces';
-import { cloneContext, isAction, isProducer, isProducerWithTransition, isValidString } from '../utils';
+  TransitionsDirective,
+} from "../machine/interfaces";
+import { cloneContext, isAction, isProducer, isProducerWithTransition, isValidString } from "../utils";
 
 export interface SerializedProducer {
   producer: string;
@@ -78,7 +78,7 @@ export interface SerializedNestedMachine {
 // @returns {Object}
 function serializeProducer(producer: ProducerDirective): SerializedProducer {
   let serialized: SerializedProducer = {
-    producer: producer.producer.name
+    producer: producer.producer.name,
   };
 
   if (isProducerWithTransition(producer)) {
@@ -93,7 +93,7 @@ function serializeProducer(producer: ProducerDirective): SerializedProducer {
 // @returns {Object}
 function serializeAction(action: ActionDirective): SerializedAction {
   let serialized: SerializedAction = {
-    action: action.action.name
+    action: action.action.name,
   };
 
   if (action.success) {
@@ -120,7 +120,7 @@ function serializeAction(action: ActionDirective): SerializedAction {
 // @returns {Object}
 function serializeGuard(guard: GuardDirective | NestedGuardDirective): SerializedGuard {
   let serialized: SerializedGuard = {
-    guard: guard.guard.name
+    guard: guard.guard.name,
   };
 
   if (isValidString(guard.failure)) {
@@ -129,7 +129,7 @@ function serializeGuard(guard: GuardDirective | NestedGuardDirective): Serialize
     serialized.failure = serializeProducer(guard.failure);
   }
 
-  if ('machine' in guard) {
+  if ("machine" in guard) {
     serialized.machine = serialize(guard.machine);
   }
 
@@ -165,7 +165,7 @@ function serializeGuards(guards: GuardsDirective): SerializedGuard[] | null {
 
 function serializeTransition(transition: TransitionDirective): SerializedTransition {
   let serialized: SerializedTransition = {
-    target: transition.target
+    target: transition.target,
   };
 
   let guards = serializeGuards(transition.guards);
@@ -179,7 +179,7 @@ function serializeTransition(transition: TransitionDirective): SerializedTransit
 
 function serializeImmediate(immediate: ImmediateDirective): SerializedImmediate {
   let serialized: SerializedImmediate = {
-    immediate: immediate.immediate
+    immediate: immediate.immediate,
   };
 
   let guards = serializeGuards(immediate.guards);
@@ -222,7 +222,7 @@ function serializeNested(nested: NestedMachineDirective[]): SerializedNestedMach
 
   return nested.map(({ machine, transition }) => {
     let serializedNestedMachine: SerializedNestedMachine = {
-      machine: serialize(machine)
+      machine: serialize(machine),
     };
 
     if (transition) {
@@ -241,7 +241,7 @@ export function serialize(machine: Machine): SerializedMachine {
     states: {},
     parallel: {},
     context: serializeContext(machine.context),
-    initial: machine.initial
+    initial: machine.initial,
   };
 
   if (machine.title) {
