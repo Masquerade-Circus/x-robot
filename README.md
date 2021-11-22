@@ -136,7 +136,7 @@ invoke(stoplight, 'red.stop'); // Invoke the stopwalk transition stop from the s
 ![Word machine diagram](./docs/images/word-machine-diagram.svg)
 
 ```javascript
-import {machine, states, state, initial, transition, invoke, parallel} from 'x-robot';
+import {machine, states, state, initial, transition, invoke, parallel, getState} from 'x-robot';
 
 const boldMachine = machine('Bold', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
 const underlineMachine = machine('Underline', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
@@ -165,4 +165,6 @@ invoke(wordMachine, 'bold/on'); // boldMachine.current === 'on'
 invoke(wordMachine, 'underline/on'); // underlineMachine.current === 'on'
 invoke(wordMachine, 'italics/on'); // italicsMachine.current === 'on'
 invoke(wordMachine, 'list/bullets'); // listMachine.current === 'bullets'
+
+getState(wordMachine); // { bold: 'on', underline: 'on', italics: 'on', list: 'bullets' }
 ```
