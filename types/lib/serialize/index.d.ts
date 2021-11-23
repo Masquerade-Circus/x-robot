@@ -1,4 +1,4 @@
-import { Machine } from '../machine/interfaces';
+import { Machine } from "../machine/interfaces";
 export interface SerializedProducer {
     producer: string;
     transition?: string;

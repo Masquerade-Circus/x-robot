@@ -21,6 +21,8 @@
     "test-mjs": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.mjs",
     "test-all": "yarn test && yarn test-cjs && yarn test-mjs",
     "dev:test": "nodemon -e ts,js -w ./tests -w ./lib --exec 'yarn test'",
+    "bench": "buffalo-test --require=./register.js ./bench/**/*.ts",
+    "dev:bench": "nodemon -e ts,js -w ./bench -w ./lib --exec 'yarn bench'",
     "build": "node build.js",
     "remark": "remark . -o",
     "commit": "git add . && git-cz",
@@ -52,6 +54,7 @@
   "devDependencies": {
     "@release-it/conventional-changelog": "^3.3.0",
     "@types/node": "^16.10.3",
+    "buffalo-test": "^2.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.13.4",
     "expect": "^27.2.4",
@@ -61,10 +64,12 @@
     "pirates": "^4.0.1",
     "release-it": "^14.11.7",
     "remark-cli": "^10.0.0",
+    "robot3": "^0.2.21",
     "terser": "^5.9.0",
     "tsc": "^2.0.3",
     "tsc-prog": "^2.2.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "xstate": "^4.26.1"
   },
   "config": {
     "commitizen": {

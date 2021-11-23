@@ -1,4 +1,4 @@
-import { Action, ActionDirective, Context, ContextDirective, DescriptionDirective, Guard, GuardDirective, GuardsDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedMachineDirective, ParallelDirective, Producer, ProducerDirective, ProducerDirectiveWithoutTransition, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective } from './interfaces';
+import { Action, ActionDirective, Context, ContextDirective, DescriptionDirective, Guard, GuardDirective, GuardsDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedMachineDirective, ParallelDirective, Producer, ProducerDirective, ProducerDirectiveWithoutTransition, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective } from "./interfaces";
 interface MachineArguments extends Array<string | ContextDirective | InitialDirective | ShouldFreezeDirective | StatesDirective | ParallelDirective> {
 }
 export declare function machine(title: string, ...args: MachineArguments): Machine;

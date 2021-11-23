@@ -1,4 +1,4 @@
-import { SerializedMachine } from '../serialize';
+import { SerializedMachine } from "../serialize";
 export declare enum Format {
     ESM = "esm",
     CJS = "cjs"

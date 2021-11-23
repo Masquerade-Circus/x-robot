@@ -18,3 +18,4 @@ export declare class Err<T, E> {
 }
 export declare function ok<T>(value: T): Ok<T, never>;
 export declare function err<E>(err: E): Err<never, E>;
+export declare function combine<T, E>(results: Results<T, E>): Result<T, E> | Results<T, E>;

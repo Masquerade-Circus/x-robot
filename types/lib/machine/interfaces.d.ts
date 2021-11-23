@@ -86,7 +86,7 @@ export interface Machine {
     frozen: boolean;
     fatal?: Error;
     history: string[];
-    parallel: ParallelDirective['parallel'];
+    parallel: ParallelDirective["parallel"];
 }
 export interface NestedMachineDirective {
     machine: Machine;

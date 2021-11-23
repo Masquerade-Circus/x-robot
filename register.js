@@ -1,7 +1,6 @@
 const { addHook } = require("pirates");
 const { transformSync } = require("esbuild");
 const fs = require("fs");
-const { cwd } = require("process");
 
 addHook(
   (code, filePath) => {
@@ -30,8 +29,8 @@ addHook(
           allowSyntheticDefaultImports: true,
           allowJs: true,
           esModuleInterop: true,
-          resolveJsonModule: true
-        }
+          resolveJsonModule: true,
+        },
       },
       loader,
       minify: false,
@@ -39,7 +38,7 @@ addHook(
       target: "esnext",
       logLevel: "warning",
       sourcemap: "inline",
-      sourcefile: filePath.split("/").pop()
+      sourcefile: filePath.split("/").pop(),
     };
 
     // Check if tsconfig.json exists with fs module
@@ -78,6 +77,6 @@ addHook(
     ignoreNodeModules: false,
     matcher(fileName) {
       return !/node_modules/.test(fileName) || /\.tsx?$/.test(fileName);
-    }
+    },
   }
 );
