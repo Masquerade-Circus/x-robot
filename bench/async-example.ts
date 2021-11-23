@@ -28,7 +28,7 @@ compare("Async example", () => {
         loading: {
           invoke: {
             id: "fetchDog",
-            src: (context, event) => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 1)),
+            src: (context, event) => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 0)),
             onDone: {
               target: "resolved",
               actions: assign({
@@ -78,16 +78,17 @@ compare("Async example", () => {
       {
         idle: robotState(robotTransition("FETCH", "loading")),
         loading: robotInvoke(
-          () => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 1)),
+          () => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 0)),
           robotTransition(
             "done",
-            "loaded",
+            "resolved",
             reduce((ctx: object, ev: { data }) => ({ ...ctx, dog: { name: ev.data.name } }))
           ),
           robotTransition("error", "rejected"),
           robotTransition("CANCEL", "idle")
         ),
-        loaded: robotState(robotImmediate("idle")),
+        resolved: robotState(robotImmediate("idle")),
+        rejected: robotState(),
       },
       () => ({})
     );
@@ -119,11 +120,14 @@ compare("Async example", () => {
         state(
           "loading",
           action(
-            () => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 1)),
-            producer((ctx, data) => ({ dog: data }), "loaded")
-          )
+            () => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 0)),
+            producer((ctx, data) => ({ dog: data }), "resolved"),
+            "rejected"
+          ),
+          transition("CANCEL", "idle")
         ),
-        state("loaded", immediate("idle"))
+        state("resolved", immediate("idle")),
+        state("rejected")
       ),
       initial("idle")
     );
