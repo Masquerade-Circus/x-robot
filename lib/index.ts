@@ -19,9 +19,9 @@ import {
   transition,
   warningState,
 } from "./machine/create";
+import { invoke, start } from "./machine/invoke";
 
 import { getState } from "./utils";
-import { invoke } from "./machine/invoke";
 
 export {
   machine,
@@ -44,5 +44,6 @@ export {
   transition,
   immediate,
   invoke,
+  start,
   getState,
 };

@@ -12,6 +12,7 @@ import {
   machine,
   primaryState,
   producer,
+  start,
   state,
   states,
   successState,
@@ -1823,6 +1824,134 @@ describe("XRobot", () => {
         "Producer: updateTitle", // Runs the producer
         "Transition: idle", // The immediate transition
         "State: idle", // The machine goes back to the initial state
+      ]);
+    });
+  });
+
+  // Start
+  describe("Start", () => {
+    // Should be able to start the machine
+    it("should be able to start the machine", async () => {
+      let updateTitle = (context, payload) => ({ ...context, title: payload });
+      let saveTitle = (context, payload) => new Promise((resolve) => setTimeout(() => resolve(1), 100));
+      let canUpdateTitle = (context, payload) => (typeof payload === "string" && payload.length ? true : "Must pass a valid title");
+
+      const myMachine = machine(
+        "My machine",
+        states(
+          state("idle", action(saveTitle), producer(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
+          state("updated", action(saveTitle), producer(updateTitle), immediate("idle"))
+        ),
+        initial("idle")
+      );
+
+      // Check the machine is in the initial state
+      expect(getState(myMachine)).toEqual("idle");
+      expect(myMachine.history).toEqual(["State: idle"]);
+
+      // Start the machine with a title
+      await start(myMachine, "Initial title");
+
+      // The machine is in the idle state
+      expect(getState(myMachine)).toEqual("idle");
+
+      // The history should have the initial state, the idle action and the idle producer
+      expect(myMachine.history).toEqual(["State: idle", "Action: saveTitle", "Producer: updateTitle"]);
+    });
+
+    it("should not be able to start the machine if already started it", async () => {
+      let updateTitle = (context, payload) => ({ ...context, title: payload });
+      let saveTitle = (context, payload) => new Promise((resolve) => setTimeout(() => resolve(1), 100));
+      let canUpdateTitle = (context, payload) => (typeof payload === "string" && payload.length ? true : "Must pass a valid title");
+
+      const myMachine = machine(
+        "My machine",
+        states(
+          state("idle", action(saveTitle), producer(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
+          state("updated", action(saveTitle), producer(updateTitle), immediate("idle"))
+        ),
+        initial("idle")
+      );
+
+      // Check the machine is in the initial state
+      expect(getState(myMachine)).toEqual("idle");
+      expect(myMachine.history).toEqual(["State: idle"]);
+
+      // Start the machine with a title
+      await start(myMachine, "Initial title");
+
+      // The machine is in the idle state
+      expect(getState(myMachine)).toEqual("idle");
+
+      // The history should have the initial state, the idle action and the idle producer
+      expect(myMachine.history).toEqual(["State: idle", "Action: saveTitle", "Producer: updateTitle"]);
+
+      // Try to start the machine again
+      await expect(() => start(myMachine, "Initial title")).toThrow(new Error("The machine has already been started."));
+
+      // The machine is in the idle state
+      expect(getState(myMachine)).toEqual("idle");
+
+      // The history should not be updated
+      expect(myMachine.history).toEqual(["State: idle", "Action: saveTitle", "Producer: updateTitle"]);
+    });
+
+    it("should not be able to start the machine if already moved it to another state", async () => {
+      let updateTitle = (context, payload) => ({ ...context, title: payload });
+      let saveTitle = (context, payload) => new Promise((resolve) => setTimeout(() => resolve(1), 100));
+      let canUpdateTitle = (context, payload) => (typeof payload === "string" && payload.length ? true : "Must pass a valid title");
+
+      const myMachine = machine(
+        "My machine",
+        states(
+          state("idle", action(saveTitle), producer(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
+          state("updated", action(saveTitle), producer(updateTitle), immediate("idle"))
+        ),
+        initial("idle")
+      );
+
+      // Check the machine is in the initial state
+      expect(getState(myMachine)).toEqual("idle");
+      expect(myMachine.history).toEqual(["State: idle"]);
+
+      // Update the machine with a title
+      await invoke(myMachine, "updateTitle", "Initial title");
+
+      // The machine is in the idle state
+      expect(getState(myMachine)).toEqual("idle");
+
+      // The history should have the initial state, plus the transitions and actions of update and then the ones of the idle state
+      expect(myMachine.history).toEqual([
+        "State: idle",
+        "Transition: updateTitle",
+        "Guard: canUpdateTitle",
+        "State: updated",
+        "Action: saveTitle",
+        "Producer: updateTitle",
+        "Transition: idle",
+        "State: idle",
+        "Action: saveTitle",
+        "Producer: updateTitle",
+      ]);
+
+      // Try to start the machine again
+      await expect(() => start(myMachine, "Initial title")).toThrow(new Error("The machine has already been started."));
+
+      // The machine is in the idle state
+      expect(getState(myMachine)).toEqual("idle");
+
+      // The history should not be updated
+      expect(myMachine.history).toEqual([
+        "State: idle",
+        "Transition: updateTitle",
+        "Guard: canUpdateTitle",
+        "State: updated",
+        "Action: saveTitle",
+        "Producer: updateTitle",
+        "Transition: idle",
+        "State: idle",
+        "Action: saveTitle",
+        "Producer: updateTitle",
       ]);
     });
   });

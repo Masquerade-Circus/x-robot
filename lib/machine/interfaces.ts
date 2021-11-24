@@ -139,3 +139,5 @@ export enum HistoryType {
   State = "State",
   Guard = "Guard",
 }
+
+export const START_EVENT = "__start__";

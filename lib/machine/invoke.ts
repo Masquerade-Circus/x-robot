@@ -3,7 +3,7 @@
 // @param {String} property
 // @param {Any} defaultValue
 
-import { ActionDirective, HistoryType, Machine, ProducerDirective, StateDirective, TransitionDirective } from "./interfaces";
+import { ActionDirective, HistoryType, Machine, ProducerDirective, START_EVENT, StateDirective, TransitionDirective } from "./interfaces";
 import {
   canMakeTransition,
   cloneContext,
@@ -20,6 +20,8 @@ import {
   isValidObject,
   isValidString,
 } from "../utils";
+
+const START_TRANSITION = START_EVENT;
 
 // Run producer
 // @param {Machine} machine
@@ -304,7 +306,7 @@ function invokeImmediateDirectives(machine: Machine, state: StateDirective, payl
       let parallelTransition = transitionParts.join("/");
       let parallelMachine = machine.parallel[parallelMachineId];
       if (promise) {
-        promise.then(() => invoke(parallelMachine, parallelTransition, payload));
+        promise = promise.then(() => invoke(parallelMachine, parallelTransition, payload));
       } else {
         invoke(parallelMachine, parallelTransition, payload);
       }
@@ -313,7 +315,7 @@ function invokeImmediateDirectives(machine: Machine, state: StateDirective, payl
     // If is a nested transition we run the transition in the nested machine
     else if (isNestedTransition(immediateDirective.immediate)) {
       if (promise) {
-        promise.then(() => invoke(machine, immediateDirective.immediate, payload));
+        promise = promise.then(() => invoke(machine, immediateDirective.immediate, payload));
       } else {
         invoke(machine, immediateDirective.immediate, payload);
       }
@@ -322,7 +324,7 @@ function invokeImmediateDirectives(machine: Machine, state: StateDirective, payl
     // If is a transition we run the transition
     else {
       if (promise) {
-        promise.then(async () => {
+        promise = promise.then(async () => {
           // Only run the next immediate if the current state is equal to the state we are in now
           if (machine.current === state.name) {
             await invoke(machine, immediateDirective.immediate, payload);
@@ -357,6 +359,11 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
 
   let trimmedTransition = transition.trim();
 
+  // If the transition equals START_TRANSITION, we get the initial state
+  if (trimmedTransition === START_TRANSITION) {
+    transition = machine.initial;
+  }
+
   // Get the current state object
   let currentStateObject = machine.states[machine.current];
 
@@ -376,22 +383,25 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
     return runNestedTransition(machine, trimmedTransition, payload);
   }
 
-  // Add the transition to the history
-  machine.history.push(`${HistoryType.Transition}: ${trimmedTransition}`);
+  // Only run guards if the transition is not the START_EVENT
+  if (trimmedTransition !== START_EVENT) {
+    // Add the transition to the history
+    machine.history.push(`${HistoryType.Transition}: ${trimmedTransition}`);
 
-  // Get the transition object
-  let transitionObject = currentStateObject.on[trimmedTransition];
+    // Get the transition object
+    let transitionObject = currentStateObject.on[trimmedTransition];
 
-  // If the transition has guards, run them and decide if we should continue
-  let shouldContinue = runGuards(machine, currentStateObject, transitionObject, payload);
-  if (shouldContinue === false) {
-    // As we tried to make a transition, we need to add the current state to the history
-    machine.history.push(`${HistoryType.State}: ${currentStateObject.name}`);
-    return;
+    // If the transition has guards, run them and decide if we should continue
+    let shouldContinue = runGuards(machine, currentStateObject, transitionObject, payload);
+    if (shouldContinue === false) {
+      // As we tried to make a transition, we need to add the current state to the history
+      machine.history.push(`${HistoryType.State}: ${currentStateObject.name}`);
+      return;
+    }
   }
 
   // Get the target state
-  let targetState = currentStateObject.on[trimmedTransition].target;
+  let targetState = trimmedTransition === START_EVENT ? machine.initial : currentStateObject.on[trimmedTransition].target;
 
   // Check if we have a valid target state as string and throw an error if not
   if (isValidString(targetState) === false) {
@@ -406,9 +416,12 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
   // Get the target state
   let targetStateObject = machine.states[targetState];
 
-  // Set the current state
-  machine.current = targetState;
-  machine.history.push(`${HistoryType.State}: ${targetState}`);
+  // Only change the current state if the transition is not START_EVENT
+  if (trimmedTransition !== START_EVENT) {
+    // Set the current state
+    machine.current = targetState;
+    machine.history.push(`${HistoryType.State}: ${targetState}`);
+  }
 
   if (machine.isAsync) {
     let promise = Promise.resolve();
@@ -434,4 +447,15 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
 
   // If there are immediate directives, run them
   invokeImmediateDirectives(machine, targetStateObject, payload);
+}
+
+export function start(machine: Machine, payload?: any): Promise<void> | void {
+  // Validate initial transition before invoking
+  let canStartMachine = canMakeTransition(machine, machine.states[machine.current], START_EVENT);
+  // If we can't start the machine, throw an error
+  if (!canStartMachine) {
+    throw new Error(`The machine has already been started.`);
+  }
+
+  return invoke(machine, START_TRANSITION, payload);
 }

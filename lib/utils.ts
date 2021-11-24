@@ -15,6 +15,7 @@ import {
   ProducerDirective,
   ProducerDirectiveWithTransition,
   ProducerDirectiveWithoutTransition,
+  START_EVENT,
   ShouldFreezeDirective,
   StateDirective,
   StatesDirective,
@@ -349,6 +350,11 @@ export function canMakeTransition(machine: Machine, currentStateObject: StateDir
   }
 
   let trimmedTransition = transition.trim();
+
+  // If the transition is the START_EVENT we will return true if the current state is the initial state and we have no history
+  if (trimmedTransition === START_EVENT) {
+    return currentStateObject.name === machine.initial && machine.history.length === 1;
+  }
 
   // Check if we have a normal transition or a nested transition (nested transitions are dot separated)
   if (isNestedTransition(trimmedTransition) || isParallelTransition(trimmedTransition)) {
