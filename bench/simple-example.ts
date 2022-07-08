@@ -1,7 +1,12 @@
 import { beforeEach, benchmark, compare } from "buffalo-test";
 import { createMachine, interpret } from "xstate";
 import { initial, invoke, machine, state, states, transition } from "../lib";
-import { createMachine as robotCreateMachine, interpret as robotInterpret, state as robotState, transition as robotTransition } from "robot3";
+import {
+  createMachine as robotCreateMachine,
+  interpret as robotInterpret,
+  state as robotState,
+  transition as robotTransition
+} from "robot3";
 
 import expect from "expect";
 
@@ -13,20 +18,20 @@ compare("Simple example", () => {
       states: {
         green: {
           on: {
-            next: "yellow",
-          },
+            next: "yellow"
+          }
         },
         yellow: {
           on: {
-            next: "red",
-          },
+            next: "red"
+          }
         },
         red: {
           on: {
-            next: "green",
-          },
-        },
-      },
+            next: "green"
+          }
+        }
+      }
     });
 
     const stoplightService = interpret(stoplightMachine).start();
@@ -37,7 +42,7 @@ compare("Simple example", () => {
     let stoplightMachine = robotCreateMachine({
       green: robotState(robotTransition("next", "yellow")),
       yellow: robotState(robotTransition("next", "red")),
-      red: robotState(robotTransition("next", "green")),
+      red: robotState(robotTransition("next", "green"))
     });
 
     let stoplightService = robotInterpret(stoplightMachine, () => {});
@@ -47,7 +52,11 @@ compare("Simple example", () => {
   let getXRobotMachine = () => {
     let stoplightMachine = machine(
       "StopLight Machine",
-      states(state("green", transition("next", "yellow")), state("yellow", transition("next", "red")), state("red", transition("next", "green"))),
+      states(
+        state("green", transition("next", "yellow")),
+        state("yellow", transition("next", "red")),
+        state("red", transition("next", "green"))
+      ),
       initial("green")
     );
 
@@ -99,7 +108,7 @@ compare("Simple example", () => {
     robot3Machine.send("next");
   });
 
-  benchmark("XRobot", () => {
+  benchmark("X-Robot", () => {
     invoke(xRobotMachine, "next");
   });
 });

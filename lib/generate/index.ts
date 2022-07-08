@@ -1,3 +1,7 @@
+/**
+ * @module x-robot/generate
+ * @description Generate code from a serialized machine
+ * */
 import { SerializedImmediate, SerializedMachine, SerializedTransition } from "../serialize";
 import { isValidObject, isValidString } from "../utils";
 
@@ -458,6 +462,12 @@ function getMachineCode(
   return code;
 }
 
+/**
+ *
+ * @param serializedMachine The machine to generate code for
+ * @param format The format to generate code for, either esm or cjs
+ * @returns The generated code as a string
+ */
 export function generateFromSerializedMachine(serializedMachine: SerializedMachine, format: Format): string {
   let code = "";
 

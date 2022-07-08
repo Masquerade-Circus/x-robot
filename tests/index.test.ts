@@ -25,7 +25,7 @@ import expect from "expect";
 import { shouldFreeze } from "../lib/machine/create";
 import { validate } from "../lib/validate";
 
-describe("XRobot", () => {
+describe("X-Robot", () => {
   // Machine
   describe("Machine", () => {
     it("should create a machine without a title", () => {

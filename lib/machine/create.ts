@@ -1,19 +1,27 @@
+/**
+ * @module x-robot
+ * @description Create a new machine from a set of directives.
+ * */
 import {
   Action,
   ActionDirective,
   Context,
   ContextDirective,
+  DangerStateDirective,
   DescriptionDirective,
   Guard,
   GuardDirective,
   GuardsDirective,
   HistoryType,
   ImmediateDirective,
+  InfoStateDirective,
   InitialDirective,
   Machine,
+  MachineArguments,
   NestedGuardDirective,
   NestedMachineDirective,
   ParallelDirective,
+  PrimaryStateDirective,
   Producer,
   ProducerDirective,
   ProducerDirectiveWithoutTransition,
@@ -21,8 +29,10 @@ import {
   ShouldFreezeDirective,
   StateDirective,
   StatesDirective,
+  SuccessStateDirective,
   TransitionDirective,
   TransitionsDirective,
+  WarningStateDirective
 } from "./interfaces";
 import {
   deepFreeze,
@@ -32,6 +42,7 @@ import {
   isDescriptionDirective,
   isImmediate,
   isInitialDirective,
+  isMachine,
   isNestedImmediateDirective,
   isNestedMachineDirective,
   isParallelDirective,
@@ -43,7 +54,7 @@ import {
   isTransition,
   isValidObject,
   isValidString,
-  titleToId,
+  titleToId
 } from "../utils";
 
 /**
@@ -54,13 +65,13 @@ import {
  * And it must be able to be serialized and return a JSON object representing the state machine
  * */
 
-interface MachineArguments extends Array<string | ContextDirective | InitialDirective | ShouldFreezeDirective | StatesDirective | ParallelDirective> {}
-
-// Creates a new state machine manager
-// @param {Object} states
-// @param {Object|Function} context
-// @param {String} initialState
-// @returns {Machine}
+/**
+ * Creates a new machine
+ * @param title Title of the machine - This will be used to generate the id of the machine
+ * @param args Arguments to the machine
+ * @returns Machine
+ * @category Creation
+ */
 export function machine(title: string, ...args: MachineArguments): Machine {
   // Create the machine
   let myMachine: Machine = {
@@ -73,7 +84,7 @@ export function machine(title: string, ...args: MachineArguments): Machine {
     frozen: true,
     isAsync: false,
     history: [],
-    parallel: {},
+    parallel: {}
   };
 
   for (let arg of args) {
@@ -94,9 +105,12 @@ export function machine(title: string, ...args: MachineArguments): Machine {
 
     // If the argument is a context directive then merge it into the context
     if (isContextDirective(arg)) {
-      let newContext = typeof arg.context === "function" ? arg.context() : arg.context;
+      let newContext =
+        typeof arg.context === "function" ? arg.context() : arg.context;
       if (!isValidObject(newContext)) {
-        throw new Error("The context passed to the machine must be an object or a function that returns an object.");
+        throw new Error(
+          "The context passed to the machine must be an object or a function that returns an object."
+        );
       }
 
       myMachine.context = { ...myMachine.context, ...newContext };
@@ -161,6 +175,11 @@ export function machine(title: string, ...args: MachineArguments): Machine {
   return myMachine;
 }
 
+/**
+ * @param states Array of state directives made with the state method
+ * @returns StatesDirective
+ * @category Creation
+ */
 export function states(...states: StateDirective[]): StatesDirective {
   let newStates: StatesDirective = {};
 
@@ -171,6 +190,12 @@ export function states(...states: StateDirective[]): StatesDirective {
   return newStates;
 }
 
+/**
+ *
+ * @param machines Array of parallel machines
+ * @returns ParallelDirective
+ * @category Creation
+ */
 export function parallel(...machines: Machine[]): ParallelDirective {
   let obj: ParallelDirective = { parallel: {} };
 
@@ -181,27 +206,49 @@ export function parallel(...machines: Machine[]): ParallelDirective {
   return obj;
 }
 
+/**
+ *
+ * @param context The context to be passed to the machine, can be a function that returns an object
+ * @returns ContextDirective
+ * @category Creation
+ */
 export function context(context: Context | Function): ContextDirective {
   return {
-    context,
+    context
   };
 }
 
+/**
+ *
+ * @param initial The initial state of the machine
+ * @returns InitialDirective
+ * @category Creation
+ */
 export function initial(initial: string): InitialDirective {
   return {
-    initial,
+    initial
   };
 }
 
+/**
+ *
+ * @param freeze If false the machine will not be frozen. The machine will be frozen by default.
+ * @returns ShouldFreezeDirective
+ * @category Creation
+ */
 export function shouldFreeze(freeze: boolean): ShouldFreezeDirective {
   return {
-    freeze,
+    freeze
   };
 }
 
-// Creates a new state
-// @params {Array} args: transitions, actions or producers
-// @returns {State}
+/**
+ *
+ * @param name The name of the state
+ * @param args nested machines, actions, producers, transitions, etc.
+ * @returns StateDirective
+ * @category Creation
+ */
 export function state(name: string, ...args: RunCollection): StateDirective {
   let run: (ActionDirective | ProducerDirective)[] = [];
   let on: TransitionsDirective = {};
@@ -220,16 +267,38 @@ export function state(name: string, ...args: RunCollection): StateDirective {
 
       // If is an action and has a success transition or a failure transition, then try to add them to the on object
       if (isAction(arg)) {
-        let successTransition = isValidString(arg.success) ? arg.success : isProducerWithTransition(arg.success) ? arg.success.transition : null;
+        let successTransition = isValidString(arg.success)
+          ? arg.success
+          : isProducerWithTransition(arg.success)
+          ? arg.success.transition
+          : null;
         // If success is a transition
-        if (isValidString(successTransition) && hasTransition({ on } as StateDirective, successTransition) === false) {
-          on[successTransition] = { transition: successTransition, target: successTransition, guards: [] };
+        if (
+          isValidString(successTransition) &&
+          hasTransition({ on } as StateDirective, successTransition) === false
+        ) {
+          on[successTransition] = {
+            transition: successTransition,
+            target: successTransition,
+            guards: []
+          };
         }
 
-        let failureTransition = isValidString(arg.failure) ? arg.failure : isProducerWithTransition(arg.failure) ? arg.failure.transition : null;
+        let failureTransition = isValidString(arg.failure)
+          ? arg.failure
+          : isProducerWithTransition(arg.failure)
+          ? arg.failure.transition
+          : null;
         // If failure is a transition
-        if (isValidString(failureTransition) && hasTransition({ on } as StateDirective, failureTransition) === false) {
-          on[failureTransition] = { transition: failureTransition, target: failureTransition, guards: [] };
+        if (
+          isValidString(failureTransition) &&
+          hasTransition({ on } as StateDirective, failureTransition) === false
+        ) {
+          on[failureTransition] = {
+            transition: failureTransition,
+            target: failureTransition,
+            guards: []
+          };
         }
       }
 
@@ -242,7 +311,10 @@ export function state(name: string, ...args: RunCollection): StateDirective {
       let guards = arg.guards;
 
       // If the immediate transition is not a nested or parallel machine then add it to the on object
-      if (!isNestedImmediateDirective(arg) && !isParallelImmediateDirective(arg)) {
+      if (
+        !isNestedImmediateDirective(arg) &&
+        !isParallelImmediateDirective(arg)
+      ) {
         // We turn the immediate transition into a normal transition so that the machine can handle it
         on[transition] = { target: transition, transition: transition, guards };
       }
@@ -263,95 +335,342 @@ export function state(name: string, ...args: RunCollection): StateDirective {
     immediate,
     args,
     type: "default",
-    description,
+    description
   };
 }
 
-// Creates a new transition
-// @param {String} event
-// @param {String} target
-// @returns {Transition}
-export function transition(transitionName: string, target: string, ...guards: GuardsDirective): TransitionDirective {
+/**
+ *
+ * @param transitionName The name of the transition
+ * @param target The target state of the transition
+ * @param guards The guards of the transition
+ * @returns TransitionDirective
+ * @category Creation
+ */
+export function transition(
+  transitionName: string,
+  target: string,
+  ...guards: GuardsDirective
+): TransitionDirective {
   return {
     transition: transitionName,
     target,
-    guards,
+    guards
   };
 }
 
-// Creates a new action
-// @param {String} event
-// @param {Function} action
-// @param {Function} onSuccessProducer (optional)
-// @param {Function} onFailureProducer (optional)
-// @returns {Action}
-export function action(action: Action, onSuccessProducer?: ProducerDirective | string | null, onFailureProducer?: ProducerDirective | string): ActionDirective {
+/**
+ *
+ * @param action The action to be run
+ * @param onSuccessProducer The producer to be run on success with an optional transition name or a transition name
+ * @param onFailureProducer The producer to be run on failure with an optional transition name or a transition name
+ * @returns ActionDirective
+ * @category Creation
+ */
+export function action(
+  action: Action,
+  onSuccessProducer?: ProducerDirective | string | null,
+  onFailureProducer?: ProducerDirective | string | null
+): ActionDirective {
   return {
     action,
     success: onSuccessProducer,
-    failure: onFailureProducer,
+    failure: onFailureProducer
   };
 }
 
-// Creates a new guard function
-// @param {Function} guard
-export function guard(guard: Guard, onFailureProducer?: ProducerDirectiveWithoutTransition): GuardDirective {
+/**
+ *
+ * @param guard The guard to be run
+ * @param onFailureProducer The producer to be run on failure, this producer should not have a transition name
+ * @returns GuardDirective
+ * @category Creation
+ */
+export function guard(
+  guard: Guard,
+  onFailureProducer?: ProducerDirectiveWithoutTransition
+): GuardDirective {
   return {
     guard,
-    failure: onFailureProducer,
+    failure: onFailureProducer
   };
 }
 
-// Creates a new producer
-// @param {Function} producer
-// @param {String} event, optional
-// @returns {Producer}
-export function producer(producer: Producer, transition?: string): ProducerDirective | ProducerDirectiveWithoutTransition {
+/**
+ *
+ * @param producer The producer to be run
+ * @param transition The transition to be run on producer processed if the logic in which the producer is run allows it
+ * @returns ProducerDirective
+ * @category Creation
+ */
+export function producer(
+  producer: Producer,
+  transition?: string
+): ProducerDirective | ProducerDirectiveWithoutTransition {
   return {
     producer,
-    transition,
+    transition
   };
 }
 
-export function immediate(target: string, ...guards: GuardsDirective): ImmediateDirective {
+/**
+ *
+ * @param target The target state of the transition
+ * @param guards The guards of the transition
+ * @returns ImmediateDirective
+ * @category Creation
+ */
+export function immediate(
+  target: string,
+  ...guards: GuardsDirective
+): ImmediateDirective {
   return {
     immediate: target,
-    guards,
+    guards
   };
 }
 
-export function nestedGuard(machine: Machine, guard: Guard, onFailureProducer?: ProducerDirectiveWithoutTransition): NestedGuardDirective {
+/**
+ * This method returns a nested guard directive.
+ * It works like the guard directive but it receives the nested machine context as the first argument instead of the parent machine context.
+ *
+ * @param machine The nested machine to be run
+ * @param guard The guard to be run
+ * @param onFailureProducer The producer to be run on failure, this producer should not have a transition name
+ * @returns NestedGuardDirective
+ * @category Creation
+ */
+export function nestedGuard(
+  machine: Machine,
+  guard: Guard,
+  onFailureProducer?: ProducerDirectiveWithoutTransition
+): NestedGuardDirective {
   return {
     guard,
     machine,
-    failure: onFailureProducer,
+    failure: onFailureProducer
   };
 }
 
-export function nested(machine: Machine, transition?: string): NestedMachineDirective {
+/**
+ *
+ * @param machine The nested machine to be run
+ * @param transition The transition to be run when the machine enters in the state that has the nested machine
+ * @returns NestedMachineDirective
+ * @category Creation
+ */
+export function nested(
+  machine: Machine,
+  transition?: string
+): NestedMachineDirective {
   return {
     machine,
-    transition,
+    transition
   };
 }
 
+/**
+ * This is used as documentation for the serialization and in the diagram generation of the machine.
+ * Not to be used in the machine execution itself.
+ *
+ * @param description The description of the state
+ * @returns DescriptionDirective
+ * @category Creation
+ */
 export function description(description: string): DescriptionDirective {
   return {
-    description,
+    description
   };
 }
 
-// States with types
-let makeStateType =
-  (type: string) =>
-  (name: string, ...args: RunCollection): StateDirective => {
-    let stateObject = state(name, ...args);
-    stateObject.type = type;
-    return stateObject;
-  };
+/**
+ * State directive that represents an info state. This is used as documentation for the serialization and in the diagram generation of the machine.
+ * Not to be used in the machine execution itself.
+ * @param name The name of the state
+ * @param args nested machines, actions, producers, transitions, etc.
+ * @returns InfoStateDirective
+ * @category Creation
+ */
+export function infoState(
+  name: string,
+  ...args: RunCollection
+): InfoStateDirective {
+  let stateObject = state(name, ...args);
+  stateObject.type = "info";
+  return stateObject as InfoStateDirective;
+}
 
-export const infoState = makeStateType("info");
-export const primaryState = makeStateType("primary");
-export const successState = makeStateType("success");
-export const warningState = makeStateType("warning");
-export const dangerState = makeStateType("danger");
+/**
+ * State directive that represents a primary state. This is used as documentation for the serialization and in the diagram generation of the machine.
+ * Not to be used in the machine execution itself.
+ * @param name The name of the state
+ * @param args nested machines, actions, producers, transitions, etc.
+ * @returns PrimaryStateDirective
+ * @category Creation
+ */
+export function primaryState(
+  name: string,
+  ...args: RunCollection
+): PrimaryStateDirective {
+  let stateObject = state(name, ...args);
+  stateObject.type = "primary";
+  return stateObject as PrimaryStateDirective;
+}
+
+/**
+ * State directive that represents a success state. This is used as documentation for the serialization and in the diagram generation of the machine.
+ * Not to be used in the machine execution itself.
+ * @param name The name of the state
+ * @param args nested machines, actions, producers, transitions, etc.
+ * @returns SuccessStateDirective
+ * @category Creation
+ */
+export function successState(
+  name: string,
+  ...args: RunCollection
+): SuccessStateDirective {
+  let stateObject = state(name, ...args);
+  stateObject.type = "success";
+  return stateObject as SuccessStateDirective;
+}
+
+/**
+ * State directive that represents a warning state. This is used as documentation for the serialization and in the diagram generation of the machine.
+ * Not to be used in the machine execution itself.
+ * @param name The name of the state
+ * @param args nested machines, actions, producers, transitions, etc.
+ * @returns WarningStateDirective
+ * @category Creation
+ */
+export function warningState(
+  name: string,
+  ...args: RunCollection
+): WarningStateDirective {
+  let stateObject = state(name, ...args);
+  stateObject.type = "warning";
+  return stateObject as WarningStateDirective;
+}
+
+/**
+ * State directive that represents a danger state. This is used as documentation for the serialization and in the diagram generation of the machine.
+ * Not to be used in the machine execution itself.
+ * @param name The name of the state
+ * @param args nested machines, actions, producers, transitions, etc.
+ * @returns DangerStateDirective
+ * @category Creation
+ */
+export function dangerState(
+  name: string,
+  ...args: RunCollection
+): DangerStateDirective {
+  let stateObject = state(name, ...args);
+  stateObject.type = "danger";
+  return stateObject as DangerStateDirective;
+}
+
+// The current state of the machine or null
+export type CurrentState = string | null;
+
+// Object with all the parallel states of the machine
+export interface AllStates {
+  [key: string]: CurrentState | AllStates;
+}
+
+/**
+ * Get the current state or the parallel states of the machine if no path is provided
+ * Or get the current state of a nested machine if a path is provided
+ * @param machine The machine to get the current state of
+ * @param path The path to the current state, e.g. 'stateA.stateB.stateC'
+ * @returns The current state or null if the path is invalid
+ * @category State
+ */
+export function getState(
+  machine: Machine,
+  path?: string
+): AllStates | CurrentState {
+  // If there is no machine we will return null
+  if (!isMachine(machine)) {
+    return null;
+  }
+
+  // If there is no path we will return the current state
+  if (!isValidString(path)) {
+    let result = {} as AllStates;
+
+    // We will iterate over all the parallel states
+    if (Object.keys(machine.parallel).length > 0) {
+      for (let parallelName in machine.parallel) {
+        result[parallelName] = getState(machine.parallel[parallelName]);
+      }
+    }
+
+    if (isValidString(machine.current)) {
+      result.current = machine.current;
+    }
+
+    // If there is only one state and it is the current state we will return it
+    if (isValidString(result.current) && Object.keys(result).length === 1) {
+      return result.current;
+    }
+
+    // If we have more than one state or the state is not the current state we will return the object
+    if (Object.keys(result).length > 0) {
+      return result;
+    }
+
+    // If there is no current state and no parallel states we will return null
+    return null;
+  }
+
+  let pathParts = path.split(".");
+  let stateName = pathParts.shift();
+
+  // If the state name is not a string we will return null
+  if (!isValidString(stateName)) {
+    return null;
+  }
+
+  // Find the state in the parallel states
+  if (stateName in machine.parallel) {
+    return getState(machine.parallel[stateName], pathParts.join("."));
+  }
+
+  // Find the state in the states
+  if (stateName in machine.states) {
+    // If we have a state we will find the states in the nested machines
+    let obj: AllStates = {};
+
+    // Find a nested machine in the state
+    for (let nested of machine.states[stateName].nested) {
+      obj[nested.machine.id] = getState(nested.machine, pathParts.join("."));
+    }
+
+    // If the object is empty we will return null
+    if (Object.keys(obj).length === 0) {
+      return null;
+    }
+
+    // If the object only has one property we will return the value of the property
+    if (Object.keys(obj).length === 1) {
+      return obj[Object.keys(obj)[0]];
+    }
+
+    // If we are here we will return the whole object
+    return obj;
+  }
+
+  // If we are here check if we have a machine id as the stateName
+  let nestedMachineId = stateName;
+
+  // Find a nested machine in the state
+  for (stateName in machine.states) {
+    for (let nested of machine.states[stateName].nested) {
+      if (nested.machine.id === nestedMachineId) {
+        return getState(nested.machine, pathParts.join("."));
+      }
+    }
+  }
+
+  // If we are here we will return null
+  return null;
+}

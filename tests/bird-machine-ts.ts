@@ -17,7 +17,7 @@ import {
   states,
   successState,
   transition,
-  warningState,
+  warningState
 } from "../lib";
 
 import { validate } from "../lib/validate";
@@ -26,7 +26,7 @@ import { validate } from "../lib/validate";
 
 const getLeftWingContext = () => ({
   state: null,
-  error: null,
+  error: null
 });
 
 // Guards
@@ -60,14 +60,22 @@ export const LeftWingMachine = machine(
       description("The left wing is closed"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
       producer(updateLeftWingToClosed),
-      transition("open", "opened", guard(isLeftWingClosed, producer(updateError)))
+      transition(
+        "open",
+        "opened",
+        guard(isLeftWingClosed, producer(updateError))
+      )
     ),
     state(
       "opened",
       description("The left wing is opened"),
       action(sendStateToApiForLeftWing, null, producer(updateError, "fatal")),
       producer(updateLeftWingToOpened),
-      transition("close", "closed", guard(isLeftWingOpened, producer(updateError)))
+      transition(
+        "close",
+        "closed",
+        guard(isLeftWingOpened, producer(updateError))
+      )
     ),
     state(
       "fatal",
@@ -87,7 +95,7 @@ export const LeftWingMachine = machine(
 
 const getRightWingContext = () => ({
   state: null,
-  error: null,
+  error: null
 });
 
 // Guards
@@ -118,14 +126,22 @@ export const RightWingMachine = machine(
       description("The right wing is closed"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
       producer(updateRightWingToClosed),
-      transition("open", "opened", guard(isRightWingClosed, producer(updateError)))
+      transition(
+        "open",
+        "opened",
+        guard(isRightWingClosed, producer(updateError))
+      )
     ),
     state(
       "opened",
       description("The right wing is opened"),
       action(sendStateToApiForRightWing, null, producer(updateError, "fatal")),
       producer(updateRightWingToOpened),
-      transition("close", "closed", guard(isRightWingOpened, producer(updateError)))
+      transition(
+        "close",
+        "closed",
+        guard(isRightWingOpened, producer(updateError))
+      )
     ),
     state(
       "fatal",
@@ -161,12 +177,22 @@ const isTimeStopped = (context) => context.timer === null;
 const FlyingTimeCounter = machine(
   "Flying time",
   states(
-    state("stopped", description("The bird is not flying"), producer(stopTimer), transition("start", "started", guard(isTimeStopped))),
-    state("started", description("The bird is flying"), producer(startTimer), transition("stop", "stopped", guard(isTimeStarted)))
+    state(
+      "stopped",
+      description("The bird is not flying"),
+      producer(stopTimer),
+      transition("start", "started", guard(isTimeStopped))
+    ),
+    state(
+      "started",
+      description("The bird is flying"),
+      producer(startTimer),
+      transition("stop", "stopped", guard(isTimeStarted))
+    )
   ),
   context({
     time: 0,
-    timer: null,
+    timer: null
   }),
   initial("stopped")
 );
@@ -178,12 +204,22 @@ const FlyingTimeCounter = machine(
 const WalkingTimeCounter = machine(
   "Walking time",
   states(
-    state("stopped", description("The bird is not walking"), producer(stopTimer), transition("start", "started", guard(isTimeStopped))),
-    state("started", description("The bird is walking"), producer(startTimer), transition("stop", "stopped", guard(isTimeStarted)))
+    state(
+      "stopped",
+      description("The bird is not walking"),
+      producer(stopTimer),
+      transition("start", "started", guard(isTimeStopped))
+    ),
+    state(
+      "started",
+      description("The bird is walking"),
+      producer(startTimer),
+      transition("stop", "stopped", guard(isTimeStarted))
+    )
   ),
   context({
     time: 0,
-    timer: null,
+    timer: null
   }),
   initial("stopped")
 );
@@ -194,7 +230,7 @@ const WalkingTimeCounter = machine(
 
 const getBirdContext = () => ({
   error: null,
-  state: null,
+  state: null
 });
 
 // Producers

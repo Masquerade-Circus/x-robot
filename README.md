@@ -1,6 +1,6 @@
-## XRobot
+## X-Robot
 
-XRobot is a finite state machine library for nodejs and for the web.
+X-Robot is a finite state machine library for nodejs and for the web.
 Intended to be used for high complex state machines with an easy to use API.
 Not only for user interfaces but also for server side applications.
 
@@ -8,7 +8,7 @@ Not only for user interfaces but also for server side applications.
 
 ### Simple example
 
-![Toggle machine diagram](./docs/images/toggle-machine-diagram.svg)
+![Toggle machine diagram](./media/toggle-machine-diagram.svg)
 
 ```javascript 
 import {machine, states, state, initial, transition, invoke} from 'x-robot';
@@ -31,7 +31,7 @@ invoke(stoplight, 'next'); // stoplight.current === 'green'
 
 ### Async example
 
-![Fetch machine diagram](./docs/images/fetch-machine-diagram.svg)
+![Fetch machine diagram](./media/fetch-machine-diagram.svg)
 
 ```javascript
 import {machine, states, state, initial, transition, invoke, action, producer} from 'x-robot';
@@ -82,7 +82,7 @@ await invoke(fetchMachine, 'fetch');
 
 ### Nested machines
 
-![Stoplight machine diagram](./docs/images/stoplight-machine-diagram.svg)
+![Stoplight machine diagram](./media/stoplight-machine-diagram.svg)
 
 ```javascript
 import {machine, states, state, initial, transition, invoke, nested, guard} from 'x-robot';
@@ -133,7 +133,7 @@ invoke(stoplight, 'red.stop'); // Invoke the stopwalk transition stop from the s
 
 ### Parallel states
 
-![Word machine diagram](./docs/images/word-machine-diagram.svg)
+![Word machine diagram](./media/word-machine-diagram.svg)
 
 ```javascript
 import {machine, states, state, initial, transition, invoke, parallel, getState} from 'x-robot';

@@ -1,8 +1,14 @@
+/**
+ * @module x-robot
+ * @description X-Robot is a finite state machine library for nodejs and for the web.
+ * */
+
 import {
   action,
   context,
   dangerState,
   description,
+  getState,
   guard,
   immediate,
   infoState,
@@ -17,11 +23,9 @@ import {
   states,
   successState,
   transition,
-  warningState,
+  warningState
 } from "./machine/create";
 import { invoke, start } from "./machine/invoke";
-
-import { getState } from "./utils";
 
 export {
   machine,

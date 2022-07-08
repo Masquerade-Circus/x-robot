@@ -22,7 +22,7 @@ import fs from "fs";
 import { serialize } from "../lib/serialize";
 import { validate } from "../lib/validate";
 
-describe("XRobot", () => {
+describe("X-Robot", () => {
   function getMachine() {
     function updateState(context, payload) {
       return { ...context, ...payload };

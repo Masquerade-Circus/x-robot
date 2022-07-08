@@ -1,7 +1,7 @@
 {
   "name": "x-robot",
   "version": "0.2.0",
-  "description": "XRobot is a finite state machine library for nodejs and for the web.",
+  "description": "X-Robot is a finite state machine library for nodejs and for the web.",
   "source": "lib/index.ts",
   "main": "dist/index.min.js",
   "module": "dist/index.mjs",
@@ -16,18 +16,20 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "test": "mocha --recursive --no-timeouts --exit --file register.js --enable-source-maps tests/**/*.test.ts",
+    "test": "mocha --recursive --no-timeouts --exit --require ts-node/register --enable-source-maps tests/**/*.test.ts",
     "test-cjs": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.js",
     "test-mjs": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.mjs",
-    "test-all": "yarn test && yarn test-cjs && yarn test-mjs",
-    "dev:test": "nodemon -e ts,js -w ./tests -w ./lib --exec 'yarn test'",
-    "bench": "buffalo-test --require=./register.js ./bench/**/*.ts",
-    "dev:bench": "nodemon -e ts,js -w ./bench -w ./lib --exec 'yarn bench'",
+    "test-min": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.min.js",
+    "test-all": "npm run test && npm run test-cjs && npm run test-mjs && npm run test-min",
+    "dev:test": "nodemon -e ts,js -w ./tests -w ./lib --exec 'npm run test'",
+    "bench": "buffalo-test --require=ts-node/register ./bench/**/*.ts",
+    "dev:bench": "nodemon -e ts,js -w ./bench -w ./lib --exec 'npm run bench'",
     "build": "node build.js",
     "remark": "remark . -o",
     "commit": "git add . && git-cz",
     "release": "release-it --verbose",
-    "release-test": "release-it --dry-run --verbose"
+    "release-test": "release-it --dry-run --verbose",
+    "docs": "typedoc"
   },
   "files": [
     "lib",
@@ -50,25 +52,30 @@
     "finite automata",
     "immutable"
   ],
-  "dependencies": {},
   "devDependencies": {
-    "@release-it/conventional-changelog": "^3.3.0",
-    "@types/node": "^16.10.3",
+    "@release-it/conventional-changelog": "^5.0.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "^18.0.0",
     "buffalo-test": "^2.0.0",
     "cz-conventional-changelog": "^3.3.0",
-    "esbuild": "^0.13.4",
-    "expect": "^27.2.4",
-    "gzip-size": "^6.0.0",
-    "mocha": "^9.1.2",
+    "esbuild": "^0.14.47",
+    "expect": "^28.1.1",
+    "gzip-size": "^7.0.0",
+    "mocha": "^10.0.0",
     "nodemon": "^2.0.13",
-    "pirates": "^4.0.1",
-    "release-it": "^14.11.7",
-    "remark-cli": "^10.0.0",
-    "robot3": "^0.2.21",
+    "release-it": "^15.1.1",
+    "remark-cli": "^11.0.0",
+    "robot3": "^0.3.1",
     "terser": "^5.9.0",
+    "ts-node": "^10.8.2",
     "tsc": "^2.0.3",
     "tsc-prog": "^2.2.1",
-    "typescript": "^4.4.3",
+    "typedoc": "^0.23.2",
+    "typedoc-plugin-markdown": "^3.13.1",
+    "typedoc-plugin-mdn-links": "^2.0.0",
+    "typedoc-plugin-merge-modules": "^4.0.0",
+    "typedoc-plugin-remove-references": "^0.0.6",
+    "typescript": "^4.7.4",
     "xstate": "^4.26.1"
   },
   "config": {
@@ -146,8 +153,9 @@
     },
     "hooks": {
       "after:@release-it/conventional-changelog": [
-        "yarn remark",
-        "yarn build"
+        "npm run remark",
+        "npm run docs",
+        "npm run build"
       ]
     }
   }

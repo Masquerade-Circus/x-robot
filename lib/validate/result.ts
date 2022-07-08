@@ -1,3 +1,7 @@
+/**
+ * @module x-robot/validate
+ * @description A class that represents the result of a validation.
+ * */
 export type Result<T, E> = Ok<T, never> | Err<never, E>;
 
 export type Results<T, E> = Result<T, E>[];
@@ -50,7 +54,9 @@ export function err<E>(err: E): Err<never, E> {
   return new Err(err);
 }
 
-export function combine<T, E>(results: Results<T, E>): Result<T, E> | Results<T, E> {
+export function combine<T, E>(
+  results: Results<T, E>
+): Result<T, E> | Results<T, E> {
   for (const result of results) {
     if (result.isErr()) {
       return result;

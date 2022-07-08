@@ -1,9 +1,13 @@
-// Gets a property from a state machine
-// @param {Machine} machine
-// @param {String} property
-// @param {Any} defaultValue
-
-import { ActionDirective, HistoryType, Machine, ProducerDirective, START_EVENT, StateDirective, TransitionDirective } from "./interfaces";
+/** @module x-robot */
+import {
+  ActionDirective,
+  HistoryType,
+  Machine,
+  ProducerDirective,
+  START_EVENT,
+  StateDirective,
+  TransitionDirective
+} from "./interfaces";
 import {
   canMakeTransition,
   cloneContext,
@@ -18,16 +22,20 @@ import {
   isProducer,
   isProducerWithTransition,
   isValidObject,
-  isValidString,
+  isValidString
 } from "../utils";
 
-const START_TRANSITION = START_EVENT;
-
-// Run producer
-// @param {Machine} machine
-// @param {Producer} producer
-// @returns {Void}
-function runProducer(machine: Machine, producer?: ProducerDirective | string | null, payload?: any) {
+/**
+ * @param machine The machine that is running
+ * @param producer The producer to invoke
+ * @param payload The payload to pass to the producer
+ * @returns Promise or void depending if the machine is async or not
+ */
+function runProducer(
+  machine: Machine,
+  producer?: ProducerDirective | string | null,
+  payload?: any
+): Promise<void> | void {
   // If it is a producer then we run it
   if (isProducer(producer)) {
     // Add the producer to the history
@@ -68,11 +76,18 @@ function runProducer(machine: Machine, producer?: ProducerDirective | string | n
   }
 }
 
-// Run action
-// @param {Machine} machine
-// @param {Action} action
-// @returns {Void}
-async function runAction(machine: Machine, action: ActionDirective, payload?: any): Promise<void> {
+/**
+ * Actions are always async and the existence of an action in a machine means that the machine is async too
+ * @param machine The machine that is running
+ * @param action The action to invoke
+ * @param payload The payload to pass to the action
+ * @returns Promise
+ */
+async function runAction(
+  machine: Machine,
+  action: ActionDirective,
+  payload?: any
+): Promise<void> {
   // Add the action to the history
   machine.history.push(`${HistoryType.Action}: ${action.action.name}`);
 
@@ -93,7 +108,23 @@ function hasFatalError(machine: Machine): boolean {
   return machine.fatal instanceof Error;
 }
 
-function catchError(machine: Machine, state: StateDirective, error: Error) {
+/**
+ *
+ * The error handler is called when an error is thrown in a transition
+ * First we check if the current state has an error transition and if so we run it
+ * If the current state does not have an error transition, we check if the machine has a fatal state and if so we go to it
+ * If the machine does not have a fatal state, we rethrow the error
+ *
+ * @param machine The machine that is running
+ * @param state The current state of the machine
+ * @param error The error that was thrown
+ * @returns Promise or void depending if the machine is async or not and if there is a error transition to invoke
+ */
+function catchError(
+  machine: Machine,
+  state: StateDirective,
+  error: Error
+): Promise<void> | void {
   // Check if we have a local error transition and invoke it if so
   if (hasTransition(state, "error")) {
     return invoke(machine, "error", error);
@@ -113,7 +144,18 @@ function catchError(machine: Machine, state: StateDirective, error: Error) {
   throw error;
 }
 
-async function runActionsAndProducers(machine: Machine, state: StateDirective, payload: any) {
+/**
+ *
+ * @param machine The machine that is running
+ * @param state The current state of the machine
+ * @param payload The payload to pass to the actions and producers
+ * @returns Promise as we know that the machine is async
+ */
+async function runActionsAndProducers(
+  machine: Machine,
+  state: StateDirective,
+  payload: any
+): Promise<void> {
   for (let i = 0; i < state.run.length; i++) {
     let item = state.run[i];
     try {
@@ -129,39 +171,58 @@ async function runActionsAndProducers(machine: Machine, state: StateDirective, p
   }
 }
 
-function runProducers(machine: Machine, state: StateDirective, payload: any, index = 0) {
-  if (index >= state.run.length) {
-    return;
-  }
-
-  try {
-    let item = state.run[index];
-
-    if (isProducer(item)) {
-      runProducer(machine, item, payload);
+/**
+ * @param machine The machine that is running
+ * @param state The current state of the machine
+ * @param payload The payload to pass to the producers
+ * @returns void as we know that the machine is not async
+ */
+function runProducers(machine: Machine, state: StateDirective, payload: any) {
+  for (let i = 0; i < state.run.length; i++) {
+    let item = state.run[i];
+    try {
+      if (isProducer(item)) {
+        runProducer(machine, item, payload);
+      }
+    } catch (error) {
+      catchError(machine, state, error as Error);
+      break;
     }
-  } catch (error) {
-    catchError(machine, state, error as Error);
   }
-
-  runProducers(machine, state, payload, index + 1);
 }
 
-function runGuards(machine: Machine, state: StateDirective, transition: TransitionDirective, payload: any, index = 0): boolean {
-  // If there are no guards, we can return true
-  if (index >= transition.guards.length) {
-    return true;
-  }
+/**
+ *
+ * @param machine The machine that is running
+ * @param state The current state of the machine
+ * @param transition The transition that is being invoked
+ * @param payload The payload to pass to the guards
+ * @param index The current index of the guard in the transition
+ * @returns boolean
+ */
+function runGuards(
+  machine: Machine,
+  state: StateDirective,
+  transition: TransitionDirective,
+  payload: any
+): boolean {
+  for (let i = 0; i < transition.guards.length; i++) {
+    // Run the guard
+    let guard = transition.guards[i];
 
-  // Run the guard
-  let guard = transition.guards[index];
+    try {
+      // If the item is not a guard then return false
+      // ? Should we throw an error instead?
+      if (!isGuard(guard)) {
+        return false;
+      }
 
-  try {
-    if (isGuard(guard)) {
       // Add the guard to the history
       machine.history.push(`${HistoryType.Guard}: ${guard.guard.name}`);
 
-      let result = false;
+      // Result could be a boolean or anything else
+      let result;
+
       // If the guard is a nested guard run it with the nested machine context
       if (isNestedGuard(guard)) {
         result = guard.guard(guard.machine.context, payload);
@@ -169,62 +230,81 @@ function runGuards(machine: Machine, state: StateDirective, transition: Transiti
         result = guard.guard(machine.context, payload);
       }
 
-      // If the result is equals to true, we can run the next guard if any
-      if (result === true) {
-        return runGuards(machine, state, transition, payload, index + 1);
-      }
+      // If the result is different than true we break the loop and return false
+      if (result !== true) {
+        // If the result is other than true, we can return false and check if we have a failure producer and invoke it if so
+        // passing the result as the payload (This is useful for error handling)
+        if (isProducer(guard.failure)) {
+          runProducer(machine, guard.failure, result);
+        }
 
-      // If the result is other than true, we can return false and check if we have a failure producer and invoke it if so
-      if (isProducer(guard.failure)) {
-        runProducer(machine, guard.failure, result);
+        return false;
       }
+    } catch (error) {
+      // Catch the error and invoke the error transition if we have one
+      catchError(machine, state, error as Error);
+
+      return false;
     }
-    // If we get here, we have a failure and we can return false
-    return false;
-  } catch (error) {
-    // Catch the error and invoke the error transition if we have one
-    catchError(machine, state, error as Error);
-
-    return false;
   }
+
+  // If we get here, we have a success and we can return true
+  return true;
 }
 
-// Run nested machines
-// @param {Machine} machine
-// @param {State} state
-function runNestedMachines(machine: Machine, state: StateDirective, payload: any) {
+/**
+ *
+ * @param machine The machine that is running
+ * @param state The current state of the machine
+ * @param payload The payload to pass to the actions and producers of the nested machine
+ * @returns Promise or void depending if the machine is async or not
+ */
+function runNestedMachines(
+  machine: Machine,
+  state: StateDirective,
+  payload: any
+): Promise<void> | void {
   // If there are no nested machines, we can return
   if (state.nested.length === 0) {
     return;
   }
 
+  let promise;
   if (machine.isAsync) {
-    // Run the actions and producers
-    let promise = Promise.resolve();
-
-    // If the state has a nested machine, we run it
-    for (let nestedMachine of state.nested) {
-      // If the nested machine is a nested machine with a transition we run the transition on it
-      if (isNestedMachineWithTransitionDirective(nestedMachine)) {
-        let transition = nestedMachine.transition;
-        promise = promise.then(() => invoke(nestedMachine.machine, transition, payload));
-      }
-    }
-
-    // Return the promise
-    return promise;
+    promise = Promise.resolve();
   }
 
   // If the state has a nested machine, we run it
   for (let nestedMachine of state.nested) {
     // If the nested machine is a nested machine with a transition we run the transition on it
     if (isNestedMachineWithTransitionDirective(nestedMachine)) {
-      invoke(nestedMachine.machine, nestedMachine.transition, payload);
+      let transition = nestedMachine.transition;
+      if (promise) {
+        promise = promise.then(() =>
+          invoke(nestedMachine.machine, transition, payload)
+        );
+      } else {
+        invoke(nestedMachine.machine, transition, payload);
+      }
     }
   }
+
+  // Return the promise
+  return promise || void 0;
 }
 
-function runNestedTransition(machine: Machine, transition: string, payload: any): Promise<void> | void {
+/**
+ *
+ * @param machine The machine that is running
+ * @param transition The transition that is being invoked
+ * @param payload The payload to pass to the actions and producers of the nested machine
+ * @returns Promise or void depending if the machine is async or not
+ */
+function runNestedTransition(
+  machine: Machine,
+  transition: string,
+  payload: any
+): Promise<void> | void {
   // We know that we have a nested transition and that the first part is the current state
   // so we get rid of the first part and split the rest
   let nestedTransitionParts = transition.split(".");
@@ -243,9 +323,13 @@ function runNestedTransition(machine: Machine, transition: string, payload: any)
   for (let nestedMachineDirective of currentStateObject.nested) {
     let nestedMachine = nestedMachineDirective.machine;
     let currentNestedState = nestedMachine.states[nestedMachine.current];
-    if (canMakeTransition(nestedMachine, currentNestedState, nestedTransition)) {
+    if (
+      canMakeTransition(nestedMachine, currentNestedState, nestedTransition)
+    ) {
       if (promise) {
-        promise = promise.then(() => invoke(nestedMachine, nestedTransition, payload));
+        promise = promise.then(() =>
+          invoke(nestedMachine, nestedTransition, payload)
+        );
       } else {
         invoke(nestedMachine, nestedTransition, payload);
       }
@@ -254,7 +338,9 @@ function runNestedTransition(machine: Machine, transition: string, payload: any)
 
   // If we have an immediate transitions we can run it
   if (promise) {
-    promise = promise.then(() => invokeImmediateDirectives(machine, currentStateObject, payload));
+    promise = promise.then(() =>
+      invokeImmediateDirectives(machine, currentStateObject, payload)
+    );
   } else {
     invokeImmediateDirectives(machine, currentStateObject, payload);
   }
@@ -262,10 +348,21 @@ function runNestedTransition(machine: Machine, transition: string, payload: any)
   return promise || void 0;
 }
 
-function runParallelTransition(machine: Machine, transition: string, payload: any): Promise<void> | void {
+/**
+ *
+ * @param machine The machine that is running
+ * @param transition The transition that is being invoked
+ * @param payload The payload to pass to the actions and producers of the parallel machine
+ * @returns Promise or void depending if the machine is async or not
+ */
+function runParallelTransition(
+  machine: Machine,
+  transition: string,
+  payload: any
+): Promise<void> | void {
   // We know that we have a parallel transition and that the first part is the parallelMachineId
   // so we get rid of the first part and split the rest
-  let parallelTransitionParts = isNestedTransition(transition) ? transition.split(".") : transition.split("/");
+  let parallelTransitionParts = transition.split("/");
   let parallelMachineId = parallelTransitionParts.shift();
   let parallelTransition = parallelTransitionParts.join("/");
 
@@ -283,8 +380,18 @@ function runParallelTransition(machine: Machine, transition: string, payload: an
   // If the parallelMachineId is in the parallel object try to run the transition in the parallel machine
   return invoke(parallelMachine, parallelTransition, payload);
 }
-
-function invokeImmediateDirectives(machine: Machine, state: StateDirective, payload: any): Promise<void> | void {
+/**
+ *
+ * @param machine The machine that is running
+ * @param state The current state of the machine
+ * @param payload The payload to pass to the actions and producers of the transition
+ * @returns Promise or void depending if the machine is async or not
+ */
+function invokeImmediateDirectives(
+  machine: Machine,
+  state: StateDirective,
+  payload: any
+): Promise<void> | void {
   // If there are no immediate directives, we can return
   if (state.immediate.length === 0) {
     return;
@@ -306,7 +413,9 @@ function invokeImmediateDirectives(machine: Machine, state: StateDirective, payl
       let parallelTransition = transitionParts.join("/");
       let parallelMachine = machine.parallel[parallelMachineId];
       if (promise) {
-        promise = promise.then(() => invoke(parallelMachine, parallelTransition, payload));
+        promise = promise.then(() =>
+          invoke(parallelMachine, parallelTransition, payload)
+        );
       } else {
         invoke(parallelMachine, parallelTransition, payload);
       }
@@ -315,7 +424,9 @@ function invokeImmediateDirectives(machine: Machine, state: StateDirective, payl
     // If is a nested transition we run the transition in the nested machine
     else if (isNestedTransition(immediateDirective.immediate)) {
       if (promise) {
-        promise = promise.then(() => invoke(machine, immediateDirective.immediate, payload));
+        promise = promise.then(() =>
+          invoke(machine, immediateDirective.immediate, payload)
+        );
       } else {
         invoke(machine, immediateDirective.immediate, payload);
       }
@@ -342,11 +453,19 @@ function invokeImmediateDirectives(machine: Machine, state: StateDirective, payl
   return promise || void 0;
 }
 
-// Invokes a transition
-// @param {Machine} machine
-// @param {String} event
-// @returns {Void}
-export function invoke(machine: Machine, transition: string, payload?: any): Promise<void> | void {
+/**
+ *
+ * @param machine The machine to invoke the transition on
+ * @param transition The transition to invoke
+ * @param payload The optional payload to pass to the transition
+ * @returns Void or a promise if the machine is async
+ * @category Invocation
+ */
+export function invoke(
+  machine: Machine,
+  transition: string,
+  payload?: any
+): Promise<void> | void {
   // If the machine has a fatal error, we will return immediately
   if (hasFatalError(machine)) {
     return;
@@ -354,24 +473,32 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
 
   // Check if we have received a valid transition as string and throw an error if not
   if (isValidString(transition) === false) {
-    throw new Error(`Trying to invoke a transition with an invalid string: ${transition}`);
+    throw new Error(
+      `Trying to invoke a transition with an invalid string: ${transition}`
+    );
   }
 
   let trimmedTransition = transition.trim();
 
-  // If the transition equals START_TRANSITION, we get the initial state
-  if (trimmedTransition === START_TRANSITION) {
+  // If the transition equals START_EVENT, we get the initial state
+  if (trimmedTransition === START_EVENT) {
     transition = machine.initial;
   }
 
   // Get the current state object
   let currentStateObject = machine.states[machine.current];
 
-  let hasTransition = canMakeTransition(machine, currentStateObject, trimmedTransition);
+  let hasTransition = canMakeTransition(
+    machine,
+    currentStateObject,
+    trimmedTransition
+  );
 
   // Check if the transition exists in the current state and throw an error if not
   if (!hasTransition) {
-    throw new Error(`The transition '${trimmedTransition}' does not exist in the current state '${machine.current}'`);
+    throw new Error(
+      `The transition '${trimmedTransition}' does not exist in the current state '${machine.current}'`
+    );
   }
 
   // Check if we have a nested or parallel transition
@@ -392,7 +519,12 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
     let transitionObject = currentStateObject.on[trimmedTransition];
 
     // If the transition has guards, run them and decide if we should continue
-    let shouldContinue = runGuards(machine, currentStateObject, transitionObject, payload);
+    let shouldContinue = runGuards(
+      machine,
+      currentStateObject,
+      transitionObject,
+      payload
+    );
     if (shouldContinue === false) {
       // As we tried to make a transition, we need to add the current state to the history
       machine.history.push(`${HistoryType.State}: ${currentStateObject.name}`);
@@ -401,16 +533,23 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
   }
 
   // Get the target state
-  let targetState = trimmedTransition === START_EVENT ? machine.initial : currentStateObject.on[trimmedTransition].target;
+  let targetState =
+    trimmedTransition === START_EVENT
+      ? machine.initial
+      : currentStateObject.on[trimmedTransition].target;
 
   // Check if we have a valid target state as string and throw an error if not
   if (isValidString(targetState) === false) {
-    throw new Error(`Trying to invoke a transition with an invalid target state: ${targetState}`);
+    throw new Error(
+      `Trying to invoke a transition with an invalid target state: ${targetState}`
+    );
   }
 
   // Check if the target state exists in the machine and throw an error if not
   if (targetState in machine.states === false) {
-    throw new Error(`Invalid target state '${targetState}' for '${machine.current}.${trimmedTransition}' transition`);
+    throw new Error(
+      `Invalid target state '${targetState}' for '${machine.current}.${trimmedTransition}' transition`
+    );
   }
 
   // Get the target state
@@ -427,13 +566,19 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
     let promise = Promise.resolve();
 
     // Try to run nested machines if any
-    promise = promise.then(() => runNestedMachines(machine, targetStateObject, payload));
+    promise = promise.then(() =>
+      runNestedMachines(machine, targetStateObject, payload)
+    );
 
     // Run the actions and producers
-    promise = promise.then(() => runActionsAndProducers(machine, targetStateObject, payload));
+    promise = promise.then(() =>
+      runActionsAndProducers(machine, targetStateObject, payload)
+    );
 
     // If there are immediate directives, run them
-    promise = promise.then(() => invokeImmediateDirectives(machine, targetStateObject, payload));
+    promise = promise.then(() =>
+      invokeImmediateDirectives(machine, targetStateObject, payload)
+    );
 
     // Return the promise
     return promise;
@@ -449,13 +594,24 @@ export function invoke(machine: Machine, transition: string, payload?: any): Pro
   invokeImmediateDirectives(machine, targetStateObject, payload);
 }
 
+/**
+ *
+ * @param machine The machine to run the initial state arguments
+ * @param payload The optional payload to pass to the initial state
+ * @returns Void or a promise if the machine is async
+ * @category Invocation
+ */
 export function start(machine: Machine, payload?: any): Promise<void> | void {
   // Validate initial transition before invoking
-  let canStartMachine = canMakeTransition(machine, machine.states[machine.current], START_EVENT);
+  let canStartMachine = canMakeTransition(
+    machine,
+    machine.states[machine.current],
+    START_EVENT
+  );
   // If we can't start the machine, throw an error
   if (!canStartMachine) {
     throw new Error(`The machine has already been started.`);
   }
 
-  return invoke(machine, START_TRANSITION, payload);
+  return invoke(machine, START_EVENT, payload);
 }

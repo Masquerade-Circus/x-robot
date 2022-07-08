@@ -1,3 +1,7 @@
+/**
+ * @module x-robot/visualize
+ * @description Generate a visual representation of a machine in plant uml format or get a png/svg image of the diagram.
+ * */
 import {
   SerializedAction,
   SerializedGuard,
@@ -5,9 +9,17 @@ import {
   SerializedMachine,
   SerializedNestedMachine,
   SerializedProducer,
-  serialize,
+  serialize
 } from "../serialize";
-import { isImmediate, isNestedMachineDirective, isNestedTransition, isParallelTransition, isValidObject, isValidString, titleToId } from "../utils";
+import {
+  isImmediate,
+  isNestedMachineDirective,
+  isNestedTransition,
+  isParallelTransition,
+  isValidObject,
+  isValidString,
+  titleToId
+} from "../utils";
 
 import { Machine } from "../machine/interfaces";
 import { exec } from "child_process";
@@ -15,25 +27,33 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 
-interface SerializedCollectionWithGuards
-  extends Array<SerializedGuard | SerializedAction | SerializedProducer | SerializedNestedMachine | SerializedImmediate> {}
+export interface SerializedCollectionWithGuards
+  extends Array<
+    | SerializedGuard
+    | SerializedAction
+    | SerializedProducer
+    | SerializedNestedMachine
+    | SerializedImmediate
+  > {}
 
 export const VISUALIZATION_LEVEL = {
   LOW: "low",
-  HIGH: "high",
+  HIGH: "high"
 };
 
-interface options {
+export interface options {
   level?: string;
   skinparam?: string;
 }
 
-interface imageFromPlantUmlCodeOptions {
+export interface imageFromPlantUmlCodeOptions {
   outDir?: string;
   fileName?: string;
 }
 
-interface imageFromMachineOptions extends options, imageFromPlantUmlCodeOptions {}
+export interface imageFromMachineOptions
+  extends options,
+    imageFromPlantUmlCodeOptions {}
 
 const toCammelCase = (str: string) =>
   str
@@ -41,11 +61,18 @@ const toCammelCase = (str: string) =>
     .replace(/\s(.)/g, ($1) => $1.toUpperCase())
     .replace(/\W/g, "");
 
-function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: options, parentName = "", childLevel = 0): string {
+function getInnerPlantUmlCode(
+  serializedMachine: SerializedMachine,
+  options: options,
+  parentName = "",
+  childLevel = 0
+): string {
   let plantUmlCode = "";
   let { level } = options;
   const isChild = childLevel > 0;
-  const cammelCasedTitle = toCammelCase(`${parentName}${toCammelCase(serializedMachine.title || "")}`);
+  const cammelCasedTitle = toCammelCase(
+    `${parentName}${toCammelCase(serializedMachine.title || "")}`
+  );
   const space = Array.from({ length: childLevel })
     .map(() => "  ")
     .join("");
@@ -63,7 +90,9 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
   const stateNames: Record<string, string> = {};
   for (const stateName in serializedMachine.states) {
     const cammelCased = toCammelCase(stateName);
-    stateNames[stateName] = isChild ? `${cammelCasedTitle}${cammelCased}` : stateName;
+    stateNames[stateName] = isChild
+      ? `${cammelCasedTitle}${cammelCased}`
+      : stateName;
   }
 
   // Add the states
@@ -90,10 +119,16 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
     if (state.nested) {
       nestedMachines += `\n${space}state ${stateNames[stateName]} {\n`;
       for (let nested of state.nested) {
-        let innerPlantUmlCode = getInnerPlantUmlCode(nested.machine, options, toCammelCase(stateNames[stateName]), childLevel + 1);
+        let innerPlantUmlCode = getInnerPlantUmlCode(
+          nested.machine,
+          options,
+          toCammelCase(stateNames[stateName]),
+          childLevel + 1
+        );
         nestedMachines += innerPlantUmlCode + `\n${space}  ||\n\n`;
       }
-      nestedMachines = nestedMachines.replace(/\n\s+\|\|\n\n$/, "\n") + `${space}}\n`;
+      nestedMachines =
+        nestedMachines.replace(/\n\s+\|\|\n\n$/, "\n") + `${space}}\n`;
     }
   }
 
@@ -107,10 +142,16 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
     parallelStates += `\n${space}state "Parallel states" as ${cammelCasedTitle}ParallelStates {\n`;
     for (const parallel in serializedMachine.parallel) {
       const parallelState = serializedMachine.parallel[parallel];
-      parallelStates += getInnerPlantUmlCode(parallelState, options, cammelCasedTitle, childLevel + 1);
+      parallelStates += getInnerPlantUmlCode(
+        parallelState,
+        options,
+        cammelCasedTitle,
+        childLevel + 1
+      );
       parallelStates += `\n${space}  --\n\n`;
     }
-    parallelStates = parallelStates.replace(/\n\s+--\n\n$/, "\n") + `${space}}\n`;
+    parallelStates =
+      parallelStates.replace(/\n\s+--\n\n$/, "\n") + `${space}}\n`;
   }
 
   if (parallelStates.trim().length > 0) {
@@ -157,7 +198,10 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
       // Add the immediate transitions if they exist and are not normal transitions
       if (state.immediate && state.immediate.length > 0) {
         for (let immediate of state.immediate) {
-          if (isNestedTransition(immediate.immediate) || isParallelTransition(immediate.immediate)) {
+          if (
+            isNestedTransition(immediate.immediate) ||
+            isParallelTransition(immediate.immediate)
+          ) {
             run.push(immediate);
           }
         }
@@ -179,7 +223,9 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
   let transitions = "";
   if (isValidString(serializedMachine.initial)) {
     // Add the initial transition
-    transitions += `\n${space}[*] --> ${stateNames[serializedMachine.initial]}\n`;
+    transitions += `\n${space}[*] --> ${
+      stateNames[serializedMachine.initial]
+    }\n`;
   }
 
   for (const stateName in serializedMachine.states) {
@@ -187,7 +233,8 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
     if (state.on) {
       for (const transitionName in state.on) {
         const stateTargetName = stateNames[state.on[transitionName].target];
-        const stateTarget = serializedMachine.states[state.on[transitionName].target];
+        const stateTarget =
+          serializedMachine.states[state.on[transitionName].target];
         let arrow = "";
         switch (stateTarget.type) {
           case "danger":
@@ -210,7 +257,11 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
             break;
         }
 
-        let isImmediate = state.immediate && state.immediate.find((immediate) => immediate.immediate === transitionName);
+        let isImmediate =
+          state.immediate &&
+          state.immediate.find(
+            (immediate) => immediate.immediate === transitionName
+          );
 
         if (isImmediate) {
           arrow += ",dashed";
@@ -240,11 +291,21 @@ function getInnerPlantUmlCode(serializedMachine: SerializedMachine, options: opt
   return plantUmlCode;
 }
 
-/***
-This function will get a serialized machine and will return a visualization of the machine in plantuml format.
-***/
-export function getPlantUmlCode(serializedMachine: SerializedMachine, optionsOrLevel: string | options = VISUALIZATION_LEVEL.LOW): string {
-  let opts: options = typeof optionsOrLevel === "string" ? { level: optionsOrLevel } : optionsOrLevel;
+/**
+ * This function will get a serialized machine and will return plantuml code representation of it.
+ * @param serializedMachine The serialized machine to be visualized.
+ * @param options The options to be used for the visualization.
+ * @returns The plantuml code for the visualization.
+ * @category Visualization
+ **/
+export function getPlantUmlCode(
+  serializedMachine: SerializedMachine,
+  optionsOrLevel: string | options = VISUALIZATION_LEVEL.LOW
+): string {
+  let opts: options =
+    typeof optionsOrLevel === "string"
+      ? { level: optionsOrLevel }
+      : optionsOrLevel;
   let { skinparam } = opts;
 
   let plantUmlCode = `\n@startuml\n\n`;
@@ -292,14 +353,16 @@ ${skinparam}`;
   return plantUmlCode;
 }
 
-function getTree(collection: SerializedCollectionWithGuards): { name: string; children: any[] } | null {
+function getTree(
+  collection: SerializedCollectionWithGuards
+): { name: string; children: any[] } | null {
   if (collection.length === 0) {
     return null;
   }
 
   let tree = {
     name: "",
-    children: [] as any,
+    children: [] as any
   };
 
   let name = (type: string) => (value: string) => `${type}:${value}`;
@@ -311,7 +374,7 @@ function getTree(collection: SerializedCollectionWithGuards): { name: string; ch
   for (let i = 0, l = collection.length; i < l; i++) {
     const item = collection[i];
     let obj = {
-      children: [] as any,
+      children: [] as any
     } as any;
 
     if ("guard" in item) {
@@ -330,7 +393,7 @@ function getTree(collection: SerializedCollectionWithGuards): { name: string; ch
     if ("success" in item) {
       let child = {
         name: `success`,
-        children: [] as any,
+        children: [] as any
       } as any;
 
       if (typeof item.success === "string") {
@@ -347,7 +410,7 @@ function getTree(collection: SerializedCollectionWithGuards): { name: string; ch
     if ("failure" in item) {
       let child = {
         name: `failure`,
-        children: [] as any,
+        children: [] as any
       } as any;
 
       if (typeof item.failure === "string") {
@@ -403,7 +466,7 @@ let collection = [
 let result = "G:'titleIsValid'\n│ └failure\n│   └M:'updateError'\n└A:'saveTitle'\n  ├success\n  │ └T:'preview'\n  └failure\n    ├M:'updateError'\n    └T:'error"
 
 ***/
-export function getAsciiTree(collection: SerializedCollectionWithGuards): string {
+function getAsciiTree(collection: SerializedCollectionWithGuards): string {
   let tree = getTree(collection);
   if (!tree) {
     return "";
@@ -421,15 +484,25 @@ This function will get a plant uml code, create a plant uml diagram,
 save it to a png file and return the path to the file. 
 We will use the plantuml jar file to create the png file.
 */
-async function getImageFromPlantUmlCode(plantUmlCode: string, type: string, options: imageFromMachineOptions = {}): Promise<string> {
+async function createImageFromPlantUmlCode(
+  plantUmlCode: string,
+  type: string,
+  options: imageFromMachineOptions = {}
+): Promise<string> {
   const plantUmlJarPath = path.resolve(__dirname, "../../vendor/plantuml.jar");
   const extension = type === "png" ? "png" : "svg";
-  const fileName = (options.fileName || `plantuml-code-${Date.now()}`).replace(`.${extension}`, "");
+  const fileName = (options.fileName || `plantuml-code-${Date.now()}`).replace(
+    `.${extension}`,
+    ""
+  );
   const outDirPath = path.resolve(process.cwd(), options.outDir || "./");
 
   // Save the plantUmlCode to a file
   let plantUmlCodeFilePath = path.resolve(os.tmpdir(), `${fileName}.txt`);
-  const plantUmlImageFile = path.resolve(outDirPath, fileName.indexOf(".") !== -1 ? fileName : `${fileName}.${extension}`);
+  const plantUmlImageFile = path.resolve(
+    outDirPath,
+    fileName.indexOf(".") !== -1 ? fileName : `${fileName}.${extension}`
+  );
 
   // Create a temp file with the plantUmlCode
   fs.writeFileSync(plantUmlCodeFilePath, plantUmlCode, "utf8");
@@ -449,7 +522,10 @@ async function getImageFromPlantUmlCode(plantUmlCode: string, type: string, opti
   await exec(plantUmlCommand);
 
   // Await the png file to be created
-  while (!fs.existsSync(plantUmlImageFile) || fs.statSync(plantUmlImageFile).size === 0) {
+  while (
+    !fs.existsSync(plantUmlImageFile) ||
+    fs.statSync(plantUmlImageFile).size === 0
+  ) {
     await new Promise((resolve) => setTimeout(resolve, 100));
     if (Date.now() - now > timeoutTime) {
       throw new Error("Timeout waiting for plantuml to create the image");
@@ -458,7 +534,9 @@ async function getImageFromPlantUmlCode(plantUmlCode: string, type: string, opti
 
   // Check if the png file exists
   if (!fs.existsSync(plantUmlImageFile)) {
-    throw new Error(`PlantUML did not create the png file: ${plantUmlImageFile}`);
+    throw new Error(
+      `PlantUML did not create the png file: ${plantUmlImageFile}`
+    );
   }
 
   // Delete the plantUmlCodeFilePath
@@ -467,28 +545,88 @@ async function getImageFromPlantUmlCode(plantUmlCode: string, type: string, opti
   return plantUmlImageFile;
 }
 
-// Create a png file from a plant uml code
-export async function createPngFromPlantUmlCode(plantUmlCode: string, options: imageFromMachineOptions = {}): Promise<string> {
-  return getImageFromPlantUmlCode(plantUmlCode, "png", options);
-}
-
-// Create a svg file from a plant uml code
-export async function createSvgFromPlantUmlCode(plantUmlCode: string, options: imageFromMachineOptions = {}): Promise<string> {
-  return getImageFromPlantUmlCode(plantUmlCode, "svg", options);
-}
-
-export function createPlantUmlStringFromMachine(machine: Machine, optionsOrLevel: string | options = VISUALIZATION_LEVEL.LOW): string {
+/**
+ * This function will get a machine and will return a plant uml code representation of it.
+ * @param machine The machine to get the plant uml code from
+ * @param optionsOrLevel The level of the machine to get the plant uml code from or options for the image
+ * @returns The plant uml code
+ * @category Visualization
+ */
+export function getPlantUmlCodeFromMachine(
+  machine: Machine,
+  optionsOrLevel: string | options = VISUALIZATION_LEVEL.LOW
+): string {
   return getPlantUmlCode(serialize(machine), optionsOrLevel);
 }
 
-export function createPngFromMachine(machine: Machine, optionsOrLevel: string | imageFromMachineOptions = VISUALIZATION_LEVEL.LOW): Promise<string> {
-  let options: imageFromMachineOptions = typeof optionsOrLevel === "string" ? { level: optionsOrLevel } : optionsOrLevel;
-  return createPngFromPlantUmlCode(createPlantUmlStringFromMachine(machine, optionsOrLevel), options);
+/**
+ * Create a png file from a plant uml code
+ * @param plantUmlCode The plant uml code
+ * @param options Options for the image
+ * @returns The path to the png file
+ * @category Visualization
+ **/
+export async function createPngFromPlantUmlCode(
+  plantUmlCode: string,
+  options: imageFromMachineOptions = {}
+): Promise<string> {
+  return createImageFromPlantUmlCode(plantUmlCode, "png", options);
 }
 
-export function createSvgFromMachine(machine: Machine, optionsOrLevel: string | imageFromMachineOptions = VISUALIZATION_LEVEL.LOW): Promise<string> {
-  let options: imageFromMachineOptions = typeof optionsOrLevel === "string" ? { level: optionsOrLevel } : optionsOrLevel;
-  return createSvgFromPlantUmlCode(createPlantUmlStringFromMachine(machine, optionsOrLevel), options);
+/**
+ * Create a svg file from a plant uml code
+ * @param plantUmlCode The plant uml code
+ * @param options Options for the image
+ * @returns The path to the svg file
+ * @category Visualization
+ */
+export async function createSvgFromPlantUmlCode(
+  plantUmlCode: string,
+  options: imageFromMachineOptions = {}
+): Promise<string> {
+  return createImageFromPlantUmlCode(plantUmlCode, "svg", options);
+}
+
+/**
+ * Create a png file from a machine
+ * @param machine The machine to get the plant uml code from
+ * @param optionsOrLevel The level of the machine to get the plant uml code from or options for the image
+ * @returns The path to the png file
+ * @category Visualization
+ */
+export function createPngFromMachine(
+  machine: Machine,
+  optionsOrLevel: string | imageFromMachineOptions = VISUALIZATION_LEVEL.LOW
+): Promise<string> {
+  let options: imageFromMachineOptions =
+    typeof optionsOrLevel === "string"
+      ? { level: optionsOrLevel }
+      : optionsOrLevel;
+  return createPngFromPlantUmlCode(
+    getPlantUmlCodeFromMachine(machine, optionsOrLevel),
+    options
+  );
+}
+
+/**
+ * Create a svg file from a machine
+ * @param machine The machine to get the plant uml code from
+ * @param optionsOrLevel The level of the machine to get the plant uml code from or options for the image
+ * @returns The path to the svg file
+ * @category Visualization
+ */
+export function createSvgFromMachine(
+  machine: Machine,
+  optionsOrLevel: string | imageFromMachineOptions = VISUALIZATION_LEVEL.LOW
+): Promise<string> {
+  let options: imageFromMachineOptions =
+    typeof optionsOrLevel === "string"
+      ? { level: optionsOrLevel }
+      : optionsOrLevel;
+  return createSvgFromPlantUmlCode(
+    getPlantUmlCodeFromMachine(machine, optionsOrLevel),
+    options
+  );
 }
 
 // Taken from https://github.com/jessitron/stringify-tree/blob/master/index.ts
@@ -502,7 +640,11 @@ export function createSvgFromMachine(machine: Machine, optionsOrLevel: string | 
  * @param nameFn how to calculate the name of a tree node
  * @param childrenFn how to get the children of a tree node
  */
-export function stringifyTree<T>(tn: T, nameFn: (t: T) => string, childrenFn: (t: T) => T[] | null): string {
+function stringifyTree<T>(
+  tn: T,
+  nameFn: (t: T) => string,
+  childrenFn: (t: T) => T[] | null
+): string {
   function prefixChild(strs: string[], last: boolean): string[] {
     return strs.map((s, i) => {
       const prefix = i === 0 ? (last ? "└" : "├") : last ? " " : "│";

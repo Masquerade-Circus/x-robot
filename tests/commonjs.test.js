@@ -1,10 +1,18 @@
 const { describe, it } = require("mocha");
-const expect = require("expect");
+const { expect } = require("expect");
 const fs = require("fs");
 
-const { VISUALIZATION_LEVEL, createSvgFromPlantUmlCode, getPlantUmlCode } = require("../dist/visualize");
+const {
+  VISUALIZATION_LEVEL,
+  createSvgFromPlantUmlCode,
+  getPlantUmlCode
+} = require("../dist/visualize");
 const { serialize } = require("../dist/serialize");
-const { BirdMachine: bird, LeftWingMachine: leftWing, RightWingMachine: rightWing } = require("./bird-machine");
+const {
+  BirdMachine: bird,
+  LeftWingMachine: leftWing,
+  RightWingMachine: rightWing
+} = require("./bird-machine");
 const { invoke, getState } = require("../dist");
 
 // Generate a diagram from a serialized machine
@@ -12,7 +20,7 @@ describe("Common js version test", () => {
   // With this test we are testing the creation, serialization and visualization of a machine with all the features of the library
   it("should generate a diagram for a serialized machine with all features available", async () => {
     const plantUmlCode = getPlantUmlCode(serialize(bird), {
-      level: VISUALIZATION_LEVEL.HIGH,
+      level: VISUALIZATION_LEVEL.HIGH
     });
 
     let expectedPlantUmlCode = `
@@ -210,7 +218,7 @@ skinparam state {
 
     const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
       outDir: "./tmp",
-      fileName: "bird-machine-diagram",
+      fileName: "bird-machine-diagram"
     });
 
     expect(svg).toBeDefined();
@@ -224,13 +232,21 @@ skinparam state {
 
   it("should move the bird states with transitions", async () => {
     // The bird is on the ground
-    expect(getState(bird)).toEqual("land");
+    expect(getState(bird)).toEqual({
+      current: "land",
+      flyingtime: "stopped",
+      walkingtime: "stopped"
+    });
     expect(getState(leftWing)).toEqual("closed");
     expect(getState(rightWing)).toEqual("closed");
 
     // The bird is taking off
     invoke(bird, "takeoff");
-    expect(getState(bird)).toEqual("takingoff");
+    expect(getState(bird)).toEqual({
+      current: "takingoff",
+      flyingtime: "stopped",
+      walkingtime: "stopped"
+    });
     expect(getState(leftWing)).toEqual("closed");
     expect(getState(rightWing)).toEqual("closed");
 
@@ -238,13 +254,21 @@ skinparam state {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // The bird is on the air
-    expect(getState(bird)).toEqual("flying");
+    expect(getState(bird)).toEqual({
+      current: "flying",
+      flyingtime: "started",
+      walkingtime: "stopped"
+    });
     expect(getState(leftWing)).toEqual("opened");
     expect(getState(rightWing)).toEqual("opened");
 
     // The bird is landing
     invoke(bird, "land");
-    expect(getState(bird)).toEqual("landing");
+    expect(getState(bird)).toEqual({
+      current: "landing",
+      flyingtime: "started",
+      walkingtime: "stopped"
+    });
     expect(getState(leftWing)).toEqual("opened");
     expect(getState(rightWing)).toEqual("opened");
 
@@ -252,19 +276,31 @@ skinparam state {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // The bird is on the ground
-    expect(getState(bird)).toEqual("land");
+    expect(getState(bird)).toEqual({
+      current: "land",
+      flyingtime: "stopped",
+      walkingtime: "started"
+    });
     expect(getState(leftWing)).toEqual("closed");
     expect(getState(rightWing)).toEqual("closed");
 
     // The bird is takingoff and immediately on the air
     await invoke(bird, "takeoff");
-    expect(getState(bird)).toEqual("flying");
+    expect(getState(bird)).toEqual({
+      current: "flying",
+      flyingtime: "started",
+      walkingtime: "stopped"
+    });
     expect(getState(leftWing)).toEqual("opened");
     expect(getState(rightWing)).toEqual("opened");
 
     // The bird is landing and immediately on the ground
     await invoke(bird, "land");
-    expect(getState(bird)).toEqual("land");
+    expect(getState(bird)).toEqual({
+      current: "land",
+      flyingtime: "stopped",
+      walkingtime: "started"
+    });
     expect(getState(leftWing)).toEqual("closed");
     expect(getState(rightWing)).toEqual("closed");
   });

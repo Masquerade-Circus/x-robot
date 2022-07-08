@@ -1,4 +1,14 @@
-import { action, immediate, initial, invoke, machine, producer, state, states, transition } from "../lib";
+import {
+  action,
+  immediate,
+  initial,
+  invoke,
+  machine,
+  producer,
+  state,
+  states,
+  transition
+} from "../lib";
 import { assign, createMachine, interpret } from "xstate";
 import { beforeEach, benchmark, compare } from "buffalo-test";
 import {
@@ -8,7 +18,7 @@ import {
   interpret as robotInterpret,
   invoke as robotInvoke,
   state as robotState,
-  transition as robotTransition,
+  transition as robotTransition
 } from "robot3";
 
 import expect from "expect";
@@ -22,36 +32,39 @@ compare("Async example", () => {
       states: {
         idle: {
           on: {
-            FETCH: "loading",
-          },
+            FETCH: "loading"
+          }
         },
         loading: {
           invoke: {
             id: "fetchDog",
-            src: (context, event) => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 0)),
+            src: (context, event) =>
+              new Promise((resolve) =>
+                setTimeout(() => resolve({ name: "fido" }), 0)
+              ),
             onDone: {
               target: "resolved",
               actions: assign({
-                dog: (_, event) => event.data,
-              }),
+                dog: (_, event) => event.data
+              })
             },
-            onError: "rejected",
+            onError: "rejected"
           },
           on: {
-            CANCEL: "idle",
-          },
+            CANCEL: "idle"
+          }
         },
         resolved: {
           always: {
-            target: "idle",
-          },
+            target: "idle"
+          }
         },
         rejected: {
           on: {
-            FETCH: "loading",
-          },
-        },
-      },
+            FETCH: "loading"
+          }
+        }
+      }
     });
 
     const dogApiService = interpret(dogApiMachine).start();
@@ -61,7 +74,9 @@ compare("Async example", () => {
     // The only way we can do this is by creating a custom interpreter and add this behavior to it.
     // So for now we'll just use the xstate interpreter and simulate the async/await.
     let onDone;
-    dogApiService.onEvent(() => dogApiService.state.value === "idle" && onDone());
+    dogApiService.onEvent(
+      () => dogApiService.state.value === "idle" && onDone()
+    );
 
     let sendFetch = async () => {
       dogApiService.send("FETCH");
@@ -78,17 +93,23 @@ compare("Async example", () => {
       {
         idle: robotState(robotTransition("FETCH", "loading")),
         loading: robotInvoke(
-          () => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 0)),
+          () =>
+            new Promise((resolve) =>
+              setTimeout(() => resolve({ name: "fido" }), 0)
+            ),
           robotTransition(
             "done",
             "resolved",
-            reduce((ctx: object, ev: { data }) => ({ ...ctx, dog: { name: ev.data.name } }))
+            reduce((ctx: object, ev: { data }) => ({
+              ...ctx,
+              dog: { name: ev.data.name }
+            }))
           ),
           robotTransition("error", "rejected"),
           robotTransition("CANCEL", "idle")
         ),
         resolved: robotState(robotImmediate("idle")),
-        rejected: robotState(),
+        rejected: robotState()
       },
       () => ({})
     );
@@ -120,7 +141,10 @@ compare("Async example", () => {
         state(
           "loading",
           action(
-            () => new Promise((resolve) => setTimeout(() => resolve({ name: "fido" }), 0)),
+            () =>
+              new Promise((resolve) =>
+                setTimeout(() => resolve({ name: "fido" }), 0)
+              ),
             producer((ctx, data) => ({ dog: data }), "resolved"),
             "rejected"
           ),
@@ -132,7 +156,7 @@ compare("Async example", () => {
       initial("idle")
     );
 
-    // We don't need to simulate the async behavior of the fetchDog invocation because xrobot handles that for us.
+    // We don't need to simulate the async behavior of the fetchDog invocation because X-Robot handles that for us.
     // We just need to async the invocation
 
     return dogApiMachine;
@@ -174,7 +198,7 @@ compare("Async example", () => {
     await robot3Machine.sendFetch();
   });
 
-  benchmark("XRobot", async () => {
+  benchmark("X-Robot", async () => {
     await invoke(xRobotMachine, "FETCH");
   });
 });

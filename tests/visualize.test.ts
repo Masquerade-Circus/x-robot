@@ -1,11 +1,11 @@
 import {
   VISUALIZATION_LEVEL,
-  createPlantUmlStringFromMachine,
   createPngFromMachine,
   createPngFromPlantUmlCode,
   createSvgFromMachine,
   createSvgFromPlantUmlCode,
   getPlantUmlCode,
+  getPlantUmlCodeFromMachine,
 } from "../lib/visualize";
 import {
   action,
@@ -577,7 +577,7 @@ skinparam state {
 @enduml
 `;
 
-    const plantUmlString = createPlantUmlStringFromMachine(myMachine, VISUALIZATION_LEVEL.HIGH);
+    const plantUmlString = getPlantUmlCodeFromMachine(myMachine, VISUALIZATION_LEVEL.HIGH);
 
     expect(plantUmlString).toEqual(plantUmlCode);
   });
@@ -964,7 +964,7 @@ describe("Readme examples", () => {
 
     const svg = await createSvgFromMachine(stoplight, {
       fileName: "toggle-machine-diagram",
-      outDir: "./docs/images",
+      outDir: "./media",
       level: VISUALIZATION_LEVEL.HIGH,
     });
 
@@ -1006,7 +1006,7 @@ describe("Readme examples", () => {
 
     const svg = await createSvgFromMachine(fetchMachine, {
       fileName: "fetch-machine-diagram",
-      outDir: "./docs/images",
+      outDir: "./media",
       level: VISUALIZATION_LEVEL.HIGH,
     });
 
@@ -1033,7 +1033,7 @@ describe("Readme examples", () => {
 
     const svg = await createSvgFromMachine(stoplight, {
       fileName: "stoplight-machine-diagram",
-      outDir: "./docs/images",
+      outDir: "./media",
       level: VISUALIZATION_LEVEL.HIGH,
     });
 
@@ -1058,7 +1058,7 @@ describe("Readme examples", () => {
 
     const svg = await createSvgFromMachine(wordMachine, {
       fileName: "word-machine-diagram",
-      outDir: "./docs/images",
+      outDir: "./media",
     });
 
     expect(svg).toBeDefined();

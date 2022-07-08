@@ -1,3 +1,14 @@
+/** @module x-robot */
+export interface MachineArguments
+  extends Array<
+    | string
+    | ContextDirective
+    | InitialDirective
+    | ShouldFreezeDirective
+    | StatesDirective
+    | ParallelDirective
+  > {}
+
 export interface Context {
   [key: string]: any;
 }
@@ -51,7 +62,7 @@ export interface Action {
 export interface ActionDirective {
   action: Action;
   success?: ProducerDirective | string | null;
-  failure?: ProducerDirective | string;
+  failure?: ProducerDirective | string | null;
 }
 
 export interface Guard {
@@ -67,7 +78,8 @@ export interface NestedGuardDirective extends GuardDirective {
   machine: Machine;
 }
 
-export interface GuardsDirective extends Array<GuardDirective | NestedGuardDirective> {}
+export interface GuardsDirective
+  extends Array<GuardDirective | NestedGuardDirective> {}
 
 export interface DescriptionDirective {
   description: string;
@@ -75,7 +87,12 @@ export interface DescriptionDirective {
 
 export interface RunCollection
   extends Array<
-    NestedMachineDirective | ActionDirective | ProducerDirectiveWithoutTransition | TransitionDirective | ImmediateDirective | DescriptionDirective
+    | NestedMachineDirective
+    | ActionDirective
+    | ProducerDirectiveWithoutTransition
+    | TransitionDirective
+    | ImmediateDirective
+    | DescriptionDirective
   > {}
 
 export interface StateDirective {
@@ -83,10 +100,37 @@ export interface StateDirective {
   run: (ActionDirective | ProducerDirective)[];
   on: TransitionsDirective;
   immediate: ImmediateDirective[];
-  args: (NestedMachineDirective | ActionDirective | ProducerDirective | TransitionDirective | ImmediateDirective | DescriptionDirective)[];
+  args: (
+    | NestedMachineDirective
+    | ActionDirective
+    | ProducerDirective
+    | TransitionDirective
+    | ImmediateDirective
+    | DescriptionDirective
+  )[];
   type: string;
   nested: NestedMachineDirective[];
   description?: string;
+}
+
+export interface InfoStateDirective extends StateDirective {
+  type: "info";
+}
+
+export interface WarningStateDirective extends StateDirective {
+  type: "warning";
+}
+
+export interface DangerStateDirective extends StateDirective {
+  type: "danger";
+}
+
+export interface PrimaryStateDirective extends StateDirective {
+  type: "primary";
+}
+
+export interface SuccessStateDirective extends StateDirective {
+  type: "success";
 }
 
 export interface StatesDirective {
@@ -116,7 +160,8 @@ export interface NestedMachineDirective {
   transition?: string;
 }
 
-export interface NestedMachineWithTransitionDirective extends NestedMachineDirective {
+export interface NestedMachineWithTransitionDirective
+  extends NestedMachineDirective {
   transition: string;
 }
 
@@ -137,7 +182,7 @@ export enum HistoryType {
   Action = "Action",
   Producer = "Producer",
   State = "State",
-  Guard = "Guard",
+  Guard = "Guard"
 }
 
 export const START_EVENT = "__start__";

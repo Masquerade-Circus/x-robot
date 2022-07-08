@@ -1,3 +1,8 @@
+/**
+ * @module x-robot/serialize
+ * @description Serializes a machine to a JSON object
+ * */
+
 import {
   ActionDirective,
   GuardDirective,
@@ -30,14 +35,14 @@ export interface SerializedGuard {
   machine?: SerializedMachine;
 }
 
-interface SerializedCollection extends Array<SerializedAction | SerializedProducer> {}
+export interface SerializedCollection extends Array<SerializedAction | SerializedProducer> {}
 
 export interface SerializedTransition {
   target: string;
   guards?: SerializedGuard[];
 }
 
-interface SerializedTransitions {
+export interface SerializedTransitions {
   [key: string]: SerializedTransition;
 }
 
@@ -46,7 +51,7 @@ export interface SerializedImmediate {
   guards?: SerializedGuard[];
 }
 
-interface SerializedState {
+export interface SerializedState {
   name: string;
   nested?: SerializedNestedMachine[];
   on?: SerializedTransitions;
@@ -56,7 +61,7 @@ interface SerializedState {
   description?: string;
 }
 
-interface SerializedStates {
+export interface SerializedStates {
   [key: string]: SerializedState;
 }
 
@@ -73,9 +78,10 @@ export interface SerializedNestedMachine {
   transition?: string;
 }
 
-// Serializes a producer
-// @param {Producer} producer
-// @returns {Object}
+/**
+ * @param producer The producer to serialize
+ * @returns SerializedProducer
+ */
 function serializeProducer(producer: ProducerDirective): SerializedProducer {
   let serialized: SerializedProducer = {
     producer: producer.producer.name,
@@ -88,9 +94,11 @@ function serializeProducer(producer: ProducerDirective): SerializedProducer {
   return serialized;
 }
 
-// Serializes an action
-// @param {Action} action
-// @returns {Object}
+/**
+ *
+ * @param action The action to serialize
+ * @returns SerializedAction
+ */
 function serializeAction(action: ActionDirective): SerializedAction {
   let serialized: SerializedAction = {
     action: action.action.name,
@@ -115,9 +123,11 @@ function serializeAction(action: ActionDirective): SerializedAction {
   return serialized;
 }
 
-// Serializes a guard
-// @param {Guard} guard
-// @returns {Object}
+/**
+ *
+ * @param guard The guard to serialize
+ * @returns SerializedGuard
+ */
 function serializeGuard(guard: GuardDirective | NestedGuardDirective): SerializedGuard {
   let serialized: SerializedGuard = {
     guard: guard.guard.name,
@@ -136,9 +146,11 @@ function serializeGuard(guard: GuardDirective | NestedGuardDirective): Serialize
   return serialized;
 }
 
-// Serialize run arguments
-// @param {Array} run
-// @returns {Array}
+/**
+ *
+ * @param run The run collection to serialize
+ * @returns SerializedCollection or null if empty
+ */
 function serializeRunArguments(run: RunCollection): SerializedCollection | null {
   if (!Array.isArray(run) || run.length === 0) {
     return null;
@@ -155,6 +167,11 @@ function serializeRunArguments(run: RunCollection): SerializedCollection | null 
   }) as SerializedCollection;
 }
 
+/**
+ *
+ * @param guards The guards to serialize
+ * @returns SerializedGuard[] or null if empty
+ */
 function serializeGuards(guards: GuardsDirective): SerializedGuard[] | null {
   if (!guards || guards.length === 0) {
     return null;
@@ -163,6 +180,11 @@ function serializeGuards(guards: GuardsDirective): SerializedGuard[] | null {
   return guards.map((guard) => serializeGuard(guard));
 }
 
+/**
+ *
+ * @param transition The transition to serialize
+ * @returns SerializedTransition
+ */
 function serializeTransition(transition: TransitionDirective): SerializedTransition {
   let serialized: SerializedTransition = {
     target: transition.target,
@@ -177,6 +199,11 @@ function serializeTransition(transition: TransitionDirective): SerializedTransit
   return serialized;
 }
 
+/**
+ *
+ * @param immediate The immediate transition to serialize
+ * @returns SerializedImmediate
+ */
 function serializeImmediate(immediate: ImmediateDirective): SerializedImmediate {
   let serialized: SerializedImmediate = {
     immediate: immediate.immediate,
@@ -191,9 +218,11 @@ function serializeImmediate(immediate: ImmediateDirective): SerializedImmediate 
   return serialized;
 }
 
-// Serialize transitions
-// @param {Object} events
-// @returns {Array}
+/**
+ *
+ * @param events The events to serialize
+ * @returns SerializedTransitions or null if empty
+ */
 function serializeTransitions(events: TransitionsDirective): SerializedTransitions | null {
   if (!events || Object.keys(events).length === 0) {
     return null;
@@ -207,14 +236,20 @@ function serializeTransitions(events: TransitionsDirective): SerializedTransitio
   return serialized;
 }
 
-// Serialize context
-// This will do a deep copy of the context
-// @param {Object} context
-// @returns {Object}
+/**
+ *
+ * @param context The context to serialize
+ * @returns Object
+ */
 function serializeContext(context: any) {
   return cloneContext(context);
 }
 
+/**
+ *
+ * @param nested The nested machines to serialize
+ * @returns SerializedNestedMachine[] or null if empty
+ */
 function serializeNested(nested: NestedMachineDirective[]): SerializedNestedMachine[] | null {
   if (!nested || nested.length === 0) {
     return null;
@@ -233,9 +268,12 @@ function serializeNested(nested: NestedMachineDirective[]): SerializedNestedMach
   });
 }
 
-// Serializes a state machine
-// @param {Machine} machine
-// @returns {Object}
+/**
+ *
+ * @param machine The machine to serialize
+ * @returns SerializedMachine
+ * @category Serialization
+ */
 export function serialize(machine: Machine): SerializedMachine {
   let serialized: SerializedMachine = {
     states: {},

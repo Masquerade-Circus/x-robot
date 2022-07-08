@@ -9,8 +9,37 @@
     "allowJs": false,
     "resolveJsonModule": true,
     "removeComments": true,
-    "declaration": true
+    "declaration": true,
+    "declarationMap": true
   },
   "include": ["lib/**/*"],
-  "exclude": ["test*/**/*", "**/*.test.ts", "**/*.spec.ts", "bench/**/*", "node_modules/**/*", "types/**/*"]
+  "exclude": [
+    "test*/**/*",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "bench/**/*",
+    "node_modules/**/*",
+    "types/**/*",
+    "docs/**/*"
+  ],
+  "typedocOptions": {
+    "entryPoints": [
+      "lib/index.ts",
+      "lib/machine",
+      "lib/validate",
+      "lib/serialize",
+      "lib/visualize",
+      "lib/generate",
+      "lib/utils.ts"
+    ],
+    "entryPointStrategy": "expand",
+    "out": "docs",
+    "sort": ["visibility"],
+    "includeVersion": true,
+    "mergeModulesMergeMode": "module",
+    "categoryOrder": ["*", "Other"]
+  },
+  "ts-node": {
+    "transpileOnly": true
+  }
 }
