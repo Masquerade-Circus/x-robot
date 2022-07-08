@@ -198,7 +198,8 @@ async function build({
   await build({
     globalName: "XRobotValidate",
     entryPoint: "./lib/validate/index.ts",
-    outfileName: "./dist/validate/index"
+    outfileName: "./dist/validate/index",
+    minify: false
   });
 
   await build({
@@ -215,5 +216,12 @@ async function build({
     outfileName: "./dist/generate/index",
     minify: false,
     external: ["child_process", "fs", "os", "path"]
+  });
+
+  await build({
+    globalName: "XRobotUtils",
+    entryPoint: "./lib/utils.ts",
+    outfileName: "./dist/utils",
+    minify: false
   });
 })();

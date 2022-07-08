@@ -7,7 +7,33 @@
   "module": "dist/index.mjs",
   "unpkg": "dist/index.min.js",
   "browser": "dist/index.min.js",
-  "types": "types/index.d.ts",
+  "types": "dist/**/*.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./generate": {
+      "import": "./dist/generate/index.mjs",
+      "require": "./dist/generate/index.js"
+    },
+    "./serialize": {
+      "import": "./dist/serialize/index.mjs",
+      "require": "./dist/serialize/index.js"
+    },
+    "./validate": {
+      "import": "./dist/validate/index.mjs",
+      "require": "./dist/validate/index.js"
+    },
+    "./visualize": {
+      "import": "./dist/visualize/index.mjs",
+      "require": "./dist/visualize/index.js"
+    },
+    "./utils": {
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:Masquerade-Circus/x-robot.git"
