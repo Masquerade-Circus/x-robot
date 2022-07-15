@@ -1,0 +1,190 @@
+/****************** Flex Start ******************/
+.flex {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.flex > *, .flex-item {
+  flex: 0 1 auto;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-row-reverse {
+  flex-direction: row-reverse;
+}
+.flex-column {
+  flex-direction: column;
+}
+.flex-column-reverse {
+  flex-direction: column-reverse;
+}
+.flex-start {
+  justify-content: flex-start;
+}
+.flex-end {
+  justify-content: flex-end;
+}
+.flex-center {
+  justify-content: center;
+}
+.flex-between {
+  justify-content: space-between;
+}
+.flex-around {
+  justify-content: space-around;
+}
+.flex-align-start {
+  align-content: flex-start;
+}
+.flex-align-end {
+  align-content: flex-end;
+}
+.flex-align-center {
+  align-content: center;
+}
+@each $size in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 {
+  .flex-#{$size} {
+    flex-grow: $size;
+  }
+}
+/****************** Flex End ******************/
+
+@mixin generate($width, $id) {
+  @media screen and (min-width: $width) {
+    .#{$id}\:flex {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+    .#{$id}\:flex > *, .flex-item {
+      flex: 0 1 auto;
+    }
+    .#{$id}\:flex-row {
+      flex-direction: row;
+    }
+    .#{$id}\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .#{$id}\:flex-column {
+      flex-direction: column;
+    }
+    .#{$id}\:flex-column-reverse {
+      flex-direction: column-reverse;
+    }
+    .#{$id}\:flex-start {
+      justify-content: flex-start;
+    }
+    .#{$id}\:flex-end {
+      justify-content: flex-end;
+    }
+    .#{$id}\:flex-center {
+      justify-content: center;
+    }
+    .#{$id}\:flex-between {
+      justify-content: space-between;
+    }
+    .#{$id}\:flex-around {
+      justify-content: space-around;
+    }
+    .#{$id}\:flex-align-start {
+      align-content: flex-start;
+    }
+    .#{$id}\:flex-align-end {
+      align-content: flex-end;
+    }
+    .#{$id}\:flex-align-center {
+      align-content: center;
+    }
+    @each $size in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 {
+      .#{$id}\:flex-#{$size} {
+        flex-grow: $size;
+      }
+    }
+
+    @each $size in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12{
+      @each $var in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12{
+        @if $size > $var {
+          .#{$id}\:w-#{$var}\/#{$size} {
+            width: percentage(calc($var/$size));
+          }
+
+          @each $child in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12{
+            .#{$id}\:flex-#{$child}-#{$var}\/#{$size}>*:nth-child(#{$child}) {
+              width: percentage(calc($var/$size));
+            }
+          }
+        }
+      }
+    }
+
+    .#{$id}\:w-1\/1 {
+      width: 100%;
+    }
+  }
+}
+
+@each $size in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12{
+  @each $var in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12{
+    @if $size > $var {
+      .w-#{$var}\/#{$size} {
+        width: percentage(calc($var/$size));
+      }
+      @each $child in 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12{
+        .flex-#{$child}-#{$var}\/#{$size}>*:nth-child(#{$child}) {
+          width: percentage(calc($var/$size));
+        }
+      }
+      
+    }
+  }
+}
+.w-1\/1 {
+  width: 100%;
+}
+@include generate(576px, sm);
+@include generate(768px, md);
+@include generate(992px, lg);
+@include generate(1200px, xl);
+
+.text-center {
+  text-align: center;
+}
+
+div[class*=language-] {
+  text-align: left;
+}
+
+.home.project .hero .action-button {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  .icon{
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+  }
+}
+
+.home.project {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    margin: 3rem auto 2rem;
+    text-align: center;
+    #main-title {
+      font-size: 2.8rem;
+    }
+    .description {
+      width: auto;
+      max-width: 100%;
+    }
+  }
+  .theme-hope-content {
+    h1 {
+      text-align: center;
+    }
+    h2 {
+      text-align: center;
+    }
+    h3 {
+      text-align: center;
+    }
+  }
+}

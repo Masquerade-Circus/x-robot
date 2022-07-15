@@ -105,3 +105,7 @@ typings/
 TODO.md
 tmp
 .temp
+node_modules/
+docs/.vuepress/.cache/
+docs/.vuepress/.temp/
+docs/.vuepress/dist/

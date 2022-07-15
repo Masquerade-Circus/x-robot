@@ -1,6 +1,6 @@
 /**
  * @module x-robot
- * @description X-Robot is a finite state machine library for nodejs and for the web.
+ * @description A finite state machine library for nodejs and the web
  * */
 
 import {

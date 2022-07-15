@@ -1,7 +1,7 @@
 {
   "name": "x-robot",
   "version": "0.3.0",
-  "description": "X-Robot is a finite state machine library for nodejs and for the web.",
+  "description": "A finite state machine library for nodejs and the web.",
   "source": "lib/index.ts",
   "main": "dist/index.min.js",
   "module": "dist/index.mjs",
@@ -55,7 +55,10 @@
     "commit": "git add . && git-cz",
     "release": "release-it --verbose",
     "release-test": "release-it --dry-run --verbose",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "docs:build": "vuepress build docs",
+    "docs:clean-dev": "vuepress dev docs --clean-cache",
+    "docs:dev": "vuepress dev docs"
   },
   "files": [
     "lib",
@@ -82,6 +85,9 @@
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.0.0",
+    "@vuepress/client": "^2.0.0-beta.49",
+    "@vuepress/plugin-register-components": "^2.0.0-beta.49",
+    "@vuepress/plugin-search": "^2.0.0-beta.49",
     "buffalo-test": "^2.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.14.47",
@@ -102,6 +108,9 @@
     "typedoc-plugin-merge-modules": "^4.0.0",
     "typedoc-plugin-remove-references": "^0.0.6",
     "typescript": "^4.7.4",
+    "vue": "^3.2.36",
+    "vuepress": "^2.0.0-beta.49",
+    "vuepress-theme-hope": "^2.0.0-beta.86",
     "xstate": "^4.26.1"
   },
   "overrides": {
@@ -187,5 +196,8 @@
         "npm run build"
       ]
     }
+  },
+  "dependencies": {
+    "vuepress-theme-hope": "^2.0.0-beta.86"
   }
 }

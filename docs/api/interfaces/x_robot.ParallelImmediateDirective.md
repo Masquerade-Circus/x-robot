@@ -1,0 +1,37 @@
+# Interface: ParallelImmediateDirective
+
+[x-robot](../modules/x_robot.md).ParallelImmediateDirective
+
+## Hierarchy
+
+- [`ImmediateDirective`](x_robot.ImmediateDirective.md)
+
+  ↳ **`ParallelImmediateDirective`**
+
+## Properties
+
+### immediate
+
+• **immediate**: `string`
+
+#### Overrides
+
+[ImmediateDirective](x_robot.ImmediateDirective.md).[immediate](x_robot.ImmediateDirective.md#immediate)
+
+#### Defined in
+
+[lib/machine/interfaces.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/a0ed060/lib/machine/interfaces.ts#L37)
+
+___
+
+### guards
+
+• **guards**: [`GuardsDirective`](x_robot.GuardsDirective.md)
+
+#### Overrides
+
+[ImmediateDirective](x_robot.ImmediateDirective.md).[guards](x_robot.ImmediateDirective.md#guards)
+
+#### Defined in
+
+[lib/machine/interfaces.ts:38](https://github.com/Masquerade-Circus/x-robot/blob/a0ed060/lib/machine/interfaces.ts#L38)

@@ -1,14 +1,47 @@
-## X-Robot
+---
+home: true
+icon: home
+title: X-Robot
+heroImage: /media/x-robot-logo.svg
+heroText: X-Robot
+tagline: A finite state machine library for nodejs and the web
+actions:
+  - text: Quick Start
+    link: /#quick-start
+    type: primary
+    icon: launch
+  - text: Get started
+    link: /guides/01-getting-started
+    icon: arrow
+  - text: Api Reference
+    link: /api/
+    icon: api
 
-X-Robot is a finite state machine library for nodejs and the web.
-Intended to be used for high complex state machines with an easy to use API.
-Not only for user interfaces but also for server side applications.
+features:
+  - title: Use it in nodejs too
+    details: Not only for user interfaces but also for server side applications.
+  - title: Easy to use api
+    details: Intended to be used for high comples state machines with a declarative and functional API.
+  - title: Machine validation
+    details: The library provides a validation system that makes it easy to validate your state machine at compile time.
+  - title: Easy visualization
+    details: You can generate a diagram from your state machine for a quick overview, documentation or to share it with your team.
+  - title: Code generation
+    details: The library provides a code generator that makes it easy to generate code for your state machine.
 
-## Use cases
+---
+
+___
+
+# Quick Start
+
+## Install
+
+## Usage
 
 ### Simple example
 
-![Toggle machine diagram](./media/toggle-machine-diagram.svg)
+::: custom flex flex-column-reverse lg:flex-row lg:flex-1-2/3 lg:flex-2-1/3 text-center
 
 ```javascript 
 import {machine, states, state, initial, transition, invoke} from 'x-robot';
@@ -29,9 +62,13 @@ invoke(stoplight, 'next'); // stoplight.current === 'red'
 invoke(stoplight, 'next'); // stoplight.current === 'green' 
 ```
 
+![](media/toggle-machine-diagram.svg)
+
+:::
+
 ### Async example
 
-![Fetch machine diagram](./media/fetch-machine-diagram.svg)
+::: custom flex flex-column-reverse lg:flex-row lg:flex-1-2/3 lg:flex-2-1/3 text-center
 
 ```javascript
 import {machine, states, state, initial, transition, invoke, action, producer} from 'x-robot';
@@ -80,10 +117,12 @@ await invoke(fetchMachine, 'fetch');
 // fetchMachine.current === 'idle' because the action was resolved and transitioned to idle
 ```
 
+![](media/fetch-machine-diagram.svg)
+:::
+
 ### Nested machines
 
-![Stoplight machine diagram](./media/stoplight-machine-diagram.svg)
-
+::: custom flex flex-column-reverse lg:flex-row lg:flex-1-2/3 lg:flex-2-1/3 text-center
 ```javascript
 import {machine, states, state, initial, transition, invoke, nested, guard} from 'x-robot';
 
@@ -131,16 +170,40 @@ invoke(stoplight, 'red.stop'); // Invoke the stopwalk transition stop from the s
 // stoplight.current === 'green' because the immediate transition was invoked and the guard was true
 ```
 
+![](media/stoplight-machine-diagram.svg)
+:::
+
 ### Parallel states
 
-![Word machine diagram](./media/word-machine-diagram.svg)
+::: custom flex flex-column-reverse lg:flex-row lg:flex-1-2/3 lg:flex-2-1/3 text-center
 
 ```javascript
 import {machine, states, state, initial, transition, invoke, parallel, getState} from 'x-robot';
 
-const boldMachine = machine('Bold', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
-const underlineMachine = machine('Underline', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
-const italicsMachine = machine('Italics', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
+const boldMachine = machine(
+  'Bold', 
+  states(
+    state('on', transition('off', 'off')), 
+    state('off', transition('on', 'on'))
+  ), 
+  initial('off')
+);
+const underlineMachine = machine(
+  'Underline', 
+  states(
+    state('on', transition('off', 'off')), 
+    state('off', transition('on', 'on'))
+  ), 
+  initial('off')
+);
+const italicsMachine = machine(
+  'Italics', 
+  states(
+    state('on', transition('off', 'off')), 
+    state('off', transition('on', 'on'))
+  ), 
+  initial('off')
+);
 const listMachine = machine(
   'List',
   states(
@@ -168,3 +231,7 @@ invoke(wordMachine, 'list/bullets'); // listMachine.current === 'bullets'
 
 getState(wordMachine); // { bold: 'on', underline: 'on', italics: 'on', list: 'bullets' }
 ```
+
+![](media/word-machine-diagram.svg)
+
+:::
