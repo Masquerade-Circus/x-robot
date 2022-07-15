@@ -33,11 +33,14 @@
       "lib/utils.ts"
     ],
     "entryPointStrategy": "expand",
-    "out": "docs",
+    "out": "docs/src/api",
+    "media": "media",
     "sort": ["visibility"],
-    "includeVersion": true,
+    "includeVersion": false,
     "mergeModulesMergeMode": "module",
-    "categoryOrder": ["*", "Other"]
+    "categoryOrder": ["*", "Other"],
+    "readme": "none",
+    "name": "Api"
   },
   "ts-node": {
     "transpileOnly": true
