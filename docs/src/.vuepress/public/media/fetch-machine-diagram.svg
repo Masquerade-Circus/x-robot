@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="481px" preserveAspectRatio="none" style="width:260px;height:481px;background:#FFFFFF;" version="1.1" viewBox="0 0 260 481" width="260px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacing" textLength="71" x="88" y="16.708">Dog API</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="141" y="107.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="32" x="150" y="132.7998">idle</text><g id="loading"><rect fill="#FFFFFF" height="134.0781" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="139" x="21.5" y="224.9531"/><line style="stroke:#708090;stroke-width:1.5;" x1="21.5" x2="160.5" y1="251.25" y2="251.25"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="56" x="63" y="242.9482">loading</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="91" x="26.5" y="267.3887">└┬ A:fetchDog</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="70" x="33.5" y="281.3574">├┬ success</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="98" x="33.5" y="295.3262">│├ P:assignDog</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="91" x="33.5" y="309.2949">│└ T:resolved</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="70" x="33.5" y="323.2637">└┬ failure</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="105" x="40.5" y="337.2324">├ P:assignError</text><text fill="#000000" font-family="monospace" font-size="12" lengthAdjust="spacing" textLength="84" x="40.5" y="351.2012">└ T:rejected</text></g><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="74" x="159" y="435.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="64" x="164" y="460.7998">resolved</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="74" x="7" y="435.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="64" x="12" y="460.7998">rejected</text><ellipse cx="166" cy="36.9531" fill="#000000" rx="10" ry="10" style="stroke:none;stroke-width:1.0;"/><!--MD5=[583e8850357656d6f71ed436b986edf1]
+link *start to idle--><path d="M166,47.1431 C166,60.1331 166,84.3331 166,102.6831 " fill="none" id="*start-to-idle" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="166,107.6931,170,98.6931,166,102.6931,162,98.6931,166,107.6931" style="stroke:#708090;stroke-width:2.0;"/><!--MD5=[069abb7da33eb40b89293e24b2f19122]
+link idle to loading--><path d="M140.92,135.8231 C120.77,142.8131 93.78,155.8331 81,177.9531 C73.8,190.4031 71.53,204.9531 71.95,219.3831 " fill="none" id="idle-to-loading" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="72.22,224.6831,75.7511,215.489,71.9625,219.6898,67.7617,215.9011,72.22,224.6831" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="40" x="82" y="191.02">fetch</text><!--MD5=[720ca03703c1c9ea2b5f73f5e3107bf0]
+link loading to idle--><path d="M121.63,224.8031 C133.43,199.3131 146.17,171.7931 154.96,152.8131 " fill="none" id="loading-to-idle" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="157.1,148.1731,149.6928,154.6641,155.002,152.7117,156.9544,158.0209,157.1,148.1731" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="48" x="143" y="191.02">cancel</text><!--MD5=[bc220758805248889cb6ffefcfdef91e]
+link loading to resolved--><path d="M119.23,358.9831 C127.25,374.9431 136.66,391.5431 147,405.9531 C153.63,415.1931 162.05,424.2831 170.03,432.0931 " fill="none" id="loading-to-resolved" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="173.9,435.8131,170.1979,426.6865,170.3008,432.3424,164.6449,432.4453,173.9,435.8131" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="64" x="148" y="402.02">resolved</text><!--MD5=[99a4ee6debe6635254b69d2bbb8daf7c]
+link loading to rejected--><path d="M51.48,358.9931 C47.17,368.7531 43.46,378.9131 41,388.9531 C37.68,402.5031 38.19,418.0731 39.65,430.6931 " fill="none" id="loading-to-rejected" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="40.32,435.9031,43.1293,426.4634,39.677,430.9446,35.1958,427.4923,40.32,435.9031" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="64" x="42" y="402.02">rejected</text><!--MD5=[c0f96fd8d23bddfa57eca681b0fe4c36]
+link resolved to idle--><path d="M206.48,435.5231 C210.64,426.7531 214.92,416.1031 217,405.9531 C218.52,398.5531 217.3,396.5031 217,388.9531 C213.22,294.9431 231.69,266.5431 200,177.9531 C196.76,168.9031 191.4,159.9731 185.89,152.2731 " fill="none" id="resolved-to-idle" style="stroke:#708090;stroke-width:2.0;stroke-dasharray:7.0,7.0;"/><polygon fill="#708090" points="182.82,148.1231,184.9595,157.7368,185.7948,152.1419,191.3896,152.9771,182.82,148.1231" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="32" x="220" y="296.52">idle</text><!--MD5=[8a8f06705d35f0eb556d9a98d2a8923d]
+@startuml
+
+title Dog API
+
+state idle<<default>>
+state loading<<default>>
+state resolved<<default>>
+state rejected<<default>>
+
+loading: └┬ A:fetchDog\n ├┬ success\n │├ P:assignDog\n │└ T:resolved\n └┬ failure\n  ├ P:assignError\n  └ T:rejected
+
+[*] - -> idle
+idle -[#slategray]-> loading: fetch
+loading -[#slategray]-> resolved: resolved
+loading -[#slategray]-> rejected: rejected
+loading -[#slategray]-> idle: cancel
+resolved -[#slategray,dashed]-> idle: idle
+
+hide empty description
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam note {
+  BackgroundColor white
+  BorderColor slategray
+  FontName monospaced
+}
+skinparam ArrowFontName monospaced
+skinparam state {
+  FontName monospaced
+  AttributeFontName monospaced
+  BackgroundColor white
+  BorderColor slategray
+  ArrowColor slategray
+  ArrowThickness 2
+  MessageAlignment left
+  BackgroundColor<<danger>> Implementation
+  BorderColor<<danger>> indianred
+  BackgroundColor<<info>> Application
+  BorderColor<<info>> skyblue
+  BackgroundColor<<warning>> Strategy
+  BorderColor<<warning>> tan
+  BackgroundColor<<success>> Technology
+  BorderColor<<success>> mediumseagreen
+  BackgroundColor<<primary>> Motivation
+  BorderColor<<primary>> lightsteelblue
+}
+@enduml
+
+PlantUML version 1.2021.12(Tue Oct 05 11:01:58 CDT 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: es
+Country: MX
+--></g></svg>

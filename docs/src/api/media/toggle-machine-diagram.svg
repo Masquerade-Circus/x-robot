@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="387px" preserveAspectRatio="none" style="width:155px;height:387px;background:#FFFFFF;" version="1.1" viewBox="0 0 155 387" width="155px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacing" textLength="79" x="31.5" y="16.708">Stoplight</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="60" y="107.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="40" x="65" y="132.7998">green</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="58" x="7" y="224.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="48" x="12" y="249.7998">yellow</text><rect fill="#FFFFFF" height="40" rx="12.5" ry="12.5" style="stroke:#708090;stroke-width:1.5;" width="50" x="60" y="341.9531"/><text fill="#000000" font-family="monospace" font-size="14" lengthAdjust="spacing" textLength="24" x="73" y="366.7998">red</text><ellipse cx="85" cy="36.9531" fill="#000000" rx="10" ry="10" style="stroke:none;stroke-width:1.0;"/><!--MD5=[397c3c162c5ddd0df8d14a2dad30eea6]
+link *start to green--><path d="M85,47.1431 C85,60.1331 85,84.3331 85,102.6831 " fill="none" id="*start-to-green" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="85,107.6931,89,98.6931,85,102.6931,81,98.6931,85,107.6931" style="stroke:#708090;stroke-width:2.0;"/><!--MD5=[60c397a31d3ce1e4617a22248cdb91c6]
+link green to yellow--><path d="M76.8,148.2031 C68.39,167.9331 55.29,198.6731 46.21,219.9831 " fill="none" id="green-to-yellow" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="44.23,224.6431,51.4342,217.9276,46.1875,220.0422,44.0728,214.7955,44.23,224.6431" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="32" x="65" y="191.02">next</text><!--MD5=[a0b3bed8ff2e82c3931a1a345a88ba4b]
+link yellow to red--><path d="M44.2,265.2031 C52.61,284.9331 65.71,315.6731 74.79,336.9831 " fill="none" id="yellow-to-red" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="76.77,341.6431,76.9272,331.7955,74.8125,337.0422,69.5658,334.9276,76.77,341.6431" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="32" x="65" y="308.02">next</text><!--MD5=[a5e0655705b84d40306bb9a9e3b7bcfd]
+link red to green--><path d="M95.48,341.5231 C99.64,332.7531 103.92,322.1031 106,311.9531 C117.97,253.6131 117.97,236.2931 106,177.9531 C104.27,169.5431 101.04,160.7931 97.62,153.0631 " fill="none" id="red-to-green" style="stroke:#708090;stroke-width:2.0;"/><polygon fill="#708090" points="95.48,148.3831,95.6,158.2313,97.5662,152.9271,102.8704,154.8933,95.48,148.3831" style="stroke:#708090;stroke-width:2.0;"/><text fill="#000000" font-family="monospace" font-size="13" lengthAdjust="spacing" textLength="32" x="115" y="249.52">next</text><!--MD5=[53dc780454b4338d99fef7c00ddcd375]
+@startuml
+
+title Stoplight
+
+state green<<default>>
+state yellow<<default>>
+state red<<default>>
+
+[*] - -> green
+green -[#slategray]-> yellow: next
+yellow -[#slategray]-> red: next
+red -[#slategray]-> green: next
+
+hide empty description
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam note {
+  BackgroundColor white
+  BorderColor slategray
+  FontName monospaced
+}
+skinparam ArrowFontName monospaced
+skinparam state {
+  FontName monospaced
+  AttributeFontName monospaced
+  BackgroundColor white
+  BorderColor slategray
+  ArrowColor slategray
+  ArrowThickness 2
+  MessageAlignment left
+  BackgroundColor<<danger>> Implementation
+  BorderColor<<danger>> indianred
+  BackgroundColor<<info>> Application
+  BorderColor<<info>> skyblue
+  BackgroundColor<<warning>> Strategy
+  BorderColor<<warning>> tan
+  BackgroundColor<<success>> Technology
+  BorderColor<<success>> mediumseagreen
+  BackgroundColor<<primary>> Motivation
+  BorderColor<<primary>> lightsteelblue
+}
+@enduml
+
+PlantUML version 1.2021.12(Tue Oct 05 11:01:58 CDT 2021)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: es
+Country: MX
+--></g></svg>
