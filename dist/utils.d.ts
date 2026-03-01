@@ -1,9 +1,10 @@
-import { ActionDirective, ContextDirective, DescriptionDirective, GuardDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedImmediateDirective, NestedMachineDirective, NestedMachineWithTransitionDirective, ParallelDirective, ParallelImmediateDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective } from "./machine/interfaces";
+import { ActionDirective, ContextDirective, DescriptionDirective, GuardDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedImmediateDirective, ParallelDirective, ParallelImmediateDirective, PulseDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective, NestedMachineDirective, NestedMachineWithTransitionDirective } from "./machine/interfaces";
 export declare function isValidString(str?: any): str is string;
 export declare function isValidObject(obj: any): obj is object;
 export declare function isProducer(producer?: any): producer is ProducerDirective;
 export declare function isProducerWithTransition(producer?: any): producer is ProducerDirectiveWithTransition;
 export declare function isProducerWithoutTransition(producer?: any): producer is ProducerDirectiveWithoutTransition;
+export declare function isPulse(pulse?: any): pulse is PulseDirective;
 export declare function isAction(action?: any): action is ActionDirective;
 export declare function isImmediate(immediate?: any): immediate is ImmediateDirective;
 export declare function isGuard(guard?: any): guard is GuardDirective;

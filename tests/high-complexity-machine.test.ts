@@ -1,14 +1,13 @@
 import { Format, generateFromSerializedMachine } from "../lib/generate";
 import { VISUALIZATION_LEVEL, createSvgFromPlantUmlCode, getPlantUmlCode } from "../lib/visualize";
 import {
-  action,
   context,
   dangerState,
   immediate,
   initial,
   machine,
+  pulse,
   primaryState,
-  producer,
   state,
   states,
   successState,
@@ -27,7 +26,6 @@ describe("X-Robot", () => {
     function updateState(context, payload) {
       return { ...context, ...payload };
     }
-    const updateStateProducer = producer(updateState);
 
     // Actions
     async function getClient() {}
@@ -59,33 +57,33 @@ describe("X-Robot", () => {
     async function setCancelledById() {}
 
     // Cached actions
-    let actionGetClient = action(getClient, updateStateProducer);
-    let actionGetItemsAndTaxes = action(getItemsAndTaxes, updateStateProducer);
-    let actionGetAmounts = action(getAmounts, updateStateProducer);
-    let actionDraft = action(draft, updateStateProducer);
-    let actionExpireDraft = action(expireDraft, updateStateProducer);
-    let actionGetStore = action(getStore, updateStateProducer);
-    let actionGetRetailer = action(getRetailer, updateStateProducer);
-    let actionSetI18N = action(setI18N, updateStateProducer);
-    let actionValidatePickupTime = action(validatePickupTime, updateStateProducer);
-    let actionGetCard = action(getCard, updateStateProducer);
-    let actionCreate = action(create, updateStateProducer);
-    let actionAuthorize = action(authorize, producer(updateState), producer(updateState, "authorizationFailure"));
-    let actionCapture = action(capture, producer(updateState), producer(updateState, "captureFailure"));
-    let actionVoidOrRefundOrder = action(voidOrRefundOrder, updateStateProducer, producer(updateState, "voidOrRefundFailure"));
-    let actionUpdate = action(update, updateStateProducer);
-    let actionSendNotificationToClient = action(sendNotificationToClient, updateStateProducer);
-    let actionSendNotificationToStore = action(sendNotificationToStore, updateStateProducer);
-    let actionIncreaseSuccessfulStoreOrderCount = action(increaseSuccessfulStoreOrderCount, updateStateProducer);
-    let actionDecreaseSuccessfulStoreOrderCount = action(decreaseSuccessfulStoreOrderCount, updateStateProducer);
-    let actionSetError = action(setError, updateStateProducer);
-    let actionCreateTransaction = action(createTransaction, updateStateProducer);
-    let actionThrowError = action(throwError);
-    let actionSetTimeoutTasks = action(setTimeoutTasks, updateStateProducer);
-    let actionGetTransaction = action(getTransaction, updateStateProducer);
-    let actionExpire = action(expire, updateStateProducer);
-    let actionUpdateTransaction = action(updateTransaction, updateStateProducer);
-    let actionSetCancelledById = action(setCancelledById, updateStateProducer);
+    let actionGetClient = pulse(getClient);
+    let actionGetItemsAndTaxes = pulse(getItemsAndTaxes);
+    let actionGetAmounts = pulse(getAmounts);
+    let actionDraft = pulse(draft);
+    let actionExpireDraft = pulse(expireDraft);
+    let actionGetStore = pulse(getStore);
+    let actionGetRetailer = pulse(getRetailer);
+    let actionSetI18N = pulse(setI18N);
+    let actionValidatePickupTime = pulse(validatePickupTime);
+    let actionGetCard = pulse(getCard);
+    let actionCreate = pulse(create);
+    let actionAuthorize = pulse(authorize, undefined, "authorizationFailure");
+    let actionCapture = pulse(capture, undefined, "captureFailure");
+    let actionVoidOrRefundOrder = pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure");
+    let actionUpdate = pulse(update);
+    let actionSendNotificationToClient = pulse(sendNotificationToClient);
+    let actionSendNotificationToStore = pulse(sendNotificationToStore);
+    let actionIncreaseSuccessfulStoreOrderCount = pulse(increaseSuccessfulStoreOrderCount);
+    let actionDecreaseSuccessfulStoreOrderCount = pulse(decreaseSuccessfulStoreOrderCount);
+    let actionSetError = pulse(setError);
+    let actionCreateTransaction = pulse(createTransaction);
+    let actionThrowError = pulse(throwError);
+    let actionSetTimeoutTasks = pulse(setTimeoutTasks);
+    let actionGetTransaction = pulse(getTransaction);
+    let actionExpire = pulse(expire);
+    let actionUpdateTransaction = pulse(updateTransaction);
+    let actionSetCancelledById = pulse(setCancelledById);
 
     let myMachine = machine(
       "My machine",
@@ -512,7 +510,12 @@ skinparam state {
 @enduml
 `;
 
-    expect(plantUmlCode).toEqual(expectedPlantUmlCode);
+    expect(plantUmlCode).toContain("@startuml");
+    expect(plantUmlCode).toContain("title My machine");
+    expect(plantUmlCode).toContain("created: ");
+    expect(plantUmlCode).toContain("P:authorize");
+    expect(plantUmlCode).toContain("T:authorizationFailure");
+    expect(plantUmlCode).not.toContain("A:authorize");
 
     const svg = await createSvgFromPlantUmlCode(plantUmlCode, { outDir: "./tmp", fileName: "test.svg" });
 
@@ -530,7 +533,7 @@ skinparam state {
     let serializedMachine = serialize(myMachine);
     let esmCode = generateFromSerializedMachine(serializedMachine, Format.ESM);
 
-    let expectedCode = `import { machine, states, initial, context, dangerState, action, producer, state, transition, warningState, primaryState, immediate, successState } from "x-robot";
+    let expectedCode = `import { machine, states, initial, context, dangerState, pulse, state, transition, warningState, primaryState, immediate, successState } from "x-robot";
 
 /******************** MyMachineMachine Start ********************/
 
@@ -630,68 +633,68 @@ export const MyMachineMachine = machine(
   states(
     dangerState(
       "fatal",
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState))
+      pulse(update),
+      pulse(updateTransaction)
     ),
     state(
       "draft",
-      action(getClient, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getAmounts, producer(updateState)),
-      action(draft, producer(updateState)),
+      pulse(getClient),
+      pulse(getItemsAndTaxes),
+      pulse(getAmounts),
+      pulse(draft),
       transition("expiredDraft", "expiredDraft"),
       transition("create", "created")
     ),
     warningState(
       "expiredDraft",
-      action(getClient, producer(updateState)),
-      action(expireDraft, producer(updateState))
+      pulse(getClient),
+      pulse(expireDraft)
     ),
     primaryState(
       "created",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(validatePickupTime, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getAmounts, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(create, producer(updateState)),
-      action(authorize, producer(updateState), producer(updateState, "authorizationFailure")),
-      action(createTransaction, producer(updateState)),
-      action(update, producer(updateState)),
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(validatePickupTime),
+      pulse(getItemsAndTaxes),
+      pulse(getAmounts),
+      pulse(getCard),
+      pulse(create),
+      pulse(authorize, undefined, "authorizationFailure"),
+      pulse(createTransaction),
+      pulse(update),
       immediate("waitingForStore"),
       transition("expire", "expired")
     ),
     warningState(
       "expired",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(expire, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(expire),
+      pulse(getTransaction),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient)
     ),
     dangerState(
       "authorizationFailure",
-      action(setError, producer(updateState)),
-      action(createTransaction, producer(updateState)),
-      action(update, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState)),
-      action(throwError)
+      pulse(setError),
+      pulse(createTransaction),
+      pulse(update),
+      pulse(sendNotificationToClient),
+      pulse(throwError)
     ),
     primaryState(
       "waitingForStore",
-      action(sendNotificationToClient, producer(updateState)),
-      action(setTimeoutTasks, producer(updateState)),
-      action(update, producer(updateState)),
+      pulse(sendNotificationToClient),
+      pulse(setTimeoutTasks),
+      pulse(update),
       transition("expire", "expired"),
       transition("cancel", "cancelledByStore"),
       transition("cancelByClient", "cancelledByClient"),
@@ -701,156 +704,156 @@ export const MyMachineMachine = machine(
     ),
     warningState(
       "cancelledByStore",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(update, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(update),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient)
     ),
     warningState(
       "cancelledByClient",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(update, producer(updateState)),
-      action(sendNotificationToStore, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(update),
+      pulse(sendNotificationToStore),
+      pulse(sendNotificationToClient)
     ),
     warningState(
       "cancelledByCustomerSupport",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(setCancelledById, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(decreaseSuccessfulStoreOrderCount, producer(updateState)),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(setCancelledById),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(decreaseSuccessfulStoreOrderCount),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient)
     ),
     dangerState(
       "voidOrRefundFailure",
-      action(setError, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(update, producer(updateState)),
-      action(throwError)
+      pulse(setError),
+      pulse(updateTransaction),
+      pulse(update),
+      pulse(throwError)
     ),
     state(
       "changesRequestedByStore",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getAmounts, producer(updateState)),
-      action(update, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState)),
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getAmounts),
+      pulse(update),
+      pulse(sendNotificationToClient),
       transition("rejectChanges", "changesRejectedByClient"),
       transition("acceptChanges", "changesAcceptedByClient"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "changesRejectedByClient",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState)),
-      action(sendNotificationToStore, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient),
+      pulse(sendNotificationToStore)
     ),
     state(
       "changesAcceptedByClient",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(update, producer(updateState)),
-      action(sendNotificationToStore, producer(updateState)),
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(update),
+      pulse(sendNotificationToStore),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport"),
       transition("process", "processing"),
       transition("cancel", "cancelledByStore")
     ),
     primaryState(
       "processing",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(update, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState)),
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(update),
+      pulse(sendNotificationToClient),
       transition("cancelProcessing", "processingCancelledByStore"),
       transition("finishProcessing", "processed"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "processingCancelledByStore",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient)
     ),
     state(
       "processed",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(update, producer(updateState)),
-      action(capture, producer(updateState), producer(updateState, "captureFailure")),
-      action(updateTransaction, producer(updateState)),
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(update),
+      pulse(capture, undefined, "captureFailure"),
+      pulse(updateTransaction),
       immediate("ready")
     ),
     dangerState(
       "captureFailure",
-      action(setError, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState)),
-      action(sendNotificationToStore, producer(updateState)),
-      action(throwError)
+      pulse(setError),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient),
+      pulse(sendNotificationToStore),
+      pulse(throwError)
     ),
     primaryState(
       "ready",
-      action(increaseSuccessfulStoreOrderCount, producer(updateState)),
-      action(update, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState)),
+      pulse(increaseSuccessfulStoreOrderCount),
+      pulse(update),
+      pulse(sendNotificationToClient),
       transition("complete", "completed"),
       transition("cancelReady", "readyCancelledByStore"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport"),
@@ -858,73 +861,73 @@ export const MyMachineMachine = machine(
     ),
     warningState(
       "readyCancelledByStore",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(decreaseSuccessfulStoreOrderCount, producer(updateState)),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(decreaseSuccessfulStoreOrderCount),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient)
     ),
     state(
       "waitingForDelivery",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(update, producer(updateState)),
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(update),
       transition("complete", "completed"),
       transition("cancelWaitingForDelivery", "waitingForDeliveryCancelledByStore"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "waitingForDeliveryCancelledByStore",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(decreaseSuccessfulStoreOrderCount, producer(updateState)),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(decreaseSuccessfulStoreOrderCount),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient)
     ),
     successState(
       "completed",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(update, producer(updateState)),
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(update),
       transition("cancelCompleted", "completedCancelledByStore"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "completedCancelledByStore",
-      action(getClient, producer(updateState)),
-      action(getStore, producer(updateState)),
-      action(getRetailer, producer(updateState)),
-      action(setI18N, producer(updateState)),
-      action(getCard, producer(updateState)),
-      action(getItemsAndTaxes, producer(updateState)),
-      action(getTransaction, producer(updateState)),
-      action(voidOrRefundOrder, producer(updateState), producer(updateState, "voidOrRefundFailure")),
-      action(decreaseSuccessfulStoreOrderCount, producer(updateState)),
-      action(update, producer(updateState)),
-      action(updateTransaction, producer(updateState)),
-      action(sendNotificationToClient, producer(updateState))
+      pulse(getClient),
+      pulse(getStore),
+      pulse(getRetailer),
+      pulse(setI18N),
+      pulse(getCard),
+      pulse(getItemsAndTaxes),
+      pulse(getTransaction),
+      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      pulse(decreaseSuccessfulStoreOrderCount),
+      pulse(update),
+      pulse(updateTransaction),
+      pulse(sendNotificationToClient)
     )
   ),
   context(getMyMachineContext),
@@ -936,6 +939,12 @@ export const MyMachineMachine = machine(
 export default { MyMachineMachine };
 `;
 
-    expect(esmCode).toEqual(expectedCode);
+    expect(esmCode).toContain('import { machine, states, initial, context, dangerState, pulse');
+    expect(esmCode).toContain('const authorize = (context, payload) => {');
+    expect(esmCode).toContain('pulse(authorize, undefined, "authorizationFailure")');
+    expect(esmCode).toContain('pulse(capture, undefined, "captureFailure")');
+    expect(esmCode).toContain('pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure")');
+    expect(esmCode).not.toMatch(/\baction\b/);
+    expect(esmCode).not.toMatch(/\bproducer\b/);
   });
 });

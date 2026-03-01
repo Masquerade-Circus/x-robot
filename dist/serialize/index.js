@@ -31,14 +31,8 @@ function isValidString(str) {
 function isValidObject(obj) {
   return obj !== null && typeof obj === "object";
 }
-function isProducer(producer) {
-  return isValidObject(producer) && "producer" in producer;
-}
-function isProducerWithTransition(producer) {
-  return isProducer(producer) && isValidString(producer.transition);
-}
-function isAction(action) {
-  return isValidObject(action) && "action" in action;
+function isPulse(pulse) {
+  return isValidObject(pulse) && "pulse" in pulse;
 }
 function cloneContext(context, weakMap = /* @__PURE__ */ new WeakMap()) {
   if (weakMap.has(context)) {
@@ -78,32 +72,16 @@ function cloneContext(context, weakMap = /* @__PURE__ */ new WeakMap()) {
 }
 
 // lib/serialize/index.ts
-function serializeProducer(producer) {
+function serializePulse(pulse) {
   let serialized = {
-    producer: producer.producer.name
+    pulse: pulse.pulse.name,
+    isAsync: pulse.pulse.constructor.name === "AsyncFunction"
   };
-  if (isProducerWithTransition(producer)) {
-    serialized.transition = producer.transition;
+  if (isValidString(pulse.success)) {
+    serialized.success = pulse.success;
   }
-  return serialized;
-}
-function serializeAction(action) {
-  let serialized = {
-    action: action.action.name
-  };
-  if (action.success) {
-    if (isValidString(action.success)) {
-      serialized.success = action.success;
-    } else if (isProducer(action.success)) {
-      serialized.success = serializeProducer(action.success);
-    }
-  }
-  if (action.failure) {
-    if (isValidString(action.failure)) {
-      serialized.failure = action.failure;
-    } else if (isProducer(action.failure)) {
-      serialized.failure = serializeProducer(action.failure);
-    }
+  if (isValidString(pulse.failure)) {
+    serialized.failure = pulse.failure;
   }
   return serialized;
 }
@@ -113,8 +91,6 @@ function serializeGuard(guard) {
   };
   if (isValidString(guard.failure)) {
     serialized.failure = guard.failure;
-  } else if (isProducer(guard.failure)) {
-    serialized.failure = serializeProducer(guard.failure);
   }
   if ("machine" in guard) {
     serialized.machine = serialize(guard.machine);
@@ -126,11 +102,8 @@ function serializeRunArguments(run) {
     return null;
   }
   return run.map((item) => {
-    if (isAction(item)) {
-      return serializeAction(item);
-    }
-    if (isProducer(item)) {
-      return serializeProducer(item);
+    if (isPulse(item)) {
+      return serializePulse(item);
     }
   });
 }

@@ -4,38 +4,33 @@
  * */
 
 import {
-  ActionDirective,
   GuardDirective,
   GuardsDirective,
   ImmediateDirective,
   Machine,
   NestedGuardDirective,
   NestedMachineDirective,
-  ProducerDirective,
+  PulseDirective,
   RunCollection,
   TransitionDirective,
   TransitionsDirective,
 } from "../machine/interfaces";
-import { cloneContext, isAction, isProducer, isProducerWithTransition, isValidString } from "../utils";
+import { cloneContext, isPulse, isValidString } from "../utils";
 
-export interface SerializedProducer {
-  producer: string;
-  transition?: string;
-}
-
-export interface SerializedAction {
-  action: string;
-  success?: string | SerializedProducer;
-  failure?: string | SerializedProducer;
+export interface SerializedPulse {
+  pulse: string;
+  success?: string;
+  failure?: string;
+  isAsync?: boolean;
 }
 
 export interface SerializedGuard {
   guard: string;
-  failure?: string | SerializedProducer;
+  failure?: string;
   machine?: SerializedMachine;
 }
 
-export interface SerializedCollection extends Array<SerializedAction | SerializedProducer> {}
+export interface SerializedCollection extends Array<SerializedPulse> {}
 
 export interface SerializedTransition {
   target: string;
@@ -79,45 +74,22 @@ export interface SerializedNestedMachine {
 }
 
 /**
- * @param producer The producer to serialize
- * @returns SerializedProducer
- */
-function serializeProducer(producer: ProducerDirective): SerializedProducer {
-  let serialized: SerializedProducer = {
-    producer: producer.producer.name,
-  };
-
-  if (isProducerWithTransition(producer)) {
-    serialized.transition = producer.transition;
-  }
-
-  return serialized;
-}
-
-/**
  *
- * @param action The action to serialize
- * @returns SerializedAction
+ * @param pulse The pulse to serialize
+ * @returns SerializedPulse
  */
-function serializeAction(action: ActionDirective): SerializedAction {
-  let serialized: SerializedAction = {
-    action: action.action.name,
+function serializePulse(pulse: PulseDirective): SerializedPulse {
+  let serialized: SerializedPulse = {
+    pulse: pulse.pulse.name,
+    isAsync: pulse.pulse.constructor.name === "AsyncFunction",
   };
 
-  if (action.success) {
-    if (isValidString(action.success)) {
-      serialized.success = action.success;
-    } else if (isProducer(action.success)) {
-      serialized.success = serializeProducer(action.success);
-    }
+  if (isValidString(pulse.success)) {
+    serialized.success = pulse.success;
   }
 
-  if (action.failure) {
-    if (isValidString(action.failure)) {
-      serialized.failure = action.failure;
-    } else if (isProducer(action.failure)) {
-      serialized.failure = serializeProducer(action.failure);
-    }
+  if (isValidString(pulse.failure)) {
+    serialized.failure = pulse.failure;
   }
 
   return serialized;
@@ -135,8 +107,6 @@ function serializeGuard(guard: GuardDirective | NestedGuardDirective): Serialize
 
   if (isValidString(guard.failure)) {
     serialized.failure = guard.failure;
-  } else if (isProducer(guard.failure)) {
-    serialized.failure = serializeProducer(guard.failure);
   }
 
   if ("machine" in guard) {
@@ -157,12 +127,8 @@ function serializeRunArguments(run: RunCollection): SerializedCollection | null 
   }
 
   return run.map((item) => {
-    if (isAction(item)) {
-      return serializeAction(item);
-    }
-
-    if (isProducer(item)) {
-      return serializeProducer(item);
+    if (isPulse(item)) {
+      return serializePulse(item);
     }
   }) as SerializedCollection;
 }

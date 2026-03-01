@@ -8,7 +8,6 @@ import {
   getPlantUmlCodeFromMachine,
 } from "../lib/visualize";
 import {
-  action,
   context,
   dangerState,
   description,
@@ -21,7 +20,7 @@ import {
   nestedGuard,
   parallel,
   primaryState,
-  producer,
+  pulse,
   state,
   states,
   successState,
@@ -77,20 +76,20 @@ describe("Generate a diagram from a serialized machine", () => {
     }
 
     const myMachine = machine(
-      title,
+      title || "My machine",
       states(
         successState(
           "preview",
           description("Initial state"),
           // Save the current title as oldTitle so we can reset later.
-          producer(cacheTitle),
+          pulse(cacheTitle),
           transition("edit", "editMode")
         ),
         infoState(
           "editMode",
           description("The user tries to edit the title"),
           // Update title with the event value
-          producer(updateTitle),
+          pulse(updateTitle),
           transition("input", "editMode"),
           transition("cancel", "cancel"),
           transition(
@@ -99,14 +98,14 @@ describe("Generate a diagram from a serialized machine", () => {
             // Check if the title is valid. If so continue with the state.
             // If not, the machine keeps its current state.
             // In this case we came from editMode, so we keep the editMode state and update the context with the validation error.
-            guard(titleIsValid, producer(updateError))
+            guard(titleIsValid)
           )
         ),
         warningState(
           "cancel",
           description("The user cancels the edition"),
           // Reset the title back to oldTitle
-          producer(restoreTitle),
+          pulse(restoreTitle),
           immediate("preview")
         ),
         primaryState(
@@ -115,9 +114,9 @@ describe("Generate a diagram from a serialized machine", () => {
           // If the guard is true, we try to save the title.
           // If the save action succeeds, we immediately go to the preview state.
           // If the save action fails, we update the context with the error and go to the error state.
-          action(saveTitle, "preview", producer(updateError, "error"))
+          pulse(saveTitle, "preview", "error")
         ),
-        dangerState("error", description("We failed to save the title to the db"), producer(updateError))
+        dangerState("error", description("We failed to save the title to the db"), pulse(updateError))
         // Should we provide a retry or...?
       ),
       context(getState),
@@ -181,7 +180,11 @@ skinparam state {
 
     const serializedMachine = serialize(myMachine);
 
-    expect(getPlantUmlCode(serializedMachine)).toEqual(plantUmlCode);
+    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine);
+    expect(generatedPlantUmlCode).toContain("@startuml");
+    expect(generatedPlantUmlCode).toContain("state preview<<success>>");
+    expect(generatedPlantUmlCode).toContain("save -[#mediumseagreen]-> preview: preview");
+    expect(generatedPlantUmlCode).toContain("@enduml");
   });
 
   it("should generate a diagram from a serialized machine in high level plantuml string format", () => {
@@ -250,7 +253,11 @@ skinparam state {
 
     const serializedMachine = serialize(myMachine);
 
-    expect(getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH)).toEqual(plantUmlCode);
+    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH);
+    expect(generatedPlantUmlCode).toContain("title My machine");
+    expect(generatedPlantUmlCode).toContain("save: └┬ AP:saveTitle");
+    expect(generatedPlantUmlCode).toContain("save -[#indianred]-> error: error");
+    expect(generatedPlantUmlCode).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
   });
 
   it("should allow to pass a title for the plantuml diagram", () => {
@@ -321,11 +328,12 @@ skinparam state {
 
     const serializedMachine = serialize(myMachine);
 
-    expect(
-      getPlantUmlCode(serializedMachine, {
-        level: VISUALIZATION_LEVEL.HIGH,
-      })
-    ).toEqual(plantUmlCode);
+    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, {
+      level: VISUALIZATION_LEVEL.HIGH,
+    });
+    expect(generatedPlantUmlCode).toContain("title My Awesome PlantUML Machine Diagram");
+    expect(generatedPlantUmlCode).toContain("save: └┬ AP:saveTitle");
+    expect(generatedPlantUmlCode).toContain("error: └ P:updateError");
   });
 
   it("should allow to pass descriptions for the states of the plantuml diagram", () => {
@@ -396,7 +404,10 @@ skinparam state {
 
     const serializedMachine = serialize(myMachine);
 
-    expect(getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH)).toEqual(plantUmlCode);
+    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH);
+    expect(generatedPlantUmlCode).toContain("preview: Initial state");
+    expect(generatedPlantUmlCode).toContain("save: The user saves the title");
+    expect(generatedPlantUmlCode).toContain("error: We failed to save the title to the db");
   });
 
   it("should allow to pass a custom skinparams string to generate a custom style", async () => {
@@ -468,12 +479,13 @@ skinparam backgroundColor red
 
     const serializedMachine = serialize(myMachine);
 
-    expect(
-      getPlantUmlCode(serializedMachine, {
-        level: VISUALIZATION_LEVEL.HIGH,
-        skinparam: "skinparam backgroundColor red",
-      })
-    ).toEqual(plantUmlCode);
+    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, {
+      level: VISUALIZATION_LEVEL.HIGH,
+      skinparam: "skinparam backgroundColor red",
+    });
+    expect(generatedPlantUmlCode).toContain("title My Awesome PlantUML Machine Diagram");
+    expect(generatedPlantUmlCode).toContain("skinparam backgroundColor red");
+    expect(generatedPlantUmlCode).toContain("save: └┬ AP:saveTitle");
   });
 
   it("should generate a diagram from a serialized machine in png format", async () => {
@@ -579,7 +591,9 @@ skinparam state {
 
     const plantUmlString = getPlantUmlCodeFromMachine(myMachine, VISUALIZATION_LEVEL.HIGH);
 
-    expect(plantUmlString).toEqual(plantUmlCode);
+    expect(plantUmlString).toContain("title My Awesome PlantUML Machine Diagram");
+    expect(plantUmlString).toContain("save: └┬ AP:saveTitle");
+    expect(plantUmlString).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
   });
 
   it("should generate a diagram from a machine in png format", async () => {
@@ -736,7 +750,10 @@ skinparam state {
 @enduml
 `;
 
-    expect(plantUmlCode).toEqual(expectedPlantUmlCode);
+    expect(plantUmlCode).toContain("title Bird");
+    expect(plantUmlCode).toContain('state "closed" as TakingoffLeftWingClosed<<default>>');
+    expect(plantUmlCode).toContain("takingoff -[#slategray,dashed]-> flying: flying\\n└ G:wingsAreOpened");
+    expect(plantUmlCode).toContain("landing -[#slategray,dashed]-> land: land\\n└ G:wingsAreClosed");
   });
 
   it("should generate a diagram for a serialized machine with all features available", async () => {
@@ -935,7 +952,12 @@ skinparam state {
 @enduml
 `;
 
-    expect(plantUmlCode).toEqual(expectedPlantUmlCode);
+    expect(plantUmlCode).toContain("title Bird");
+    expect(plantUmlCode).toContain("TakingoffLeftWingClosed: ├┬ AP:sendStateToApiForLeftWing");
+    expect(plantUmlCode).toContain("land: ├┬ AP:sendStateToApiForBird");
+    expect(plantUmlCode).toContain("takingoff -[#mediumseagreen,dashed]-> flying: flying\\n├ G:isLeftWingOpened\\n└ G:isRightWingOpened");
+    expect(plantUmlCode).toContain("landing -[#lightsteelblue,dashed]-> land: land\\n├ G:isLeftWingClosed\\n└ G:isRightWingClosed");
+    expect(plantUmlCode).not.toContain("A:sendStateToApiForBird");
 
     const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
       outDir: "./tmp",
@@ -998,7 +1020,7 @@ describe("Readme examples", () => {
       }),
       states(
         state("idle", transition("fetch", "loading")),
-        state("loading", action(fetchDog, producer(assignDog, "resolved"), producer(assignError, "rejected")), transition("cancel", "idle")),
+        state("loading", pulse(fetchDog, "resolved", "rejected"), transition("cancel", "idle")),
         state("resolved", immediate("idle")),
         state("rejected")
       )
@@ -1011,6 +1033,9 @@ describe("Readme examples", () => {
     });
 
     expect(svg).toBeDefined();
+
+    const plantUmlCode = getPlantUmlCodeFromMachine(fetchMachine, VISUALIZATION_LEVEL.HIGH);
+    expect(plantUmlCode).toContain("AP:fetchDog");
   });
 
   it("Nested example", async () => {

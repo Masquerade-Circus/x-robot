@@ -1,4 +1,4 @@
-import { context, getState, guard, immediate, initial, invoke, machine, nested, nestedGuard, producer, state, states, transition } from "../lib";
+import { context, getState, guard, immediate, initial, invoke, machine, nested, nestedGuard, pulse, state, states, transition } from "../lib";
 import { describe, it } from "mocha";
 
 import expect from "expect";
@@ -68,19 +68,19 @@ describe("Nested states", () => {
     }
 
     function aPersonEnters(context) {
-      return { doorWayCount: context.doorWayCount + 1 };
+      context.doorWayCount = context.doorWayCount + 1;
     }
 
     function aPersonLeaves(context) {
-      return { doorWayCount: context.doorWayCount - 1 };
+      context.doorWayCount = context.doorWayCount - 1;
     }
 
     let doorWayMachine = machine(
       "doorWay",
       states(
         state("idle", transition("enter", "enter"), transition("leave", "leave", guard(doorWayIsNotEmpty))),
-        state("enter", producer(aPersonEnters), immediate("idle")),
-        state("leave", producer(aPersonLeaves), immediate("idle"))
+        state("enter", pulse(aPersonEnters), immediate("idle")),
+        state("leave", pulse(aPersonLeaves), immediate("idle"))
       ),
       context({
         doorWayCount: 0,
@@ -127,19 +127,19 @@ describe("Nested states", () => {
     }
 
     function aPersonEnters(context) {
-      return { doorWayCount: context.doorWayCount + 1 };
+      context.doorWayCount = context.doorWayCount + 1;
     }
 
     function aPersonLeaves(context) {
-      return { doorWayCount: context.doorWayCount - 1 };
+      context.doorWayCount = context.doorWayCount - 1;
     }
 
     let doorWayMachine = machine(
       "doorWay",
       states(
         state("idle", transition("enter", "enter"), transition("leave", "leave", guard(doorWayIsNotEmpty))),
-        state("enter", producer(aPersonEnters), immediate("idle")),
-        state("leave", producer(aPersonLeaves), immediate("idle"))
+        state("enter", pulse(aPersonEnters), immediate("idle")),
+        state("leave", pulse(aPersonLeaves), immediate("idle"))
       ),
       context({
         doorWayCount: 0,
@@ -180,23 +180,23 @@ describe("Nested states", () => {
     }
 
     function aPersonEnters(context) {
-      return { doorWayCount: context.doorWayCount + 1 };
+      context.doorWayCount = context.doorWayCount + 1;
     }
 
     function aPersonLeaves(context) {
-      return { doorWayCount: context.doorWayCount - 1 };
+      context.doorWayCount = context.doorWayCount - 1;
     }
 
     function updateError(context, error) {
-      return { error };
+      context.error = error;
     }
 
     let doorWayMachine = machine(
       "doorWay",
       states(
         state("idle", transition("enter", "enter"), transition("leave", "leave", guard(doorWayIsNotEmpty))),
-        state("enter", producer(aPersonEnters), immediate("idle")),
-        state("leave", producer(aPersonLeaves), immediate("idle"))
+        state("enter", pulse(aPersonEnters), immediate("idle")),
+        state("leave", pulse(aPersonLeaves), immediate("idle"))
       ),
       context({
         doorWayCount: 0,
@@ -207,7 +207,7 @@ describe("Nested states", () => {
     let doorMachine = machine(
       "door",
       states(
-        state("opened", nested(doorWayMachine), transition("close", "closed", nestedGuard(doorWayMachine, doorWayIsEmpty, producer(updateError)))),
+        state("opened", nested(doorWayMachine), transition("close", "closed", nestedGuard(doorWayMachine, doorWayIsEmpty, pulse(updateError)))),
         state("closed", transition("open", "opened"), transition("lock", "locked")),
         state("locked", transition("unlock", "closed"))
       ),

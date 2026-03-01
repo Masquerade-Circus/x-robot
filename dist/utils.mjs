@@ -17,6 +17,9 @@ function isProducerWithTransition(producer) {
 function isProducerWithoutTransition(producer) {
   return !isProducerWithTransition(producer);
 }
+function isPulse(pulse) {
+  return isValidObject(pulse) && "pulse" in pulse;
+}
 function isAction(action) {
   return isValidObject(action) && "action" in action;
 }
@@ -189,6 +192,7 @@ export {
   isProducer,
   isProducerWithTransition,
   isProducerWithoutTransition,
+  isPulse,
   isShouldFreezeDirective,
   isStateDirective,
   isStatesDirective,

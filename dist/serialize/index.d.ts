@@ -1,19 +1,16 @@
 import { Machine } from "../machine/interfaces";
-export interface SerializedProducer {
-    producer: string;
-    transition?: string;
-}
-export interface SerializedAction {
-    action: string;
-    success?: string | SerializedProducer;
-    failure?: string | SerializedProducer;
+export interface SerializedPulse {
+    pulse: string;
+    success?: string;
+    failure?: string;
+    isAsync?: boolean;
 }
 export interface SerializedGuard {
     guard: string;
-    failure?: string | SerializedProducer;
+    failure?: string;
     machine?: SerializedMachine;
 }
-export interface SerializedCollection extends Array<SerializedAction | SerializedProducer> {
+export interface SerializedCollection extends Array<SerializedPulse> {
 }
 export interface SerializedTransition {
     target: string;

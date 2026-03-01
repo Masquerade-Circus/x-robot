@@ -3,8 +3,6 @@
  * @description Create a new machine from a set of directives.
  * */
 import {
-  Action,
-  ActionDirective,
   Context,
   ContextDirective,
   DangerStateDirective,
@@ -22,9 +20,6 @@ import {
   NestedMachineDirective,
   ParallelDirective,
   PrimaryStateDirective,
-  Producer,
-  ProducerDirective,
-  ProducerDirectiveWithoutTransition,
   RunCollection,
   ShouldFreezeDirective,
   StateDirective,
@@ -32,12 +27,13 @@ import {
   SuccessStateDirective,
   TransitionDirective,
   TransitionsDirective,
-  WarningStateDirective
+  WarningStateDirective,
+  Pulse,
+  PulseDirective
 } from "./interfaces";
 import {
   deepFreeze,
   hasTransition,
-  isAction,
   isContextDirective,
   isDescriptionDirective,
   isImmediate,
@@ -47,8 +43,7 @@ import {
   isNestedMachineDirective,
   isParallelDirective,
   isParallelImmediateDirective,
-  isProducer,
-  isProducerWithTransition,
+  isPulse,
   isShouldFreezeDirective,
   isStatesDirective,
   isTransition,
@@ -134,13 +129,17 @@ export function machine(title: string, ...args: MachineArguments): Machine {
     deepFreeze(myMachine.context);
   }
 
-  // Find if the machine is async, if so, add the async property
-  // Machin is async if there is a state with an action in the run array
+  // Find if the machine is async, if so, add the async property.
+  // A machine is async if any pulse in any state is async.
   for (let state in myMachine.states) {
     if (myMachine.states[state].run.length > 0) {
-      // Find an action in the run array
-      let action = myMachine.states[state].run.find(isAction);
-      if (action) {
+      let hasAsyncPulse = myMachine.states[state].run.some(
+        (item) =>
+          isPulse(item) &&
+          typeof item.pulse === "function" &&
+          item.pulse.constructor.name === "AsyncFunction"
+      );
+      if (hasAsyncPulse) {
         myMachine.isAsync = true;
         break;
       }
@@ -250,7 +249,7 @@ export function shouldFreeze(freeze: boolean): ShouldFreezeDirective {
  * @category Creation
  */
 export function state(name: string, ...args: RunCollection): StateDirective {
-  let run: (ActionDirective | ProducerDirective)[] = [];
+  let run: PulseDirective[] = [];
   let on: TransitionsDirective = {};
   let immediate: ImmediateDirective[] = [];
   let nested: NestedMachineDirective[] = [];
@@ -261,18 +260,13 @@ export function state(name: string, ...args: RunCollection): StateDirective {
     // If is a nested machine
     if (isNestedMachineDirective(arg)) {
       nested.push(arg);
-      // If is action or producer add it to the run array
-    } else if (isAction(arg) || isProducer(arg)) {
+      // If is pulse add it to the run array
+    } else if (isPulse(arg)) {
       run.push(arg);
 
-      // If is an action and has a success transition or a failure transition, then try to add them to the on object
-      if (isAction(arg)) {
-        let successTransition = isValidString(arg.success)
-          ? arg.success
-          : isProducerWithTransition(arg.success)
-          ? arg.success.transition
-          : null;
-        // If success is a transition
+      // If pulse has a success transition or failure transition, add them to the on object
+      if (arg.success) {
+        let successTransition = arg.success;
         if (
           isValidString(successTransition) &&
           hasTransition({ on } as StateDirective, successTransition) === false
@@ -283,13 +277,10 @@ export function state(name: string, ...args: RunCollection): StateDirective {
             guards: []
           };
         }
+      }
 
-        let failureTransition = isValidString(arg.failure)
-          ? arg.failure
-          : isProducerWithTransition(arg.failure)
-          ? arg.failure.transition
-          : null;
-        // If failure is a transition
+      if (arg.failure) {
+        let failureTransition = arg.failure;
         if (
           isValidString(failureTransition) &&
           hasTransition({ on } as StateDirective, failureTransition) === false
@@ -361,55 +352,38 @@ export function transition(
 
 /**
  *
- * @param action The action to be run
- * @param onSuccessProducer The producer to be run on success with an optional transition name or a transition name
- * @param onFailureProducer The producer to be run on failure with an optional transition name or a transition name
- * @returns ActionDirective
+ * @param pulse The pulse to be run
+ * @param success The transition to run on success (optional)
+ * @param failure The transition to run on failure (optional)
+ * @returns PulseDirective
  * @category Creation
  */
-export function action(
-  action: Action,
-  onSuccessProducer?: ProducerDirective | string | null,
-  onFailureProducer?: ProducerDirective | string | null
-): ActionDirective {
+export function pulse(
+  pulse: Pulse,
+  success?: string,
+  failure?: string
+): PulseDirective {
   return {
-    action,
-    success: onSuccessProducer,
-    failure: onFailureProducer
+    pulse,
+    success,
+    failure
   };
 }
 
 /**
  *
- * @param guard The guard to be run
- * @param onFailureProducer The producer to be run on failure, this producer should not have a transition name
+ * @param guard The guard function to be run
+ * @param failure The transition to run on failure (optional)
  * @returns GuardDirective
  * @category Creation
  */
 export function guard(
   guard: Guard,
-  onFailureProducer?: ProducerDirectiveWithoutTransition
+  failure?: string
 ): GuardDirective {
   return {
     guard,
-    failure: onFailureProducer
-  };
-}
-
-/**
- *
- * @param producer The producer to be run
- * @param transition The transition to be run on producer processed if the logic in which the producer is run allows it
- * @returns ProducerDirective
- * @category Creation
- */
-export function producer(
-  producer: Producer,
-  transition?: string
-): ProducerDirective | ProducerDirectiveWithoutTransition {
-  return {
-    producer,
-    transition
+    failure
   };
 }
 
@@ -443,12 +417,12 @@ export function immediate(
 export function nestedGuard(
   machine: Machine,
   guard: Guard,
-  onFailureProducer?: ProducerDirectiveWithoutTransition
+  failure?: string
 ): NestedGuardDirective {
   return {
     guard,
     machine,
-    failure: onFailureProducer
+    failure
   };
 }
 

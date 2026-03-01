@@ -4,7 +4,6 @@
  * */
 
 import {
-  action,
   context,
   dangerState,
   description,
@@ -18,7 +17,7 @@ import {
   nestedGuard,
   parallel,
   primaryState,
-  producer,
+  pulse,
   state,
   states,
   successState,
@@ -43,8 +42,7 @@ export {
   description,
   guard,
   nestedGuard,
-  producer,
-  action,
+  pulse,
   transition,
   immediate,
   invoke,

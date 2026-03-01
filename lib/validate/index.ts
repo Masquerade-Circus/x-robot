@@ -3,9 +3,8 @@
  * @description Validates the machine prior to its use.
  * */
 import {
-  ActionDirective,
   Machine,
-  ProducerDirective,
+  PulseDirective,
   StateDirective
 } from "../machine/interfaces";
 import { Result, err, ok } from "./result";
@@ -13,12 +12,10 @@ import {
   canMakeTransition,
   hasState,
   hasTransition,
-  isAction,
   isGuard,
   isNestedTransition,
   isParallelTransition,
-  isProducer,
-  isProducerWithTransition,
+  isPulse,
   isTransition,
   isValidString
 } from "../utils";
@@ -70,35 +67,17 @@ function validateThatAllStatesHaveTransitionsToThem(
             }
           }
 
-          // Check for a transition declared in the actions of the state
+          // Check for a transition declared in the pulses of the state
           for (let item of machine.states[otherState].run) {
-            if (isAction(item)) {
+            if (isPulse(item)) {
               // Success is a transition string
               if (isValidString(item.success) && item.success === state) {
                 hasPreviousState = true;
                 break;
               }
 
-              // Success is a producer with a transition string
-              if (
-                isProducerWithTransition(item.failure) &&
-                item.failure.transition === state
-              ) {
-                hasPreviousState = true;
-                break;
-              }
-
               // Failure is a transition string
               if (isValidString(item.failure) && item.failure === state) {
-                hasPreviousState = true;
-                break;
-              }
-
-              // Failure is a producer with a transition string
-              if (
-                isProducerWithTransition(item.failure) &&
-                item.failure.transition === state
-              ) {
                 hasPreviousState = true;
                 break;
               }
@@ -208,116 +187,51 @@ function validateImmediateTransitions(machine: Machine): Result<void, Error> {
   return ok(void 0);
 }
 
-function validateStateProducer(
-  item: ProducerDirective,
-  stateName: string,
-  state: StateDirective
-): Result<void, Error> {
-  // Validate that the producer is a valid function
-  if (typeof item.producer !== "function") {
-    return err(
-      new Error(
-        `The producer '${item.producer}' of the state '${stateName}' must be a function.`
-      )
-    );
-  }
-
-  // Validate that the producer is not an async function or a promise
-  if (item.producer.constructor.name === "AsyncFunction") {
-    return err(
-      new Error(
-        `The producer '${item.producer.name}' of the state '${stateName}' must be a synchronous function.`
-      )
-    );
-  }
-
-  // We can't validate that the producer is not a function returning a promise but we will validate its return value at runtime
-
-  // Validate that the producer hasn't a transition
-  if (isProducerWithTransition(item)) {
-    return err(
-      new Error(
-        `The producer '${item.producer.name}' of the state '${stateName}' cannot have a transition.`
-      )
-    );
-  }
-
-  // Validate that the producer is created before any transitions
-  let firstTransitionIndex = state.args.findIndex((arg: any) =>
-    isTransition(arg)
-  );
-  let indexOfCurrentProducer = state.args.findIndex((arg: any) => arg === item);
-  if (
-    firstTransitionIndex >= 0 &&
-    indexOfCurrentProducer > firstTransitionIndex
-  ) {
-    return err(
-      new Error(
-        `The producer '${item.producer.name}' of the state '${stateName}' must be created before any transitions.`
-      )
-    );
-  }
-
-  return ok(void 0);
-}
-
-function validateAction(
+function validatePulse(
   machine: Machine,
   state: StateDirective,
   stateName: string,
-  item: ActionDirective
+  item: PulseDirective
 ): Result<void, Error> {
-  // Validate that the action is a valid function
-  if (typeof item.action !== "function") {
+  // Validate that the pulse is a valid function
+  if (typeof item.pulse !== "function") {
     return err(
       new Error(
-        `The action '${item.action}' of the state '${stateName}' must be a function.`
+        `The pulse '${item.pulse}' of the state '${stateName}' must be a function.`
       )
     );
   }
 
-  // Validate that the action is created before any transitions
+  // Validate that the pulse is created before any transitions
   let firstTransitionIndex = state.args.findIndex((arg: any) =>
     isTransition(arg)
   );
-  let indexOfCurrentAction = state.args.findIndex((arg: any) => arg === item);
+  let indexOfCurrentPulse = state.args.findIndex((arg: any) => arg === item);
   if (
     firstTransitionIndex >= 0 &&
-    indexOfCurrentAction > firstTransitionIndex
+    indexOfCurrentPulse > firstTransitionIndex
   ) {
     return err(
       new Error(
-        `The action '${item.action.name}' of the state '${stateName}' must be created before any transitions.`
+        `The pulse '${item.pulse.name}' of the state '${stateName}' must be created before any transitions.`
       )
     );
   }
 
-  // Validate that the action has an error transition, a producer with an error transition or there is an error transition in the state
-  if (
-    "fatal" in machine.states === false &&
-    !isProducerWithTransition(item.failure) &&
-    !isValidString(item.failure) &&
-    !hasTransition(state, "error")
-  ) {
+  // Validate success transition if declared
+  if (isValidString(item.success) && !hasState(machine, item.success)) {
     return err(
       new Error(
-        `The action '${item.action.name}' of the state '${stateName}' must have an error transition, an error producer with a transition or an 'error' transition in the state.`
+        `The pulse '${item.pulse.name}' of the state '${stateName}' has a success transition '${item.success}' that does not exists.`
       )
     );
   }
 
-  // Validate that the error transition exists
-  let errorTransition = isProducerWithTransition(item.failure)
-    ? item.failure.transition
-    : isValidString(item.failure)
-    ? item.failure
-    : isTransition(state.on.error)
-    ? "error"
-    : "fatal";
-  if (!hasState(machine, errorTransition)) {
+  // Validate failure transition if declared
+  if (isValidString(item.failure) && !hasState(machine, item.failure)) {
     return err(
       new Error(
-        `The action '${item.action.name}' of the state '${stateName}' has an error transition '${errorTransition}' that does not exists.`
+        `The pulse '${item.pulse.name}' of the state '${stateName}' has a failure transition '${item.failure}' that does not exists.`
       )
     );
   }
@@ -332,37 +246,25 @@ function validateRunCollections(machine: Machine): Result<void, Error> {
 
     // Validate run collection
     for (let item of state.run) {
-      // Validate that the run item is an action, a producer or a guard
-      if (!(isAction(item) || isProducer(item) || isGuard(item))) {
+      // Validate that the run item is a pulse
+      if (!isPulse(item)) {
         return err(
           new Error(
-            `The state '${stateName}' has a run collection that contains an item that is not an action, a producer or a guard.`
+            `The state '${stateName}' has a run collection that contains an item that is not a pulse.`
           )
         );
       }
 
-      // If the run item is a producer
-      if (isProducer(item)) {
-        let isStateProducerValidResult = validateStateProducer(
-          item,
-          stateName,
-          state
-        );
-        if (isStateProducerValidResult.isErr()) {
-          return isStateProducerValidResult;
-        }
-      }
-
-      // If the run item is an action
-      if (isAction(item)) {
-        let isActionValidResult = validateAction(
+      // Validate pulse
+      if (isPulse(item)) {
+        let isPulseValidResult = validatePulse(
           machine,
           state,
           stateName,
           item
         );
-        if (isActionValidResult.isErr()) {
-          return isActionValidResult;
+        if (isPulseValidResult.isErr()) {
+          return isPulseValidResult;
         }
       }
     }
@@ -423,14 +325,24 @@ function validateGuards(machine: Machine): Result<void, Error> {
             );
           }
 
-          // If the guard has a failure producer validate that the producer hasn't a transition
           if (
-            isValidString(guard.failure) ||
-            isProducerWithTransition(guard.failure)
+            guard.failure !== undefined &&
+            !isValidString(guard.failure)
           ) {
             return err(
               new Error(
-                `The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' cannot have a transition.`
+                `The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' must have a valid failure transition.`
+              )
+            );
+          }
+
+          if (
+            isValidString(guard.failure) &&
+            !hasTransition(state, guard.failure)
+          ) {
+            return err(
+              new Error(
+                `The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${guard.failure}' that does not exists.`
               )
             );
           }

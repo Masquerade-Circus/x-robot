@@ -4,6 +4,7 @@ import {
   HistoryType,
   Machine,
   ProducerDirective,
+  PulseDirective,
   START_EVENT,
   StateDirective,
   TransitionDirective
@@ -21,6 +22,7 @@ import {
   isParallelTransition,
   isProducer,
   isProducerWithTransition,
+  isPulse,
   isValidObject,
   isValidString
 } from "../utils";
@@ -73,6 +75,95 @@ function runProducer(
     // If is a string, we assume it is a transition instead of a producer and we run it
   } else if (isValidString(producer)) {
     return invoke(machine, producer);
+  }
+}
+
+/**
+ * @param machine The machine that is running
+ * @param pulse The pulse to invoke
+ * @param payload The payload to pass to the pulse
+ * @returns Promise or void depending if the machine is async or not
+ */
+function runPulse(
+  machine: Machine,
+  pulse?: PulseDirective | string | null,
+  payload?: any
+): Promise<void> | void {
+  if (isPulse(pulse)) {
+    const isAsync = pulse.pulse.constructor.name === "AsyncFunction";
+
+    machine.history.push(
+      isAsync 
+        ? `${HistoryType.AsyncPulse}: ${pulse.pulse.name}`
+        : `${HistoryType.Pulse}: ${pulse.pulse.name}`
+    );
+
+    let context = machine.context;
+
+    if (machine.frozen) {
+      context = cloneContext(context);
+    }
+
+    if (isAsync) {
+      const runPulseFn = () => pulse.pulse(context, payload);
+      return Promise.resolve(runPulseFn())
+        .then((result: unknown) => {
+          if (isValidObject(result)) {
+            context = result;
+          }
+
+          machine.context = context;
+          if (machine.frozen) {
+            deepFreeze(machine.context);
+          }
+
+          if (pulse.success) {
+            return invoke(machine, pulse.success);
+          }
+        })
+        .catch((error: unknown) => {
+          machine.context = context;
+          if (machine.frozen) {
+            deepFreeze(machine.context);
+          }
+
+          if (pulse.failure) {
+            return invoke(machine, pulse.failure, error);
+          }
+
+          throw error;
+        });
+    } else {
+      try {
+        const result = pulse.pulse(context, payload);
+
+        if (isValidObject(result)) {
+          context = result;
+        }
+
+        machine.context = context;
+        if (machine.frozen) {
+          deepFreeze(machine.context);
+        }
+
+        if (pulse.success) {
+          return invoke(machine, pulse.success);
+        }
+      } catch (error) {
+        machine.context = context;
+        if (machine.frozen) {
+          deepFreeze(machine.context);
+        }
+
+        if (pulse.failure) {
+          return invoke(machine, pulse.failure, error);
+        }
+
+        throw error;
+      }
+    }
+  } else if (isValidString(pulse)) {
+    return invoke(machine, pulse);
   }
 }
 
@@ -163,6 +254,8 @@ async function runActionsAndProducers(
         await runAction(machine, item, payload);
       } else if (isProducer(item)) {
         await runProducer(machine, item, payload);
+      } else if (isPulse(item)) {
+        await runPulse(machine, item, payload);
       }
     } catch (error) {
       await catchError(machine, state, error as Error);
@@ -183,6 +276,8 @@ function runProducers(machine: Machine, state: StateDirective, payload: any) {
     try {
       if (isProducer(item)) {
         runProducer(machine, item, payload);
+      } else if (isPulse(item)) {
+        runPulse(machine, item, payload);
       }
     } catch (error) {
       catchError(machine, state, error as Error);
@@ -232,10 +327,13 @@ function runGuards(
 
       // If the result is different than true we break the loop and return false
       if (result !== true) {
-        // If the result is other than true, we can return false and check if we have a failure producer and invoke it if so
-        // passing the result as the payload (This is useful for error handling)
-        if (isProducer(guard.failure)) {
-          runProducer(machine, guard.failure, result);
+        // If the result is other than true, we can return false and check if
+        // we have a failure transition or pulse and invoke it if so, passing
+        // the result as the payload (This is useful for error handling)
+        if (isValidString(guard.failure)) {
+          invoke(machine, guard.failure, result);
+        } else if (isPulse(guard.failure)) {
+          runPulse(machine, guard.failure, result);
         }
 
         return false;

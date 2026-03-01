@@ -50,14 +50,8 @@ function isValidString(str) {
 function isValidObject(obj) {
   return obj !== null && typeof obj === "object";
 }
-function isProducer(producer) {
-  return isValidObject(producer) && "producer" in producer;
-}
-function isProducerWithTransition(producer) {
-  return isProducer(producer) && isValidString(producer.transition);
-}
-function isAction(action) {
-  return isValidObject(action) && "action" in action;
+function isPulse(pulse) {
+  return isValidObject(pulse) && "pulse" in pulse;
 }
 function isGuard(guard) {
   return isValidObject(guard) && "guard" in guard;
@@ -136,20 +130,12 @@ function validateThatAllStatesHaveTransitionsToThem(machine) {
             }
           }
           for (let item of machine.states[otherState].run) {
-            if (isAction(item)) {
+            if (isPulse(item)) {
               if (isValidString(item.success) && item.success === state) {
                 hasPreviousState = true;
                 break;
               }
-              if (isProducerWithTransition(item.failure) && item.failure.transition === state) {
-                hasPreviousState = true;
-                break;
-              }
               if (isValidString(item.failure) && item.failure === state) {
-                hasPreviousState = true;
-                break;
-              }
-              if (isProducerWithTransition(item.failure) && item.failure.transition === state) {
                 hasPreviousState = true;
                 break;
               }
@@ -208,38 +194,20 @@ function validateImmediateTransitions(machine) {
   }
   return ok(void 0);
 }
-function validateStateProducer(item, stateName, state) {
-  if (typeof item.producer !== "function") {
-    return err(new Error(`The producer '${item.producer}' of the state '${stateName}' must be a function.`));
-  }
-  if (item.producer.constructor.name === "AsyncFunction") {
-    return err(new Error(`The producer '${item.producer.name}' of the state '${stateName}' must be a synchronous function.`));
-  }
-  if (isProducerWithTransition(item)) {
-    return err(new Error(`The producer '${item.producer.name}' of the state '${stateName}' cannot have a transition.`));
+function validatePulse(machine, state, stateName, item) {
+  if (typeof item.pulse !== "function") {
+    return err(new Error(`The pulse '${item.pulse}' of the state '${stateName}' must be a function.`));
   }
   let firstTransitionIndex = state.args.findIndex((arg) => isTransition(arg));
-  let indexOfCurrentProducer = state.args.findIndex((arg) => arg === item);
-  if (firstTransitionIndex >= 0 && indexOfCurrentProducer > firstTransitionIndex) {
-    return err(new Error(`The producer '${item.producer.name}' of the state '${stateName}' must be created before any transitions.`));
+  let indexOfCurrentPulse = state.args.findIndex((arg) => arg === item);
+  if (firstTransitionIndex >= 0 && indexOfCurrentPulse > firstTransitionIndex) {
+    return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' must be created before any transitions.`));
   }
-  return ok(void 0);
-}
-function validateAction(machine, state, stateName, item) {
-  if (typeof item.action !== "function") {
-    return err(new Error(`The action '${item.action}' of the state '${stateName}' must be a function.`));
+  if (isValidString(item.success) && !hasState(machine, item.success)) {
+    return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has a success transition '${item.success}' that does not exists.`));
   }
-  let firstTransitionIndex = state.args.findIndex((arg) => isTransition(arg));
-  let indexOfCurrentAction = state.args.findIndex((arg) => arg === item);
-  if (firstTransitionIndex >= 0 && indexOfCurrentAction > firstTransitionIndex) {
-    return err(new Error(`The action '${item.action.name}' of the state '${stateName}' must be created before any transitions.`));
-  }
-  if ("fatal" in machine.states === false && !isProducerWithTransition(item.failure) && !isValidString(item.failure) && !hasTransition(state, "error")) {
-    return err(new Error(`The action '${item.action.name}' of the state '${stateName}' must have an error transition, an error producer with a transition or an 'error' transition in the state.`));
-  }
-  let errorTransition = isProducerWithTransition(item.failure) ? item.failure.transition : isValidString(item.failure) ? item.failure : isTransition(state.on.error) ? "error" : "fatal";
-  if (!hasState(machine, errorTransition)) {
-    return err(new Error(`The action '${item.action.name}' of the state '${stateName}' has an error transition '${errorTransition}' that does not exists.`));
+  if (isValidString(item.failure) && !hasState(machine, item.failure)) {
+    return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has a failure transition '${item.failure}' that does not exists.`));
   }
   return ok(void 0);
 }
@@ -247,19 +215,13 @@ function validateRunCollections(machine) {
   for (let stateName in machine.states) {
     let state = machine.states[stateName];
     for (let item of state.run) {
-      if (!(isAction(item) || isProducer(item) || isGuard(item))) {
-        return err(new Error(`The state '${stateName}' has a run collection that contains an item that is not an action, a producer or a guard.`));
+      if (!isPulse(item)) {
+        return err(new Error(`The state '${stateName}' has a run collection that contains an item that is not a pulse.`));
       }
-      if (isProducer(item)) {
-        let isStateProducerValidResult = validateStateProducer(item, stateName, state);
-        if (isStateProducerValidResult.isErr()) {
-          return isStateProducerValidResult;
-        }
-      }
-      if (isAction(item)) {
-        let isActionValidResult = validateAction(machine, state, stateName, item);
-        if (isActionValidResult.isErr()) {
-          return isActionValidResult;
+      if (isPulse(item)) {
+        let isPulseValidResult = validatePulse(machine, state, stateName, item);
+        if (isPulseValidResult.isErr()) {
+          return isPulseValidResult;
         }
       }
     }
@@ -291,8 +253,11 @@ function validateGuards(machine) {
           if (typeof guard.guard !== "function") {
             return err(new Error(`The guard '${guard.guard}' of the transition '${stateName}.${transitionName}' must be a function.`));
           }
-          if (isValidString(guard.failure) || isProducerWithTransition(guard.failure)) {
-            return err(new Error(`The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' cannot have a transition.`));
+          if (guard.failure !== void 0 && !isValidString(guard.failure)) {
+            return err(new Error(`The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' must have a valid failure transition.`));
+          }
+          if (isValidString(guard.failure) && !hasTransition(state, guard.failure)) {
+            return err(new Error(`The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${guard.failure}' that does not exists.`));
           }
         }
       }

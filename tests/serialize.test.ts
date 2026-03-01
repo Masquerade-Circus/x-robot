@@ -1,5 +1,4 @@
 import {
-  action,
   context,
   dangerState,
   guard,
@@ -8,7 +7,7 @@ import {
   initial,
   machine,
   primaryState,
-  producer,
+  pulse,
   states,
   successState,
   transition,
@@ -27,37 +26,34 @@ describe("Serialize", () => {
       error: null,
     });
 
-    const titleIsValid = (context) => {
+    const titleIsValid = (context: any) => {
       if (context.title.length > 0) {
         return true;
       }
       return [{ message: "Title is required" }];
     };
 
-    async function saveTitle(context) {
-      // Save the title
+    async function saveTitle(context: any) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      return;
     }
 
-    function cacheTitle(context) {
-      return { ...context, oldTitle: context.title };
+    function cacheTitle(context: any) {
+      context.oldTitle = context.title;
     }
 
-    function updateTitle(context, event) {
+    function updateTitle(context: any, event: any) {
       if (!event) {
-        return context;
+        return;
       }
-
-      return { ...context, title: event.target.value };
+      context.title = event.target.value;
     }
 
-    function restoreTitle(context) {
-      return { ...context, title: context.oldTitle };
+    function restoreTitle(context: any) {
+      context.title = context.oldTitle;
     }
 
-    function updateError(context, error) {
-      return { ...context, error };
+    function updateError(context: any, error: any) {
+      context.error = error;
     }
 
     const myMachine = machine(
@@ -65,40 +61,30 @@ describe("Serialize", () => {
       states(
         successState(
           "preview",
-          // Save the current title as oldTitle so we can reset later.
-          producer(cacheTitle),
+          pulse(cacheTitle),
           transition("edit", "editMode")
         ),
         infoState(
           "editMode",
-          // Update title with the event value
-          producer(updateTitle),
+          pulse(updateTitle),
           transition("input", "editMode"),
           transition("cancel", "cancel"),
           transition(
             "save",
             "save",
-            // Check if the title is valid. If so continue with the state.
-            // If not, the machine keeps its current state.
-            // In this case we came from editMode, so we keep the editMode state and update the context with the validation error.
-            guard(titleIsValid, producer(updateError))
+            guard(titleIsValid)
           )
         ),
         warningState(
           "cancel",
-          // Reset the title back to oldTitle
-          producer(restoreTitle),
+          pulse(restoreTitle),
           immediate("preview")
         ),
         primaryState(
           "save",
-          // If the guard is true, we try to save the title.
-          // If the save action succeeds, we immediately go to the preview state.
-          // If the save action fails, we update the context with the error and go to the error state.
-          action(saveTitle, "preview", producer(updateError, "error"))
+          pulse(saveTitle, "preview", "error")
         ),
         dangerState("error")
-        // Should we provide a retry or...?
       ),
       context(getState),
       initial("preview")
@@ -109,7 +95,8 @@ describe("Serialize", () => {
         preview: {
           run: [
             {
-              producer: "cacheTitle",
+              pulse: "cacheTitle",
+              isAsync: false,
             },
           ],
           on: {
@@ -120,7 +107,8 @@ describe("Serialize", () => {
         editMode: {
           run: [
             {
-              producer: "updateTitle",
+              pulse: "updateTitle",
+              isAsync: false,
             },
           ],
           on: {
@@ -131,9 +119,6 @@ describe("Serialize", () => {
               guards: [
                 {
                   guard: "titleIsValid",
-                  failure: {
-                    producer: "updateError",
-                  },
                 },
               ],
             },
@@ -143,7 +128,8 @@ describe("Serialize", () => {
         cancel: {
           run: [
             {
-              producer: "restoreTitle",
+              pulse: "restoreTitle",
+              isAsync: false,
             },
           ],
           on: {
@@ -155,12 +141,10 @@ describe("Serialize", () => {
         save: {
           run: [
             {
-              action: "saveTitle",
+              pulse: "saveTitle",
               success: "preview",
-              failure: {
-                producer: "updateError",
-                transition: "error",
-              },
+              failure: "error",
+              isAsync: true,
             },
           ],
           on: {

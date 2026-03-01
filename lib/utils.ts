@@ -9,10 +9,9 @@ import {
   Machine,
   NestedGuardDirective,
   NestedImmediateDirective,
-  NestedMachineDirective,
-  NestedMachineWithTransitionDirective,
   ParallelDirective,
   ParallelImmediateDirective,
+  PulseDirective,
   ProducerDirective,
   ProducerDirectiveWithTransition,
   ProducerDirectiveWithoutTransition,
@@ -20,7 +19,9 @@ import {
   ShouldFreezeDirective,
   StateDirective,
   StatesDirective,
-  TransitionDirective
+  TransitionDirective,
+  NestedMachineDirective,
+  NestedMachineWithTransitionDirective
 } from "./machine/interfaces";
 
 export function isValidString(str?: any): str is string {
@@ -45,6 +46,10 @@ export function isProducerWithoutTransition(
   producer?: any
 ): producer is ProducerDirectiveWithoutTransition {
   return !isProducerWithTransition(producer);
+}
+
+export function isPulse(pulse?: any): pulse is PulseDirective {
+  return isValidObject(pulse) && "pulse" in pulse;
 }
 
 export function isAction(action?: any): action is ActionDirective {

@@ -8,14 +8,8 @@ function isValidString(str) {
 function isValidObject(obj) {
   return obj !== null && typeof obj === "object";
 }
-function isProducer(producer) {
-  return isValidObject(producer) && "producer" in producer;
-}
-function isProducerWithTransition(producer) {
-  return isProducer(producer) && isValidString(producer.transition);
-}
-function isAction(action) {
-  return isValidObject(action) && "action" in action;
+function isPulse(pulse) {
+  return isValidObject(pulse) && "pulse" in pulse;
 }
 function isNestedMachineDirective(machine) {
   return isValidObject(machine) && "machine" in machine;
@@ -65,32 +59,16 @@ function cloneContext(context, weakMap = /* @__PURE__ */ new WeakMap()) {
 var titleToId = (str) => str.toLowerCase().replace(/(\s|\W)/g, "");
 
 // lib/serialize/index.ts
-function serializeProducer(producer) {
+function serializePulse(pulse) {
   let serialized = {
-    producer: producer.producer.name
+    pulse: pulse.pulse.name,
+    isAsync: pulse.pulse.constructor.name === "AsyncFunction"
   };
-  if (isProducerWithTransition(producer)) {
-    serialized.transition = producer.transition;
+  if (isValidString(pulse.success)) {
+    serialized.success = pulse.success;
   }
-  return serialized;
-}
-function serializeAction(action) {
-  let serialized = {
-    action: action.action.name
-  };
-  if (action.success) {
-    if (isValidString(action.success)) {
-      serialized.success = action.success;
-    } else if (isProducer(action.success)) {
-      serialized.success = serializeProducer(action.success);
-    }
-  }
-  if (action.failure) {
-    if (isValidString(action.failure)) {
-      serialized.failure = action.failure;
-    } else if (isProducer(action.failure)) {
-      serialized.failure = serializeProducer(action.failure);
-    }
+  if (isValidString(pulse.failure)) {
+    serialized.failure = pulse.failure;
   }
   return serialized;
 }
@@ -100,8 +78,6 @@ function serializeGuard(guard) {
   };
   if (isValidString(guard.failure)) {
     serialized.failure = guard.failure;
-  } else if (isProducer(guard.failure)) {
-    serialized.failure = serializeProducer(guard.failure);
   }
   if ("machine" in guard) {
     serialized.machine = serialize(guard.machine);
@@ -113,11 +89,8 @@ function serializeRunArguments(run) {
     return null;
   }
   return run.map((item) => {
-    if (isAction(item)) {
-      return serializeAction(item);
-    }
-    if (isProducer(item)) {
-      return serializeProducer(item);
+    if (isPulse(item)) {
+      return serializePulse(item);
     }
   });
 }
@@ -475,22 +448,21 @@ function getTree(collection) {
   };
   let name = (type) => (value) => `${type}:${value}`;
   let guard = name("G");
-  let action = name("A");
-  let producer = name("P");
+  let pulse = (isAsync) => name(isAsync ? "AP" : "P");
   let transition = name("T");
   for (let i = 0, l = collection.length; i < l; i++) {
     const item = collection[i];
+    if (!item) {
+      continue;
+    }
     let obj = {
       children: []
     };
     if ("guard" in item) {
       obj.name = guard(item.guard);
     }
-    if ("action" in item) {
-      obj.name = action(item.action);
-    }
-    if ("producer" in item) {
-      obj.name = producer(item.producer);
+    if ("pulse" in item) {
+      obj.name = pulse(item.isAsync)(item.pulse);
     }
     if ("immediate" in item) {
       obj.name = transition(item.immediate);
@@ -502,11 +474,6 @@ function getTree(collection) {
       };
       if (typeof item.success === "string") {
         child.children.push({ name: transition(item.success) });
-      } else if (typeof item.success === "object") {
-        child.children.push({ name: producer(item.success.producer) });
-        if (item.success.transition) {
-          child.children.push({ name: transition(item.success.transition) });
-        }
       }
       obj.children.push(child);
     }
@@ -517,11 +484,6 @@ function getTree(collection) {
       };
       if (typeof item.failure === "string") {
         child.children.push({ name: transition(item.failure) });
-      } else if (typeof item.failure === "object") {
-        child.children.push({ name: producer(item.failure.producer) });
-        if (item.failure.transition) {
-          child.children.push({ name: transition(item.failure.transition) });
-        }
       }
       obj.children.push(child);
     }

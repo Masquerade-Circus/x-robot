@@ -43,6 +43,7 @@ __export(utils_exports, {
   isProducer: () => isProducer,
   isProducerWithTransition: () => isProducerWithTransition,
   isProducerWithoutTransition: () => isProducerWithoutTransition,
+  isPulse: () => isPulse,
   isShouldFreezeDirective: () => isShouldFreezeDirective,
   isStateDirective: () => isStateDirective,
   isStatesDirective: () => isStatesDirective,
@@ -71,6 +72,9 @@ function isProducerWithTransition(producer) {
 }
 function isProducerWithoutTransition(producer) {
   return !isProducerWithTransition(producer);
+}
+function isPulse(pulse) {
+  return isValidObject(pulse) && "pulse" in pulse;
 }
 function isAction(action) {
   return isValidObject(action) && "action" in action;

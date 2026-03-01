@@ -3,12 +3,11 @@
  * @description Generate a visual representation of a machine in plant uml format or get a png/svg image of the diagram.
  * */
 import {
-  SerializedAction,
   SerializedGuard,
   SerializedImmediate,
   SerializedMachine,
   SerializedNestedMachine,
-  SerializedProducer,
+  SerializedPulse,
   serialize
 } from "../serialize";
 import {
@@ -30,8 +29,7 @@ import path from "path";
 export interface SerializedCollectionWithGuards
   extends Array<
     | SerializedGuard
-    | SerializedAction
-    | SerializedProducer
+    | SerializedPulse
     | SerializedNestedMachine
     | SerializedImmediate
   > {}
@@ -367,12 +365,14 @@ function getTree(
 
   let name = (type: string) => (value: string) => `${type}:${value}`;
   let guard = name("G");
-  let action = name("A");
-  let producer = name("P");
+  let pulse = (isAsync?: boolean) => name(isAsync ? "AP" : "P");
   let transition = name("T");
 
   for (let i = 0, l = collection.length; i < l; i++) {
     const item = collection[i];
+    if (!item) {
+      continue;
+    }
     let obj = {
       children: [] as any
     } as any;
@@ -380,11 +380,8 @@ function getTree(
     if ("guard" in item) {
       obj.name = guard(item.guard);
     }
-    if ("action" in item) {
-      obj.name = action(item.action);
-    }
-    if ("producer" in item) {
-      obj.name = producer(item.producer);
+    if ("pulse" in item) {
+      obj.name = pulse(item.isAsync)(item.pulse);
     }
     if ("immediate" in item) {
       obj.name = transition(item.immediate);
@@ -398,11 +395,6 @@ function getTree(
 
       if (typeof item.success === "string") {
         child.children.push({ name: transition(item.success) });
-      } else if (typeof item.success === "object") {
-        child.children.push({ name: producer(item.success.producer) });
-        if (item.success.transition) {
-          child.children.push({ name: transition(item.success.transition) });
-        }
       }
       obj.children.push(child);
     }
@@ -415,11 +407,6 @@ function getTree(
 
       if (typeof item.failure === "string") {
         child.children.push({ name: transition(item.failure) });
-      } else if (typeof item.failure === "object") {
-        child.children.push({ name: producer(item.failure.producer) });
-        if (item.failure.transition) {
-          child.children.push({ name: transition(item.failure.transition) });
-        }
       }
       obj.children.push(child);
     }

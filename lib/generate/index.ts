@@ -13,9 +13,7 @@ export enum Format {
 function getGuards(
   transition: SerializedTransition | SerializedImmediate,
   guards: string[] = [],
-  declaredGuards: string[] = [],
-  producers: string[] = [],
-  declaredProducers: string[] = []
+  declaredGuards: string[] = []
 ): string {
   let code = "";
   if (transition.guards) {
@@ -34,14 +32,8 @@ function getGuards(
         code += `, guard(${guardName}`;
       }
 
-      // Guards can have producers
-      if (item.failure && typeof item.failure === "object" && item.failure.producer) {
-        if (!producers.includes(item.failure.producer) && !declaredProducers.includes(item.failure.producer)) {
-          producers.push(item.failure.producer);
-          declaredProducers.push(item.failure.producer);
-        }
-
-        code += `, producer(${item.failure.producer})`;
+      if (isValidString(item.failure)) {
+        code += `, "${item.failure}"`;
       }
       code += `)`;
     }
@@ -52,17 +44,14 @@ function getGuards(
 
 function getCodeParts(
   serializedMachine: SerializedMachine,
-  declaredActions: string[] = [],
-  declaredProducers: string[] = [],
+  declaredPulses: string[] = [],
   declaredGuards: string[] = []
 ): {
-  actions: string[];
-  producers: string[];
+  pulses: string[];
   guards: string[];
   states: Record<string, string>;
 } {
-  let actions: string[] = [];
-  let producers: string[] = [];
+  let pulses: string[] = [];
   let guards: string[] = [];
 
   let states: { [key: string]: string } = {};
@@ -95,85 +84,32 @@ function getCodeParts(
       }
     }
 
-    // Check if we need to add producers and actions
+    // Check if we need to add pulses
     if (state.run && state.run.length > 0) {
-      // For each item in the run array, check if we need to add the producer or action
+      // For each item in the run array, check if we need to add the pulse
       for (let runItem of state.run) {
-        if ("action" in runItem) {
-          if (!actions.includes(runItem.action) && !declaredActions.includes(runItem.action)) {
-            actions.push(runItem.action);
-            declaredActions.push(runItem.action);
+        if ("pulse" in runItem) {
+          if (!pulses.includes(runItem.pulse) && !declaredPulses.includes(runItem.pulse)) {
+            pulses.push(runItem.pulse);
+            declaredPulses.push(runItem.pulse);
           }
 
-          stateCode += `      action(${runItem.action}`;
+          stateCode += `      pulse(${runItem.pulse}`;
 
-          // Actions can have producers as well, so we need to check if we need to add them
-          if (runItem.success) {
-            // Success is a producer
-            if (typeof runItem.success === "object" && "producer" in runItem.success) {
-              if (!producers.includes(runItem.success.producer) && !declaredProducers.includes(runItem.success.producer)) {
-                producers.push(runItem.success.producer);
-                declaredProducers.push(runItem.success.producer);
-              }
-
-              stateCode += `, producer(${runItem.success.producer}`;
-
-              // Success producer has transition
-              if (runItem.success.transition) {
-                stateCode += `, "${runItem.success.transition}"`;
-                implicitStateTransitions.push(runItem.success.transition);
-              }
-
-              stateCode += `)`;
-            }
-
-            // Success is a transition
-            if (typeof runItem.success === "string") {
-              stateCode += `, "${runItem.success}"`;
-              implicitStateTransitions.push(runItem.success);
-            }
+          if (isValidString(runItem.success)) {
+            stateCode += `, "${runItem.success}"`;
+            implicitStateTransitions.push(runItem.success);
           }
 
-          if (runItem.failure) {
-            if (!runItem.success) {
-              stateCode += ", null";
+          if (isValidString(runItem.failure)) {
+            if (!isValidString(runItem.success)) {
+              stateCode += `, undefined`;
             }
-
-            // Failure is a producer
-            if (typeof runItem.failure === "object" && "producer" in runItem.failure) {
-              if (!producers.includes(runItem.failure.producer) && !declaredProducers.includes(runItem.failure.producer)) {
-                producers.push(runItem.failure.producer);
-                declaredProducers.push(runItem.failure.producer);
-              }
-
-              stateCode += `, producer(${runItem.failure.producer}`;
-
-              // Failure producer has transition
-              if (runItem.failure.transition) {
-                stateCode += `, "${runItem.failure.transition}"`;
-                implicitStateTransitions.push(runItem.failure.transition);
-              }
-
-              stateCode += `)`;
-            }
-
-            // Failure is a transition
-            if (typeof runItem.failure === "string") {
-              stateCode += `, "${runItem.failure}"`;
-              implicitStateTransitions.push(runItem.failure);
-            }
+            stateCode += `, "${runItem.failure}"`;
+            implicitStateTransitions.push(runItem.failure);
           }
 
           stateCode += `),\n`;
-        }
-
-        if ("producer" in runItem) {
-          if (!producers.includes(runItem.producer) && !declaredProducers.includes(runItem.producer)) {
-            producers.push(runItem.producer);
-            declaredProducers.push(runItem.producer);
-          }
-
-          stateCode += `      producer(${runItem.producer}),\n`;
         }
       }
     }
@@ -182,7 +118,11 @@ function getCodeParts(
     if (state.immediate) {
       for (let immediate of state.immediate) {
         stateCode += `      immediate("${immediate.immediate}"`;
-        stateCode += getGuards({ target: immediate.immediate, guards: immediate.guards }, guards, declaredGuards, producers, declaredProducers);
+        stateCode += getGuards(
+          { target: immediate.immediate, guards: immediate.guards },
+          guards,
+          declaredGuards
+        );
         stateCode += `),\n`;
       }
     }
@@ -194,7 +134,7 @@ function getCodeParts(
       if (!implicitStateTransitions.includes(transition.target) || transition.guards) {
         if (!state.immediate || !state.immediate.find((immediate) => immediate.immediate === transition.target)) {
           stateCode += `      transition("${transitionName}", "${transition.target}"`;
-          stateCode += getGuards(transition, guards, declaredGuards, producers, declaredProducers);
+          stateCode += getGuards(transition, guards, declaredGuards);
           stateCode += `),\n`;
         }
       }
@@ -206,7 +146,7 @@ function getCodeParts(
     states[stateName] = stateCode.replace(/\(\n\s+\)$/, "()");
   }
 
-  return { actions, producers, guards, states };
+  return { pulses, guards, states };
 }
 
 function addImport(importName: string, imports: string[] = ["machine"]) {
@@ -258,8 +198,12 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ["
       }
 
       if (isValidObject(state.on)) {
-        // Transitions can have guards and guards can have producers
-        if (!imports.includes("transition") || !imports.includes("guards") || !imports.includes("producer")) {
+        // Transitions can have guards
+        if (
+          !imports.includes("transition") ||
+          !imports.includes("guard") ||
+          !imports.includes("nestedGuard")
+        ) {
           for (let transitionName in state.on) {
             // Check if we need to import the transition
             if (!imports.includes("transition") && (!isValidString(state.immediate) || state.immediate !== transitionName)) {
@@ -275,15 +219,9 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ["
                 } else {
                   addImport("guard", imports);
                 }
-              }
 
-              // Guards can have producers
-              if (!imports.includes("producer")) {
-                for (let guard of transition.guards) {
-                  if (isValidObject(guard.failure) && guard.failure.producer) {
-                    addImport("producer", imports);
-                    break;
-                  }
+                if (isValidString(item.failure)) {
+                  addImport("transition", imports);
                 }
               }
             }
@@ -291,36 +229,15 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ["
         }
       }
 
-      // Run items can be actions or producers
-      // Actions can have transitions and producers, and producers can have transitions
+      // Run items are pulses and can have success/failure transitions
       if (state.run && state.run.length > 0) {
         for (let runItem of state.run) {
-          // Check if we need to import the action
-          if ("action" in runItem) {
-            addImport("action", imports);
+          if ("pulse" in runItem) {
+            addImport("pulse", imports);
 
             if (isValidString(runItem.success) || isValidString(runItem.failure)) {
               addImport("transition", imports);
             }
-
-            if (isValidObject(runItem.success)) {
-              addImport("producer", imports);
-              if (isValidString(runItem.success.transition)) {
-                addImport("transition", imports);
-              }
-            }
-
-            if (isValidObject(runItem.failure)) {
-              addImport("producer", imports);
-              if (isValidString(runItem.failure.transition)) {
-                addImport("transition", imports);
-              }
-            }
-          }
-
-          // Check if we need to import the producer
-          if ("producer" in runItem) {
-            addImport("producer", imports);
           }
         }
       }
@@ -352,8 +269,7 @@ function getMachineCode(
   serializedMachine: SerializedMachine,
   format: Format,
   machines: Map<string, string> = new Map(),
-  declaredActions: string[] = [],
-  declaredProducers: string[] = [],
+  declaredPulses: string[] = [],
   declaredGuards: string[] = []
 ): string {
   let code = "";
@@ -366,7 +282,13 @@ function getMachineCode(
         let { machineName } = getMachineName(nestedMachine.machine);
         // We only want to add the machine if it hasn't been added yet
         if (!machines.has(machineName)) {
-          code += getMachineCode(nestedMachine.machine, format, machines, declaredActions, declaredProducers, declaredGuards);
+          code += getMachineCode(
+            nestedMachine.machine,
+            format,
+            machines,
+            declaredPulses,
+            declaredGuards
+          );
         }
       }
     }
@@ -378,12 +300,22 @@ function getMachineCode(
     let { machineName } = getMachineName(parallelMachine);
     // We only want to add the machine if it hasn't been added yet
     if (!machines.has(machineName)) {
-      code += getMachineCode(parallelMachine, format, machines, declaredActions, declaredProducers, declaredGuards);
+      code += getMachineCode(
+        parallelMachine,
+        format,
+        machines,
+        declaredPulses,
+        declaredGuards
+      );
     }
   }
 
   let { machineName, camelizedTitle } = getMachineName(serializedMachine);
-  let { actions, producers, guards, states } = getCodeParts(serializedMachine, declaredActions, declaredProducers, declaredGuards);
+  let { pulses, guards, states } = getCodeParts(
+    serializedMachine,
+    declaredPulses,
+    declaredGuards
+  );
 
   code += `\n/******************** ${machineName} Start ********************/\n\n`;
 
@@ -399,22 +331,13 @@ function getMachineCode(
     code += `${guardCode}\n`;
   }
 
-  // Producers
-  if (producers.length > 0) {
-    let producerCode = `// Producers\n`;
-    for (let producer of producers) {
-      producerCode += `const ${producer} = (context, payload) => {\n  // TODO: Implement producer\n  return {...context};\n};\n`;
+  // Pulses
+  if (pulses.length > 0) {
+    let pulseCode = `// Pulses\n`;
+    for (let pulse of pulses) {
+      pulseCode += `const ${pulse} = (context, payload) => {\n  // TODO: Implement pulse\n  return {...context};\n};\n`;
     }
-    code += `${producerCode}\n`;
-  }
-
-  // Actions
-  if (actions.length > 0) {
-    let actionCode = `// Actions\n`;
-    for (let action of actions) {
-      actionCode += `const ${action} = async (context, payload) => {\n  // TODO: Implement action\n};\n`;
-    }
-    code += `${actionCode}\n`;
+    code += `${pulseCode}\n`;
   }
 
   // Add export declaration for esm

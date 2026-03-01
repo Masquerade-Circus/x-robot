@@ -6,6 +6,118 @@ X-Robot is a finite state machine library for nodejs and for the web.
 Intended to be used for high complex state machines with an easy to use API.
 Not only for user interfaces but also for server side applications.
 
+## Installation
+
+`x-robot` is published as an npm module: https://www.npmjs.com/package/x-robot
+
+### npm
+
+```bash
+npm install x-robot
+```
+
+### bun
+
+```bash
+bun add x-robot
+```
+
+## What is a Pulse?
+
+A pulse is the execution unit in x-robot for state updates and side effects.
+It receives `context` plus an optional payload, can be sync or async, and can
+mutate `context` directly.
+
+In frozen mode (enabled by default), pulses receive a cloned context, so you do
+not need to clone state manually before updating it.
+
+```javascript
+pulse(fn) // pulse with no transitions
+pulse(fn, 'success') // transition on success
+pulse(fn, 'success', 'failure') // transitions on success or failure
+```
+
+### Concepts comparison
+
+| Concept | Can run async | Manual state clone | Must return new state | Event/type discrimination | Async update needs two functions | Boilerplate complexity |
+| --- | --- | --- | --- | --- | --- | --- |
+| Reducer | No | Yes | Yes | Yes | Yes | High |
+| Mutation | No | Yes | Yes | No | Yes | Medium |
+| Producer | No | No | No | No | Yes | Low |
+| Action + Mutation | Yes | Yes | Yes | No | Yes | High |
+| Action + Producer | Yes | No | No | No | Yes | Medium |
+| Pulse | Yes | No | No | No | No | Minimal |
+
+### Reducer example (discriminates by event type)
+
+```javascript
+function titleReducer(state, action) {
+  if (action.type === 'TITLE/SET') {
+    return { ...state, title: action.payload };
+  }
+
+  if (action.type === 'TITLE/CLEAR') {
+    return { ...state, title: '' };
+  }
+
+  return state;
+}
+```
+
+### Action + Mutation example
+
+```javascript
+async function fetchTitleAction(state) {
+  const response = await fetch('/api/title');
+  const data = await response.json();
+  return setTitleMutation(state, data.title);
+}
+
+function setTitleMutation(state, title) {
+  return { ...state, title };
+}
+```
+
+### Action + Producer example
+
+```javascript
+async function fetchTitleAction(context) {
+  const response = await fetch('/api/title');
+  const data = await response.json();
+  setTitleProducer(context, data.title);
+}
+
+function setTitleProducer(context, title) {
+  context.title = title;
+}
+```
+
+### Pulse example (single function)
+
+```javascript
+async function fetchTitle(context) {
+  const response = await fetch('/api/title');
+  const data = await response.json();
+  context.title = data.title;
+}
+
+state('loading', pulse(fetchTitle, 'resolved', 'rejected'));
+```
+
+### Throw after mutating context
+
+```javascript
+function validateAndFail(context) {
+  context.lastAttempt = Date.now();
+  throw new Error('Validation failed');
+}
+
+state('saving', pulse(validateAndFail, undefined, 'error'));
+```
+
+In frozen mode (default), the pulse writes to a cloned context, so mutating
+then throwing is safe and does not attempt to mutate the original frozen object.
+
 ## Use cases
 
 ### Simple example
@@ -36,20 +148,16 @@ invoke(stoplight, 'next'); // stoplight.current === 'green'
 ![Fetch machine diagram](./media/fetch-machine-diagram.svg)
 
 ```javascript
-import {machine, states, state, initial, transition, invoke, action, producer} from 'x-robot';
+import {machine, states, state, initial, transition, immediate, invoke, context, pulse} from 'x-robot';
 
-// Action
-async function fetchDog() {
+// Pulse
+async function fetchDog(context) {
   let response = await fetch('https://dog.ceo/api/breeds/image/random');
   let json = await response.json();
-  return json.data;
+  context.dog = json.data;
 }
 
-// Producers
-function assignDog(context, dog) {
-  context.dog = dog;
-}
-
+// Error pulse
 function assignError(context, error) {
   context.error = error;
 }
@@ -66,20 +174,18 @@ const fetchMachine = machine(
     state('idle', transition('fetch', 'loading')),
     state(
       'loading',
-      action(fetchDog, 
-        producer(assignDog, 'resolved'), 
-        producer(assignError, 'rejected')
-      ), 
+      pulse(fetchDog, 'resolved', 'rejected'),
       transition('cancel', 'idle')
     ),
     state('resolved', immediate('idle')),
-    state('rejected')
+    state('rejected', pulse(assignError))
   )
 );
 
 // fetchMachine.current === 'idle' because is the initial state
 await invoke(fetchMachine, 'fetch');
-// fetchMachine.current === 'idle' because the action was resolved and transitioned to idle
+// fetchMachine.current === 'idle' if the pulse succeeds (resolved -> idle)
+// fetchMachine.current === 'rejected' if the pulse fails
 ```
 
 ### Nested machines

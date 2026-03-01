@@ -36,6 +36,14 @@ export interface ProducerDirectiveWithTransition extends ProducerDirective {
 export interface ProducerDirectiveWithoutTransition {
     producer: Producer;
 }
+export interface Pulse {
+    (context: Context, payload?: any): Promise<void | any> | void;
+}
+export interface PulseDirective {
+    pulse: Pulse;
+    success?: string;
+    failure?: string;
+}
 export interface Action {
     (context: Context, payload?: any): Promise<void | any>;
 }
@@ -49,24 +57,25 @@ export interface Guard {
 }
 export interface GuardDirective {
     guard: Guard;
-    failure?: ProducerDirectiveWithoutTransition;
+    failure?: string;
 }
 export interface NestedGuardDirective extends GuardDirective {
     machine: Machine;
+    failure?: string;
 }
 export interface GuardsDirective extends Array<GuardDirective | NestedGuardDirective> {
 }
 export interface DescriptionDirective {
     description: string;
 }
-export interface RunCollection extends Array<NestedMachineDirective | ActionDirective | ProducerDirectiveWithoutTransition | TransitionDirective | ImmediateDirective | DescriptionDirective> {
+export interface RunCollection extends Array<NestedMachineDirective | PulseDirective | TransitionDirective | ImmediateDirective | DescriptionDirective> {
 }
 export interface StateDirective {
     name: string;
-    run: (ActionDirective | ProducerDirective)[];
+    run: PulseDirective[];
     on: TransitionsDirective;
     immediate: ImmediateDirective[];
-    args: (NestedMachineDirective | ActionDirective | ProducerDirective | TransitionDirective | ImmediateDirective | DescriptionDirective)[];
+    args: (NestedMachineDirective | PulseDirective | TransitionDirective | ImmediateDirective | DescriptionDirective)[];
     type: string;
     nested: NestedMachineDirective[];
     description?: string;
@@ -125,6 +134,8 @@ export declare enum HistoryType {
     Transition = "Transition",
     Action = "Action",
     Producer = "Producer",
+    Pulse = "Pulse",
+    AsyncPulse = "Async Pulse",
     State = "State",
     Guard = "Guard"
 }

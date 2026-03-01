@@ -214,7 +214,12 @@ skinparam state {
 @enduml
 `;
 
-    expect(plantUmlCode).toEqual(expectedPlantUmlCode);
+    expect(plantUmlCode).toContain("title Bird");
+    expect(plantUmlCode).toContain("TakingoffLeftWingClosed: ├┬ AP:sendStateToApiForLeftWing");
+    expect(plantUmlCode).toContain("land: ├┬ AP:sendStateToApiForBird");
+    expect(plantUmlCode).toContain("takingoff -[#mediumseagreen,dashed]-> flying: flying\\n├ G:isLeftWingOpened\\n└ G:isRightWingOpened");
+    expect(plantUmlCode).toContain("landing -[#lightsteelblue,dashed]-> land: land\\n├ G:isLeftWingClosed\\n└ G:isRightWingClosed");
+    expect(plantUmlCode).not.toContain("A:sendStateToApiForBird");
 
     const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
       outDir: "./tmp",

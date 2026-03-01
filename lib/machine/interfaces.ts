@@ -55,6 +55,16 @@ export interface ProducerDirectiveWithoutTransition {
   producer: Producer;
 }
 
+export interface Pulse {
+  (context: Context, payload?: any): Promise<void | any> | void;
+}
+
+export interface PulseDirective {
+  pulse: Pulse;
+  success?: string;
+  failure?: string;
+}
+
 export interface Action {
   (context: Context, payload?: any): Promise<void | any>;
 }
@@ -71,11 +81,12 @@ export interface Guard {
 
 export interface GuardDirective {
   guard: Guard;
-  failure?: ProducerDirectiveWithoutTransition;
+  failure?: string;
 }
 
 export interface NestedGuardDirective extends GuardDirective {
   machine: Machine;
+  failure?: string;
 }
 
 export interface GuardsDirective
@@ -88,8 +99,7 @@ export interface DescriptionDirective {
 export interface RunCollection
   extends Array<
     | NestedMachineDirective
-    | ActionDirective
-    | ProducerDirectiveWithoutTransition
+    | PulseDirective
     | TransitionDirective
     | ImmediateDirective
     | DescriptionDirective
@@ -97,13 +107,12 @@ export interface RunCollection
 
 export interface StateDirective {
   name: string;
-  run: (ActionDirective | ProducerDirective)[];
+  run: PulseDirective[];
   on: TransitionsDirective;
   immediate: ImmediateDirective[];
   args: (
     | NestedMachineDirective
-    | ActionDirective
-    | ProducerDirective
+    | PulseDirective
     | TransitionDirective
     | ImmediateDirective
     | DescriptionDirective
@@ -181,6 +190,8 @@ export enum HistoryType {
   Transition = "Transition",
   Action = "Action",
   Producer = "Producer",
+  Pulse = "Pulse",
+  AsyncPulse = "Async Pulse",
   State = "State",
   Guard = "Guard"
 }
