@@ -1,4 +1,5 @@
-import { Context, ContextDirective, DangerStateDirective, DescriptionDirective, Guard, GuardDirective, GuardsDirective, ImmediateDirective, InfoStateDirective, InitialDirective, Machine, MachineArguments, NestedGuardDirective, NestedMachineDirective, ParallelDirective, PrimaryStateDirective, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, SuccessStateDirective, TransitionDirective, WarningStateDirective, Pulse, PulseDirective } from "./interfaces";
+import { Context, ContextDirective, DangerStateDirective, DescriptionDirective, Guard, GuardDirective, GuardsDirective, ImmediateDirective, InfoStateDirective, InitialDirective, InitDirective, Machine, MachineArguments, NestedGuardDirective, NestedMachineDirective, ParallelDirective, PrimaryStateDirective, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, SuccessStateDirective, TransitionDirective, WarningStateDirective, Pulse, PulseDirective } from "./interfaces";
+export declare function init(...directives: (InitialDirective | ContextDirective | ShouldFreezeDirective)[]): InitDirective;
 export declare function machine(title: string, ...args: MachineArguments): Machine;
 export declare function states(...states: StateDirective[]): StatesDirective;
 export declare function parallel(...machines: Machine[]): ParallelDirective;
@@ -8,9 +9,9 @@ export declare function shouldFreeze(freeze: boolean): ShouldFreezeDirective;
 export declare function state(name: string, ...args: RunCollection): StateDirective;
 export declare function transition(transitionName: string, target: string, ...guards: GuardsDirective): TransitionDirective;
 export declare function pulse(pulse: Pulse, success?: string, failure?: string): PulseDirective;
-export declare function guard(guard: Guard, failure?: string): GuardDirective;
+export declare function guard(guard: Guard, failure?: string | PulseDirective): GuardDirective;
 export declare function immediate(target: string, ...guards: GuardsDirective): ImmediateDirective;
-export declare function nestedGuard(machine: Machine, guard: Guard, failure?: string): NestedGuardDirective;
+export declare function nestedGuard(machine: Machine, guard: Guard, failure?: string | PulseDirective): NestedGuardDirective;
 export declare function nested(machine: Machine, transition?: string): NestedMachineDirective;
 export declare function description(description: string): DescriptionDirective;
 export declare function infoState(name: string, ...args: RunCollection): InfoStateDirective;

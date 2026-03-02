@@ -1,13 +1,16 @@
 /** @module x-robot */
 export interface MachineArguments
   extends Array<
-    | string
-    | ContextDirective
-    | InitialDirective
-    | ShouldFreezeDirective
-    | StatesDirective
+    | InitDirective
+    | StateDirective
     | ParallelDirective
   > {}
+
+export interface InitDirective {
+  initial?: InitialDirective;
+  context?: ContextDirective;
+  freeze?: ShouldFreezeDirective;
+}
 
 export interface Context {
   [key: string]: any;
@@ -62,7 +65,7 @@ export interface Pulse {
 export interface PulseDirective {
   pulse: Pulse;
   success?: string;
-  failure?: string;
+  failure?: string | PulseDirective;
 }
 
 export interface Action {
@@ -81,12 +84,12 @@ export interface Guard {
 
 export interface GuardDirective {
   guard: Guard;
-  failure?: string;
+  failure?: string | PulseDirective;
 }
 
 export interface NestedGuardDirective extends GuardDirective {
   machine: Machine;
-  failure?: string;
+  failure?: string | PulseDirective;
 }
 
 export interface GuardsDirective

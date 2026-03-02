@@ -5,10 +5,10 @@ import {
   immediate,
   infoState,
   initial,
+  init,
   machine,
   primaryState,
   pulse,
-  states,
   successState,
   transition,
   warningState,
@@ -58,36 +58,36 @@ describe("Serialize", () => {
 
     const myMachine = machine(
       "Title component",
-      states(
-        successState(
-          "preview",
-          pulse(cacheTitle),
-          transition("edit", "editMode")
-        ),
-        infoState(
-          "editMode",
-          pulse(updateTitle),
-          transition("input", "editMode"),
-          transition("cancel", "cancel"),
-          transition(
-            "save",
-            "save",
-            guard(titleIsValid)
-          )
-        ),
-        warningState(
-          "cancel",
-          pulse(restoreTitle),
-          immediate("preview")
-        ),
-        primaryState(
-          "save",
-          pulse(saveTitle, "preview", "error")
-        ),
-        dangerState("error")
+      init(
+        initial("preview"),
+        context(getState)
       ),
-      context(getState),
-      initial("preview")
+      successState(
+        "preview",
+        pulse(cacheTitle),
+        transition("edit", "editMode")
+      ),
+      infoState(
+        "editMode",
+        pulse(updateTitle),
+        transition("input", "editMode"),
+        transition("cancel", "cancel"),
+        transition(
+          "save",
+          "save",
+          guard(titleIsValid)
+        )
+      ),
+      warningState(
+        "cancel",
+        pulse(restoreTitle),
+        immediate("preview")
+      ),
+      primaryState(
+        "save",
+        pulse(saveTitle, "preview", "error")
+      ),
+      dangerState("error")
     );
 
     let serializedMachine = {

@@ -1,4 +1,9 @@
-export interface MachineArguments extends Array<string | ContextDirective | InitialDirective | ShouldFreezeDirective | StatesDirective | ParallelDirective> {
+export interface MachineArguments extends Array<InitDirective | StateDirective | ParallelDirective> {
+}
+export interface InitDirective {
+    initial?: InitialDirective;
+    context?: ContextDirective;
+    freeze?: ShouldFreezeDirective;
 }
 export interface Context {
     [key: string]: any;
@@ -57,11 +62,11 @@ export interface Guard {
 }
 export interface GuardDirective {
     guard: Guard;
-    failure?: string;
+    failure?: string | PulseDirective;
 }
 export interface NestedGuardDirective extends GuardDirective {
     machine: Machine;
-    failure?: string;
+    failure?: string | PulseDirective;
 }
 export interface GuardsDirective extends Array<GuardDirective | NestedGuardDirective> {
 }

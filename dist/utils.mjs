@@ -68,6 +68,14 @@ function isShouldFreezeDirective(shouldFreeze) {
 function isInitialDirective(initial) {
   return isValidObject(initial) && "initial" in initial;
 }
+function isInitDirective(init) {
+  if (!isValidObject(init))
+    return false;
+  const hasInitial = "initial" in init;
+  const hasContext = "context" in init;
+  const hasFreeze = "freeze" in init;
+  return hasInitial || hasContext || hasFreeze;
+}
 function isDescriptionDirective(description) {
   return isValidObject(description) && "description" in description;
 }
@@ -179,6 +187,7 @@ export {
   isDescriptionDirective,
   isGuard,
   isImmediate,
+  isInitDirective,
   isInitialDirective,
   isMachine,
   isNestedGuard,

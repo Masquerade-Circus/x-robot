@@ -6,6 +6,7 @@ import {
   GuardDirective,
   ImmediateDirective,
   InitialDirective,
+  InitDirective,
   Machine,
   NestedGuardDirective,
   NestedImmediateDirective,
@@ -146,6 +147,14 @@ export function isShouldFreezeDirective(
 
 export function isInitialDirective(initial?: any): initial is InitialDirective {
   return isValidObject(initial) && "initial" in initial;
+}
+
+export function isInitDirective(init?: any): init is InitDirective {
+  if (!isValidObject(init)) return false;
+  const hasInitial = "initial" in init;
+  const hasContext = "context" in init;
+  const hasFreeze = "freeze" in init;
+  return hasInitial || hasContext || hasFreeze;
 }
 
 export function isDescriptionDirective(

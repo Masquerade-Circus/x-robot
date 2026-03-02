@@ -1,4 +1,4 @@
-import { ActionDirective, ContextDirective, DescriptionDirective, GuardDirective, ImmediateDirective, InitialDirective, Machine, NestedGuardDirective, NestedImmediateDirective, ParallelDirective, ParallelImmediateDirective, PulseDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective, NestedMachineDirective, NestedMachineWithTransitionDirective } from "./machine/interfaces";
+import { ActionDirective, ContextDirective, DescriptionDirective, GuardDirective, ImmediateDirective, InitialDirective, InitDirective, Machine, NestedGuardDirective, NestedImmediateDirective, ParallelDirective, ParallelImmediateDirective, PulseDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective, NestedMachineDirective, NestedMachineWithTransitionDirective } from "./machine/interfaces";
 export declare function isValidString(str?: any): str is string;
 export declare function isValidObject(obj: any): obj is object;
 export declare function isProducer(producer?: any): producer is ProducerDirective;
@@ -21,6 +21,7 @@ export declare function isStatesDirective(states?: any): states is StatesDirecti
 export declare function isParallelDirective(parallel?: any): parallel is ParallelDirective;
 export declare function isShouldFreezeDirective(shouldFreeze?: any): shouldFreeze is ShouldFreezeDirective;
 export declare function isInitialDirective(initial?: any): initial is InitialDirective;
+export declare function isInitDirective(init?: any): init is InitDirective;
 export declare function isDescriptionDirective(description?: any): description is DescriptionDirective;
 export declare function isNestedTransition(transition?: any): boolean;
 export declare function isParallelTransition(transition?: any): boolean;

@@ -14,6 +14,7 @@ import {
   guard,
   immediate,
   infoState,
+  init,
   initial,
   machine,
   nested,
@@ -22,7 +23,6 @@ import {
   primaryState,
   pulse,
   state,
-  states,
   successState,
   transition,
   warningState,
@@ -77,50 +77,47 @@ describe("Generate a diagram from a serialized machine", () => {
 
     const myMachine = machine(
       title || "My machine",
-      states(
-        successState(
-          "preview",
-          description("Initial state"),
-          // Save the current title as oldTitle so we can reset later.
-          pulse(cacheTitle),
-          transition("edit", "editMode")
-        ),
-        infoState(
-          "editMode",
-          description("The user tries to edit the title"),
-          // Update title with the event value
-          pulse(updateTitle),
-          transition("input", "editMode"),
-          transition("cancel", "cancel"),
-          transition(
-            "save",
-            "save",
-            // Check if the title is valid. If so continue with the state.
-            // If not, the machine keeps its current state.
-            // In this case we came from editMode, so we keep the editMode state and update the context with the validation error.
-            guard(titleIsValid)
-          )
-        ),
-        warningState(
-          "cancel",
-          description("The user cancels the edition"),
-          // Reset the title back to oldTitle
-          pulse(restoreTitle),
-          immediate("preview")
-        ),
-        primaryState(
-          "save",
-          description("The user saves the title"),
-          // If the guard is true, we try to save the title.
-          // If the save action succeeds, we immediately go to the preview state.
-          // If the save action fails, we update the context with the error and go to the error state.
-          pulse(saveTitle, "preview", "error")
-        ),
-        dangerState("error", description("We failed to save the title to the db"), pulse(updateError))
-        // Should we provide a retry or...?
+      init(context(getState), initial("preview")),
+      successState(
+        "preview",
+        description("Initial state"),
+        // Save the current title as oldTitle so we can reset later.
+        pulse(cacheTitle),
+        transition("edit", "editMode")
       ),
-      context(getState),
-      initial("preview")
+      infoState(
+        "editMode",
+        description("The user tries to edit the title"),
+        // Update title with the event value
+        pulse(updateTitle),
+        transition("input", "editMode"),
+        transition("cancel", "cancel"),
+        transition(
+          "save",
+          "save",
+          // Check if the title is valid. If so continue with the state.
+          // If not, the machine keeps its current state.
+          // In this case we came from editMode, so we keep the editMode state and update the context with the validation error.
+          guard(titleIsValid)
+        )
+      ),
+      warningState(
+        "cancel",
+        description("The user cancels the edition"),
+        // Reset the title back to oldTitle
+        pulse(restoreTitle),
+        immediate("preview")
+      ),
+      primaryState(
+        "save",
+        description("The user saves the title"),
+        // If the guard is true, we try to save the title.
+        // If the save action succeeds, we immediately go to the preview state.
+        // If the save action fails, we update the context with the error and go to the error state.
+        pulse(saveTitle, "preview", "error")
+      ),
+      dangerState("error", description("We failed to save the title to the db"), pulse(updateError))
+      // Should we provide a retry or...?
     );
 
     return myMachine;
@@ -627,13 +624,15 @@ skinparam state {
   it("should generate a diagram for a serialized machine with nested machines", async () => {
     let leftWingMachine = machine(
       "Left wing",
-      states(state("closed", transition("open", "opened")), state("opened", transition("close", "closed"))),
-      initial("closed")
+      init(initial("closed")),
+      state("closed", transition("open", "opened")),
+      state("opened", transition("close", "closed"))
     );
     let rightWingMachine = machine(
       "Right wing",
-      states(state("closed", transition("open", "opened")), state("opened", transition("close", "closed"))),
-      initial("closed")
+      init(initial("closed")),
+      state("closed", transition("open", "opened")),
+      state("opened", transition("close", "closed"))
     );
 
     function wingsAreOpened(context) {
@@ -646,13 +645,11 @@ skinparam state {
 
     let bird = machine(
       "Bird",
-      states(
-        state("land", transition("takeoff", "takingoff")),
-        state("takingoff", nested(leftWingMachine), nested(rightWingMachine), immediate("flying", guard(wingsAreOpened))),
-        state("flying", transition("land", "landing")),
-        state("landing", nested(leftWingMachine), nested(rightWingMachine), immediate("land", guard(wingsAreClosed)))
-      ),
-      initial("land")
+      init(initial("land")),
+      state("land", transition("takeoff", "takingoff")),
+      state("takingoff", nested(leftWingMachine), nested(rightWingMachine), immediate("flying", guard(wingsAreOpened))),
+      state("flying", transition("land", "landing")),
+      state("landing", nested(leftWingMachine), nested(rightWingMachine), immediate("land", guard(wingsAreClosed)))
     );
 
     const plantUmlCode = getPlantUmlCode(serialize(bird), {
@@ -980,8 +977,10 @@ describe("Readme examples", () => {
   it("Simple example", async () => {
     const stoplight = machine(
       "Stoplight",
-      states(state("green", transition("next", "yellow")), state("yellow", transition("next", "red")), state("red", transition("next", "green"))),
-      initial("green")
+      init(initial("green")),
+      state("green", transition("next", "yellow")),
+      state("yellow", transition("next", "red")),
+      state("red", transition("next", "green"))
     );
 
     const svg = await createSvgFromMachine(stoplight, {
@@ -1013,17 +1012,17 @@ describe("Readme examples", () => {
     // Machine definition
     const fetchMachine = machine(
       "Dog API",
-      initial("idle"),
-      context({
-        dog: null,
-        error: null,
-      }),
-      states(
-        state("idle", transition("fetch", "loading")),
-        state("loading", pulse(fetchDog, "resolved", "rejected"), transition("cancel", "idle")),
-        state("resolved", immediate("idle")),
-        state("rejected")
-      )
+      init(
+        context({
+          dog: null,
+          error: null,
+        }),
+        initial("idle")
+      ),
+      state("idle", transition("fetch", "loading")),
+      state("loading", pulse(fetchDog, "resolved", "rejected"), transition("cancel", "idle")),
+      state("resolved", immediate("idle")),
+      state("rejected")
     );
 
     const svg = await createSvgFromMachine(fetchMachine, {
@@ -1039,7 +1038,7 @@ describe("Readme examples", () => {
   });
 
   it("Nested example", async () => {
-    const stopwalk = machine("Stopwalk", states(state("wait", transition("start", "walk")), state("walk", transition("stop", "wait"))), initial("wait"));
+    const stopwalk = machine("Stopwalk", init(initial("wait")), state("wait", transition("start", "walk")), state("walk", transition("stop", "wait")));
 
     // Guard to prevent the machine to transition to 'green' if the stopwalk machine is in 'walk' state
     const canGoToGreen = () => {
@@ -1048,12 +1047,10 @@ describe("Readme examples", () => {
 
     const stoplight = machine(
       "Stoplight",
-      states(
-        state("green", transition("next", "yellow")),
-        state("yellow", transition("next", "red")),
-        state("red", nested(stopwalk, "start"), immediate("green", guard(canGoToGreen)))
-      ),
-      initial("green")
+      init(initial("green")),
+      state("green", transition("next", "yellow")),
+      state("yellow", transition("next", "red")),
+      state("red", nested(stopwalk, "start"), immediate("green", guard(canGoToGreen)))
     );
 
     const svg = await createSvgFromMachine(stoplight, {
@@ -1066,17 +1063,15 @@ describe("Readme examples", () => {
   });
 
   it("Parallel example", async () => {
-    const boldMachine = machine("Bold", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off"));
-    const underlineMachine = machine("Underline", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off"));
-    const italicsMachine = machine("Italics", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off"));
+    const boldMachine = machine("Bold", init(initial("off")), state("on", transition("off", "off")), state("off", transition("on", "on")));
+    const underlineMachine = machine("Underline", init(initial("off")), state("on", transition("off", "off")), state("off", transition("on", "on")));
+    const italicsMachine = machine("Italics", init(initial("off")), state("on", transition("off", "off")), state("off", transition("on", "on")));
     const listMachine = machine(
       "List",
-      states(
-        state("none", transition("bullets", "bullets"), transition("numbers", "numbers")),
-        state("bullets", transition("none", "none")),
-        state("numbers", transition("none", "none"))
-      ),
-      initial("none")
+      init(initial("none")),
+      state("none", transition("bullets", "bullets"), transition("numbers", "numbers")),
+      state("bullets", transition("none", "none")),
+      state("numbers", transition("none", "none"))
     );
 
     const wordMachine = machine("Word Machine", parallel(boldMachine, underlineMachine, italicsMachine, listMachine));

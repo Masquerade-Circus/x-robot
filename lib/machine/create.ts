@@ -14,6 +14,7 @@ import {
   ImmediateDirective,
   InfoStateDirective,
   InitialDirective,
+  InitDirective,
   Machine,
   MachineArguments,
   NestedGuardDirective,
@@ -38,6 +39,7 @@ import {
   isDescriptionDirective,
   isImmediate,
   isInitialDirective,
+  isInitDirective,
   isMachine,
   isNestedImmediateDirective,
   isNestedMachineDirective,
@@ -46,6 +48,7 @@ import {
   isPulse,
   isShouldFreezeDirective,
   isStatesDirective,
+  isStateDirective,
   isTransition,
   isValidObject,
   isValidString,
@@ -61,9 +64,40 @@ import {
  * */
 
 /**
+ * Creates an init directive that can contain initial, context and freeze options
+ * @param directives InitialDirective, ContextDirective or ShouldFreezeDirective
+ * @returns InitDirective
+ * @category Creation
+ */
+export function init(...directives: (InitialDirective | ContextDirective | ShouldFreezeDirective)[]): InitDirective {
+  let initObj: InitDirective = {};
+  
+  for (const directive of directives) {
+    if (isInitialDirective(directive)) {
+      if (initObj.initial) {
+        throw new Error("Cannot have more than one initial directive in init");
+      }
+      initObj.initial = directive;
+    } else if (isContextDirective(directive)) {
+      if (initObj.context) {
+        throw new Error("Cannot have more than one context directive in init");
+      }
+      initObj.context = directive;
+    } else if (isShouldFreezeDirective(directive)) {
+      if (initObj.freeze) {
+        throw new Error("Cannot have more than one shouldFreeze directive in init");
+      }
+      initObj.freeze = directive;
+    }
+  }
+  
+  return initObj;
+}
+
+/**
  * Creates a new machine
  * @param title Title of the machine - This will be used to generate the id of the machine
- * @param args Arguments to the machine
+ * @param args Arguments to the machine: init?, state*, parallel*
  * @returns Machine
  * @category Creation
  */
@@ -82,46 +116,87 @@ export function machine(title: string, ...args: MachineArguments): Machine {
     parallel: {}
   };
 
-  for (let arg of args) {
-    // If arg is a string then it is the title
-    if (isValidString(arg)) {
-      title = arg;
-    }
+  let foundInit: InitDirective | null = null;
+  let firstStateName: string | null = null;
 
-    // If the argument is a states directive then merge it into the states
-    if (isStatesDirective(arg)) {
-      myMachine.states = { ...myMachine.states, ...arg };
+  // First pass: collect init directive and find first state name
+  for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
+    
+    // If the argument is an init directive
+    if (isInitDirective(arg)) {
+      if (foundInit !== null) {
+        throw new Error("Cannot have more than one init directive");
+      }
+      foundInit = arg;
+    }
+    
+    // If the argument is a state directive, track the first state
+    if (isStateDirective(arg)) {
+      if (!firstStateName) {
+        firstStateName = arg.name;
+      }
+    }
+  }
+
+  // Second pass: process all arguments
+  for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
+
+    // If the argument is an init directive, process it
+    if (isInitDirective(arg)) {
+      // Process initial from init
+      if (arg.initial) {
+        myMachine.initial = arg.initial.initial;
+        myMachine.current = myMachine.initial;
+        myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
+      }
+      
+      // Process context from init
+      if (arg.context) {
+        let newContext =
+          typeof arg.context.context === "function" 
+            ? arg.context.context() 
+            : arg.context.context;
+        if (!isValidObject(newContext)) {
+          throw new Error(
+            "The context passed to the machine must be an object or a function that returns an object."
+          );
+        }
+        myMachine.context = { ...myMachine.context, ...newContext };
+      }
+      
+      // Process freeze from init
+      if (arg.freeze) {
+        myMachine.frozen = arg.freeze.freeze;
+      }
+      
+      continue;
     }
 
     // If the argument is a parallel directive then merge it into the parallel
     if (isParallelDirective(arg)) {
       myMachine.parallel = { ...myMachine.parallel, ...arg.parallel };
+      continue;
     }
 
-    // If the argument is a context directive then merge it into the context
-    if (isContextDirective(arg)) {
-      let newContext =
-        typeof arg.context === "function" ? arg.context() : arg.context;
-      if (!isValidObject(newContext)) {
-        throw new Error(
-          "The context passed to the machine must be an object or a function that returns an object."
-        );
-      }
-
-      myMachine.context = { ...myMachine.context, ...newContext };
+    // If the argument is a state directive
+    if (isStateDirective(arg)) {
+      myMachine.states[arg.name] = arg;
+      continue;
     }
-
-    // If the argument is an initial directive then set the initial state
-    if (isInitialDirective(arg)) {
-      myMachine.initial = arg.initial;
-      myMachine.current = myMachine.initial;
-      myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
+    
+    // If the argument is a states directive (legacy - should not be used)
+    if (isStatesDirective(arg)) {
+      throw new Error("states() wrapper is no longer supported. Pass states directly to machine().");
     }
+  }
 
-    // If the argument is a shouldFreeze directive then set the freeze flag
-    if (isShouldFreezeDirective(arg)) {
-      myMachine.frozen = arg.freeze;
-    }
+  // If no initial was provided, use the first state
+  if (!myMachine.initial && firstStateName) {
+    myMachine.initial = firstStateName;
+    myMachine.current = myMachine.initial;
+    myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
   }
 
   // If freeze is true, we will deep freeze the context
@@ -379,7 +454,7 @@ export function pulse(
  */
 export function guard(
   guard: Guard,
-  failure?: string
+  failure?: string | PulseDirective
 ): GuardDirective {
   return {
     guard,
@@ -417,7 +492,7 @@ export function immediate(
 export function nestedGuard(
   machine: Machine,
   guard: Guard,
-  failure?: string
+  failure?: string | PulseDirective
 ): NestedGuardDirective {
   return {
     guard,

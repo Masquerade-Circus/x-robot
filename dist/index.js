@@ -27,6 +27,7 @@ __export(lib_exports, {
   guard: () => guard,
   immediate: () => immediate,
   infoState: () => infoState,
+  init: () => init,
   initial: () => initial,
   invoke: () => invoke,
   machine: () => machine,
@@ -37,7 +38,6 @@ __export(lib_exports, {
   pulse: () => pulse,
   start: () => start,
   state: () => state,
-  states: () => states,
   successState: () => successState,
   transition: () => transition,
   warningState: () => warningState
@@ -96,8 +96,8 @@ function isStateDirective(state2) {
 function isContextDirective(context2) {
   return isValidObject(context2) && "context" in context2;
 }
-function isStatesDirective(states2) {
-  return isValidObject(states2) && Object.keys(states2).every((key) => isValidString(key)) && Object.values(states2).every((state2) => isStateDirective(state2));
+function isStatesDirective(states) {
+  return isValidObject(states) && Object.keys(states).every((key) => isValidString(key)) && Object.values(states).every((state2) => isStateDirective(state2));
 }
 function isParallelDirective(parallel2) {
   return isValidObject(parallel2) && "parallel" in parallel2;
@@ -107,6 +107,14 @@ function isShouldFreezeDirective(shouldFreeze) {
 }
 function isInitialDirective(initial2) {
   return isValidObject(initial2) && "initial" in initial2;
+}
+function isInitDirective(init2) {
+  if (!isValidObject(init2))
+    return false;
+  const hasInitial = "initial" in init2;
+  const hasContext = "context" in init2;
+  const hasFreeze = "freeze" in init2;
+  return hasInitial || hasContext || hasFreeze;
 }
 function isDescriptionDirective(description2) {
   return isValidObject(description2) && "description" in description2;
@@ -210,6 +218,28 @@ function canMakeTransition(machine2, currentStateObject, transition2) {
 var titleToId = (str) => str.toLowerCase().replace(/(\s|\W)/g, "");
 
 // lib/machine/create.ts
+function init(...directives) {
+  let initObj = {};
+  for (const directive of directives) {
+    if (isInitialDirective(directive)) {
+      if (initObj.initial) {
+        throw new Error("Cannot have more than one initial directive in init");
+      }
+      initObj.initial = directive;
+    } else if (isContextDirective(directive)) {
+      if (initObj.context) {
+        throw new Error("Cannot have more than one context directive in init");
+      }
+      initObj.context = directive;
+    } else if (isShouldFreezeDirective(directive)) {
+      if (initObj.freeze) {
+        throw new Error("Cannot have more than one shouldFreeze directive in init");
+      }
+      initObj.freeze = directive;
+    }
+  }
+  return initObj;
+}
 function machine(title, ...args) {
   let myMachine = {
     id: titleToId(title || "x-robot"),
@@ -223,31 +253,58 @@ function machine(title, ...args) {
     history: [],
     parallel: {}
   };
-  for (let arg of args) {
-    if (isValidString(arg)) {
-      title = arg;
+  let foundInit = null;
+  let firstStateName = null;
+  for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
+    if (isInitDirective(arg)) {
+      if (foundInit !== null) {
+        throw new Error("Cannot have more than one init directive");
+      }
+      foundInit = arg;
     }
-    if (isStatesDirective(arg)) {
-      myMachine.states = { ...myMachine.states, ...arg };
+    if (isStateDirective(arg)) {
+      if (!firstStateName) {
+        firstStateName = arg.name;
+      }
+    }
+  }
+  for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
+    if (isInitDirective(arg)) {
+      if (arg.initial) {
+        myMachine.initial = arg.initial.initial;
+        myMachine.current = myMachine.initial;
+        myMachine.history.push(`${"State" /* State */}: ${myMachine.initial}`);
+      }
+      if (arg.context) {
+        let newContext = typeof arg.context.context === "function" ? arg.context.context() : arg.context.context;
+        if (!isValidObject(newContext)) {
+          throw new Error("The context passed to the machine must be an object or a function that returns an object.");
+        }
+        myMachine.context = { ...myMachine.context, ...newContext };
+      }
+      if (arg.freeze) {
+        myMachine.frozen = arg.freeze.freeze;
+      }
+      continue;
     }
     if (isParallelDirective(arg)) {
       myMachine.parallel = { ...myMachine.parallel, ...arg.parallel };
+      continue;
     }
-    if (isContextDirective(arg)) {
-      let newContext = typeof arg.context === "function" ? arg.context() : arg.context;
-      if (!isValidObject(newContext)) {
-        throw new Error("The context passed to the machine must be an object or a function that returns an object.");
-      }
-      myMachine.context = { ...myMachine.context, ...newContext };
+    if (isStateDirective(arg)) {
+      myMachine.states[arg.name] = arg;
+      continue;
     }
-    if (isInitialDirective(arg)) {
-      myMachine.initial = arg.initial;
-      myMachine.current = myMachine.initial;
-      myMachine.history.push(`${"State" /* State */}: ${myMachine.initial}`);
+    if (isStatesDirective(arg)) {
+      throw new Error("states() wrapper is no longer supported. Pass states directly to machine().");
     }
-    if (isShouldFreezeDirective(arg)) {
-      myMachine.frozen = arg.freeze;
-    }
+  }
+  if (!myMachine.initial && firstStateName) {
+    myMachine.initial = firstStateName;
+    myMachine.current = myMachine.initial;
+    myMachine.history.push(`${"State" /* State */}: ${myMachine.initial}`);
   }
   if (myMachine.frozen) {
     deepFreeze(myMachine.context);
@@ -282,13 +339,6 @@ function machine(title, ...args) {
     }
   }
   return myMachine;
-}
-function states(...states2) {
-  let newStates = {};
-  for (let state2 of states2) {
-    newStates[state2.name] = state2;
-  }
-  return newStates;
 }
 function parallel(...machines) {
   let obj = { parallel: {} };

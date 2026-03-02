@@ -1,5 +1,5 @@
 import { describe, it } from "mocha";
-import { getState, initial, invoke, machine, parallel, state, states, transition } from "../lib";
+import { getState, init, initial, invoke, machine, parallel, state, transition } from "../lib";
 
 import expect from "expect";
 import { validate } from "../lib/validate";
@@ -9,17 +9,15 @@ describe("Parallel States", () => {
     const wordMachine = machine(
       "Word Machine",
       parallel(
-        machine("Bold", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off")),
-        machine("Underline", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off")),
-        machine("Italics", states(state("on", transition("off", "off")), state("off", transition("on", "on"))), initial("off")),
+        machine("Bold", init(initial("off")), state("on", transition("off", "off")), state("off", transition("on", "on"))),
+        machine("Underline", init(initial("off")), state("on", transition("off", "off")), state("off", transition("on", "on"))),
+        machine("Italics", init(initial("off")), state("on", transition("off", "off")), state("off", transition("on", "on"))),
         machine(
           "List",
-          states(
-            state("none", transition("bullets", "bullets"), transition("numbers", "numbers")),
-            state("bullets", transition("none", "none")),
-            state("numbers", transition("none", "none"))
-          ),
-          initial("none")
+          init(initial("none")),
+          state("none", transition("bullets", "bullets"), transition("numbers", "numbers")),
+          state("bullets", transition("none", "none")),
+          state("numbers", transition("none", "none"))
         )
       )
     );

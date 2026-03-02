@@ -128,6 +128,9 @@ function runPulse(
           }
 
           if (pulse.failure) {
+            if (isPulse(pulse.failure)) {
+              return runPulse(machine, pulse.failure, error);
+            }
             return invoke(machine, pulse.failure, error);
           }
 
@@ -156,6 +159,9 @@ function runPulse(
         }
 
         if (pulse.failure) {
+          if (isPulse(pulse.failure)) {
+            return runPulse(machine, pulse.failure, error);
+          }
           return invoke(machine, pulse.failure, error);
         }
 
@@ -216,7 +222,15 @@ function catchError(
   state: StateDirective,
   error: Error
 ): Promise<void> | void {
-  // Check if we have a local error transition and invoke it if so
+  // If frozen, we need to clone the context before modifying
+  if (machine.frozen) {
+    machine.context = cloneContext(machine.context);
+  }
+  
+  // Store error in context for easy access (always, as fallback in case pulse doesn't set it)
+  machine.context.error = error;
+
+  // If there's an error transition, let it handle the error
   if (hasTransition(state, "error")) {
     return invoke(machine, "error", error);
   }
@@ -334,6 +348,13 @@ function runGuards(
           invoke(machine, guard.failure, result);
         } else if (isPulse(guard.failure)) {
           runPulse(machine, guard.failure, result);
+        } else if (isValidString(result)) {
+          // If no failure transition/pulse is defined, store the result in context.error
+          // If frozen, we need to clone the context first
+          if (machine.frozen) {
+            machine.context = cloneContext(machine.context);
+          }
+          machine.context.error = result;
         }
 
         return false;
