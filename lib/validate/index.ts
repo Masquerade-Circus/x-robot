@@ -236,6 +236,24 @@ function validatePulse(
     );
   }
 
+  // Validate that success is not a PulseDirective (use multiple pulses instead)
+  if (isPulse(item.success)) {
+    return err(
+      new Error(
+        `The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid success parameter. Use multiple pulses instead.`
+      )
+    );
+  }
+
+  // Validate that failure is not a PulseDirective (use multiple pulses instead)
+  if (isPulse(item.failure)) {
+    return err(
+      new Error(
+        `The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid failure parameter. Use multiple pulses instead.`
+      )
+    );
+  }
+
   return ok(void 0);
 }
 
@@ -243,6 +261,17 @@ function validateRunCollections(machine: Machine): Result<void, Error> {
   // Validate the transitions of each state
   for (let stateName in machine.states) {
     let state = machine.states[stateName];
+
+    // Validate that guards are not used directly in states (they must be inside transitions)
+    for (let arg of state.args) {
+      if (isGuard(arg)) {
+        return err(
+          new Error(
+            `The guard must be used inside a transition.`
+          )
+        );
+      }
+    }
 
     // Validate run collection
     for (let item of state.run) {
@@ -331,7 +360,7 @@ function validateGuards(machine: Machine): Result<void, Error> {
           ) {
             return err(
               new Error(
-                `The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' must have a valid failure transition.`
+                `The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' failure must be a string.`
               )
             );
           }

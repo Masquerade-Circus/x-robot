@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / x-robot/utils
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/utils
 
 # Module: x-robot/utils
 
@@ -11,6 +11,7 @@
 - [isProducer](x_robot_utils.md#isproducer)
 - [isProducerWithTransition](x_robot_utils.md#isproducerwithtransition)
 - [isProducerWithoutTransition](x_robot_utils.md#isproducerwithouttransition)
+- [isPulse](x_robot_utils.md#ispulse)
 - [isAction](x_robot_utils.md#isaction)
 - [isImmediate](x_robot_utils.md#isimmediate)
 - [isGuard](x_robot_utils.md#isguard)
@@ -27,6 +28,7 @@
 - [isParallelDirective](x_robot_utils.md#isparalleldirective)
 - [isShouldFreezeDirective](x_robot_utils.md#isshouldfreezedirective)
 - [isInitialDirective](x_robot_utils.md#isinitialdirective)
+- [isInitDirective](x_robot_utils.md#isinitdirective)
 - [isDescriptionDirective](x_robot_utils.md#isdescriptiondirective)
 - [isNestedTransition](x_robot_utils.md#isnestedtransition)
 - [isParallelTransition](x_robot_utils.md#isparalleltransition)
@@ -116,6 +118,22 @@ ___
 #### Returns
 
 producer is ProducerDirectiveWithoutTransition
+
+___
+
+### isPulse
+
+▸ **isPulse**(`pulse?`): pulse is PulseDirective
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `pulse?` | `any` |
+
+#### Returns
+
+pulse is PulseDirective
 
 ___
 
@@ -374,6 +392,22 @@ ___
 #### Returns
 
 initial is InitialDirective
+
+___
+
+### isInitDirective
+
+▸ **isInitDirective**(`init?`): init is InitDirective
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `init?` | `any` |
+
+#### Returns
+
+init is InitDirective
 
 ___
 

@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / TransitionDirective
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / TransitionDirective
 
 # Interface: TransitionDirective
 
@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:17](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L17)
+[lib/machine/interfaces.ts:20](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L20)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:18](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L18)
+[lib/machine/interfaces.ts:21](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L21)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:19](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L19)
+[lib/machine/interfaces.ts:22](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L22)

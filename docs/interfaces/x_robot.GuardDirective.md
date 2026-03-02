@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / GuardDirective
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / GuardDirective
 
 # Interface: GuardDirective
 
@@ -25,14 +25,14 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L73)
+[lib/machine/interfaces.ts:87](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L87)
 
 ___
 
 ### failure
 
-• `Optional` **failure**: [`ProducerDirectiveWithoutTransition`](x_robot.ProducerDirectiveWithoutTransition.md)
+• `Optional` **failure**: `string` \| [`PulseDirective`](x_robot.PulseDirective.md)
 
 #### Defined in
 
-[lib/machine/interfaces.ts:74](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L74)
+[lib/machine/interfaces.ts:88](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L88)

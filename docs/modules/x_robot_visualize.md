@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / x-robot/visualize
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/visualize
 
 # Module: x-robot/visualize
 
@@ -169,4 +169,4 @@ The path to the svg file
 
 #### Defined in
 
-[lib/visualize/index.ts:39](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/visualize/index.ts#L39)
+[lib/visualize/index.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/visualize/index.ts#L37)

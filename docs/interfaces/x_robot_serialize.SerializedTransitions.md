@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedTransitions
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedTransitions
 
 # Interface: SerializedTransitions
 

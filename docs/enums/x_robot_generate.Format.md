@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/generate](../modules/x_robot_generate.md) / Format
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/generate](../modules/x_robot_generate.md) / Format
 
 # Enumeration: Format
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[lib/generate/index.ts:9](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/generate/index.ts#L9)
+[lib/generate/index.ts:9](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/generate/index.ts#L9)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[lib/generate/index.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/generate/index.ts#L10)
+[lib/generate/index.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/generate/index.ts#L10)

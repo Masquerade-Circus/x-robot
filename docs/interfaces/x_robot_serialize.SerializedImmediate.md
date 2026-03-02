@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedImmediate
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedImmediate
 
 # Interface: SerializedImmediate
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[lib/serialize/index.ts:50](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L50)
+[lib/serialize/index.ts:45](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L45)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L51)
+[lib/serialize/index.ts:46](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L46)

@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / x-robot/serialize
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/serialize
 
 # Module: x-robot/serialize
 
@@ -14,8 +14,7 @@ Serializes a machine to a JSON object
 
 ### Interfaces
 
-- [SerializedProducer](../interfaces/x_robot_serialize.SerializedProducer.md)
-- [SerializedAction](../interfaces/x_robot_serialize.SerializedAction.md)
+- [SerializedPulse](../interfaces/x_robot_serialize.SerializedPulse.md)
 - [SerializedGuard](../interfaces/x_robot_serialize.SerializedGuard.md)
 - [SerializedCollection](../interfaces/x_robot_serialize.SerializedCollection.md)
 - [SerializedTransition](../interfaces/x_robot_serialize.SerializedTransition.md)

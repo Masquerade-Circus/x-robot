@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/validate](../modules/x_robot_validate.md) / Err
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/validate](../modules/x_robot_validate.md) / Err
 
 # Class: Err<T, E\>
 
@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[lib/validate/result.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/validate/result.ts#L29)
+[lib/validate/result.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/validate/result.ts#L29)
 
 ## Methods
 

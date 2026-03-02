@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / x-robot
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot
 
 # Module: x-robot
 
@@ -10,6 +10,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 
 ### Creation Functions
 
+- [init](x_robot.md#init)
 - [machine](x_robot.md#machine)
 - [states](x_robot.md#states)
 - [parallel](x_robot.md#parallel)
@@ -18,9 +19,8 @@ X-Robot is a finite state machine library for nodejs and for the web.
 - [shouldFreeze](x_robot.md#shouldfreeze)
 - [state](x_robot.md#state)
 - [transition](x_robot.md#transition)
-- [action](x_robot.md#action)
+- [pulse](x_robot.md#pulse)
 - [guard](x_robot.md#guard)
-- [producer](x_robot.md#producer)
 - [immediate](x_robot.md#immediate)
 - [nestedGuard](x_robot.md#nestedguard)
 - [nested](x_robot.md#nested)
@@ -48,6 +48,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 
 - [AllStates](../interfaces/x_robot.AllStates.md)
 - [MachineArguments](../interfaces/x_robot.MachineArguments.md)
+- [InitDirective](../interfaces/x_robot.InitDirective.md)
 - [Context](../interfaces/x_robot.Context.md)
 - [TransitionDirective](../interfaces/x_robot.TransitionDirective.md)
 - [TransitionsDirective](../interfaces/x_robot.TransitionsDirective.md)
@@ -58,6 +59,8 @@ X-Robot is a finite state machine library for nodejs and for the web.
 - [ProducerDirective](../interfaces/x_robot.ProducerDirective.md)
 - [ProducerDirectiveWithTransition](../interfaces/x_robot.ProducerDirectiveWithTransition.md)
 - [ProducerDirectiveWithoutTransition](../interfaces/x_robot.ProducerDirectiveWithoutTransition.md)
+- [Pulse](../interfaces/x_robot.Pulse.md)
+- [PulseDirective](../interfaces/x_robot.PulseDirective.md)
 - [Action](../interfaces/x_robot.Action.md)
 - [ActionDirective](../interfaces/x_robot.ActionDirective.md)
 - [Guard](../interfaces/x_robot.Guard.md)
@@ -91,6 +94,26 @@ X-Robot is a finite state machine library for nodejs and for the web.
 
 ## Creation Functions
 
+### init
+
+▸ **init**(...`directives`): [`InitDirective`](../interfaces/x_robot.InitDirective.md)
+
+Creates an init directive that can contain initial, context and freeze options
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `...directives` | ([`InitialDirective`](../interfaces/x_robot.InitialDirective.md) \| [`ContextDirective`](../interfaces/x_robot.ContextDirective.md) \| [`ShouldFreezeDirective`](../interfaces/x_robot.ShouldFreezeDirective.md))[] | InitialDirective, ContextDirective or ShouldFreezeDirective |
+
+#### Returns
+
+[`InitDirective`](../interfaces/x_robot.InitDirective.md)
+
+InitDirective
+
+___
+
 ### machine
 
 ▸ **machine**(`title`, ...`args`): [`Machine`](../interfaces/x_robot.Machine.md)
@@ -102,7 +125,7 @@ Creates a new machine
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `title` | `string` | Title of the machine - This will be used to generate the id of the machine |
-| `...args` | [`MachineArguments`](../interfaces/x_robot.MachineArguments.md) | Arguments to the machine |
+| `...args` | [`MachineArguments`](../interfaces/x_robot.MachineArguments.md) | Arguments to the machine: init?, state*, parallel* |
 
 #### Returns
 
@@ -241,61 +264,42 @@ TransitionDirective
 
 ___
 
-### action
+### pulse
 
-▸ **action**(`action`, `onSuccessProducer?`, `onFailureProducer?`): [`ActionDirective`](../interfaces/x_robot.ActionDirective.md)
+▸ **pulse**(`pulse`, `success?`, `failure?`): [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `action` | [`Action`](../interfaces/x_robot.Action.md) | The action to be run |
-| `onSuccessProducer?` | ``null`` \| `string` \| [`ProducerDirective`](../interfaces/x_robot.ProducerDirective.md) | The producer to be run on success with an optional transition name or a transition name |
-| `onFailureProducer?` | ``null`` \| `string` \| [`ProducerDirective`](../interfaces/x_robot.ProducerDirective.md) | The producer to be run on failure with an optional transition name or a transition name |
+| `pulse` | [`Pulse`](../interfaces/x_robot.Pulse.md) | The pulse to be run |
+| `success?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | The transition to run on success (optional) |
+| `failure?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | The transition to run on failure (optional) |
 
 #### Returns
 
-[`ActionDirective`](../interfaces/x_robot.ActionDirective.md)
+[`PulseDirective`](../interfaces/x_robot.PulseDirective.md)
 
-ActionDirective
+PulseDirective
 
 ___
 
 ### guard
 
-▸ **guard**(`guard`, `onFailureProducer?`): [`GuardDirective`](../interfaces/x_robot.GuardDirective.md)
+▸ **guard**(`guard`, `failure?`): [`GuardDirective`](../interfaces/x_robot.GuardDirective.md)
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `guard` | [`Guard`](../interfaces/x_robot.Guard.md) | The guard to be run |
-| `onFailureProducer?` | [`ProducerDirectiveWithoutTransition`](../interfaces/x_robot.ProducerDirectiveWithoutTransition.md) | The producer to be run on failure, this producer should not have a transition name |
+| `guard` | [`Guard`](../interfaces/x_robot.Guard.md) | The guard function to be run |
+| `failure?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | The transition to run on failure (optional) |
 
 #### Returns
 
 [`GuardDirective`](../interfaces/x_robot.GuardDirective.md)
 
 GuardDirective
-
-___
-
-### producer
-
-▸ **producer**(`producer`, `transition?`): [`ProducerDirective`](../interfaces/x_robot.ProducerDirective.md) \| [`ProducerDirectiveWithoutTransition`](../interfaces/x_robot.ProducerDirectiveWithoutTransition.md)
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `producer` | [`Producer`](../interfaces/x_robot.Producer.md) | The producer to be run |
-| `transition?` | `string` | The transition to be run on producer processed if the logic in which the producer is run allows it |
-
-#### Returns
-
-[`ProducerDirective`](../interfaces/x_robot.ProducerDirective.md) \| [`ProducerDirectiveWithoutTransition`](../interfaces/x_robot.ProducerDirectiveWithoutTransition.md)
-
-ProducerDirective
 
 ___
 
@@ -320,7 +324,7 @@ ___
 
 ### nestedGuard
 
-▸ **nestedGuard**(`machine`, `guard`, `onFailureProducer?`): [`NestedGuardDirective`](../interfaces/x_robot.NestedGuardDirective.md)
+▸ **nestedGuard**(`machine`, `guard`, `failure?`): [`NestedGuardDirective`](../interfaces/x_robot.NestedGuardDirective.md)
 
 This method returns a nested guard directive.
 It works like the guard directive but it receives the nested machine context as the first argument instead of the parent machine context.
@@ -331,7 +335,7 @@ It works like the guard directive but it receives the nested machine context as 
 | :------ | :------ | :------ |
 | `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | The nested machine to be run |
 | `guard` | [`Guard`](../interfaces/x_robot.Guard.md) | The guard to be run |
-| `onFailureProducer?` | [`ProducerDirectiveWithoutTransition`](../interfaces/x_robot.ProducerDirectiveWithoutTransition.md) | The producer to be run on failure, this producer should not have a transition name |
+| `failure?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | - |
 
 #### Returns
 
@@ -562,7 +566,7 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/create.ts:572](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/create.ts#L572)
+[lib/machine/create.ts:671](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/create.ts#L671)
 
 ## Variables
 
@@ -572,4 +576,4 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/interfaces.ts:188](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L188)
+[lib/machine/interfaces.ts:203](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L203)

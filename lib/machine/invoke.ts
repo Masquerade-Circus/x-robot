@@ -118,7 +118,12 @@ function runPulse(
           }
 
           if (pulse.success) {
+            if (isPulse(pulse.success)) {
+              return runPulse(machine, pulse.success);
+            }
             return invoke(machine, pulse.success);
+          } else if ((pulse as any).transition) {
+            return invoke(machine, (pulse as any).transition);
           }
         })
         .catch((error: unknown) => {
@@ -150,7 +155,12 @@ function runPulse(
         }
 
         if (pulse.success) {
+          if (isPulse(pulse.success)) {
+            return runPulse(machine, pulse.success);
+          }
           return invoke(machine, pulse.success);
+        } else if ((pulse as any).transition) {
+          return invoke(machine, (pulse as any).transition);
         }
       } catch (error) {
         machine.context = context;

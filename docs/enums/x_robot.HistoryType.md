@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / HistoryType
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / HistoryType
 
 # Enumeration: HistoryType
 
@@ -11,6 +11,8 @@
 - [Transition](x_robot.HistoryType.md#transition)
 - [Action](x_robot.HistoryType.md#action)
 - [Producer](x_robot.HistoryType.md#producer)
+- [Pulse](x_robot.HistoryType.md#pulse)
+- [AsyncPulse](x_robot.HistoryType.md#asyncpulse)
 - [State](x_robot.HistoryType.md#state)
 - [Guard](x_robot.HistoryType.md#guard)
 
@@ -22,7 +24,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:181](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L181)
+[lib/machine/interfaces.ts:194](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L194)
 
 ___
 
@@ -32,7 +34,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:182](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L182)
+[lib/machine/interfaces.ts:195](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L195)
 
 ___
 
@@ -42,7 +44,27 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:183](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L183)
+[lib/machine/interfaces.ts:196](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L196)
+
+___
+
+### Pulse
+
+• **Pulse** = ``"Pulse"``
+
+#### Defined in
+
+[lib/machine/interfaces.ts:197](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L197)
+
+___
+
+### AsyncPulse
+
+• **AsyncPulse** = ``"Async Pulse"``
+
+#### Defined in
+
+[lib/machine/interfaces.ts:198](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L198)
 
 ___
 
@@ -52,7 +74,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:184](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L184)
+[lib/machine/interfaces.ts:199](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L199)
 
 ___
 
@@ -62,4 +84,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:185](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/machine/interfaces.ts#L185)
+[lib/machine/interfaces.ts:200](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L200)

@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedGuard
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedGuard
 
 # Interface: SerializedGuard
 
@@ -20,17 +20,17 @@
 
 #### Defined in
 
-[lib/serialize/index.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L33)
+[lib/serialize/index.ts:28](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L28)
 
 ___
 
 ### failure
 
-• `Optional` **failure**: `string` \| [`SerializedProducer`](x_robot_serialize.SerializedProducer.md)
+• `Optional` **failure**: `string`
 
 #### Defined in
 
-[lib/serialize/index.ts:34](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L34)
+[lib/serialize/index.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L29)
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:35](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L35)
+[lib/serialize/index.ts:30](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L30)

@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/visualize](../modules/x_robot_visualize.md) / imageFromPlantUmlCodeOptions
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/visualize](../modules/x_robot_visualize.md) / imageFromPlantUmlCodeOptions
 
 # Interface: imageFromPlantUmlCodeOptions
 
@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[lib/visualize/index.ts:50](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/visualize/index.ts#L50)
+[lib/visualize/index.ts:48](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/visualize/index.ts#L48)
 
 ___
 
@@ -35,4 +35,4 @@ ___
 
 #### Defined in
 
-[lib/visualize/index.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/visualize/index.ts#L51)
+[lib/visualize/index.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/visualize/index.ts#L49)

@@ -150,7 +150,7 @@ describe("Nested states", () => {
     expect(doorWayMachine.context.doorWayCount).toEqual(0);
   });
 
-  it.skip("should allow to use a nested guard in the parent machine", () => {
+  it("should allow to use a nested guard in the parent machine", () => {
     function doorWayIsEmpty(context) {
       return context.doorWayCount === 0 ? true : "Doorway is not empty";
     }

@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / x-robot/validate
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/validate
 
 # Module: x-robot/validate
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/validate/result.ts#L5)
+[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/validate/result.ts#L5)
 
 ___
 
@@ -149,4 +149,4 @@ ___
 
 #### Defined in
 
-[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/validate/result.ts#L7)
+[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/validate/result.ts#L7)

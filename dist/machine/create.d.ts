@@ -8,7 +8,7 @@ export declare function initial(initial: string): InitialDirective;
 export declare function shouldFreeze(freeze: boolean): ShouldFreezeDirective;
 export declare function state(name: string, ...args: RunCollection): StateDirective;
 export declare function transition(transitionName: string, target: string, ...guards: GuardsDirective): TransitionDirective;
-export declare function pulse(pulse: Pulse, success?: string, failure?: string): PulseDirective;
+export declare function pulse(pulse: Pulse, success?: string | PulseDirective, failure?: string | PulseDirective): PulseDirective;
 export declare function guard(guard: Guard, failure?: string | PulseDirective): GuardDirective;
 export declare function immediate(target: string, ...guards: GuardsDirective): ImmediateDirective;
 export declare function nestedGuard(machine: Machine, guard: Guard, failure?: string | PulseDirective): NestedGuardDirective;

@@ -64,8 +64,9 @@ export interface Pulse {
 
 export interface PulseDirective {
   pulse: Pulse;
-  success?: string;
+  success?: string | PulseDirective;
   failure?: string | PulseDirective;
+  transition?: string;
 }
 
 export interface Action {

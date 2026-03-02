@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedState
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedState
 
 # Interface: SerializedState
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[lib/serialize/index.ts:55](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L55)
+[lib/serialize/index.ts:50](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L50)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L56)
+[lib/serialize/index.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L51)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L57)
+[lib/serialize/index.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L52)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L58)
+[lib/serialize/index.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L53)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L59)
+[lib/serialize/index.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L54)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:60](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L60)
+[lib/serialize/index.ts:55](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L55)
 
 ___
 
@@ -84,4 +84,4 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L61)
+[lib/serialize/index.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L56)

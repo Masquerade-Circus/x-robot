@@ -342,13 +342,33 @@ export function state(name: string, ...args: RunCollection): StateDirective {
       // If pulse has a success transition or failure transition, add them to the on object
       if (arg.success) {
         let successTransition = arg.success;
-        if (
-          isValidString(successTransition) &&
-          hasTransition({ on } as StateDirective, successTransition) === false
-        ) {
+        // If success is a string, use it directly
+        if (isValidString(successTransition) && hasTransition({ on } as StateDirective, successTransition) === false) {
           on[successTransition] = {
             transition: successTransition,
             target: successTransition,
+            guards: []
+          };
+        } else if (typeof successTransition === 'object' && 'transition' in successTransition) {
+          // If success is a PulseDirective with transition property, extract and add it
+          let transitionValue = (successTransition as any).transition;
+          if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
+            on[transitionValue] = {
+              transition: transitionValue,
+              target: transitionValue,
+              guards: []
+            };
+          }
+        }
+      }
+
+      // Also check for top-level transition property (when success is a PulseDirective at top level)
+      if ((arg as any).transition) {
+        let transitionValue = (arg as any).transition;
+        if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
+          on[transitionValue] = {
+            transition: transitionValue,
+            target: transitionValue,
             guards: []
           };
         }
@@ -356,15 +376,23 @@ export function state(name: string, ...args: RunCollection): StateDirective {
 
       if (arg.failure) {
         let failureTransition = arg.failure;
-        if (
-          isValidString(failureTransition) &&
-          hasTransition({ on } as StateDirective, failureTransition) === false
-        ) {
+        // If failure is a string, use it directly
+        if (isValidString(failureTransition) && hasTransition({ on } as StateDirective, failureTransition) === false) {
           on[failureTransition] = {
             transition: failureTransition,
             target: failureTransition,
             guards: []
           };
+        } else if (typeof failureTransition === 'object' && 'transition' in failureTransition) {
+          // If failure is a PulseDirective with transition property, extract and add it
+          let transitionValue = (failureTransition as any).transition;
+          if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
+            on[transitionValue] = {
+              transition: transitionValue,
+              target: transitionValue,
+              guards: []
+            };
+          }
         }
       }
 
@@ -435,13 +463,35 @@ export function transition(
  */
 export function pulse(
   pulse: Pulse,
-  success?: string,
-  failure?: string
+  success?: string | PulseDirective,
+  failure?: string | PulseDirective
 ): PulseDirective {
+  // If success is a PulseDirective, transform it
+  let successValue: string | PulseDirective | undefined = success;
+  if (success && typeof success === 'object' && 'pulse' in success) {
+    const innerPulse = success as PulseDirective;
+    successValue = {
+      pulse: innerPulse.pulse,
+      failure: innerPulse.failure,
+      transition: innerPulse.success
+    } as PulseDirective;
+  }
+  
+  // If failure is a PulseDirective, transform it
+  let failureValue: string | PulseDirective | undefined = failure;
+  if (failure && typeof failure === 'object' && 'pulse' in failure) {
+    const innerPulse = failure as PulseDirective;
+    failureValue = {
+      pulse: innerPulse.pulse,
+      failure: innerPulse.failure,
+      transition: innerPulse.success
+    } as PulseDirective;
+  }
+  
   return {
     pulse,
-    success,
-    failure
+    success: successValue,
+    failure: failureValue
   };
 }
 

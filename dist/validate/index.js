@@ -235,11 +235,22 @@ function validatePulse(machine, state, stateName, item) {
   if (isValidString(item.failure) && !hasState(machine, item.failure)) {
     return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has a failure transition '${item.failure}' that does not exists.`));
   }
+  if (isPulse(item.success)) {
+    return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid success parameter. Use multiple pulses instead.`));
+  }
+  if (isPulse(item.failure)) {
+    return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid failure parameter. Use multiple pulses instead.`));
+  }
   return ok(void 0);
 }
 function validateRunCollections(machine) {
   for (let stateName in machine.states) {
     let state = machine.states[stateName];
+    for (let arg of state.args) {
+      if (isGuard(arg)) {
+        return err(new Error(`The guard must be used inside a transition.`));
+      }
+    }
     for (let item of state.run) {
       if (!isPulse(item)) {
         return err(new Error(`The state '${stateName}' has a run collection that contains an item that is not a pulse.`));
@@ -280,7 +291,7 @@ function validateGuards(machine) {
             return err(new Error(`The guard '${guard.guard}' of the transition '${stateName}.${transitionName}' must be a function.`));
           }
           if (guard.failure !== void 0 && !isValidString(guard.failure)) {
-            return err(new Error(`The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' must have a valid failure transition.`));
+            return err(new Error(`The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' failure must be a string.`));
           }
           if (isValidString(guard.failure) && !hasTransition(state, guard.failure)) {
             return err(new Error(`The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${guard.failure}' that does not exists.`));

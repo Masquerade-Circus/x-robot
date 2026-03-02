@@ -46,8 +46,9 @@ export interface Pulse {
 }
 export interface PulseDirective {
     pulse: Pulse;
-    success?: string;
-    failure?: string;
+    success?: string | PulseDirective;
+    failure?: string | PulseDirective;
+    transition?: string;
 }
 export interface Action {
     (context: Context, payload?: any): Promise<void | any>;

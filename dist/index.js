@@ -377,6 +377,25 @@ function state(name, ...args) {
             target: successTransition,
             guards: []
           };
+        } else if (typeof successTransition === "object" && "transition" in successTransition) {
+          let transitionValue = successTransition.transition;
+          if (isValidString(transitionValue) && hasTransition({ on }, transitionValue) === false) {
+            on[transitionValue] = {
+              transition: transitionValue,
+              target: transitionValue,
+              guards: []
+            };
+          }
+        }
+      }
+      if (arg.transition) {
+        let transitionValue = arg.transition;
+        if (isValidString(transitionValue) && hasTransition({ on }, transitionValue) === false) {
+          on[transitionValue] = {
+            transition: transitionValue,
+            target: transitionValue,
+            guards: []
+          };
         }
       }
       if (arg.failure) {
@@ -387,6 +406,15 @@ function state(name, ...args) {
             target: failureTransition,
             guards: []
           };
+        } else if (typeof failureTransition === "object" && "transition" in failureTransition) {
+          let transitionValue = failureTransition.transition;
+          if (isValidString(transitionValue) && hasTransition({ on }, transitionValue) === false) {
+            on[transitionValue] = {
+              transition: transitionValue,
+              target: transitionValue,
+              guards: []
+            };
+          }
         }
       }
     } else if (isImmediate(arg)) {
@@ -421,10 +449,28 @@ function transition(transitionName, target, ...guards) {
   };
 }
 function pulse(pulse2, success, failure) {
+  let successValue = success;
+  if (success && typeof success === "object" && "pulse" in success) {
+    const innerPulse = success;
+    successValue = {
+      pulse: innerPulse.pulse,
+      failure: innerPulse.failure,
+      transition: innerPulse.success
+    };
+  }
+  let failureValue = failure;
+  if (failure && typeof failure === "object" && "pulse" in failure) {
+    const innerPulse = failure;
+    failureValue = {
+      pulse: innerPulse.pulse,
+      failure: innerPulse.failure,
+      transition: innerPulse.success
+    };
+  }
   return {
     pulse: pulse2,
-    success,
-    failure
+    success: successValue,
+    failure: failureValue
   };
 }
 function guard(guard2, failure) {
@@ -578,7 +624,12 @@ function runPulse(machine2, pulse2, payload) {
           deepFreeze(machine2.context);
         }
         if (pulse2.success) {
+          if (isPulse(pulse2.success)) {
+            return runPulse(machine2, pulse2.success);
+          }
           return invoke(machine2, pulse2.success);
+        } else if (pulse2.transition) {
+          return invoke(machine2, pulse2.transition);
         }
       }).catch((error) => {
         machine2.context = context2;
@@ -586,6 +637,9 @@ function runPulse(machine2, pulse2, payload) {
           deepFreeze(machine2.context);
         }
         if (pulse2.failure) {
+          if (isPulse(pulse2.failure)) {
+            return runPulse(machine2, pulse2.failure, error);
+          }
           return invoke(machine2, pulse2.failure, error);
         }
         throw error;
@@ -601,7 +655,12 @@ function runPulse(machine2, pulse2, payload) {
           deepFreeze(machine2.context);
         }
         if (pulse2.success) {
+          if (isPulse(pulse2.success)) {
+            return runPulse(machine2, pulse2.success);
+          }
           return invoke(machine2, pulse2.success);
+        } else if (pulse2.transition) {
+          return invoke(machine2, pulse2.transition);
         }
       } catch (error) {
         machine2.context = context2;
@@ -609,6 +668,9 @@ function runPulse(machine2, pulse2, payload) {
           deepFreeze(machine2.context);
         }
         if (pulse2.failure) {
+          if (isPulse(pulse2.failure)) {
+            return runPulse(machine2, pulse2.failure, error);
+          }
           return invoke(machine2, pulse2.failure, error);
         }
         throw error;
@@ -635,6 +697,10 @@ function hasFatalError(machine2) {
   return machine2.fatal instanceof Error;
 }
 function catchError(machine2, state2, error) {
+  if (machine2.frozen) {
+    machine2.context = cloneContext(machine2.context);
+  }
+  machine2.context.error = error;
   if (hasTransition(state2, "error")) {
     return invoke(machine2, "error", error);
   }
@@ -697,6 +763,11 @@ function runGuards(machine2, state2, transition2, payload) {
           invoke(machine2, guard2.failure, result);
         } else if (isPulse(guard2.failure)) {
           runPulse(machine2, guard2.failure, result);
+        } else if (isValidString(result)) {
+          if (machine2.frozen) {
+            machine2.context = cloneContext(machine2.context);
+          }
+          machine2.context.error = result;
         }
         return false;
       }

@@ -1,4 +1,4 @@
-[x-robot - v0.2.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedMachine
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/serialize](../modules/x_robot_serialize.md) / SerializedMachine
 
 # Interface: SerializedMachine
 
@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[lib/serialize/index.ts:69](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L69)
+[lib/serialize/index.ts:64](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L64)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:70](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L70)
+[lib/serialize/index.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L65)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L71)
+[lib/serialize/index.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L66)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:72](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L72)
+[lib/serialize/index.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L67)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/0346b56/lib/serialize/index.ts#L73)
+[lib/serialize/index.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L68)

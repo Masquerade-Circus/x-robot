@@ -123,16 +123,14 @@ then throwing is safe and does not attempt to mutate the original frozen object.
 ![Toggle machine diagram](./media/toggle-machine-diagram.svg)
 
 ```javascript 
-import {machine, states, state, initial, transition, invoke} from 'x-robot';
+import {machine, state, initial, init, transition, invoke} from 'x-robot';
 
 const stoplight = machine(
   'Stoplight',
-  states(
-    state('green', transition('next', 'yellow')),
-    state('yellow', transition('next', 'red')),
-    state('red', transition('next', 'green'))
-  ),
-  initial('green')
+  init(initial('green')),
+  state('green', transition('next', 'yellow')),
+  state('yellow', transition('next', 'red')),
+  state('red', transition('next', 'green'))
 );
 
 // stoplight.current === 'green' because is the initial state
@@ -146,7 +144,7 @@ invoke(stoplight, 'next'); // stoplight.current === 'green'
 ![Fetch machine diagram](./media/fetch-machine-diagram.svg)
 
 ```javascript
-import {machine, states, state, initial, transition, immediate, invoke, context, pulse} from 'x-robot';
+import {machine, state, initial, init, context, transition, immediate, invoke, pulse} from 'x-robot';
 
 // Pulse
 async function fetchDog(context) {
@@ -163,21 +161,18 @@ function assignError(context, error) {
 // Machine definition
 const fetchMachine = machine(
   'Dog API',
-  initial('idle'),
-  context({
+  init(initial('idle'), context({
     dog: null,
     error: null
-  }),
-  states(
-    state('idle', transition('fetch', 'loading')),
-    state(
-      'loading',
-      pulse(fetchDog, 'resolved', 'rejected'),
-      transition('cancel', 'idle')
-    ),
-    state('resolved', immediate('idle')),
-    state('rejected', pulse(assignError))
-  )
+  })),
+  state('idle', transition('fetch', 'loading')),
+  state(
+    'loading',
+    pulse(fetchDog, 'resolved', 'rejected'),
+    transition('cancel', 'idle')
+  ),
+  state('resolved', immediate('idle')),
+  state('rejected', pulse(assignError))
 );
 
 // fetchMachine.current === 'idle' because is the initial state
@@ -191,15 +186,13 @@ await invoke(fetchMachine, 'fetch');
 ![Stoplight machine diagram](./media/stoplight-machine-diagram.svg)
 
 ```javascript
-import {machine, states, state, initial, transition, invoke, nested, guard} from 'x-robot';
+import {machine, state, initial, init, transition, invoke, nested, guard, immediate} from 'x-robot';
 
 const stopwalk = machine(
   'Stopwalk',
-  states(
-    state('wait', transition('start', 'walk')), 
-    state('walk', transition('stop', 'wait'))
-  ),
-  initial('wait')
+  init(initial('wait')),
+  state('wait', transition('start', 'walk')), 
+  state('walk', transition('stop', 'wait'))
 );
 
 // Guard to prevent the machine to transition to 'green' if the stopwalk machine is in 'walk' state
@@ -209,16 +202,14 @@ const canGoToGreen = () => {
 
 const stoplight = machine(
   'Stoplight',
-  states(
-    state('green', transition('next', 'yellow')),
-    state('yellow', transition('next', 'red')),
-    state(
-      'red', 
-      nested(stopwalk, 'start'), 
-      immediate('green', guard(canGoToGreen))
-    )
-  ),
-  initial('green')
+  init(initial('green')),
+  state('green', transition('next', 'yellow')),
+  state('yellow', transition('next', 'red')),
+  state(
+    'red', 
+    nested(stopwalk, 'start'), 
+    immediate('green', guard(canGoToGreen))
+  )
 );
 
 // stopwalk.current === 'wait' because is the initial state
@@ -242,19 +233,17 @@ invoke(stoplight, 'red.stop'); // Invoke the stopwalk transition stop from the s
 ![Word machine diagram](./media/word-machine-diagram.svg)
 
 ```javascript
-import {machine, states, state, initial, transition, invoke, parallel, getState} from 'x-robot';
+import {machine, state, initial, init, transition, invoke, parallel, getState} from 'x-robot';
 
-const boldMachine = machine('Bold', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
-const underlineMachine = machine('Underline', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
-const italicsMachine = machine('Italics', states(state('on', transition('off', 'off')), state('off', transition('on', 'on'))), initial('off'));
+const boldMachine = machine('Bold', init(initial('off')), state('on', transition('off', 'off')), state('off', transition('on', 'on')));
+const underlineMachine = machine('Underline', init(initial('off')), state('on', transition('off', 'off')), state('off', transition('on', 'on')));
+const italicsMachine = machine('Italics', init(initial('off')), state('on', transition('off', 'off')), state('off', transition('on', 'on')));
 const listMachine = machine(
   'List',
-  states(
-    state('none', transition('bullets', 'bullets'), transition('numbers', 'numbers')),
-    state('bullets', transition('none', 'none')),
-    state('numbers', transition('none', 'none'))
-  ),
-  initial('none')
+  init(initial('none')),
+  state('none', transition('bullets', 'bullets'), transition('numbers', 'numbers')),
+  state('bullets', transition('none', 'none')),
+  state('numbers', transition('none', 'none'))
 );
 
 const wordMachine = machine(
