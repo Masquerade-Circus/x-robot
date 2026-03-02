@@ -47,9 +47,10 @@ function cloneContext(context, weakMap = /* @__PURE__ */ new WeakMap()) {
 
 // lib/serialize/index.ts
 function serializePulse(pulse) {
-  let serialized = {
-    pulse: pulse.pulse.name,
-    isAsync: pulse.pulse.constructor.name === "AsyncFunction"
+  const pulseFn = pulse.pulse;
+  const serialized = {
+    pulse: pulseFn.name || "anonymous",
+    isAsync: pulseFn.constructor.name === "AsyncFunction"
   };
   if (isValidString(pulse.success)) {
     serialized.success = pulse.success;
@@ -94,6 +95,10 @@ function serializeTransition(transition) {
   let guards = serializeGuards(transition.guards);
   if (guards) {
     serialized.guards = guards;
+  }
+  if (transition.exitPulse) {
+    const exitPulseArray = Array.isArray(transition.exitPulse) ? transition.exitPulse : [transition.exitPulse];
+    serialized.exitPulse = exitPulseArray.map((pulse) => serializePulse(pulse));
   }
   return serialized;
 }

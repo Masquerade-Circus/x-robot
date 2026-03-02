@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[lib/serialize/index.ts:64](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L64)
+[lib/serialize/index.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L65)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L65)
+[lib/serialize/index.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L66)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L66)
+[lib/serialize/index.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L67)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L67)
+[lib/serialize/index.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L68)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L68)
+[lib/serialize/index.ts:69](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L69)

@@ -15,6 +15,7 @@ export interface SerializedCollection extends Array<SerializedPulse> {
 export interface SerializedTransition {
     target: string;
     guards?: SerializedGuard[];
+    exitPulse?: SerializedPulse[];
 }
 export interface SerializedTransitions {
     [key: string]: SerializedTransition;

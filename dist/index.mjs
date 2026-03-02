@@ -17,6 +17,9 @@ function isProducerWithTransition(producer) {
 function isPulse(pulse2) {
   return isValidObject(pulse2) && "pulse" in pulse2;
 }
+function isExitPulse(exitPulse2) {
+  return isValidObject(exitPulse2) && "exitPulse" in exitPulse2;
+}
 function isAction(action) {
   return isValidObject(action) && "action" in action;
 }
@@ -395,11 +398,23 @@ function state(name, ...args) {
     description: description2
   };
 }
-function transition(transitionName, target, ...guards) {
+function transition(transitionName, target, ...args) {
+  let guards = [];
+  let exitPulse2;
+  for (const arg of args) {
+    if (isGuard(arg)) {
+      guards.push(arg);
+    } else if (Array.isArray(arg)) {
+      guards = arg;
+    } else if (isExitPulse(arg)) {
+      exitPulse2 = arg.exitPulse;
+    }
+  }
   return {
     transition: transitionName,
     target,
-    guards
+    guards,
+    exitPulse: exitPulse2
   };
 }
 function pulse(pulse2, success, failure) {
@@ -425,6 +440,15 @@ function pulse(pulse2, success, failure) {
     pulse: pulse2,
     success: successValue,
     failure: failureValue
+  };
+}
+function exitPulse(handler, success, failure) {
+  return {
+    exitPulse: [{
+      pulse: handler,
+      success,
+      failure
+    }]
   };
 }
 function guard(guard2, failure) {
@@ -706,11 +730,97 @@ function runGuards(machine2, state2, transition2, payload) {
         return false;
       }
       machine2.history.push(`${"Guard" /* Guard */}: ${guard2.guard.name}`);
+      let guardContext = machine2.context;
+      if (machine2.frozen) {
+        guardContext = cloneContext(machine2.context);
+      }
       let result;
       if (isNestedGuard(guard2)) {
         result = guard2.guard(guard2.machine.context, payload);
       } else {
-        result = guard2.guard(machine2.context, payload);
+        result = guard2.guard(guardContext, payload);
+      }
+      if (result instanceof Promise) {
+        return result.then((resolvedResult) => {
+          if (machine2.frozen && guardContext !== machine2.context) {
+            machine2.context = guardContext;
+            deepFreeze(machine2.context);
+          }
+          if (resolvedResult !== true) {
+            if (isValidString(guard2.failure)) {
+              invoke(machine2, guard2.failure, resolvedResult);
+            } else if (isPulse(guard2.failure)) {
+              runPulse(machine2, guard2.failure, resolvedResult);
+            } else if (isValidString(resolvedResult)) {
+              if (machine2.frozen) {
+                machine2.context = cloneContext(machine2.context);
+              }
+              machine2.context.error = resolvedResult;
+            }
+            return false;
+          }
+          return runGuardsFromIndex(machine2, state2, transition2, payload, i + 1);
+        });
+      }
+      if (result !== true) {
+        if (isValidString(guard2.failure)) {
+          invoke(machine2, guard2.failure, result);
+        } else if (isPulse(guard2.failure)) {
+          runPulse(machine2, guard2.failure, result);
+        } else if (isValidString(result)) {
+          if (machine2.frozen) {
+            machine2.context = cloneContext(machine2.context);
+          }
+          machine2.context.error = result;
+        }
+        return false;
+      }
+    } catch (error) {
+      catchError(machine2, state2, error);
+      return false;
+    }
+  }
+  return true;
+}
+function runGuardsFromIndex(machine2, state2, transition2, payload, startIndex) {
+  for (let i = startIndex; i < transition2.guards.length; i++) {
+    let guard2 = transition2.guards[i];
+    try {
+      if (!isGuard(guard2)) {
+        return false;
+      }
+      machine2.history.push(`${"Guard" /* Guard */}: ${guard2.guard.name}`);
+      let guardContext = machine2.context;
+      if (machine2.frozen) {
+        guardContext = cloneContext(machine2.context);
+      }
+      let result;
+      if (isNestedGuard(guard2)) {
+        result = guard2.guard(guard2.machine.context, payload);
+      } else {
+        result = guard2.guard(guardContext, payload);
+      }
+      if (result instanceof Promise) {
+        return result.then((resolvedResult) => {
+          if (resolvedResult !== true) {
+            if (isValidString(guard2.failure)) {
+              invoke(machine2, guard2.failure, resolvedResult);
+            } else if (isPulse(guard2.failure)) {
+              runPulse(machine2, guard2.failure, resolvedResult);
+            } else if (isValidString(resolvedResult)) {
+              if (machine2.frozen) {
+                machine2.context = cloneContext(machine2.context);
+              }
+              machine2.context.error = resolvedResult;
+            }
+            return false;
+          }
+          if (machine2.frozen && guardContext !== machine2.context) {
+            machine2.context = guardContext;
+            deepFreeze(machine2.context);
+          }
+          return runGuardsFromIndex(machine2, state2, transition2, payload, i + 1);
+        });
       }
       if (result !== true) {
         if (isValidString(guard2.failure)) {
@@ -859,12 +969,44 @@ function invoke(machine2, transition2, payload) {
   if (trimmedTransition !== START_EVENT) {
     machine2.history.push(`${"Transition" /* Transition */}: ${trimmedTransition}`);
     let transitionObject = currentStateObject.on[trimmedTransition];
-    let shouldContinue = runGuards(machine2, currentStateObject, transitionObject, payload);
-    if (shouldContinue === false) {
+    let guardsResult = runGuards(machine2, currentStateObject, transitionObject, payload);
+    if (guardsResult instanceof Promise) {
+      return guardsResult.then((shouldContinue) => {
+        if (shouldContinue === false) {
+          machine2.history.push(`${"State" /* State */}: ${currentStateObject.name}`);
+          return;
+        }
+        return handleExitPulsesAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload);
+      });
+    }
+    if (guardsResult === false) {
       machine2.history.push(`${"State" /* State */}: ${currentStateObject.name}`);
       return;
     }
+    return handleExitPulsesAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload);
   }
+  return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
+}
+function handleExitPulsesAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload) {
+  const exitPulses = transitionObject.exitPulse;
+  if (exitPulses && Array.isArray(exitPulses)) {
+    const pulsesToRun = Array.isArray(exitPulses[0]) ? exitPulses[0] : exitPulses;
+    for (const exitPulse2 of pulsesToRun) {
+      if (machine2.isAsync) {
+        let promise = Promise.resolve();
+        promise = promise.then(() => runPulse(machine2, exitPulse2, payload));
+        return promise.then(() => {
+          return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
+        });
+      } else {
+        runPulse(machine2, exitPulse2, payload);
+      }
+    }
+    return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
+  }
+  return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
+}
+function continueTransition(machine2, currentStateObject, trimmedTransition, payload) {
   let targetState = trimmedTransition === START_EVENT ? machine2.initial : currentStateObject.on[trimmedTransition].target;
   if (isValidString(targetState) === false) {
     throw new Error(`Trying to invoke a transition with an invalid target state: ${targetState}`);
@@ -899,6 +1041,7 @@ export {
   context,
   dangerState,
   description,
+  exitPulse,
   getState,
   guard,
   immediate,

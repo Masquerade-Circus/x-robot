@@ -250,6 +250,19 @@ function validateTransitions(machine) {
       if (!(transition.target in machine.states)) {
         return err(new Error(`The transition '${transitionName}' of the state '${stateName}' has a target state '${transition.target}' that does not exists.`));
       }
+      if (transition.exitPulse) {
+        const exitPulseArr = Array.isArray(transition.exitPulse) ? transition.exitPulse : [transition.exitPulse];
+        for (const exitPulse of exitPulseArr) {
+          if (isPulse(exitPulse)) {
+            if (typeof exitPulse.success === "string" && !(exitPulse.success in machine.states)) {
+              return err(new Error(`The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a success transition '${exitPulse.success}' that does not exists.`));
+            }
+            if (typeof exitPulse.failure === "string" && !(exitPulse.failure in machine.states)) {
+              return err(new Error(`The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${exitPulse.failure}' that does not exists.`));
+            }
+          }
+        }
+      }
     }
   }
   return ok(void 0);

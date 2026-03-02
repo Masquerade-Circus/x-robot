@@ -12,6 +12,7 @@ import {
   canMakeTransition,
   hasState,
   hasTransition,
+  isExitPulse,
   isGuard,
   isNestedTransition,
   isParallelTransition,
@@ -327,6 +328,34 @@ function validateTransitions(machine: Machine): Result<void, Error> {
             `The transition '${transitionName}' of the state '${stateName}' has a target state '${transition.target}' that does not exists.`
           )
         );
+      }
+
+      // Validate exitPulse if present
+      if (transition.exitPulse) {
+        const exitPulseArr = Array.isArray(transition.exitPulse) 
+          ? transition.exitPulse 
+          : [transition.exitPulse];
+        
+        for (const exitPulse of exitPulseArr) {
+          if (isPulse(exitPulse)) {
+            // Validate success transition if present
+            if (typeof exitPulse.success === "string" && !(exitPulse.success in machine.states)) {
+              return err(
+                new Error(
+                  `The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a success transition '${exitPulse.success}' that does not exists.`
+                )
+              );
+            }
+            // Validate failure transition if present
+            if (typeof exitPulse.failure === "string" && !(exitPulse.failure in machine.states)) {
+              return err(
+                new Error(
+                  `The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${exitPulse.failure}' that does not exists.`
+                )
+              );
+            }
+          }
+        }
       }
     }
   }

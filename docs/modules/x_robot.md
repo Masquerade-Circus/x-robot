@@ -20,6 +20,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 - [state](x_robot.md#state)
 - [transition](x_robot.md#transition)
 - [pulse](x_robot.md#pulse)
+- [exitPulse](x_robot.md#exitpulse)
 - [guard](x_robot.md#guard)
 - [immediate](x_robot.md#immediate)
 - [nestedGuard](x_robot.md#nestedguard)
@@ -246,7 +247,7 @@ ___
 
 ### transition
 
-▸ **transition**(`transitionName`, `target`, ...`guards`): [`TransitionDirective`](../interfaces/x_robot.TransitionDirective.md)
+▸ **transition**(`transitionName`, `target`, ...`args`): [`TransitionDirective`](../interfaces/x_robot.TransitionDirective.md)
 
 #### Parameters
 
@@ -254,7 +255,7 @@ ___
 | :------ | :------ | :------ |
 | `transitionName` | `string` | The name of the transition |
 | `target` | `string` | The target state of the transition |
-| `...guards` | [`GuardsDirective`](../interfaces/x_robot.GuardsDirective.md) | The guards of the transition |
+| `...args` | ([`GuardsDirective`](../interfaces/x_robot.GuardsDirective.md) \| [`GuardDirective`](../interfaces/x_robot.GuardDirective.md) \| { `exitPulse`: [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)[]  })[] | Guards and optional exitPulse at the end |
 
 #### Returns
 
@@ -281,6 +282,30 @@ ___
 [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)
 
 PulseDirective
+
+___
+
+### exitPulse
+
+▸ **exitPulse**(`handler`, `success?`, `failure?`): `Object`
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `handler` | [`Pulse`](../interfaces/x_robot.Pulse.md) | The handler function to run when exiting the state |
+| `success?` | `string` | Optional success transition string |
+| `failure?` | `string` | Optional failure transition string |
+
+#### Returns
+
+`Object`
+
+ExitPulseDirective
+
+| Name | Type |
+| :------ | :------ |
+| `exitPulse` | [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)[] |
 
 ___
 
@@ -566,7 +591,7 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/create.ts:671](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/create.ts#L671)
+[lib/machine/create.ts:709](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/machine/create.ts#L709)
 
 ## Variables
 
@@ -576,4 +601,4 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/interfaces.ts:203](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/machine/interfaces.ts#L203)
+[lib/machine/interfaces.ts:204](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/machine/interfaces.ts#L204)

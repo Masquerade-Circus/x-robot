@@ -20,6 +20,9 @@ function isProducerWithoutTransition(producer) {
 function isPulse(pulse) {
   return isValidObject(pulse) && "pulse" in pulse;
 }
+function isExitPulse(exitPulse) {
+  return isValidObject(exitPulse) && "exitPulse" in exitPulse;
+}
 function isAction(action) {
   return isValidObject(action) && "action" in action;
 }
@@ -185,6 +188,7 @@ export {
   isAction,
   isContextDirective,
   isDescriptionDirective,
+  isExitPulse,
   isGuard,
   isImmediate,
   isInitDirective,

@@ -53,6 +53,10 @@ export function isPulse(pulse?: any): pulse is PulseDirective {
   return isValidObject(pulse) && "pulse" in pulse;
 }
 
+export function isExitPulse(exitPulse?: any): exitPulse is { exitPulse: PulseDirective[] } {
+  return isValidObject(exitPulse) && "exitPulse" in exitPulse;
+}
+
 export function isAction(action?: any): action is ActionDirective {
   return isValidObject(action) && "action" in action;
 }

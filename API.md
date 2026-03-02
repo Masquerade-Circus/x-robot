@@ -184,6 +184,39 @@ guard(isValid, pulse(handleError)) // NO válido - failure debe ser string
 - Retorna otro valor → no permite la transición
   - Si hay `failure` (string) → transiciona según failure
   - Si no hay `failure` → almacena el valor en `context.error`
+- Si es async (Promise) → espera el resultado y behave igual
+
+---
+
+## 9.1. `exitPulse(handler, [success], [failure])`
+
+Ejecuta lógica cuando la máquina sale de un estado, después de que los guards pasan y antes de cambiar al nuevo estado.
+
+```typescript
+// Solo handler
+exitPulse(cleanup)
+
+// Con transición de éxito
+exitPulse(cleanup, "success")
+
+// Con transiciones de éxito y error
+exitPulse(cleanup, "success", "error")
+```
+
+**Ubicación:**
+- SOLO al final de la transición, después de los guards
+
+```typescript
+// VÁLIDO:
+transition("submit", "success", guard(isValid), exitPulse(cleanup))
+
+// INVÁLIDO:
+transition("submit", "success", exitPulse(cleanup), guard(isValid))
+```
+
+**Comportamiento:**
+- Si los guards pasan → ejecuta el exitPulse → transiciona al nuevo estado
+- Si los guards fallan → NO ejecuta el exitPulse → se queda en el estado actual
 
 ---
 

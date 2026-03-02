@@ -12,6 +12,7 @@
 - [isProducerWithTransition](x_robot_utils.md#isproducerwithtransition)
 - [isProducerWithoutTransition](x_robot_utils.md#isproducerwithouttransition)
 - [isPulse](x_robot_utils.md#ispulse)
+- [isExitPulse](x_robot_utils.md#isexitpulse)
 - [isAction](x_robot_utils.md#isaction)
 - [isImmediate](x_robot_utils.md#isimmediate)
 - [isGuard](x_robot_utils.md#isguard)
@@ -134,6 +135,22 @@ ___
 #### Returns
 
 pulse is PulseDirective
+
+___
+
+### isExitPulse
+
+▸ **isExitPulse**(`exitPulse?`): exitPulse is Object
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `exitPulse?` | `any` |
+
+#### Returns
+
+exitPulse is Object
 
 ___
 

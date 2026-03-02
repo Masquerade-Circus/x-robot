@@ -105,14 +105,14 @@ ___
 
 ### pop
 
-▸ **pop**(): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **pop**(): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 Removes the last element from an array and returns it.
 If the array is empty, undefined is returned and the array is not modified.
 
 #### Returns
 
-`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
@@ -130,7 +130,7 @@ Appends new elements to the end of an array, and returns the new length of the a
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[] | New elements to add to the array. |
+| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[] | New elements to add to the array. |
 
 #### Returns
 
@@ -144,7 +144,7 @@ ___
 
 ### concat
 
-▸ **concat**(...`items`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+▸ **concat**(...`items`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 Combines two or more arrays.
 This method returns a new array without modifying any existing arrays.
@@ -153,17 +153,17 @@ This method returns a new array without modifying any existing arrays.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | `ConcatArray`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>[] | Additional arrays and/or items to add to the end of the array. |
+| `...items` | `ConcatArray`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>[] | Additional arrays and/or items to add to the end of the array. |
 
 #### Returns
 
-([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 #### Inherited from
 
 Array.concat
 
-▸ **concat**(...`items`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+▸ **concat**(...`items`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 Combines two or more arrays.
 This method returns a new array without modifying any existing arrays.
@@ -172,11 +172,11 @@ This method returns a new array without modifying any existing arrays.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) \| `ConcatArray`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>)[] | Additional arrays and/or items to add to the end of the array. |
+| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) \| `ConcatArray`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>)[] | Additional arrays and/or items to add to the end of the array. |
 
 #### Returns
 
-([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 #### Inherited from
 
@@ -208,14 +208,14 @@ ___
 
 ### reverse
 
-▸ **reverse**(): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+▸ **reverse**(): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 Reverses the elements in an array in place.
 This method mutates the array and returns a reference to the same array.
 
 #### Returns
 
-([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 #### Inherited from
 
@@ -225,14 +225,14 @@ ___
 
 ### shift
 
-▸ **shift**(): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **shift**(): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 Removes the first element from an array and returns it.
 If the array is empty, undefined is returned and the array is not modified.
 
 #### Returns
 
-`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
@@ -242,7 +242,7 @@ ___
 
 ### slice
 
-▸ **slice**(`start?`, `end?`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+▸ **slice**(`start?`, `end?`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 Returns a copy of a section of an array.
 For both start and end, a negative index can be used to indicate an offset from the end of the array.
@@ -257,7 +257,7 @@ For example, -2 refers to the second to last element of the array.
 
 #### Returns
 
-([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 #### Inherited from
 
@@ -276,7 +276,7 @@ This method mutates the array and returns a reference to the same array.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `compareFn?` | (`a`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `b`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)) => `number` | Function used to determine the order of the elements. It is expected to return  a negative value if the first argument is less than the second argument, zero if they're equal, and a positive  value otherwise. If omitted, the elements are sorted in ascending, ASCII character order.  ```ts  [11,2,22,1].sort((a, b) => a - b)  ``` |
+| `compareFn?` | (`a`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `b`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)) => `number` | Function used to determine the order of the elements. It is expected to return  a negative value if the first argument is less than the second argument, zero if they're equal, and a positive  value otherwise. If omitted, the elements are sorted in ascending, ASCII character order.  ```ts  [11,2,22,1].sort((a, b) => a - b)  ``` |
 
 #### Returns
 
@@ -290,7 +290,7 @@ ___
 
 ### splice
 
-▸ **splice**(`start`, `deleteCount?`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+▸ **splice**(`start`, `deleteCount?`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
 
@@ -303,7 +303,7 @@ Removes elements from an array and, if necessary, inserts new elements in their 
 
 #### Returns
 
-([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 An array containing the elements that were deleted.
 
@@ -311,7 +311,7 @@ An array containing the elements that were deleted.
 
 Array.splice
 
-▸ **splice**(`start`, `deleteCount`, ...`items`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+▸ **splice**(`start`, `deleteCount`, ...`items`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
 
@@ -321,11 +321,11 @@ Removes elements from an array and, if necessary, inserts new elements in their 
 | :------ | :------ | :------ |
 | `start` | `number` | The zero-based location in the array from which to start removing elements. |
 | `deleteCount` | `number` | The number of elements to remove. |
-| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[] | Elements to insert into the array in place of the deleted elements. |
+| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[] | Elements to insert into the array in place of the deleted elements. |
 
 #### Returns
 
-([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 An array containing the elements that were deleted.
 
@@ -345,7 +345,7 @@ Inserts new elements at the start of an array, and returns the new length of the
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[] | Elements to insert at the start of the array. |
+| `...items` | ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[] | Elements to insert at the start of the array. |
 
 #### Returns
 
@@ -367,7 +367,7 @@ Returns the index of the first occurrence of a value in an array, or -1 if it is
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `searchElement` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | The value to locate in the array. |
+| `searchElement` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | The value to locate in the array. |
 | `fromIndex?` | `number` | The array index at which to begin the search. If fromIndex is omitted, the search starts at index 0. |
 
 #### Returns
@@ -390,7 +390,7 @@ Returns the index of the last occurrence of a specified value in an array, or -1
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `searchElement` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | The value to locate in the array. |
+| `searchElement` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | The value to locate in the array. |
 | `fromIndex?` | `number` | The array index at which to begin searching backward. If fromIndex is omitted, the search starts at the last index in the array. |
 
 #### Returns
@@ -413,13 +413,13 @@ Determines whether all the members of an array satisfy the specified test.
 
 | Name | Type |
 | :------ | :------ |
-| `S` | extends [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
+| `S` | extends [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => value is S | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
+| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => value is S | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function.  If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -438,7 +438,7 @@ Determines whether all the members of an array satisfy the specified test.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
+| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function.  If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -461,7 +461,7 @@ Determines whether the specified callback function returns true for any element 
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | A function that accepts up to three arguments. The some method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value true, or until the end of the array. |
+| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | A function that accepts up to three arguments. The some method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value true, or until the end of the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function.  If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -484,7 +484,7 @@ Performs the specified action for each element in an array.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `void` | A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `void` | A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -513,7 +513,7 @@ Calls a defined callback function on each element of an array, and returns an ar
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` | A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` | A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -536,13 +536,13 @@ Returns the elements of an array that meet the condition specified in a callback
 
 | Name | Type |
 | :------ | :------ |
-| `S` | extends [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
+| `S` | extends [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => value is S | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
+| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => value is S | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -553,7 +553,7 @@ Returns the elements of an array that meet the condition specified in a callback
 
 Array.filter
 
-▸ **filter**(`predicate`, `thisArg?`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+▸ **filter**(`predicate`, `thisArg?`): ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 Returns the elements of an array that meet the condition specified in a callback function.
 
@@ -561,12 +561,12 @@ Returns the elements of an array that meet the condition specified in a callback
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
+| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
 
-([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
+([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 #### Inherited from
 
@@ -576,7 +576,7 @@ ___
 
 ### reduce
 
-▸ **reduce**(`callbackfn`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **reduce**(`callbackfn`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
 
@@ -584,28 +584,28 @@ Calls the specified callback function for all the elements in an array. The retu
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
 
 #### Returns
 
-[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
 Array.reduce
 
-▸ **reduce**(`callbackfn`, `initialValue`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **reduce**(`callbackfn`, `initialValue`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
-| `initialValue` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
+| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
+| `initialValue` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
 
 #### Returns
 
-[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
@@ -625,7 +625,7 @@ Calls the specified callback function for all the elements in an array. The retu
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
 | `initialValue` | `U` | If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value. |
 
 #### Returns
@@ -640,7 +640,7 @@ ___
 
 ### reduceRight
 
-▸ **reduceRight**(`callbackfn`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **reduceRight**(`callbackfn`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
 
@@ -648,28 +648,28 @@ Calls the specified callback function for all the elements in an array, in desce
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
 
 #### Returns
 
-[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
 Array.reduceRight
 
-▸ **reduceRight**(`callbackfn`, `initialValue`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **reduceRight**(`callbackfn`, `initialValue`): [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
-| `initialValue` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
+| `callbackfn` | (`previousValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
+| `initialValue` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
 
 #### Returns
 
-[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
@@ -689,7 +689,7 @@ Calls the specified callback function for all the elements in an array, in desce
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `currentIndex`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
 | `initialValue` | `U` | If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value. |
 
 #### Returns
@@ -713,13 +713,13 @@ otherwise.
 
 | Name | Type |
 | :------ | :------ |
-| `S` | extends [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
+| `S` | extends [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`this`: `void`, `value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `obj`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => value is S | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found, find  immediately returns that element value. Otherwise, find returns undefined. |
+| `predicate` | (`this`: `void`, `value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `obj`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => value is S | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found, find  immediately returns that element value. Otherwise, find returns undefined. |
 | `thisArg?` | `any` | If provided, it will be used as the this value for each invocation of  predicate. If it is not provided, undefined is used instead. |
 
 #### Returns
@@ -730,18 +730,18 @@ otherwise.
 
 Array.find
 
-▸ **find**(`predicate`, `thisArg?`): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **find**(`predicate`, `thisArg?`): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `obj`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` |
+| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `obj`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` |
 | `thisArg?` | `any` |
 
 #### Returns
 
-`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
@@ -760,7 +760,7 @@ otherwise.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `obj`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found,  findIndex immediately returns that element index. Otherwise, findIndex returns -1. |
+| `predicate` | (`value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `obj`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `unknown` | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found,  findIndex immediately returns that element index. Otherwise, findIndex returns -1. |
 | `thisArg?` | `any` | If provided, it will be used as the this value for each invocation of  predicate. If it is not provided, undefined is used instead. |
 
 #### Returns
@@ -783,7 +783,7 @@ Changes all array elements from `start` to `end` index to a static `value` and r
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `value` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | value to fill array section with |
+| `value` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | value to fill array section with |
 | `start?` | `number` | index to start filling the array at. If start is negative, it is treated as  length+start where length is the length of the array. |
 | `end?` | `number` | index to stop filling the array at. If end is negative, it is treated as  length+end. |
 
@@ -824,13 +824,13 @@ ___
 
 ### entries
 
-▸ **entries**(): `IterableIterator`<[`number`, [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)]\>
+▸ **entries**(): `IterableIterator`<[`number`, [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)]\>
 
 Returns an iterable of key, value pairs for every entry in the array
 
 #### Returns
 
-`IterableIterator`<[`number`, [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)]\>
+`IterableIterator`<[`number`, [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)]\>
 
 #### Inherited from
 
@@ -856,13 +856,13 @@ ___
 
 ### values
 
-▸ **values**(): `IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
+▸ **values**(): `IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
 
 Returns an iterable of values in the array
 
 #### Returns
 
-`IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
+`IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
 
 #### Inherited from
 
@@ -880,7 +880,7 @@ Determines whether an array includes a certain element, returning true or false 
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `searchElement` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | The element to search for. |
+| `searchElement` | [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md) | The element to search for. |
 | `fromIndex?` | `number` | The position in this array at which to begin searching for searchElement. |
 
 #### Returns
@@ -912,7 +912,7 @@ This is identical to a map followed by flat with depth 1.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callback` | (`this`: `This`, `value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` \| readonly `U`[] | A function that accepts up to three arguments. The flatMap method calls the  callback function one time for each element in the array. |
+| `callback` | (`this`: `This`, `value`: [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md), `index`: `number`, `array`: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]) => `U` \| readonly `U`[] | A function that accepts up to three arguments. The flatMap method calls the  callback function one time for each element in the array. |
 | `thisArg?` | `This` | An object to which the this keyword can refer in the callback function. If  thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -958,7 +958,7 @@ ___
 
 ### at
 
-▸ **at**(`index`): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+▸ **at**(`index`): `undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 Returns the item located at the specified index.
 
@@ -970,7 +970,7 @@ Returns the item located at the specified index.
 
 #### Returns
 
-`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
+`undefined` \| [`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)
 
 #### Inherited from
 
@@ -980,13 +980,13 @@ ___
 
 ### [iterator]
 
-▸ **[iterator]**(): `IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
+▸ **[iterator]**(): `IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
 
 Iterator
 
 #### Returns
 
-`IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
+`IterableIterator`<[`TransitionDirective`](x_robot.TransitionDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\>
 
 #### Inherited from
 

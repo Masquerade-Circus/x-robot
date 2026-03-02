@@ -658,4 +658,27 @@ module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, Walking
 
   it("should save the generated code in esm format into a js file");
   it("should save the generated code in cjs format into a js file");
+
+  it("should generate code with exitPulse", () => {
+    const { serialize } = require("../lib/serialize");
+    const { Format, generateFromSerializedMachine } = require("../lib/generate");
+    const { exitPulse, initial, init, machine, pulse, state, transition } = require("../lib");
+    
+    function cleanup(context: any) {
+      context.cleaned = true;
+    }
+
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "loading", exitPulse(cleanup))),
+      state("loading")
+    );
+
+    const serialized = serialize(myMachine);
+    const code = generateFromSerializedMachine(serialized, Format.ESM);
+    
+    expect(code).toContain("exitPulse");
+    expect(code).toContain("cleanup");
+  });
 });

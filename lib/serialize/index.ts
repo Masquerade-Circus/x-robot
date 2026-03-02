@@ -35,6 +35,7 @@ export interface SerializedCollection extends Array<SerializedPulse> {}
 export interface SerializedTransition {
   target: string;
   guards?: SerializedGuard[];
+  exitPulse?: SerializedPulse[];
 }
 
 export interface SerializedTransitions {
@@ -79,9 +80,11 @@ export interface SerializedNestedMachine {
  * @returns SerializedPulse
  */
 function serializePulse(pulse: PulseDirective): SerializedPulse {
-  let serialized: SerializedPulse = {
-    pulse: pulse.pulse.name,
-    isAsync: pulse.pulse.constructor.name === "AsyncFunction",
+  // Handle case where pulse is an empty function (from exitPulse string conversion)
+  const pulseFn = pulse.pulse as Function;
+  const serialized: SerializedPulse = {
+    pulse: pulseFn.name || "anonymous",
+    isAsync: pulseFn.constructor.name === "AsyncFunction",
   };
 
   if (isValidString(pulse.success)) {
@@ -160,6 +163,13 @@ function serializeTransition(transition: TransitionDirective): SerializedTransit
 
   if (guards) {
     serialized.guards = guards;
+  }
+
+  if (transition.exitPulse) {
+    const exitPulseArray = Array.isArray(transition.exitPulse) 
+      ? transition.exitPulse 
+      : [transition.exitPulse];
+    serialized.exitPulse = exitPulseArray.map(pulse => serializePulse(pulse));
   }
 
   return serialized;

@@ -5,6 +5,9 @@ export declare function isProducer(producer?: any): producer is ProducerDirectiv
 export declare function isProducerWithTransition(producer?: any): producer is ProducerDirectiveWithTransition;
 export declare function isProducerWithoutTransition(producer?: any): producer is ProducerDirectiveWithoutTransition;
 export declare function isPulse(pulse?: any): pulse is PulseDirective;
+export declare function isExitPulse(exitPulse?: any): exitPulse is {
+    exitPulse: PulseDirective[];
+};
 export declare function isAction(action?: any): action is ActionDirective;
 export declare function isImmediate(immediate?: any): immediate is ImmediateDirective;
 export declare function isGuard(guard?: any): guard is GuardDirective;

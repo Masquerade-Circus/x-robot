@@ -12,6 +12,7 @@ export interface TransitionDirective {
     transition: string;
     target: string;
     guards: GuardsDirective;
+    exitPulse?: PulseDirective | PulseDirective[];
 }
 export interface TransitionsDirective {
     [key: string]: TransitionDirective;

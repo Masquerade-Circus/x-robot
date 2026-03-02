@@ -37,6 +37,8 @@ import {
   hasTransition,
   isContextDirective,
   isDescriptionDirective,
+  isExitPulse,
+  isGuard,
   isImmediate,
   isInitialDirective,
   isInitDirective,
@@ -437,19 +439,33 @@ export function state(name: string, ...args: RunCollection): StateDirective {
  *
  * @param transitionName The name of the transition
  * @param target The target state of the transition
- * @param guards The guards of the transition
+ * @param args Guards and optional exitPulse at the end
  * @returns TransitionDirective
  * @category Creation
  */
 export function transition(
   transitionName: string,
   target: string,
-  ...guards: GuardsDirective
+  ...args: (GuardDirective | GuardsDirective | { exitPulse: PulseDirective[] })[]
 ): TransitionDirective {
+  let guards: GuardsDirective = [];
+  let exitPulse: PulseDirective[] | undefined;
+  
+  for (const arg of args) {
+    if (isGuard(arg)) {
+      guards.push(arg);
+    } else if (Array.isArray(arg)) {
+      guards = arg as GuardsDirective;
+    } else if (isExitPulse(arg)) {
+      exitPulse = arg.exitPulse;
+    }
+  }
+  
   return {
     transition: transitionName,
     target,
-    guards
+    guards,
+    exitPulse
   };
 }
 
@@ -492,6 +508,28 @@ export function pulse(
     pulse,
     success: successValue,
     failure: failureValue
+  };
+}
+
+/**
+ *
+ * @param handler The handler function to run when exiting the state
+ * @param success Optional success transition string
+ * @param failure Optional failure transition string
+ * @returns ExitPulseDirective
+ * @category Creation
+ */
+export function exitPulse(
+  handler: Pulse,
+  success?: string,
+  failure?: string
+): { exitPulse: PulseDirective[] } {
+  return {
+    exitPulse: [{
+      pulse: handler,
+      success,
+      failure
+    }]
   };
 }
 

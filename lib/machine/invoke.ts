@@ -317,14 +317,14 @@ function runProducers(machine: Machine, state: StateDirective, payload: any) {
  * @param transition The transition that is being invoked
  * @param payload The payload to pass to the guards
  * @param index The current index of the guard in the transition
- * @returns boolean
+ * @returns Promise<boolean> | boolean
  */
 function runGuards(
   machine: Machine,
   state: StateDirective,
   transition: TransitionDirective,
   payload: any
-): boolean {
+): Promise<boolean> | boolean {
   for (let i = 0; i < transition.guards.length; i++) {
     // Run the guard
     let guard = transition.guards[i];
@@ -339,6 +339,12 @@ function runGuards(
       // Add the guard to the history
       machine.history.push(`${HistoryType.Guard}: ${guard.guard.name}`);
 
+      // Get context - clone if frozen for guards that might modify it
+      let guardContext = machine.context;
+      if (machine.frozen) {
+        guardContext = cloneContext(machine.context);
+      }
+
       // Result could be a boolean or anything else
       let result;
 
@@ -346,7 +352,40 @@ function runGuards(
       if (isNestedGuard(guard)) {
         result = guard.guard(guard.machine.context, payload);
       } else {
-        result = guard.guard(machine.context, payload);
+        result = guard.guard(guardContext, payload);
+      }
+
+      // Check if result is a Promise (async guard)
+      if (result instanceof Promise) {
+        // For async guards, we need to handle it differently
+        // Return a Promise that chains all async guards
+        return result.then((resolvedResult: any) => {
+          // Update context if it was modified by async guard
+          if (machine.frozen && guardContext !== machine.context) {
+            machine.context = guardContext;
+            deepFreeze(machine.context);
+          }
+          
+          // If the result is different than true we return false
+          if (resolvedResult !== true) {
+            // Handle failure
+            if (isValidString(guard.failure)) {
+              invoke(machine, guard.failure, resolvedResult);
+            } else if (isPulse(guard.failure)) {
+              runPulse(machine, guard.failure, resolvedResult);
+            } else if (isValidString(resolvedResult)) {
+              if (machine.frozen) {
+                machine.context = cloneContext(machine.context);
+              }
+              machine.context.error = resolvedResult;
+            }
+            return false;
+          }
+          
+          // Guard passed, continue with remaining guards
+          // Create a new promise chain for remaining guards
+          return runGuardsFromIndex(machine, state, transition, payload, i + 1);
+        });
       }
 
       // If the result is different than true we break the loop and return false
@@ -378,6 +417,82 @@ function runGuards(
   }
 
   // If we get here, we have a success and we can return true
+  return true;
+}
+
+function runGuardsFromIndex(
+  machine: Machine,
+  state: StateDirective,
+  transition: TransitionDirective,
+  payload: any,
+  startIndex: number
+): Promise<boolean> | boolean {
+  for (let i = startIndex; i < transition.guards.length; i++) {
+    let guard = transition.guards[i];
+
+    try {
+      if (!isGuard(guard)) {
+        return false;
+      }
+
+      machine.history.push(`${HistoryType.Guard}: ${guard.guard.name}`);
+
+      let guardContext = machine.context;
+      if (machine.frozen) {
+        guardContext = cloneContext(machine.context);
+      }
+
+      let result;
+
+      if (isNestedGuard(guard)) {
+        result = guard.guard(guard.machine.context, payload);
+      } else {
+        result = guard.guard(guardContext, payload);
+      }
+
+      if (result instanceof Promise) {
+        return result.then((resolvedResult: any) => {
+          if (resolvedResult !== true) {
+            if (isValidString(guard.failure)) {
+              invoke(machine, guard.failure, resolvedResult);
+            } else if (isPulse(guard.failure)) {
+              runPulse(machine, guard.failure, resolvedResult);
+            } else if (isValidString(resolvedResult)) {
+              if (machine.frozen) {
+                machine.context = cloneContext(machine.context);
+              }
+              machine.context.error = resolvedResult;
+            }
+            return false;
+          }
+          // Update context if modified
+          if (machine.frozen && guardContext !== machine.context) {
+            machine.context = guardContext;
+            deepFreeze(machine.context);
+          }
+          return runGuardsFromIndex(machine, state, transition, payload, i + 1);
+        });
+      }
+
+      if (result !== true) {
+        if (isValidString(guard.failure)) {
+          invoke(machine, guard.failure, result);
+        } else if (isPulse(guard.failure)) {
+          runPulse(machine, guard.failure, result);
+        } else if (isValidString(result)) {
+          if (machine.frozen) {
+            machine.context = cloneContext(machine.context);
+          }
+          machine.context.error = result;
+        }
+        return false;
+      }
+    } catch (error) {
+      catchError(machine, state, error as Error);
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -648,20 +763,75 @@ export function invoke(
     let transitionObject = currentStateObject.on[trimmedTransition];
 
     // If the transition has guards, run them and decide if we should continue
-    let shouldContinue = runGuards(
+    let guardsResult = runGuards(
       machine,
       currentStateObject,
       transitionObject,
       payload
     );
-    if (shouldContinue === false) {
+
+    // Handle async guards
+    if (guardsResult instanceof Promise) {
+      return guardsResult.then((shouldContinue: boolean) => {
+        if (shouldContinue === false) {
+          machine.history.push(`${HistoryType.State}: ${currentStateObject.name}`);
+          return;
+        }
+        // Continue with exitPulse handling after async guards
+        return handleExitPulsesAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
+      });
+    }
+
+    if (guardsResult === false) {
       // As we tried to make a transition, we need to add the current state to the history
       machine.history.push(`${HistoryType.State}: ${currentStateObject.name}`);
       return;
     }
+
+    // Run exitPulse(s) from the current state if the transition has them
+    return handleExitPulsesAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
   }
 
-  // Get the target state
+  // Continue with the rest of the transition
+  return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+}
+
+function handleExitPulsesAndContinue(
+  machine: Machine,
+  currentStateObject: StateDirective,
+  transitionObject: any,
+  trimmedTransition: string,
+  payload?: any
+): Promise<void> | void {
+  const exitPulses = transitionObject.exitPulse;
+  if (exitPulses && Array.isArray(exitPulses)) {
+    const pulsesToRun = Array.isArray(exitPulses[0]) 
+      ? exitPulses[0] 
+      : exitPulses as PulseDirective[];
+    
+    for (const exitPulse of pulsesToRun) {
+      if (machine.isAsync) {
+        let promise = Promise.resolve();
+        promise = promise.then(() => runPulse(machine, exitPulse, payload));
+        return promise.then(() => {
+          return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+        });
+      } else {
+        runPulse(machine, exitPulse, payload);
+      }
+    }
+    return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+  }
+
+  return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+}
+
+function continueTransition(
+  machine: Machine,
+  currentStateObject: StateDirective,
+  trimmedTransition: string,
+  payload?: any
+): Promise<void> | void {
   let targetState =
     trimmedTransition === START_EVENT
       ? machine.initial

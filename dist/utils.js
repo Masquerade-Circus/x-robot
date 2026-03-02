@@ -28,6 +28,7 @@ __export(utils_exports, {
   isAction: () => isAction,
   isContextDirective: () => isContextDirective,
   isDescriptionDirective: () => isDescriptionDirective,
+  isExitPulse: () => isExitPulse,
   isGuard: () => isGuard,
   isImmediate: () => isImmediate,
   isInitDirective: () => isInitDirective,
@@ -76,6 +77,9 @@ function isProducerWithoutTransition(producer) {
 }
 function isPulse(pulse) {
   return isValidObject(pulse) && "pulse" in pulse;
+}
+function isExitPulse(exitPulse) {
+  return isValidObject(exitPulse) && "exitPulse" in exitPulse;
 }
 function isAction(action) {
   return isValidObject(action) && "action" in action;

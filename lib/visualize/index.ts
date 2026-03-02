@@ -275,6 +275,13 @@ function getInnerPlantUmlCode(
               transitions += `\\n${asciiTree}`;
             }
           }
+
+          // Add exitPulse info
+          const exitPulseData = state.on[transitionName].exitPulse;
+          if (exitPulseData && exitPulseData.length > 0) {
+            const exitPulseNames = exitPulseData.map(ep => ep.pulse).join(", ");
+            transitions += `\\n[exit: ${exitPulseNames}]`;
+          }
         }
 
         transitions += `\n`;

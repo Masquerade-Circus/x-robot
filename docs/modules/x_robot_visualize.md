@@ -169,4 +169,4 @@ The path to the svg file
 
 #### Defined in
 
-[lib/visualize/index.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/visualize/index.ts#L37)
+[lib/visualize/index.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/visualize/index.ts#L37)

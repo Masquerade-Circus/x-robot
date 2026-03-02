@@ -1,6 +1,7 @@
 import {
   context,
   dangerState,
+  exitPulse,
   guard,
   immediate,
   infoState,
@@ -9,6 +10,7 @@ import {
   machine,
   primaryState,
   pulse,
+  state,
   successState,
   transition,
   warningState,
@@ -164,5 +166,43 @@ describe("Serialize", () => {
     };
 
     expect(serialize(myMachine)).toEqual(serializedMachine);
+  });
+
+  it("should serialize exitPulse in transitions", () => {
+    function cleanup(context: any) {
+      context.cleaned = true;
+    }
+
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "loading", exitPulse(cleanup))),
+      state("loading")
+    );
+
+    const serialized = serialize(myMachine);
+    
+    expect(serialized.states.idle.on.start.exitPulse).toBeDefined();
+    expect(serialized.states.idle.on.start.exitPulse).toHaveLength(1);
+    expect(serialized.states.idle.on.start.exitPulse[0].pulse).toBe("cleanup");
+  });
+
+  it("should serialize exitPulse with success and failure transitions", () => {
+    function cleanup(context: any) {
+      context.cleaned = true;
+    }
+
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "loading", exitPulse(cleanup, "success"))),
+      state("loading"),
+      state("success")
+    );
+
+    const serialized = serialize(myMachine);
+    
+    expect(serialized.states.idle.on.start.exitPulse[0].pulse).toBe("cleanup");
+    expect(serialized.states.idle.on.start.exitPulse[0].success).toBe("success");
   });
 });

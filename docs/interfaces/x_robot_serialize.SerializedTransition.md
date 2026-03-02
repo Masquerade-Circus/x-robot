@@ -10,6 +10,7 @@
 
 - [target](x_robot_serialize.SerializedTransition.md#target)
 - [guards](x_robot_serialize.SerializedTransition.md#guards)
+- [exitPulse](x_robot_serialize.SerializedTransition.md#exitpulse)
 
 ## Properties
 
@@ -19,7 +20,7 @@
 
 #### Defined in
 
-[lib/serialize/index.ts:36](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L36)
+[lib/serialize/index.ts:36](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L36)
 
 ___
 
@@ -29,4 +30,14 @@ ___
 
 #### Defined in
 
-[lib/serialize/index.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/3ab8fd4/lib/serialize/index.ts#L37)
+[lib/serialize/index.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L37)
+
+___
+
+### exitPulse
+
+• `Optional` **exitPulse**: [`SerializedPulse`](x_robot_serialize.SerializedPulse.md)[]
+
+#### Defined in
+
+[lib/serialize/index.ts:38](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/serialize/index.ts#L38)

@@ -42,6 +42,39 @@ function getGuards(
   return code;
 }
 
+function getExitPulses(
+  transition: SerializedTransition,
+  pulses: string[] = [],
+  declaredPulses: string[] = []
+): string {
+  let code = "";
+  if (transition.exitPulse && transition.exitPulse.length > 0) {
+    code += `, exitPulse(`;
+    for (let i = 0; i < transition.exitPulse.length; i++) {
+      const exitPulse = transition.exitPulse[i];
+      if (!pulses.includes(exitPulse.pulse) && !declaredPulses.includes(exitPulse.pulse)) {
+        pulses.push(exitPulse.pulse);
+        declaredPulses.push(exitPulse.pulse);
+      }
+      
+      code += `pulse(${exitPulse.pulse}`;
+      if (isValidString(exitPulse.success)) {
+        code += `, "${exitPulse.success}"`;
+      }
+      if (isValidString(exitPulse.failure)) {
+        code += `, undefined, "${exitPulse.failure}"`;
+      }
+      code += `)`;
+      
+      if (i < transition.exitPulse.length - 1) {
+        code += `, `;
+      }
+    }
+    code += `)`;
+  }
+  return code;
+}
+
 function getCodeParts(
   serializedMachine: SerializedMachine,
   declaredPulses: string[] = [],
@@ -135,6 +168,7 @@ function getCodeParts(
         if (!state.immediate || !state.immediate.find((immediate) => immediate.immediate === transition.target)) {
           stateCode += `      transition("${transitionName}", "${transition.target}"`;
           stateCode += getGuards(transition, guards, declaredGuards);
+          stateCode += getExitPulses(transition, pulses, declaredPulses);
           stateCode += `),\n`;
         }
       }
@@ -221,6 +255,17 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ["
                 }
 
                 if (isValidString(item.failure)) {
+                  addImport("transition", imports);
+                }
+              }
+            }
+
+            // Check if we need to import exitPulse
+            if (transition.exitPulse && transition.exitPulse.length > 0) {
+              addImport("exitPulse", imports);
+              for (let exitPulse of transition.exitPulse) {
+                addImport("pulse", imports);
+                if (isValidString(exitPulse.success) || isValidString(exitPulse.failure)) {
                   addImport("transition", imports);
                 }
               }

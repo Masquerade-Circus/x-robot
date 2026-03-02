@@ -265,3 +265,90 @@ invoke(wordMachine, 'list/bullets'); // listMachine.current === 'bullets'
 
 getState(wordMachine); // { bold: 'on', underline: 'on', italics: 'on', list: 'bullets' }
 ```
+
+### Exit Pulse
+
+The `exitPulse` is executed when leaving a state, after guards pass and before transitioning to the new state. It's useful for cleanup tasks.
+
+![Exit Pulse machine diagram](./media/exit-pulse-machine-diagram.svg)
+
+```javascript
+import {machine, state, initial, init, transition, invoke, pulse, exitPulse} from 'x-robot';
+
+function cleanup(context) {
+  context.cleaned = true;
+}
+
+function saveData(context) {
+  context.saved = true;
+}
+
+const myMachine = machine(
+  'My Machine',
+  init(initial('idle')),
+  state('idle', 
+    transition('start', 'loading', exitPulse(cleanup))
+  ),
+  state('loading',
+    pulse(saveData),
+    transition('complete', 'idle')
+  )
+);
+
+// myMachine.current === 'idle'
+invoke(myMachine, 'start');
+// myMachine.context.cleaned === true (exitPulse executed)
+// myMachine.current === 'loading'
+```
+
+### Async Guards
+
+Guards can be async functions, allowing you to perform async validation before transitioning.
+
+```javascript
+import {machine, state, initial, init, transition, invoke, guard} from 'x-robot';
+
+async function checkPermission(context) {
+  const response = await fetch('/api/permission');
+  const data = await response.json();
+  return data.allowed;
+}
+
+const myMachine = machine(
+  'My Machine',
+  init(initial('idle')),
+  state('idle', transition('start', 'loading', guard(checkPermission))),
+  state('loading')
+);
+
+// myMachine.current === 'idle'
+await invoke(myMachine, 'start');
+// If checkPermission returns true, transitions to 'loading'
+// If checkPermission returns false, stays in 'idle'
+```
+
+### Guard with failure transition
+
+Guards can have a failure transition that is invoked when the guard returns false.
+
+```javascript
+import {machine, state, initial, init, transition, invoke, guard} from 'x-robot';
+
+function validateInput(context, payload) {
+  return payload.length > 0;
+}
+
+const myMachine = machine(
+  'My Machine',
+  init(initial('idle')),
+  state('idle', transition('submit', 'success', guard(validateInput, 'error'))),
+  state('success'),
+  state('error')
+);
+
+// With valid payload
+invoke(myMachine, 'submit', 'hello'); // myMachine.current === 'success'
+
+// With invalid payload
+invoke(myMachine, 'submit', ''); // myMachine.current === 'error'
+```

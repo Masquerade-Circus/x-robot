@@ -60,9 +60,10 @@ var titleToId = (str) => str.toLowerCase().replace(/(\s|\W)/g, "");
 
 // lib/serialize/index.ts
 function serializePulse(pulse) {
-  let serialized = {
-    pulse: pulse.pulse.name,
-    isAsync: pulse.pulse.constructor.name === "AsyncFunction"
+  const pulseFn = pulse.pulse;
+  const serialized = {
+    pulse: pulseFn.name || "anonymous",
+    isAsync: pulseFn.constructor.name === "AsyncFunction"
   };
   if (isValidString(pulse.success)) {
     serialized.success = pulse.success;
@@ -107,6 +108,10 @@ function serializeTransition(transition) {
   let guards = serializeGuards(transition.guards);
   if (guards) {
     serialized.guards = guards;
+  }
+  if (transition.exitPulse) {
+    const exitPulseArray = Array.isArray(transition.exitPulse) ? transition.exitPulse : [transition.exitPulse];
+    serialized.exitPulse = exitPulseArray.map((pulse) => serializePulse(pulse));
   }
   return serialized;
 }
@@ -378,6 +383,11 @@ ${space}[*] --> ${stateNames[serializedMachine.initial]}
             if (asciiTree.length) {
               transitions += `\\n${asciiTree}`;
             }
+          }
+          const exitPulseData = state.on[transitionName].exitPulse;
+          if (exitPulseData && exitPulseData.length > 0) {
+            const exitPulseNames = exitPulseData.map((ep) => ep.pulse).join(", ");
+            transitions += `\\n[exit: ${exitPulseNames}]`;
           }
         }
         transitions += `
