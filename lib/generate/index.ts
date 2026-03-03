@@ -48,25 +48,22 @@ function getExitPulses(
   declaredPulses: string[] = []
 ): string {
   let code = "";
-  if (transition.exitPulse && transition.exitPulse.length > 0) {
-    code += `, exitPulse(`;
-    for (let i = 0; i < transition.exitPulse.length; i++) {
-      const exitPulse = transition.exitPulse[i];
+  if (transition.exit && transition.exit.length > 0) {
+    code += `, exit(`;
+    for (let i = 0; i < transition.exit.length; i++) {
+      const exitPulse = transition.exit[i];
       if (!pulses.includes(exitPulse.pulse) && !declaredPulses.includes(exitPulse.pulse)) {
         pulses.push(exitPulse.pulse);
         declaredPulses.push(exitPulse.pulse);
       }
       
-      code += `pulse(${exitPulse.pulse}`;
-      if (isValidString(exitPulse.success)) {
-        code += `, "${exitPulse.success}"`;
-      }
+      code += `entry(${exitPulse.pulse}`;
       if (isValidString(exitPulse.failure)) {
-        code += `, undefined, "${exitPulse.failure}"`;
+        code += `, "${exitPulse.failure}"`;
       }
       code += `)`;
       
-      if (i < transition.exitPulse.length - 1) {
+      if (i < transition.exit.length - 1) {
         code += `, `;
       }
     }
@@ -117,9 +114,9 @@ function getCodeParts(
       }
     }
 
-    // Check if we need to add pulses
+    // Check if we need to add entries
     if (state.run && state.run.length > 0) {
-      // For each item in the run array, check if we need to add the pulse
+      // For each item in the run array, check if we need to add the entry
       for (let runItem of state.run) {
         if ("pulse" in runItem) {
           if (!pulses.includes(runItem.pulse) && !declaredPulses.includes(runItem.pulse)) {
@@ -127,7 +124,7 @@ function getCodeParts(
             declaredPulses.push(runItem.pulse);
           }
 
-          stateCode += `      pulse(${runItem.pulse}`;
+          stateCode += `      entry(${runItem.pulse}`;
 
           if (isValidString(runItem.success)) {
             stateCode += `, "${runItem.success}"`;
@@ -260,12 +257,12 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ["
               }
             }
 
-            // Check if we need to import exitPulse
-            if (transition.exitPulse && transition.exitPulse.length > 0) {
-              addImport("exitPulse", imports);
-              for (let exitPulse of transition.exitPulse) {
-                addImport("pulse", imports);
-                if (isValidString(exitPulse.success) || isValidString(exitPulse.failure)) {
+            // Check if we need to import exit
+            if (transition.exit && transition.exit.length > 0) {
+              addImport("exit", imports);
+              for (let exitItem of transition.exit) {
+                addImport("entry", imports);
+                if (isValidString(exitItem.failure)) {
                   addImport("transition", imports);
                 }
               }
@@ -274,11 +271,11 @@ function getImports(serializedMachine: SerializedMachine, imports: string[] = ["
         }
       }
 
-      // Run items are pulses and can have success/failure transitions
+      // Run items are entries and can have success/failure transitions
       if (state.run && state.run.length > 0) {
         for (let runItem of state.run) {
           if ("pulse" in runItem) {
-            addImport("pulse", imports);
+            addImport("entry", imports);
 
             if (isValidString(runItem.success) || isValidString(runItem.failure)) {
               addImport("transition", imports);
@@ -376,11 +373,11 @@ function getMachineCode(
     code += `${guardCode}\n`;
   }
 
-  // Pulses
+  // Entries
   if (pulses.length > 0) {
-    let pulseCode = `// Pulses\n`;
+    let pulseCode = `// Entries\n`;
     for (let pulse of pulses) {
-      pulseCode += `const ${pulse} = (context, payload) => {\n  // TODO: Implement pulse\n  return {...context};\n};\n`;
+      pulseCode += `const ${pulse} = (context, payload) => {\n  // TODO: Implement entry\n  return {...context};\n};\n`;
     }
     code += `${pulseCode}\n`;
   }

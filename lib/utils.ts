@@ -3,7 +3,9 @@ import {
   ActionDirective,
   ContextDirective,
   DescriptionDirective,
+  ExitDirective,
   GuardDirective,
+  HistoryDirective,
   ImmediateDirective,
   InitialDirective,
   InitDirective,
@@ -49,12 +51,12 @@ export function isProducerWithoutTransition(
   return !isProducerWithTransition(producer);
 }
 
-export function isPulse(pulse?: any): pulse is PulseDirective {
-  return isValidObject(pulse) && "pulse" in pulse;
+export function isEntry(entry?: any): entry is PulseDirective {
+  return isValidObject(entry) && "pulse" in entry;
 }
 
-export function isExitPulse(exitPulse?: any): exitPulse is { exitPulse: PulseDirective[] } {
-  return isValidObject(exitPulse) && "exitPulse" in exitPulse;
+export function isExit(exit?: any): exit is { exit: ExitDirective[] } {
+  return isValidObject(exit) && "exit" in exit;
 }
 
 export function isAction(action?: any): action is ActionDirective {
@@ -153,12 +155,17 @@ export function isInitialDirective(initial?: any): initial is InitialDirective {
   return isValidObject(initial) && "initial" in initial;
 }
 
+export function isHistoryDirective(history?: any): history is HistoryDirective {
+  return isValidObject(history) && "history" in history && typeof (history as HistoryDirective).history === "number" && (history as HistoryDirective).history >= 0;
+}
+
 export function isInitDirective(init?: any): init is InitDirective {
   if (!isValidObject(init)) return false;
   const hasInitial = "initial" in init;
   const hasContext = "context" in init;
   const hasFreeze = "freeze" in init;
-  return hasInitial || hasContext || hasFreeze;
+  const hasHistory = "history" in init;
+  return hasInitial || hasContext || hasFreeze || hasHistory;
 }
 
 export function isDescriptionDirective(
@@ -187,99 +194,206 @@ export function isParallelImmediateDirective(
   return isImmediate(immediate) && isParallelTransition(immediate.immediate);
 }
 
-/**
- * This method is used to deep freeze an object
- * @param {Object} obj The object to freeze
- * @returns {Object} Object frozen
- */
-export function deepFreeze(obj: any) {
-  if (typeof obj === "object" && obj !== null && !Object.isFrozen(obj)) {
-    if (Array.isArray(obj)) {
-      for (let i = 0, l = obj.length; i < l; i++) {
-        deepFreeze(obj[i]);
-      }
-    } else {
-      for (let prop in obj) {
-        deepFreeze(obj[prop]);
+export function deepFreeze(
+  obj: any,
+  freezeClassInstances: boolean = false,
+  seen = new WeakSet()
+): any {
+  if (
+    obj === null ||
+    typeof obj !== "object" ||
+    seen.has(obj) ||
+    Object.isFrozen(obj)
+  ) {
+    return obj;
+  }
+
+  seen.add(obj);
+
+  if (Array.isArray(obj)) {
+    for (let i = 0, l = obj.length; i < l; i++) {
+      deepFreeze(obj[i], freezeClassInstances, seen);
+    }
+  } else {
+    const props = Reflect.ownKeys(obj);
+    for (let i = 0, l = props.length; i < l; i++) {
+      deepFreeze(obj[props[i]], freezeClassInstances, seen);
+    }
+
+    if (freezeClassInstances) {
+      const proto = Object.getPrototypeOf(obj);
+      if (proto && proto !== Object.prototype) {
+        deepFreeze(proto, freezeClassInstances, seen);
       }
     }
-    Object.freeze(obj);
   }
+
+  Object.freeze(obj);
 
   return obj;
 }
 
-// Creates a deep copy of the context
-// @param {Object} context
-// @returns {Object}
-export function cloneContext(context: any, weakMap = new WeakMap()): any {
-  // If context is in the weak map, we will use the weak map value
-  if (weakMap.has(context)) {
-    return weakMap.get(context);
+function isPlainObject(value: any): boolean {
+  if (!value || typeof value !== "object") {
+    return false;
   }
 
-  // If context is null or undefined, we will return it as is
-  if (context === null || context === undefined) {
-    return context;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+export { isPlainObject };
+
+function canUseStructuredClone(value: any): boolean {
+  if (typeof structuredClone !== "function") {
+    return false;
   }
 
-  let result;
-
-  // Check for every type of object property and clone it accordingly
-  // If is an array, we will clone it recursively
-  if (Array.isArray(context)) {
-    result = context.map((item) => cloneContext(item, weakMap));
+  if (typeof Buffer !== "undefined" && value instanceof Buffer) {
+    return false;
   }
 
-  // If it is an object, we will clone it recursively
-  else if (typeof context === "object") {
-    result = {} as any;
-    for (let key in context) {
-      result[key] = cloneContext(context[key], weakMap);
+  return (
+    Array.isArray(value) ||
+    isPlainObject(value) ||
+    value instanceof Date ||
+    value instanceof RegExp ||
+    value instanceof Map ||
+    value instanceof Set ||
+    value instanceof ArrayBuffer ||
+    ArrayBuffer.isView(value)
+  );
+}
+
+export function deepCloneUnfreeze<T>(
+  obj: T,
+  cloneClassInstances = false,
+  seen = new WeakMap()
+): T {
+  if (typeof obj === "undefined" || obj === null || typeof obj !== "object") {
+    return obj;
+  }
+
+  const source = obj as any;
+
+  if (seen.has(source)) {
+    return seen.get(source);
+  }
+
+  if (canUseStructuredClone(source)) {
+    const cloned = structuredClone(source);
+    seen.set(source, cloned);
+    return cloned;
+  }
+
+  let clone: any;
+
+  switch (true) {
+    case Array.isArray(source): {
+      clone = [];
+      seen.set(source, clone);
+      for (let i = 0, l = source.length; i < l; i++) {
+        clone[i] = deepCloneUnfreeze(source[i], cloneClassInstances, seen);
+      }
+      return clone;
+    }
+    case source instanceof Date: {
+      clone = new Date(source.getTime());
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof RegExp: {
+      clone = new RegExp(source.source, source.flags);
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof Map: {
+      clone = new Map();
+      seen.set(source, clone);
+      for (const [key, value] of source.entries()) {
+        clone.set(
+          deepCloneUnfreeze(key, cloneClassInstances, seen),
+          deepCloneUnfreeze(value, cloneClassInstances, seen)
+        );
+      }
+      return clone;
+    }
+    case source instanceof Set: {
+      clone = new Set();
+      seen.set(source, clone);
+      for (const value of source.values()) {
+        clone.add(deepCloneUnfreeze(value, cloneClassInstances, seen));
+      }
+      return clone;
+    }
+    case source instanceof ArrayBuffer: {
+      clone = source.slice(0);
+      seen.set(source, clone);
+      return clone;
+    }
+    case ArrayBuffer.isView(source): {
+      clone = new source.constructor(source.buffer.slice(0));
+      seen.set(source, clone);
+      return clone;
+    }
+    case typeof Buffer !== "undefined" && source instanceof Buffer: {
+      clone = Buffer.from(source);
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof Error: {
+      clone = new source.constructor(source.message);
+      seen.set(source, clone);
+      break;
+    }
+    case source instanceof Promise ||
+      source instanceof WeakMap ||
+      source instanceof WeakSet: {
+      clone = source;
+      seen.set(source, clone);
+      return clone;
+    }
+    case source.constructor && source.constructor !== Object: {
+      if (!cloneClassInstances) {
+        clone = source;
+        seen.set(source, clone);
+        return clone;
+      }
+      clone = Object.create(Object.getPrototypeOf(source));
+      seen.set(source, clone);
+      break;
+    }
+    default: {
+      clone = {};
+      seen.set(source, clone);
+
+      const keys = Reflect.ownKeys(source);
+      for (let i = 0, l = keys.length; i < l; i++) {
+        const key = keys[i];
+        clone[key as string] = deepCloneUnfreeze(
+          source[key as string],
+          cloneClassInstances,
+          seen
+        );
+      }
+      return clone;
     }
   }
 
-  // If it is a date, we will clone it
-  else if (context instanceof Date) {
-    result = new Date(context.getTime());
+  const descriptors = Object.getOwnPropertyDescriptors(source);
+  for (const key of Reflect.ownKeys(descriptors)) {
+    const descriptor = descriptors[key as string];
+    if ("value" in descriptor) {
+      descriptor.value = deepCloneUnfreeze(
+        descriptor.value,
+        cloneClassInstances,
+        seen
+      );
+    }
+    Object.defineProperty(clone, key, descriptor);
   }
 
-  // If it is a Set, we will clone it recursively
-  else if (context instanceof Set) {
-    result = new Set(context);
-  }
-
-  // If it is a Map, we will clone it recursively
-  else if (context instanceof Map) {
-    let array = Array.from(context, ([key, val]) => [
-      key,
-      cloneContext(val, weakMap)
-    ]) as [any, any][];
-    result = new Map(array);
-  }
-
-  // If it is a RegExp, we will clone it
-  else if (context instanceof RegExp) {
-    return new RegExp(context.source, context.flags);
-  }
-
-  // If it is a instance of a class, we create a new instance of the class
-  // Only if we turn the first parameter to true
-  else if (false && context instanceof Object && context.constructor) {
-    result = new context.constructor(context);
-  }
-
-  // If it is a primitive, we will just assign it
-  else {
-    result = context;
-    return result;
-  }
-
-  // Add the context to the weak map
-  weakMap.set(context, result);
-
-  // Return the cloned context
-  return result;
+  return clone;
 }
 
 // This method allows to get a value from a passed object using dot notation path, it is not used in the library at the moment

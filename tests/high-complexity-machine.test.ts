@@ -3,11 +3,12 @@ import { VISUALIZATION_LEVEL, createSvgFromPlantUmlCode, getPlantUmlCode } from 
 import {
   context,
   dangerState,
+  entry,
+  exit,
   immediate,
   init,
   initial,
   machine,
-  pulse,
   primaryState,
   state,
   successState,
@@ -57,33 +58,33 @@ describe("X-Robot", () => {
     async function setCancelledById() {}
 
     // Cached actions
-    let actionGetClient = pulse(getClient);
-    let actionGetItemsAndTaxes = pulse(getItemsAndTaxes);
-    let actionGetAmounts = pulse(getAmounts);
-    let actionDraft = pulse(draft);
-    let actionExpireDraft = pulse(expireDraft);
-    let actionGetStore = pulse(getStore);
-    let actionGetRetailer = pulse(getRetailer);
-    let actionSetI18N = pulse(setI18N);
-    let actionValidatePickupTime = pulse(validatePickupTime);
-    let actionGetCard = pulse(getCard);
-    let actionCreate = pulse(create);
-    let actionAuthorize = pulse(authorize, undefined, "authorizationFailure");
-    let actionCapture = pulse(capture, undefined, "captureFailure");
-    let actionVoidOrRefundOrder = pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure");
-    let actionUpdate = pulse(update);
-    let actionSendNotificationToClient = pulse(sendNotificationToClient);
-    let actionSendNotificationToStore = pulse(sendNotificationToStore);
-    let actionIncreaseSuccessfulStoreOrderCount = pulse(increaseSuccessfulStoreOrderCount);
-    let actionDecreaseSuccessfulStoreOrderCount = pulse(decreaseSuccessfulStoreOrderCount);
-    let actionSetError = pulse(setError);
-    let actionCreateTransaction = pulse(createTransaction);
-    let actionThrowError = pulse(throwError);
-    let actionSetTimeoutTasks = pulse(setTimeoutTasks);
-    let actionGetTransaction = pulse(getTransaction);
-    let actionExpire = pulse(expire);
-    let actionUpdateTransaction = pulse(updateTransaction);
-    let actionSetCancelledById = pulse(setCancelledById);
+    let actionGetClient = entry(getClient);
+    let actionGetItemsAndTaxes = entry(getItemsAndTaxes);
+    let actionGetAmounts = entry(getAmounts);
+    let actionDraft = entry(draft);
+    let actionExpireDraft = entry(expireDraft);
+    let actionGetStore = entry(getStore);
+    let actionGetRetailer = entry(getRetailer);
+    let actionSetI18N = entry(setI18N);
+    let actionValidatePickupTime = entry(validatePickupTime);
+    let actionGetCard = entry(getCard);
+    let actionCreate = entry(create);
+    let actionAuthorize = entry(authorize, undefined, "authorizationFailure");
+    let actionCapture = entry(capture, undefined, "captureFailure");
+    let actionVoidOrRefundOrder = entry(voidOrRefundOrder, undefined, "voidOrRefundFailure");
+    let actionUpdate = entry(update);
+    let actionSendNotificationToClient = entry(sendNotificationToClient);
+    let actionSendNotificationToStore = entry(sendNotificationToStore);
+    let actionIncreaseSuccessfulStoreOrderCount = entry(increaseSuccessfulStoreOrderCount);
+    let actionDecreaseSuccessfulStoreOrderCount = entry(decreaseSuccessfulStoreOrderCount);
+    let actionSetError = entry(setError);
+    let actionCreateTransaction = entry(createTransaction);
+    let actionThrowError = entry(throwError);
+    let actionSetTimeoutTasks = entry(setTimeoutTasks);
+    let actionGetTransaction = entry(getTransaction);
+    let actionExpire = entry(expire);
+    let actionUpdateTransaction = entry(updateTransaction);
+    let actionSetCancelledById = entry(setCancelledById);
 
     let myMachine = machine(
       "My machine",
@@ -533,7 +534,7 @@ skinparam state {
     let serializedMachine = serialize(myMachine);
     let esmCode = generateFromSerializedMachine(serializedMachine, Format.ESM);
 
-    let expectedCode = `import { machine, states, initial, context, dangerState, pulse, state, transition, warningState, primaryState, immediate, successState } from "x-robot";
+    let expectedCode = `import { entry } from "x-robot";
 
 /******************** MyMachineMachine Start ********************/
 
@@ -633,68 +634,68 @@ export const MyMachineMachine = machine(
   states(
     dangerState(
       "fatal",
-      pulse(update),
-      pulse(updateTransaction)
+      entry(update),
+      entry(updateTransaction)
     ),
     state(
       "draft",
-      pulse(getClient),
-      pulse(getItemsAndTaxes),
-      pulse(getAmounts),
-      pulse(draft),
+      entry(getClient),
+      entry(getItemsAndTaxes),
+      entry(getAmounts),
+      entry(draft),
       transition("expiredDraft", "expiredDraft"),
       transition("create", "created")
     ),
     warningState(
       "expiredDraft",
-      pulse(getClient),
-      pulse(expireDraft)
+      entry(getClient),
+      entry(expireDraft)
     ),
     primaryState(
       "created",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(validatePickupTime),
-      pulse(getItemsAndTaxes),
-      pulse(getAmounts),
-      pulse(getCard),
-      pulse(create),
-      pulse(authorize, undefined, "authorizationFailure"),
-      pulse(createTransaction),
-      pulse(update),
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(validatePickupTime),
+      entry(getItemsAndTaxes),
+      entry(getAmounts),
+      entry(getCard),
+      entry(create),
+      entry(authorize, undefined, "authorizationFailure"),
+      entry(createTransaction),
+      entry(update),
       immediate("waitingForStore"),
       transition("expire", "expired")
     ),
     warningState(
       "expired",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(expire),
-      pulse(getTransaction),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(expire),
+      entry(getTransaction),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient)
     ),
     dangerState(
       "authorizationFailure",
-      pulse(setError),
-      pulse(createTransaction),
-      pulse(update),
-      pulse(sendNotificationToClient),
-      pulse(throwError)
+      entry(setError),
+      entry(createTransaction),
+      entry(update),
+      entry(sendNotificationToClient),
+      entry(throwError)
     ),
     primaryState(
       "waitingForStore",
-      pulse(sendNotificationToClient),
-      pulse(setTimeoutTasks),
-      pulse(update),
+      entry(sendNotificationToClient),
+      entry(setTimeoutTasks),
+      entry(update),
       transition("expire", "expired"),
       transition("cancel", "cancelledByStore"),
       transition("cancelByClient", "cancelledByClient"),
@@ -704,156 +705,156 @@ export const MyMachineMachine = machine(
     ),
     warningState(
       "cancelledByStore",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(update),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(update),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient)
     ),
     warningState(
       "cancelledByClient",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(update),
-      pulse(sendNotificationToStore),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(update),
+      entry(sendNotificationToStore),
+      entry(sendNotificationToClient)
     ),
     warningState(
       "cancelledByCustomerSupport",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(setCancelledById),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(decreaseSuccessfulStoreOrderCount),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(setCancelledById),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(decreaseSuccessfulStoreOrderCount),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient)
     ),
     dangerState(
       "voidOrRefundFailure",
-      pulse(setError),
-      pulse(updateTransaction),
-      pulse(update),
-      pulse(throwError)
+      entry(setError),
+      entry(updateTransaction),
+      entry(update),
+      entry(throwError)
     ),
     state(
       "changesRequestedByStore",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getAmounts),
-      pulse(update),
-      pulse(sendNotificationToClient),
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getAmounts),
+      entry(update),
+      entry(sendNotificationToClient),
       transition("rejectChanges", "changesRejectedByClient"),
       transition("acceptChanges", "changesAcceptedByClient"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "changesRejectedByClient",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient),
-      pulse(sendNotificationToStore)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient),
+      entry(sendNotificationToStore)
     ),
     state(
       "changesAcceptedByClient",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(update),
-      pulse(sendNotificationToStore),
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(update),
+      entry(sendNotificationToStore),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport"),
       transition("process", "processing"),
       transition("cancel", "cancelledByStore")
     ),
     primaryState(
       "processing",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(update),
-      pulse(sendNotificationToClient),
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(update),
+      entry(sendNotificationToClient),
       transition("cancelProcessing", "processingCancelledByStore"),
       transition("finishProcessing", "processed"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "processingCancelledByStore",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient)
     ),
     state(
       "processed",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(update),
-      pulse(capture, undefined, "captureFailure"),
-      pulse(updateTransaction),
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(update),
+      entry(capture, undefined, "captureFailure"),
+      entry(updateTransaction),
       immediate("ready")
     ),
     dangerState(
       "captureFailure",
-      pulse(setError),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient),
-      pulse(sendNotificationToStore),
-      pulse(throwError)
+      entry(setError),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient),
+      entry(sendNotificationToStore),
+      entry(throwError)
     ),
     primaryState(
       "ready",
-      pulse(increaseSuccessfulStoreOrderCount),
-      pulse(update),
-      pulse(sendNotificationToClient),
+      entry(increaseSuccessfulStoreOrderCount),
+      entry(update),
+      entry(sendNotificationToClient),
       transition("complete", "completed"),
       transition("cancelReady", "readyCancelledByStore"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport"),
@@ -861,73 +862,73 @@ export const MyMachineMachine = machine(
     ),
     warningState(
       "readyCancelledByStore",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(decreaseSuccessfulStoreOrderCount),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(decreaseSuccessfulStoreOrderCount),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient)
     ),
     state(
       "waitingForDelivery",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(update),
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(update),
       transition("complete", "completed"),
       transition("cancelWaitingForDelivery", "waitingForDeliveryCancelledByStore"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "waitingForDeliveryCancelledByStore",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(decreaseSuccessfulStoreOrderCount),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(decreaseSuccessfulStoreOrderCount),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient)
     ),
     successState(
       "completed",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(update),
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(update),
       transition("cancelCompleted", "completedCancelledByStore"),
       transition("cancelByCustomerSupport", "cancelledByCustomerSupport")
     ),
     warningState(
       "completedCancelledByStore",
-      pulse(getClient),
-      pulse(getStore),
-      pulse(getRetailer),
-      pulse(setI18N),
-      pulse(getCard),
-      pulse(getItemsAndTaxes),
-      pulse(getTransaction),
-      pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
-      pulse(decreaseSuccessfulStoreOrderCount),
-      pulse(update),
-      pulse(updateTransaction),
-      pulse(sendNotificationToClient)
+      entry(getClient),
+      entry(getStore),
+      entry(getRetailer),
+      entry(setI18N),
+      entry(getCard),
+      entry(getItemsAndTaxes),
+      entry(getTransaction),
+      entry(voidOrRefundOrder, undefined, "voidOrRefundFailure"),
+      entry(decreaseSuccessfulStoreOrderCount),
+      entry(update),
+      entry(updateTransaction),
+      entry(sendNotificationToClient)
     )
   ),
   context(getMyMachineContext),
@@ -939,11 +940,11 @@ export const MyMachineMachine = machine(
 export default { MyMachineMachine };
 `;
 
-    expect(esmCode).toContain('import { machine, states, initial, context, dangerState, pulse');
+    expect(esmCode).toContain('import { machine, states, initial, context, dangerState, entry');
     expect(esmCode).toContain('const authorize = (context, payload) => {');
-    expect(esmCode).toContain('pulse(authorize, undefined, "authorizationFailure")');
-    expect(esmCode).toContain('pulse(capture, undefined, "captureFailure")');
-    expect(esmCode).toContain('pulse(voidOrRefundOrder, undefined, "voidOrRefundFailure")');
+    expect(esmCode).toContain('entry(authorize, undefined, "authorizationFailure")');
+    expect(esmCode).toContain('entry(capture, undefined, "captureFailure")');
+    expect(esmCode).toContain('entry(voidOrRefundOrder, undefined, "voidOrRefundFailure")');
     expect(esmCode).not.toMatch(/\baction\b/);
     expect(esmCode).not.toMatch(/\bproducer\b/);
   });

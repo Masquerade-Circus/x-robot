@@ -1,4 +1,19 @@
-import { context, getState, guard, immediate, init, initial, invoke, machine, nested, nestedGuard, pulse, state, transition } from "../lib";
+import {
+  context,
+  entry,
+  exit,
+  getState,
+  guard,
+  immediate,
+  init,
+  initial,
+  invoke,
+  machine,
+  nested,
+  nestedGuard,
+  state,
+  transition
+} from "../lib";
 import { describe, it } from "mocha";
 
 import expect from "expect";
@@ -75,8 +90,8 @@ describe("Nested states", () => {
       "doorWay",
       init(initial("idle"), context({ doorWayCount: 0 })),
       state("idle", transition("enter", "enter"), transition("leave", "leave", guard(doorWayIsNotEmpty))),
-      state("enter", pulse(aPersonEnters), immediate("idle")),
-      state("leave", pulse(aPersonLeaves), immediate("idle"))
+      state("enter", entry(aPersonEnters), immediate("idle")),
+      state("leave", entry(aPersonLeaves), immediate("idle"))
     );
 
     let doorMachine = machine(
@@ -126,8 +141,8 @@ describe("Nested states", () => {
       "doorWay",
       init(initial("idle"), context({ doorWayCount: 0 })),
       state("idle", transition("enter", "enter"), transition("leave", "leave", guard(doorWayIsNotEmpty))),
-      state("enter", pulse(aPersonEnters), immediate("idle")),
-      state("leave", pulse(aPersonLeaves), immediate("idle"))
+      state("enter", entry(aPersonEnters), immediate("idle")),
+      state("leave", entry(aPersonLeaves), immediate("idle"))
     );
 
     let doorMachine = machine(
@@ -175,8 +190,8 @@ describe("Nested states", () => {
       "doorWay",
       init(initial("idle"), context({ doorWayCount: 0 })),
       state("idle", transition("enter", "enter"), transition("leave", "leave", guard(doorWayIsNotEmpty))),
-      state("enter", pulse(aPersonEnters), immediate("idle")),
-      state("leave", pulse(aPersonLeaves), immediate("idle"))
+      state("enter", entry(aPersonEnters), immediate("idle")),
+      state("leave", entry(aPersonLeaves), immediate("idle"))
     );
 
     let doorMachine = machine(

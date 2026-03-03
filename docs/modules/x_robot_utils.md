@@ -11,8 +11,8 @@
 - [isProducer](x_robot_utils.md#isproducer)
 - [isProducerWithTransition](x_robot_utils.md#isproducerwithtransition)
 - [isProducerWithoutTransition](x_robot_utils.md#isproducerwithouttransition)
-- [isPulse](x_robot_utils.md#ispulse)
-- [isExitPulse](x_robot_utils.md#isexitpulse)
+- [isEntry](x_robot_utils.md#isentry)
+- [isExit](x_robot_utils.md#isexit)
 - [isAction](x_robot_utils.md#isaction)
 - [isImmediate](x_robot_utils.md#isimmediate)
 - [isGuard](x_robot_utils.md#isguard)
@@ -29,6 +29,7 @@
 - [isParallelDirective](x_robot_utils.md#isparalleldirective)
 - [isShouldFreezeDirective](x_robot_utils.md#isshouldfreezedirective)
 - [isInitialDirective](x_robot_utils.md#isinitialdirective)
+- [isHistoryDirective](x_robot_utils.md#ishistorydirective)
 - [isInitDirective](x_robot_utils.md#isinitdirective)
 - [isDescriptionDirective](x_robot_utils.md#isdescriptiondirective)
 - [isNestedTransition](x_robot_utils.md#isnestedtransition)
@@ -36,8 +37,9 @@
 - [isNestedImmediateDirective](x_robot_utils.md#isnestedimmediatedirective)
 - [isParallelImmediateDirective](x_robot_utils.md#isparallelimmediatedirective)
 - [deepFreeze](x_robot_utils.md#deepfreeze)
-- [cloneContext](x_robot_utils.md#clonecontext)
+- [deepCloneUnfreeze](x_robot_utils.md#deepcloneunfreeze)
 - [canMakeTransition](x_robot_utils.md#canmaketransition)
+- [isPlainObject](x_robot_utils.md#isplainobject)
 - [titleToId](x_robot_utils.md#titletoid)
 
 ## Functions
@@ -122,35 +124,35 @@ producer is ProducerDirectiveWithoutTransition
 
 ___
 
-### isPulse
+### isEntry
 
-▸ **isPulse**(`pulse?`): pulse is PulseDirective
+▸ **isEntry**(`entry?`): entry is PulseDirective
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `pulse?` | `any` |
+| `entry?` | `any` |
 
 #### Returns
 
-pulse is PulseDirective
+entry is PulseDirective
 
 ___
 
-### isExitPulse
+### isExit
 
-▸ **isExitPulse**(`exitPulse?`): exitPulse is Object
+▸ **isExit**(`exit?`): exit is Object
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `exitPulse?` | `any` |
+| `exit?` | `any` |
 
 #### Returns
 
-exitPulse is Object
+exit is Object
 
 ___
 
@@ -412,6 +414,22 @@ initial is InitialDirective
 
 ___
 
+### isHistoryDirective
+
+▸ **isHistoryDirective**(`history?`): history is HistoryDirective
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `history?` | `any` |
+
+#### Returns
+
+history is HistoryDirective
+
+___
+
 ### isInitDirective
 
 ▸ **isInitDirective**(`init?`): init is InitDirective
@@ -510,38 +528,43 @@ ___
 
 ### deepFreeze
 
-▸ **deepFreeze**(`obj`): `any`
-
-This method is used to deep freeze an object
+▸ **deepFreeze**(`obj`, `freezeClassInstances?`, `seen?`): `any`
 
 #### Parameters
 
-| Name | Type | Description |
+| Name | Type | Default value |
 | :------ | :------ | :------ |
-| `obj` | `any` | The object to freeze |
+| `obj` | `any` | `undefined` |
+| `freezeClassInstances` | `boolean` | `false` |
+| `seen` | [`WeakSet`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet )<`object`\> | `undefined` |
 
 #### Returns
 
 `any`
-
-Object frozen
 
 ___
 
-### cloneContext
+### deepCloneUnfreeze
 
-▸ **cloneContext**(`context`, `weakMap?`): `any`
+▸ **deepCloneUnfreeze**<`T`\>(`obj`, `cloneClassInstances?`, `seen?`): `T`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `context` | `any` |
-| `weakMap` | [`WeakMap`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap )<`object`, `any`\> |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `obj` | `T` | `undefined` |
+| `cloneClassInstances` | `boolean` | `false` |
+| `seen` | [`WeakMap`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap )<`object`, `any`\> | `undefined` |
 
 #### Returns
 
-`any`
+`T`
 
 ___
 
@@ -562,6 +585,22 @@ ___
 `boolean`
 
 boolean true if the transition can be executed, false otherwise
+
+___
+
+### isPlainObject
+
+▸ **isPlainObject**(`value`): `boolean`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `value` | `any` |
+
+#### Returns
+
+`boolean`
 
 ___
 

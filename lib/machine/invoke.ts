@@ -11,10 +11,11 @@ import {
 } from "./interfaces";
 import {
   canMakeTransition,
-  cloneContext,
+  deepCloneUnfreeze,
   deepFreeze,
   hasTransition,
   isAction,
+  isEntry,
   isGuard,
   isNestedGuard,
   isNestedMachineWithTransitionDirective,
@@ -22,10 +23,19 @@ import {
   isParallelTransition,
   isProducer,
   isProducerWithTransition,
-  isPulse,
   isValidObject,
   isValidString
 } from "../utils";
+
+function addToHistory(machine: Machine, entry: string): void {
+  if (machine.historyLimit === undefined) return;
+  if (machine.historyLimit === 0) return;
+  
+  machine.history.push(entry);
+  if (machine.history.length > machine.historyLimit) {
+    machine.history.shift();
+  }
+}
 
 /**
  * @param machine The machine that is running
@@ -41,14 +51,14 @@ function runProducer(
   // If it is a producer then we run it
   if (isProducer(producer)) {
     // Add the producer to the history
-    machine.history.push(`${HistoryType.Producer}: ${producer.producer.name}`);
+    addToHistory(machine, `${HistoryType.Producer}: ${producer.producer.name}`);
 
     // Get the context
     let context = machine.context;
 
     // If the machine is frozen we need to clone the context
     if (machine.frozen) {
-      context = cloneContext(context);
+      context = deepCloneUnfreeze(context);
     }
 
     // Run the producer
@@ -89,10 +99,11 @@ function runPulse(
   pulse?: PulseDirective | string | null,
   payload?: any
 ): Promise<void> | void {
-  if (isPulse(pulse)) {
+  if (isEntry(pulse)) {
     const isAsync = pulse.pulse.constructor.name === "AsyncFunction";
 
-    machine.history.push(
+    addToHistory(
+      machine,
       isAsync 
         ? `${HistoryType.AsyncPulse}: ${pulse.pulse.name}`
         : `${HistoryType.Pulse}: ${pulse.pulse.name}`
@@ -101,7 +112,7 @@ function runPulse(
     let context = machine.context;
 
     if (machine.frozen) {
-      context = cloneContext(context);
+      context = deepCloneUnfreeze(context);
     }
 
     if (isAsync) {
@@ -118,7 +129,7 @@ function runPulse(
           }
 
           if (pulse.success) {
-            if (isPulse(pulse.success)) {
+            if (isEntry(pulse.success)) {
               return runPulse(machine, pulse.success);
             }
             return invoke(machine, pulse.success);
@@ -133,7 +144,7 @@ function runPulse(
           }
 
           if (pulse.failure) {
-            if (isPulse(pulse.failure)) {
+            if (isEntry(pulse.failure)) {
               return runPulse(machine, pulse.failure, error);
             }
             return invoke(machine, pulse.failure, error);
@@ -155,7 +166,7 @@ function runPulse(
         }
 
         if (pulse.success) {
-          if (isPulse(pulse.success)) {
+          if (isEntry(pulse.success)) {
             return runPulse(machine, pulse.success);
           }
           return invoke(machine, pulse.success);
@@ -169,7 +180,7 @@ function runPulse(
         }
 
         if (pulse.failure) {
-          if (isPulse(pulse.failure)) {
+          if (isEntry(pulse.failure)) {
             return runPulse(machine, pulse.failure, error);
           }
           return invoke(machine, pulse.failure, error);
@@ -196,7 +207,7 @@ async function runAction(
   payload?: any
 ): Promise<void> {
   // Add the action to the history
-  machine.history.push(`${HistoryType.Action}: ${action.action.name}`);
+  addToHistory(machine, `${HistoryType.Action}: ${action.action.name}`);
 
   // Run the action
   try {
@@ -234,7 +245,7 @@ function catchError(
 ): Promise<void> | void {
   // If frozen, we need to clone the context before modifying
   if (machine.frozen) {
-    machine.context = cloneContext(machine.context);
+    machine.context = deepCloneUnfreeze(machine.context);
   }
   
   // Store error in context for easy access (always, as fallback in case pulse doesn't set it)
@@ -278,7 +289,7 @@ async function runActionsAndProducers(
         await runAction(machine, item, payload);
       } else if (isProducer(item)) {
         await runProducer(machine, item, payload);
-      } else if (isPulse(item)) {
+      } else if (isEntry(item)) {
         await runPulse(machine, item, payload);
       }
     } catch (error) {
@@ -300,7 +311,7 @@ function runProducers(machine: Machine, state: StateDirective, payload: any) {
     try {
       if (isProducer(item)) {
         runProducer(machine, item, payload);
-      } else if (isPulse(item)) {
+      } else if (isEntry(item)) {
         runPulse(machine, item, payload);
       }
     } catch (error) {
@@ -337,12 +348,12 @@ function runGuards(
       }
 
       // Add the guard to the history
-      machine.history.push(`${HistoryType.Guard}: ${guard.guard.name}`);
+      addToHistory(machine, `${HistoryType.Guard}: ${guard.guard.name}`);
 
       // Get context - clone if frozen for guards that might modify it
       let guardContext = machine.context;
       if (machine.frozen) {
-        guardContext = cloneContext(machine.context);
+        guardContext = deepCloneUnfreeze(machine.context);
       }
 
       // Result could be a boolean or anything else
@@ -371,11 +382,11 @@ function runGuards(
             // Handle failure
             if (isValidString(guard.failure)) {
               invoke(machine, guard.failure, resolvedResult);
-            } else if (isPulse(guard.failure)) {
+            } else if (isEntry(guard.failure)) {
               runPulse(machine, guard.failure, resolvedResult);
             } else if (isValidString(resolvedResult)) {
               if (machine.frozen) {
-                machine.context = cloneContext(machine.context);
+                machine.context = deepCloneUnfreeze(machine.context);
               }
               machine.context.error = resolvedResult;
             }
@@ -395,13 +406,13 @@ function runGuards(
         // the result as the payload (This is useful for error handling)
         if (isValidString(guard.failure)) {
           invoke(machine, guard.failure, result);
-        } else if (isPulse(guard.failure)) {
+        } else if (isEntry(guard.failure)) {
           runPulse(machine, guard.failure, result);
         } else if (isValidString(result)) {
           // If no failure transition/pulse is defined, store the result in context.error
           // If frozen, we need to clone the context first
           if (machine.frozen) {
-            machine.context = cloneContext(machine.context);
+            machine.context = deepCloneUnfreeze(machine.context);
           }
           machine.context.error = result;
         }
@@ -435,11 +446,11 @@ function runGuardsFromIndex(
         return false;
       }
 
-      machine.history.push(`${HistoryType.Guard}: ${guard.guard.name}`);
+      addToHistory(machine, `${HistoryType.Guard}: ${guard.guard.name}`);
 
       let guardContext = machine.context;
       if (machine.frozen) {
-        guardContext = cloneContext(machine.context);
+        guardContext = deepCloneUnfreeze(machine.context);
       }
 
       let result;
@@ -455,11 +466,11 @@ function runGuardsFromIndex(
           if (resolvedResult !== true) {
             if (isValidString(guard.failure)) {
               invoke(machine, guard.failure, resolvedResult);
-            } else if (isPulse(guard.failure)) {
+            } else if (isEntry(guard.failure)) {
               runPulse(machine, guard.failure, resolvedResult);
             } else if (isValidString(resolvedResult)) {
               if (machine.frozen) {
-                machine.context = cloneContext(machine.context);
+                machine.context = deepCloneUnfreeze(machine.context);
               }
               machine.context.error = resolvedResult;
             }
@@ -477,11 +488,11 @@ function runGuardsFromIndex(
       if (result !== true) {
         if (isValidString(guard.failure)) {
           invoke(machine, guard.failure, result);
-        } else if (isPulse(guard.failure)) {
+        } else if (isEntry(guard.failure)) {
           runPulse(machine, guard.failure, result);
         } else if (isValidString(result)) {
           if (machine.frozen) {
-            machine.context = cloneContext(machine.context);
+            machine.context = deepCloneUnfreeze(machine.context);
           }
           machine.context.error = result;
         }
@@ -757,7 +768,7 @@ export function invoke(
   // Only run guards if the transition is not the START_EVENT
   if (trimmedTransition !== START_EVENT) {
     // Add the transition to the history
-    machine.history.push(`${HistoryType.Transition}: ${trimmedTransition}`);
+    addToHistory(machine, `${HistoryType.Transition}: ${trimmedTransition}`);
 
     // Get the transition object
     let transitionObject = currentStateObject.on[trimmedTransition];
@@ -774,50 +785,50 @@ export function invoke(
     if (guardsResult instanceof Promise) {
       return guardsResult.then((shouldContinue: boolean) => {
         if (shouldContinue === false) {
-          machine.history.push(`${HistoryType.State}: ${currentStateObject.name}`);
+          addToHistory(machine, `${HistoryType.State}: ${currentStateObject.name}`);
           return;
         }
-        // Continue with exitPulse handling after async guards
-        return handleExitPulsesAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
+        // Continue with exit handling after async guards
+        return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
       });
     }
 
     if (guardsResult === false) {
       // As we tried to make a transition, we need to add the current state to the history
-      machine.history.push(`${HistoryType.State}: ${currentStateObject.name}`);
+      addToHistory(machine, `${HistoryType.State}: ${currentStateObject.name}`);
       return;
     }
 
-    // Run exitPulse(s) from the current state if the transition has them
-    return handleExitPulsesAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
+    // Run exit(s) from the current state if the transition has them
+    return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
   }
 
   // Continue with the rest of the transition
   return continueTransition(machine, currentStateObject, trimmedTransition, payload);
 }
 
-function handleExitPulsesAndContinue(
+function handleExitAndContinue(
   machine: Machine,
   currentStateObject: StateDirective,
   transitionObject: any,
   trimmedTransition: string,
   payload?: any
 ): Promise<void> | void {
-  const exitPulses = transitionObject.exitPulse;
-  if (exitPulses && Array.isArray(exitPulses)) {
-    const pulsesToRun = Array.isArray(exitPulses[0]) 
-      ? exitPulses[0] 
-      : exitPulses as PulseDirective[];
+  const exitItems = transitionObject.exit;
+  if (exitItems && Array.isArray(exitItems)) {
+    const pulsesToRun = Array.isArray(exitItems[0]) 
+      ? exitItems[0] 
+      : exitItems as PulseDirective[];
     
-    for (const exitPulse of pulsesToRun) {
+    for (const exitItem of pulsesToRun) {
       if (machine.isAsync) {
         let promise = Promise.resolve();
-        promise = promise.then(() => runPulse(machine, exitPulse, payload));
+        promise = promise.then(() => runPulse(machine, exitItem, payload));
         return promise.then(() => {
           return continueTransition(machine, currentStateObject, trimmedTransition, payload);
         });
       } else {
-        runPulse(machine, exitPulse, payload);
+        runPulse(machine, exitItem, payload);
       }
     }
     return continueTransition(machine, currentStateObject, trimmedTransition, payload);
@@ -858,7 +869,7 @@ function continueTransition(
   if (trimmedTransition !== START_EVENT) {
     // Set the current state
     machine.current = targetState;
-    machine.history.push(`${HistoryType.State}: ${targetState}`);
+    addToHistory(machine, `${HistoryType.State}: ${targetState}`);
   }
 
   if (machine.isAsync) {

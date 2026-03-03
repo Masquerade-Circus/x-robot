@@ -3,7 +3,7 @@ import {
   getPlantUmlCode,
 } from "../lib/visualize";
 import {
-  exitPulse,
+  exit,
   init,
   initial,
   machine,
@@ -15,8 +15,8 @@ import { describe, it } from "mocha";
 import expect from "expect";
 import { serialize } from "../lib/serialize";
 
-describe("Visualize exitPulse", () => {
-  it("should show exitPulse in plantuml diagram", () => {
+describe("Visualize exit", () => {
+  it("should show exit in plantuml diagram", () => {
     function cleanup(context: any) {
       context.cleaned = true;
     }
@@ -24,7 +24,7 @@ describe("Visualize exitPulse", () => {
     const myMachine = machine(
       "Test",
       init(initial("idle")),
-      state("idle", transition("start", "loading", exitPulse(cleanup))),
+      state("idle", transition("start", "loading", exit(cleanup))),
       state("loading")
     );
 

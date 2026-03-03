@@ -17,10 +17,11 @@ X-Robot is a finite state machine library for nodejs and for the web.
 - [context](x_robot.md#context)
 - [initial](x_robot.md#initial)
 - [shouldFreeze](x_robot.md#shouldfreeze)
+- [history](x_robot.md#history)
 - [state](x_robot.md#state)
 - [transition](x_robot.md#transition)
-- [pulse](x_robot.md#pulse)
-- [exitPulse](x_robot.md#exitpulse)
+- [entry](x_robot.md#entry)
+- [exit](x_robot.md#exit)
 - [guard](x_robot.md#guard)
 - [immediate](x_robot.md#immediate)
 - [nestedGuard](x_robot.md#nestedguard)
@@ -62,6 +63,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 - [ProducerDirectiveWithoutTransition](../interfaces/x_robot.ProducerDirectiveWithoutTransition.md)
 - [Pulse](../interfaces/x_robot.Pulse.md)
 - [PulseDirective](../interfaces/x_robot.PulseDirective.md)
+- [ExitDirective](../interfaces/x_robot.ExitDirective.md)
 - [Action](../interfaces/x_robot.Action.md)
 - [ActionDirective](../interfaces/x_robot.ActionDirective.md)
 - [Guard](../interfaces/x_robot.Guard.md)
@@ -84,6 +86,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 - [ContextDirective](../interfaces/x_robot.ContextDirective.md)
 - [InitialDirective](../interfaces/x_robot.InitialDirective.md)
 - [ShouldFreezeDirective](../interfaces/x_robot.ShouldFreezeDirective.md)
+- [HistoryDirective](../interfaces/x_robot.HistoryDirective.md)
 
 ### Enumerations
 
@@ -99,13 +102,13 @@ X-Robot is a finite state machine library for nodejs and for the web.
 
 ▸ **init**(...`directives`): [`InitDirective`](../interfaces/x_robot.InitDirective.md)
 
-Creates an init directive that can contain initial, context and freeze options
+Creates an init directive that can contain initial, context, freeze and history options
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...directives` | ([`InitialDirective`](../interfaces/x_robot.InitialDirective.md) \| [`ContextDirective`](../interfaces/x_robot.ContextDirective.md) \| [`ShouldFreezeDirective`](../interfaces/x_robot.ShouldFreezeDirective.md))[] | InitialDirective, ContextDirective or ShouldFreezeDirective |
+| `...directives` | ([`InitialDirective`](../interfaces/x_robot.InitialDirective.md) \| [`ContextDirective`](../interfaces/x_robot.ContextDirective.md) \| [`ShouldFreezeDirective`](../interfaces/x_robot.ShouldFreezeDirective.md) \| [`HistoryDirective`](../interfaces/x_robot.HistoryDirective.md))[] | InitialDirective, ContextDirective, ShouldFreezeDirective or HistoryDirective |
 
 #### Returns
 
@@ -226,6 +229,24 @@ ShouldFreezeDirective
 
 ___
 
+### history
+
+▸ **history**(`limit`): [`HistoryDirective`](../interfaces/x_robot.HistoryDirective.md)
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `limit` | `number` | The maximum number of history entries to keep. Set to 0 to disable history. |
+
+#### Returns
+
+[`HistoryDirective`](../interfaces/x_robot.HistoryDirective.md)
+
+HistoryDirective
+
+___
+
 ### state
 
 ▸ **state**(`name`, ...`args`): [`StateDirective`](../interfaces/x_robot.StateDirective.md)
@@ -255,7 +276,7 @@ ___
 | :------ | :------ | :------ |
 | `transitionName` | `string` | The name of the transition |
 | `target` | `string` | The target state of the transition |
-| `...args` | ([`GuardsDirective`](../interfaces/x_robot.GuardsDirective.md) \| [`GuardDirective`](../interfaces/x_robot.GuardDirective.md) \| { `exitPulse`: [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)[]  })[] | Guards and optional exitPulse at the end |
+| `...args` | ([`GuardsDirective`](../interfaces/x_robot.GuardsDirective.md) \| [`GuardDirective`](../interfaces/x_robot.GuardDirective.md) \| { `exit`: [`ExitDirective`](../interfaces/x_robot.ExitDirective.md)[]  })[] | Guards and optional exit or exitPulse at the end |
 
 #### Returns
 
@@ -265,17 +286,17 @@ TransitionDirective
 
 ___
 
-### pulse
+### entry
 
-▸ **pulse**(`pulse`, `success?`, `failure?`): [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)
+▸ **entry**(`pulse`, `success?`, `failure?`): [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `pulse` | [`Pulse`](../interfaces/x_robot.Pulse.md) | The pulse to be run |
-| `success?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | The transition to run on success (optional) |
-| `failure?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | The transition to run on failure (optional) |
+| `pulse` | [`Pulse`](../interfaces/x_robot.Pulse.md) | The function to run when entering the state |
+| `success?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | Optional success transition string |
+| `failure?` | `string` \| [`PulseDirective`](../interfaces/x_robot.PulseDirective.md) | Optional failure transition string |
 
 #### Returns
 
@@ -285,27 +306,26 @@ PulseDirective
 
 ___
 
-### exitPulse
+### exit
 
-▸ **exitPulse**(`handler`, `success?`, `failure?`): `Object`
+▸ **exit**(`handler`, `failure?`): `Object`
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `handler` | [`Pulse`](../interfaces/x_robot.Pulse.md) | The handler function to run when exiting the state |
-| `success?` | `string` | Optional success transition string |
+| `handler` | [`Pulse`](../interfaces/x_robot.Pulse.md) | The function to run when exiting the state |
 | `failure?` | `string` | Optional failure transition string |
 
 #### Returns
 
 `Object`
 
-ExitPulseDirective
+ExitDirective
 
 | Name | Type |
 | :------ | :------ |
-| `exitPulse` | [`PulseDirective`](../interfaces/x_robot.PulseDirective.md)[] |
+| `exit` | [`ExitDirective`](../interfaces/x_robot.ExitDirective.md)[] |
 
 ___
 
@@ -591,7 +611,7 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/create.ts:709](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/machine/create.ts#L709)
+[lib/machine/create.ts:739](https://github.com/Masquerade-Circus/x-robot/blob/5a7fcfa/lib/machine/create.ts#L739)
 
 ## Variables
 
@@ -601,4 +621,4 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/interfaces.ts:204](https://github.com/Masquerade-Circus/x-robot/blob/5737eb3/lib/machine/interfaces.ts#L204)
+[lib/machine/interfaces.ts:215](https://github.com/Masquerade-Circus/x-robot/blob/5a7fcfa/lib/machine/interfaces.ts#L215)

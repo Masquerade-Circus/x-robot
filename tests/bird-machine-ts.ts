@@ -2,6 +2,8 @@ import {
   context,
   dangerState,
   description,
+  entry,
+  exit,
   guard,
   immediate,
   infoState,
@@ -12,7 +14,6 @@ import {
   nestedGuard,
   parallel,
   primaryState,
-  pulse,
   state,
   successState,
   transition,
@@ -60,23 +61,23 @@ export const LeftWingMachine = machine(
   state(
     "closed",
     description("The left wing is closed"),
-    pulse(sendStateToApiForLeftWing, undefined, "fatal"),
-    pulse(updateLeftWingToClosed),
+    entry(sendStateToApiForLeftWing, undefined, "fatal"),
+    entry(updateLeftWingToClosed),
     transition("open", "opened", guard(isLeftWingClosed))
   ),
   state(
     "opened",
     description("The left wing is opened"),
-    pulse(sendStateToApiForLeftWing, undefined, "fatal"),
-    pulse(updateLeftWingToOpened),
+    entry(sendStateToApiForLeftWing, undefined, "fatal"),
+    entry(updateLeftWingToOpened),
     transition("close", "closed", guard(isLeftWingOpened))
   ),
   state(
     "fatal",
     description("Is the left wing injured?"),
-    pulse(sendStateToApiForLeftWing, undefined, "fatal"),
-    pulse(updateLeftWingToFatal),
-    pulse(updateError)
+    entry(sendStateToApiForLeftWing, undefined, "fatal"),
+    entry(updateLeftWingToFatal),
+    entry(updateError)
   )
 );
 
@@ -118,23 +119,23 @@ export const RightWingMachine = machine(
   state(
     "closed",
     description("The right wing is closed"),
-    pulse(sendStateToApiForRightWing, undefined, "fatal"),
-    pulse(updateRightWingToClosed),
+    entry(sendStateToApiForRightWing, undefined, "fatal"),
+    entry(updateRightWingToClosed),
     transition("open", "opened", guard(isRightWingClosed))
   ),
   state(
     "opened",
     description("The right wing is opened"),
-    pulse(sendStateToApiForRightWing, undefined, "fatal"),
-    pulse(updateRightWingToOpened),
+    entry(sendStateToApiForRightWing, undefined, "fatal"),
+    entry(updateRightWingToOpened),
     transition("close", "closed", guard(isRightWingOpened))
   ),
   state(
     "fatal",
     description("Is the right wing injured?"),
-    pulse(sendStateToApiForRightWing, undefined, "fatal"),
-    pulse(updateRightWingToFatal),
-    pulse(updateError)
+    entry(sendStateToApiForRightWing, undefined, "fatal"),
+    entry(updateRightWingToFatal),
+    entry(updateError)
   )
 );
 
@@ -169,13 +170,13 @@ const FlyingTimeCounter = machine(
   state(
     "stopped",
     description("The bird is not flying"),
-    pulse(stopTimer),
+    entry(stopTimer),
     transition("start", "started", guard(isTimeStopped))
   ),
   state(
     "started",
     description("The bird is flying"),
-    pulse(startTimer),
+    entry(startTimer),
     transition("stop", "stopped", guard(isTimeStarted))
   )
 );
@@ -196,13 +197,13 @@ const WalkingTimeCounter = machine(
   state(
     "stopped",
     description("The bird is not walking"),
-    pulse(stopTimer),
+    entry(stopTimer),
     transition("start", "started", guard(isTimeStopped))
   ),
   state(
     "started",
     description("The bird is walking"),
-    pulse(startTimer),
+    entry(startTimer),
     transition("stop", "stopped", guard(isTimeStarted))
   )
 );
@@ -248,8 +249,8 @@ export const BirdMachine = machine(
   primaryState(
     "land",
     description("The bird is on the ground"),
-    pulse(sendStateToApiForBird, undefined, "fatal"),
-    pulse(updateBirdToLand),
+    entry(sendStateToApiForBird, undefined, "fatal"),
+    entry(updateBirdToLand),
     transition("takeoff", "takingoff"),
     immediate("flyingtime/stop"),
     immediate("walkingtime/start")
@@ -259,8 +260,8 @@ export const BirdMachine = machine(
     description("The bird is taking off"),
     nested(LeftWingMachine, "open"),
     nested(RightWingMachine, "open"),
-    pulse(sendStateToApiForBird, undefined, "fatal"),
-    pulse(updateBirdToTakingoff),
+    entry(sendStateToApiForBird, undefined, "fatal"),
+    entry(updateBirdToTakingoff),
     immediate(
       "flying",
       nestedGuard(LeftWingMachine, isLeftWingOpened),
@@ -270,8 +271,8 @@ export const BirdMachine = machine(
   successState(
     "flying",
     description("The bird is on the air"),
-    pulse(sendStateToApiForBird, undefined, "fatal"),
-    pulse(updateBirdToFlying),
+    entry(sendStateToApiForBird, undefined, "fatal"),
+    entry(updateBirdToFlying),
     transition("land", "landing"),
     immediate("flyingtime/start"),
     immediate("walkingtime/stop")
@@ -281,8 +282,8 @@ export const BirdMachine = machine(
     description("The bird is landing"),
     nested(LeftWingMachine, "close"),
     nested(RightWingMachine, "close"),
-    pulse(sendStateToApiForBird, undefined, "fatal"),
-    pulse(updateBirdToLanding),
+    entry(sendStateToApiForBird, undefined, "fatal"),
+    entry(updateBirdToLanding),
     immediate(
       "land",
       nestedGuard(LeftWingMachine, isLeftWingClosed),
@@ -292,9 +293,9 @@ export const BirdMachine = machine(
   dangerState(
     "fatal",
     description("Is the bird dead?"),
-    pulse(sendStateToApiForBird, undefined, "fatal"),
-    pulse(updateBirdToFatal),
-    pulse(updateError)
+    entry(sendStateToApiForBird, undefined, "fatal"),
+    entry(updateBirdToFatal),
+    entry(updateError)
   )
 );
 

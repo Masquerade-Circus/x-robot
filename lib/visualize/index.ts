@@ -276,11 +276,11 @@ function getInnerPlantUmlCode(
             }
           }
 
-          // Add exitPulse info
-          const exitPulseData = state.on[transitionName].exitPulse;
-          if (exitPulseData && exitPulseData.length > 0) {
-            const exitPulseNames = exitPulseData.map(ep => ep.pulse).join(", ");
-            transitions += `\\n[exit: ${exitPulseNames}]`;
+          // Add exit info
+          const exitData = state.on[transitionName].exit;
+          if (exitData && exitData.length > 0) {
+            const exitNames = exitData.map(ep => ep.pulse).join(", ");
+            transitions += `\\n[exit: ${exitNames}]`;
           }
         }
 

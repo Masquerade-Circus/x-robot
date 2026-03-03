@@ -12,7 +12,7 @@ describe("Generate code from a serialized machine", () => {
   };
 
   it("should generate code from a serialized machine in esm format", () => {
-    let expectedCode = `import { machine, states, initial, context, primaryState, description, immediate, transition, action, producer, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel } from "x-robot";
+    let expectedCode = `import { machine, states, initial, context, primaryState, description, immediate, transition, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel, entry, exit } from "x-robot";
 
 /******************** LeftWingMachine Start ********************/
 
@@ -60,23 +60,23 @@ export const LeftWingMachine = machine(
     state(
       "closed",
       description("The left wing is closed"),
-      pulse(sendStateToApiForLeftWing, null, pulse(updateError, "fatal")),
-      pulse(updateLeftWingToClosed),
-      transition("open", "opened", guard(isLeftWingClosed, pulse(updateError)))
+      entry(sendStateToApiForLeftWing, null, entry(updateError, "fatal")),
+      entry(updateLeftWingToClosed),
+      transition("open", "opened", guard(isLeftWingClosed, entry(updateError)))
     ),
     state(
       "opened",
       description("The left wing is opened"),
-      pulse(sendStateToApiForLeftWing, null, pulse(updateError, "fatal")),
-      pulse(updateLeftWingToOpened),
-      transition("close", "closed", guard(isLeftWingOpened, pulse(updateError)))
+      entry(sendStateToApiForLeftWing, null, entry(updateError, "fatal")),
+      entry(updateLeftWingToOpened),
+      transition("close", "closed", guard(isLeftWingOpened, entry(updateError)))
     ),
     state(
       "fatal",
       description("Is the left wing injured?"),
-      pulse(sendStateToApiForLeftWing, null, pulse(updateError, "fatal")),
-      pulse(updateLeftWingToFatal),
-      pulse(updateError)
+      entry(sendStateToApiForLeftWing, null, entry(updateError, "fatal")),
+      entry(updateLeftWingToFatal),
+      entry(updateError)
     )
   ),
   context(getLeftWingContext),
@@ -127,23 +127,23 @@ export const RightWingMachine = machine(
     state(
       "closed",
       description("The right wing is closed"),
-      pulse(sendStateToApiForRightWing, null, pulse(updateError, "fatal")),
-      pulse(updateRightWingToClosed),
-      transition("open", "opened", guard(isRightWingClosed, pulse(updateError)))
+      entry(sendStateToApiForRightWing, null, entry(updateError, "fatal")),
+      entry(updateRightWingToClosed),
+      transition("open", "opened", guard(isRightWingClosed, entry(updateError)))
     ),
     state(
       "opened",
       description("The right wing is opened"),
-      pulse(sendStateToApiForRightWing, null, pulse(updateError, "fatal")),
-      pulse(updateRightWingToOpened),
-      transition("close", "closed", guard(isRightWingOpened, pulse(updateError)))
+      entry(sendStateToApiForRightWing, null, entry(updateError, "fatal")),
+      entry(updateRightWingToOpened),
+      transition("close", "closed", guard(isRightWingOpened, entry(updateError)))
     ),
     state(
       "fatal",
       description("Is the right wing injured?"),
-      pulse(sendStateToApiForRightWing, null, pulse(updateError, "fatal")),
-      pulse(updateRightWingToFatal),
-      pulse(updateError)
+      entry(sendStateToApiForRightWing, null, entry(updateError, "fatal")),
+      entry(updateRightWingToFatal),
+      entry(updateError)
     )
   ),
   context(getRightWingContext),
@@ -185,13 +185,13 @@ export const FlyingTimeMachine = machine(
     state(
       "stopped",
       description("The bird is not flying"),
-      pulse(stopTimer),
+      entry(stopTimer),
       transition("start", "started", guard(isTimeStopped))
     ),
     state(
       "started",
       description("The bird is flying"),
-      pulse(startTimer),
+      entry(startTimer),
       transition("stop", "stopped", guard(isTimeStarted))
     )
   ),
@@ -214,13 +214,13 @@ export const WalkingTimeMachine = machine(
     state(
       "stopped",
       description("The bird is not walking"),
-      pulse(stopTimer),
+      entry(stopTimer),
       transition("start", "started", guard(isTimeStopped))
     ),
     state(
       "started",
       description("The bird is walking"),
-      pulse(startTimer),
+      entry(startTimer),
       transition("stop", "stopped", guard(isTimeStarted))
     )
   ),
@@ -270,8 +270,8 @@ export const BirdMachine = machine(
     primaryState(
       "land",
       description("The bird is on the ground"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToLand),
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToLand),
       immediate("flyingtime/stop"),
       immediate("walkingtime/start"),
       transition("takeoff", "takingoff")
@@ -281,15 +281,15 @@ export const BirdMachine = machine(
       description("The bird is taking off"),
       nested(LeftWingMachine, "open"),
       nested(RightWingMachine, "open"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToTakingoff),
-      immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened, pulse(updateError)), nestedGuard(RightWingMachine, isRightWingOpened, pulse(updateError)))
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToTakingoff),
+      immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened, entry(updateError)), nestedGuard(RightWingMachine, isRightWingOpened, entry(updateError)))
     ),
     successState(
       "flying",
       description("The bird is on the air"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToFlying),
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToFlying),
       immediate("flyingtime/start"),
       immediate("walkingtime/stop"),
       transition("land", "landing")
@@ -299,16 +299,16 @@ export const BirdMachine = machine(
       description("The bird is landing"),
       nested(LeftWingMachine, "close"),
       nested(RightWingMachine, "close"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToLanding),
-      immediate("land", nestedGuard(LeftWingMachine, isLeftWingClosed, pulse(updateError)), nestedGuard(RightWingMachine, isRightWingClosed, pulse(updateError)))
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToLanding),
+      immediate("land", nestedGuard(LeftWingMachine, isLeftWingClosed, entry(updateError)), nestedGuard(RightWingMachine, isRightWingClosed, entry(updateError)))
     ),
     dangerState(
       "fatal",
       description("Is the bird dead?"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToFatal),
-      pulse(updateError)
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToFatal),
+      entry(updateError)
     )
   ),
   parallel(
@@ -326,16 +326,16 @@ export default { LeftWingMachine, RightWingMachine, FlyingTimeMachine, WalkingTi
     let myMachine = getMachine();
     let code = generateFromSerializedMachine(myMachine, Format.ESM);
 
-    expect(code).toContain('import { machine, states, initial, context, primaryState, description, immediate, transition, pulse');
-    expect(code).toContain('pulse(sendStateToApiForBird, undefined, "fatal")');
+    expect(code).toContain('import { machine, states, initial, context, primaryState, description, immediate, transition, entry');
+    expect(code).toContain('entry(sendStateToApiForBird, undefined, "fatal")');
     expect(code).toContain('immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened), nestedGuard(RightWingMachine, isRightWingOpened))');
-    expect(code).toContain('// Pulses');
+    expect(code).toContain('// Entries');
     expect(code).not.toMatch(/\baction\b/);
     expect(code).not.toMatch(/\bproducer\b/);
   });
 
   it("should generate code from a serialized machine in cjs format", () => {
-    let expectedCode = `const { machine, states, initial, context, primaryState, description, immediate, transition, action, producer, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel } = require("x-robot");
+    let expectedCode = `const { machine, states, initial, context, primaryState, description, immediate, transition, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel, entry, exit } = require("x-robot");
 
 /******************** LeftWingMachine Start ********************/
 
@@ -383,23 +383,23 @@ const LeftWingMachine = machine(
     state(
       "closed",
       description("The left wing is closed"),
-      pulse(sendStateToApiForLeftWing, null, pulse(updateError, "fatal")),
-      pulse(updateLeftWingToClosed),
-      transition("open", "opened", guard(isLeftWingClosed, pulse(updateError)))
+      entry(sendStateToApiForLeftWing, null, entry(updateError, "fatal")),
+      entry(updateLeftWingToClosed),
+      transition("open", "opened", guard(isLeftWingClosed, entry(updateError)))
     ),
     state(
       "opened",
       description("The left wing is opened"),
-      pulse(sendStateToApiForLeftWing, null, pulse(updateError, "fatal")),
-      pulse(updateLeftWingToOpened),
-      transition("close", "closed", guard(isLeftWingOpened, pulse(updateError)))
+      entry(sendStateToApiForLeftWing, null, entry(updateError, "fatal")),
+      entry(updateLeftWingToOpened),
+      transition("close", "closed", guard(isLeftWingOpened, entry(updateError)))
     ),
     state(
       "fatal",
       description("Is the left wing injured?"),
-      pulse(sendStateToApiForLeftWing, null, pulse(updateError, "fatal")),
-      pulse(updateLeftWingToFatal),
-      pulse(updateError)
+      entry(sendStateToApiForLeftWing, null, entry(updateError, "fatal")),
+      entry(updateLeftWingToFatal),
+      entry(updateError)
     )
   ),
   context(getLeftWingContext),
@@ -450,23 +450,23 @@ const RightWingMachine = machine(
     state(
       "closed",
       description("The right wing is closed"),
-      pulse(sendStateToApiForRightWing, null, pulse(updateError, "fatal")),
-      pulse(updateRightWingToClosed),
-      transition("open", "opened", guard(isRightWingClosed, pulse(updateError)))
+      entry(sendStateToApiForRightWing, null, entry(updateError, "fatal")),
+      entry(updateRightWingToClosed),
+      transition("open", "opened", guard(isRightWingClosed, entry(updateError)))
     ),
     state(
       "opened",
       description("The right wing is opened"),
-      pulse(sendStateToApiForRightWing, null, pulse(updateError, "fatal")),
-      pulse(updateRightWingToOpened),
-      transition("close", "closed", guard(isRightWingOpened, pulse(updateError)))
+      entry(sendStateToApiForRightWing, null, entry(updateError, "fatal")),
+      entry(updateRightWingToOpened),
+      transition("close", "closed", guard(isRightWingOpened, entry(updateError)))
     ),
     state(
       "fatal",
       description("Is the right wing injured?"),
-      pulse(sendStateToApiForRightWing, null, pulse(updateError, "fatal")),
-      pulse(updateRightWingToFatal),
-      pulse(updateError)
+      entry(sendStateToApiForRightWing, null, entry(updateError, "fatal")),
+      entry(updateRightWingToFatal),
+      entry(updateError)
     )
   ),
   context(getRightWingContext),
@@ -508,13 +508,13 @@ const FlyingTimeMachine = machine(
     state(
       "stopped",
       description("The bird is not flying"),
-      pulse(stopTimer),
+      entry(stopTimer),
       transition("start", "started", guard(isTimeStopped))
     ),
     state(
       "started",
       description("The bird is flying"),
-      pulse(startTimer),
+      entry(startTimer),
       transition("stop", "stopped", guard(isTimeStarted))
     )
   ),
@@ -537,13 +537,13 @@ const WalkingTimeMachine = machine(
     state(
       "stopped",
       description("The bird is not walking"),
-      pulse(stopTimer),
+      entry(stopTimer),
       transition("start", "started", guard(isTimeStopped))
     ),
     state(
       "started",
       description("The bird is walking"),
-      pulse(startTimer),
+      entry(startTimer),
       transition("stop", "stopped", guard(isTimeStarted))
     )
   ),
@@ -593,8 +593,8 @@ const BirdMachine = machine(
     primaryState(
       "land",
       description("The bird is on the ground"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToLand),
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToLand),
       immediate("flyingtime/stop"),
       immediate("walkingtime/start"),
       transition("takeoff", "takingoff")
@@ -604,15 +604,15 @@ const BirdMachine = machine(
       description("The bird is taking off"),
       nested(LeftWingMachine, "open"),
       nested(RightWingMachine, "open"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToTakingoff),
-      immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened, pulse(updateError)), nestedGuard(RightWingMachine, isRightWingOpened, pulse(updateError)))
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToTakingoff),
+      immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened, entry(updateError)), nestedGuard(RightWingMachine, isRightWingOpened, entry(updateError)))
     ),
     successState(
       "flying",
       description("The bird is on the air"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToFlying),
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToFlying),
       immediate("flyingtime/start"),
       immediate("walkingtime/stop"),
       transition("land", "landing")
@@ -622,16 +622,16 @@ const BirdMachine = machine(
       description("The bird is landing"),
       nested(LeftWingMachine, "close"),
       nested(RightWingMachine, "close"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToLanding),
-      immediate("land", nestedGuard(LeftWingMachine, isLeftWingClosed, pulse(updateError)), nestedGuard(RightWingMachine, isRightWingClosed, pulse(updateError)))
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToLanding),
+      immediate("land", nestedGuard(LeftWingMachine, isLeftWingClosed, entry(updateError)), nestedGuard(RightWingMachine, isRightWingClosed, entry(updateError)))
     ),
     dangerState(
       "fatal",
       description("Is the bird dead?"),
-      pulse(sendStateToApiForBird, null, pulse(updateError, "fatal")),
-      pulse(updateBirdToFatal),
-      pulse(updateError)
+      entry(sendStateToApiForBird, null, entry(updateError, "fatal")),
+      entry(updateBirdToFatal),
+      entry(updateError)
     )
   ),
   parallel(
@@ -648,10 +648,10 @@ module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, Walking
 `;
     let myMachine = getMachine();
     let code = generateFromSerializedMachine(myMachine, Format.CJS);
-    expect(code).toContain('const { machine, states, initial, context, primaryState, description, immediate, transition, pulse');
-    expect(code).toContain('pulse(sendStateToApiForBird, undefined, "fatal")');
+    expect(code).toContain('const { machine, states, initial, context, primaryState, description, immediate, transition, entry');
+    expect(code).toContain('entry(sendStateToApiForBird, undefined, "fatal")');
     expect(code).toContain('immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened), nestedGuard(RightWingMachine, isRightWingOpened))');
-    expect(code).toContain('// Pulses');
+    expect(code).toContain('// Entries');
     expect(code).not.toMatch(/\baction\b/);
     expect(code).not.toMatch(/\bproducer\b/);
   });
@@ -659,10 +659,10 @@ module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, Walking
   it("should save the generated code in esm format into a js file");
   it("should save the generated code in cjs format into a js file");
 
-  it("should generate code with exitPulse", () => {
+  it("should generate code with exit", () => {
     const { serialize } = require("../lib/serialize");
     const { Format, generateFromSerializedMachine } = require("../lib/generate");
-    const { exitPulse, initial, init, machine, pulse, state, transition } = require("../lib");
+    const { exit, initial, init, machine, pulse, state, transition } = require("../lib");
     
     function cleanup(context: any) {
       context.cleaned = true;
@@ -671,14 +671,14 @@ module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, Walking
     const myMachine = machine(
       "Test",
       init(initial("idle")),
-      state("idle", transition("start", "loading", exitPulse(cleanup))),
+      state("idle", transition("start", "loading", exit(cleanup))),
       state("loading")
     );
 
     const serialized = serialize(myMachine);
     const code = generateFromSerializedMachine(serialized, Format.ESM);
     
-    expect(code).toContain("exitPulse");
+    expect(code).toContain("exit");
     expect(code).toContain("cleanup");
   });
 });

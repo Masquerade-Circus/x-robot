@@ -21,7 +21,7 @@ Crea la máquina de estados. Los argumentos pueden ser:
 
 ---
 
-## 2. `init(initial?, context?, shouldFreeze?)`
+## 2. `init(initial?, context?, shouldFreeze?, history?)`
 
 Configuración inicial de la máquina.
 
@@ -30,6 +30,8 @@ Configuración inicial de la máquina.
 init(initial("idle"))
 init(initial("idle"), context({ count: 0 }))
 init(initial("idle"), context({ count: 0 }), shouldFreeze(false))
+init(initial("idle"), history(5))           // limitar historial a 5 entradas
+init(initial("idle"), history(0))            // desactivar historial
 init(context({ count: 0 }))
 ```
 
@@ -77,18 +79,32 @@ shouldFreeze(false)  // context mutable
 
 ---
 
-## 6. `state(name, ...args)`
+## 6. `history(limit)`
+
+Controla el número máximo de entradas en el historial de la máquina. Por defecto es 10. Establecer en 0 para desactivar.
+
+```typescript
+history(10)   // default - mantener últimas 10 entradas
+history(5)    // mantener últimas 5 entradas
+history(0)    // desactivar historial
+```
+
+**Esta es una característica que XState NO tiene.**
+
+---
+
+## 7. `state(name, ...args)`
 
 Define un estado.
 
 ```typescript
 state("idle")
 state("loading", transition("done", "success"))
-state("error", pulse(handleError), transition("retry", "loading"))
+state("error", entry(handleError), transition("retry", "loading"))
 ```
 
 **Argumentos posibles:**
-- `pulse(...)` - ejecuta lógica
+- `entry(...)` - ejecuta lógica
 - `transition(...)` - define transiciones
 - `immediate(...)` - transiciones inmediatas
 - `nested(...)` - máquina anidada
@@ -96,184 +112,63 @@ state("error", pulse(handleError), transition("retry", "loading"))
 
 ---
 
-## 7. `pulse(fn, [success], [failure])`
+## 8. `entry(fn, [success], [failure])`
 
 Ejecuta lógica cuando la máquina entra al estado.
 
 ```typescript
 // Solo ejecutar
-pulse(fn)
+entry(fn)
 
 // Ejecutar y transicionar en éxito
-pulse(fn, "done")
+entry(fn, "done")
 
 // Ejecutar y transicionar en éxito o error
-pulse(fn, "done", "error")
+entry(fn, "done", "error")
 
 // Solo ejecutar en error (sin success)
-pulse(fn, ,"error")
+entry(fn, ,"error")
 ```
 
 **Comportamiento detallado:**
 
 | Sintaxis | Éxito | Error |
 |----------|-------|-------|
-| `pulse(fn)` | Queda en el estado, pasa al siguiente pulse | Busca estado "error", si existe transiciona; si no, throw |
-| `pulse(fn, "done")` | Transiciona a "done" | Busca estado "error", si existe transiciona; si no, throw |
-| `pulse(fn, ,"error")` | Queda en el estado | Transiciona a "error" |
-| `pulse(fn, "done", "error")` | Transiciona a "done" | Transiciona a "error" |
+| `entry(fn)` | Queda en el estado, pasa al siguiente entry | Busca estado "error", si existe transiciona; si no, throw |
+| `entry(fn, "done")` | Transiciona a "done" | Busca estado "error", si existe transiciona; si no, throw |
+| `entry(fn, ,"error")` | Queda en el estado | Transiciona a "error" |
+| `entry(fn, "done", "error")` | Transiciona a "done" | Transiciona a "error" |
 
-**NO válido (usar múltiples pulses):**
+**NO válido (usar múltiples entry):**
 ```typescript
 // INVÁLIDO:
-pulse(fn, pulse(handler)) 
-pulse(fn, "done", pulse(handler))
+entry(fn, entry(handler)) 
+entry(fn, "done", entry(handler))
 
-// VÁLIDO - separar en múltiples pulses:
-pulse(fn)
-pulse(handler)
+// VÁLIDO - separar en múltiples entry:
+entry(fn)
+entry(handler)
 ```
 
 ---
 
-## 8. `transition(name, target, ...guards)`
+## 9. `transition(name, target, ...guards)`
 
-Define una transición.
+## 10. `guard(fn, [failure])`
 
-```typescript
-transition("submit", "submitting")
-transition("submit", "submitting", guard(isValid))
-transition("update", "updated", guard(canUpdate), guard(isAuthorized))
-```
+## 10.1. `exit(handler, [failure])`
 
-| Parámetro | Tipo | Descripción |
-|-----------|------|-------------|
-| `name` | `string` | Nombre del evento |
-| `target` | `string` | Estado destino |
-| `guards` | `GuardDirective[]` | Condiciones (opcional) |
+## 11. `immediate(target, ...guards)`
 
----
+## 12. `nested(machine, [transition])`
 
-## 9. `guard(fn, [failure])`
+## 13. `nestedGuard(machine, guard, [failure])`
 
-Define una condición para una transición.
+## 14. `parallel(...machines)`
 
-```typescript
-guard(isValid)
-guard(isValid, "invalid")
+## 15. `description(text)`
 
-// En transición:
-transition("submit", "submitting", guard(isFormValid))
-```
-
-**Reglas:**
-- El `failure` SOLO acepta strings (no pulses)
-- El guard debe estar dentro de una transición, no directamente en el estado
-
-```typescript
-// VÁLIDO:
-guard(isValid)           // solo validar
-guard(isValid, "error") // transicionar en failure
-
-// INVÁLIDO:
-guard(isValid, pulse(handleError)) // NO válido - failure debe ser string
-```
-
-**Comportamiento:**
-- Retorna `true` → permite la transición
-- Retorna otro valor → no permite la transición
-  - Si hay `failure` (string) → transiciona según failure
-  - Si no hay `failure` → almacena el valor en `context.error`
-- Si es async (Promise) → espera el resultado y behave igual
-
----
-
-## 9.1. `exitPulse(handler, [success], [failure])`
-
-Ejecuta lógica cuando la máquina sale de un estado, después de que los guards pasan y antes de cambiar al nuevo estado.
-
-```typescript
-// Solo handler
-exitPulse(cleanup)
-
-// Con transición de éxito
-exitPulse(cleanup, "success")
-
-// Con transiciones de éxito y error
-exitPulse(cleanup, "success", "error")
-```
-
-**Ubicación:**
-- SOLO al final de la transición, después de los guards
-
-```typescript
-// VÁLIDO:
-transition("submit", "success", guard(isValid), exitPulse(cleanup))
-
-// INVÁLIDO:
-transition("submit", "success", exitPulse(cleanup), guard(isValid))
-```
-
-**Comportamiento:**
-- Si los guards pasan → ejecuta el exitPulse → transiciona al nuevo estado
-- Si los guards fallan → NO ejecuta el exitPulse → se queda en el estado actual
-
----
-
-## 10. `immediate(target, ...guards)`
-
-Transición inmediata (sin esperar evento).
-
-```typescript
-immediate("loading")
-immediate("success", guard(isReady))
-```
-
----
-
-## 11. `nested(machine, [transition])`
-
-Incrusta otra máquina como submáquina.
-
-```typescript
-nested(leftWingMachine)
-nested(leftWingMachine, "open")  // transiciona al estado "open" al entrar
-```
-
----
-
-## 12. `nestedGuard(machine, guard, [failure])`
-
-Guard que evalúa contra el context de una máquina anidada.
-
-```typescript
-nestedGuard(leftWingMachine, isWingOpen)
-nestedGuard(leftWingMachine, isWingOpen, "invalid")
-```
-
----
-
-## 13. `parallel(...machines)`
-
-Define máquinas paralelas que se ejecutan simultáneamente.
-
-```typescript
-parallel(timerMachine, counterMachine)
-```
-
----
-
-## 14. `description(text)`
-
-Documentación para el estado.
-
-```typescript
-state("loading", description("Cargando datos"))
-```
-
----
-
-## 15. Helpers de estado
+## 16. Helpers de estado
 
 Aliases para estados con tipos visuales:
 
@@ -293,11 +188,11 @@ primaryState("active", ...)
 // Machine
 machine("MyApp", init(initial("idle")), state("idle"), state("loading"))
 
-// State con múltiples pulses
+// State con múltiples entry
 state("saving",
-  pulse(validateInput),
-  pulse(saveData, "saved"),
-  pulse(notify)
+  entry(validateInput),
+  entry(saveData, "saved"),
+  entry(notify)
 )
 
 // Transitions con guards
@@ -307,15 +202,15 @@ state("form",
 
 // Con error handling
 state("processing",
-  pulse(apiCall, "success", "error")
+  entry(apiCall, "success", "error")
 )
 
 state("error",
-  pulse(logError)
+  entry(logError)
 )
 
 state("success",
-  pulse(showMessage)
+  entry(showMessage)
 )
 ```
 
@@ -326,8 +221,8 @@ state("success",
 ### Estados finales
 Un estado sin transiciones se considera estado final.
 
-### Manejo de errores en pulses
-1. Si el pulse tiene `failure` definido → usa esa transición
+### Manejo de errores en entry actions
+1. Si el entry tiene `failure` definido → usa esa transición
 2. Si no tiene `failure` pero existe estado "error" → transiciona automáticamente
 3. Si no tiene "error" → lanza el error
 

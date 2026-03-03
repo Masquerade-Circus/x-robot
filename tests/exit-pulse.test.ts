@@ -1,11 +1,11 @@
 import {
-  exitPulse,
+  entry,
+  exit,
   guard,
   init,
   initial,
   invoke,
   machine,
-  pulse,
   state,
   transition,
   context
@@ -16,7 +16,7 @@ import { validate } from "../lib/validate";
 
 describe("Exit Pulse", () => {
   describe("Execution", () => {
-    it("should execute exitPulse when guard passes", () => {
+    it("should execute exit when guard passes", () => {
       let exitExecuted = false;
       
       const exitFn = () => {
@@ -26,7 +26,7 @@ describe("Exit Pulse", () => {
       const myMachine = machine(
         "Test",
         init(initial("idle")),
-        state("idle", transition("start", "loading", exitPulse(exitFn))),
+        state("idle", transition("start", "loading", exit(exitFn))),
         state("loading")
       );
       
@@ -36,7 +36,7 @@ describe("Exit Pulse", () => {
       expect(myMachine.current).toBe("loading");
     });
 
-    it("should NOT execute exitPulse when guard fails", () => {
+    it("should NOT execute exit when guard fails", () => {
       let exitExecuted = false;
       
       const exitFn = () => {
@@ -48,7 +48,7 @@ describe("Exit Pulse", () => {
       const myMachine = machine(
         "Test",
         init(initial("idle")),
-        state("idle", transition("start", "loading", guard(alwaysFail), exitPulse(exitFn))),
+        state("idle", transition("start", "loading", guard(alwaysFail), exit(exitFn))),
         state("loading")
       );
       
@@ -58,11 +58,11 @@ describe("Exit Pulse", () => {
       expect(myMachine.current).toBe("idle");
     });
 
-    it("should execute exitPulse and allow context modification", () => {
+    it("should execute exit and allow context modification", () => {
       const myMachine = machine(
         "Test",
         init(initial("idle"), context({ value: "initial" })),
-        state("idle", transition("start", "loading", exitPulse((ctx: any) => { ctx.value = "modified"; }))),
+        state("idle", transition("start", "loading", exit((ctx: any) => { ctx.value = "modified"; }))),
         state("loading")
       );
       
@@ -71,7 +71,7 @@ describe("Exit Pulse", () => {
       expect(myMachine.current).toBe("loading");
     });
 
-    it("should execute exitPulse after guards", () => {
+    it("should execute exit after guards", () => {
       const executionOrder: string[] = [];
       
       const guardFn = () => {
@@ -80,40 +80,28 @@ describe("Exit Pulse", () => {
       };
       
       const exitFn = () => {
-        executionOrder.push("exitPulse");
+        executionOrder.push("exit");
       };
       
       const myMachine = machine(
         "Test",
         init(initial("idle")),
-        state("idle", transition("start", "loading", guard(guardFn), exitPulse(exitFn))),
+        state("idle", transition("start", "loading", guard(guardFn), exit(exitFn))),
         state("loading")
       );
       
       invoke(myMachine, "start");
-      expect(executionOrder).toEqual(["guard", "exitPulse"]);
+      expect(executionOrder).toEqual(["guard", "exit"]);
     });
   });
 
   describe("Validation", () => {
-    it("should validate exitPulse success transition exists", () => {
+    it("should validate exit failure transition exists", () => {
       expect(() => {
         const myMachine = machine(
           "Test",
           init(initial("idle")),
-          state("idle", transition("start", "loading", exitPulse(() => {}, "success"))),
-          state("loading")
-        );
-        validate(myMachine);
-      }).toThrow("has a success transition 'success' that does not exists");
-    });
-
-    it("should validate exitPulse failure transition exists", () => {
-      expect(() => {
-        const myMachine = machine(
-          "Test",
-          init(initial("idle")),
-          state("idle", transition("start", "loading", exitPulse(() => {}, undefined, "failure"))),
+          state("idle", transition("start", "loading", exit(() => {}, "failure"))),
           state("loading")
         );
         validate(myMachine);
@@ -143,10 +131,10 @@ describe("Exit Pulse", () => {
         "Test",
         init(initial("idle")),
         state("idle", 
-          pulse(idleEntryFn),
-          transition("start", "loading", exitPulse(exitFn))
+          entry(idleEntryFn),
+          transition("start", "loading", exit(exitFn))
         ),
-        state("loading", pulse(loadingEntryFn))
+        state("loading", entry(loadingEntryFn))
       );
       
       expect(myMachine.current).toBe("idle");
@@ -171,7 +159,7 @@ describe("Exit Pulse", () => {
         "Test",
         init(initial("idle")),
         state("idle", 
-          transition("start", "loading", guard(alwaysFail, "failed"), exitPulse(exitFn)),
+          transition("start", "loading", guard(alwaysFail, "failed"), exit(exitFn)),
           transition("failed", "failed")
         ),
         state("loading"),
@@ -186,7 +174,7 @@ describe("Exit Pulse", () => {
   });
 
   describe("Initial state", () => {
-    it("should NOT execute exitPulse on initial state", () => {
+    it("should NOT execute exit on initial state", () => {
       let exitExecuted = false;
       
       const exitFn = () => {
@@ -196,7 +184,7 @@ describe("Exit Pulse", () => {
       const myMachine = machine(
         "Test",
         init(initial("idle")),
-        state("idle", transition("start", "loading"), transition("go", "loading", exitPulse(exitFn))),
+        state("idle", transition("start", "loading"), transition("go", "loading", exit(exitFn))),
         state("loading")
       );
       
@@ -206,11 +194,11 @@ describe("Exit Pulse", () => {
   });
 
   describe("Context modification", () => {
-    it("should allow context modification in exitPulse", () => {
+    it("should allow context modification in exit", () => {
       const myMachine = machine(
         "Test",
         init(initial("idle"), context({ value: "initial" })),
-        state("idle", transition("start", "loading", exitPulse((ctx: any) => { ctx.value = "modified"; }))),
+        state("idle", transition("start", "loading", exit((ctx: any) => { ctx.value = "modified"; }))),
         state("loading")
       );
       

@@ -10,7 +10,9 @@
     "resolveJsonModule": true,
     "removeComments": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "types": ["node"]
   },
   "include": ["lib/**/*"],
   "exclude": [

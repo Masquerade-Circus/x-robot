@@ -15,7 +15,7 @@ import {
   TransitionDirective,
   TransitionsDirective,
 } from "../machine/interfaces";
-import { cloneContext, isPulse, isValidString } from "../utils";
+import { deepCloneUnfreeze, isEntry, isValidString } from "../utils";
 
 export interface SerializedPulse {
   pulse: string;
@@ -35,7 +35,7 @@ export interface SerializedCollection extends Array<SerializedPulse> {}
 export interface SerializedTransition {
   target: string;
   guards?: SerializedGuard[];
-  exitPulse?: SerializedPulse[];
+  exit?: SerializedPulse[];
 }
 
 export interface SerializedTransitions {
@@ -130,7 +130,7 @@ function serializeRunArguments(run: RunCollection): SerializedCollection | null 
   }
 
   return run.map((item) => {
-    if (isPulse(item)) {
+    if (isEntry(item)) {
       return serializePulse(item);
     }
   }) as SerializedCollection;
@@ -165,11 +165,11 @@ function serializeTransition(transition: TransitionDirective): SerializedTransit
     serialized.guards = guards;
   }
 
-  if (transition.exitPulse) {
-    const exitPulseArray = Array.isArray(transition.exitPulse) 
-      ? transition.exitPulse 
-      : [transition.exitPulse];
-    serialized.exitPulse = exitPulseArray.map(pulse => serializePulse(pulse));
+  if (transition.exit) {
+    const exitArray = Array.isArray(transition.exit)
+      ? transition.exit
+      : [transition.exit];
+    serialized.exit = exitArray.map(pulse => serializePulse(pulse));
   }
 
   return serialized;
@@ -218,7 +218,7 @@ function serializeTransitions(events: TransitionsDirective): SerializedTransitio
  * @returns Object
  */
 function serializeContext(context: any) {
-  return cloneContext(context);
+  return deepCloneUnfreeze(context);
 }
 
 /**

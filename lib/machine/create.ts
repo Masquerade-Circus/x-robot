@@ -7,9 +7,11 @@ import {
   ContextDirective,
   DangerStateDirective,
   DescriptionDirective,
+  ExitDirective,
   Guard,
   GuardDirective,
   GuardsDirective,
+  HistoryDirective,
   HistoryType,
   ImmediateDirective,
   InfoStateDirective,
@@ -37,8 +39,10 @@ import {
   hasTransition,
   isContextDirective,
   isDescriptionDirective,
-  isExitPulse,
+  isEntry,
+  isExit,
   isGuard,
+  isHistoryDirective,
   isImmediate,
   isInitialDirective,
   isInitDirective,
@@ -47,7 +51,6 @@ import {
   isNestedMachineDirective,
   isParallelDirective,
   isParallelImmediateDirective,
-  isPulse,
   isShouldFreezeDirective,
   isStatesDirective,
   isStateDirective,
@@ -66,12 +69,12 @@ import {
  * */
 
 /**
- * Creates an init directive that can contain initial, context and freeze options
- * @param directives InitialDirective, ContextDirective or ShouldFreezeDirective
+ * Creates an init directive that can contain initial, context, freeze and history options
+ * @param directives InitialDirective, ContextDirective, ShouldFreezeDirective or HistoryDirective
  * @returns InitDirective
  * @category Creation
  */
-export function init(...directives: (InitialDirective | ContextDirective | ShouldFreezeDirective)[]): InitDirective {
+export function init(...directives: (InitialDirective | ContextDirective | ShouldFreezeDirective | HistoryDirective)[]): InitDirective {
   let initObj: InitDirective = {};
   
   for (const directive of directives) {
@@ -90,6 +93,11 @@ export function init(...directives: (InitialDirective | ContextDirective | Shoul
         throw new Error("Cannot have more than one shouldFreeze directive in init");
       }
       initObj.freeze = directive;
+    } else if (isHistoryDirective(directive)) {
+      if (initObj.history) {
+        throw new Error("Cannot have more than one history directive in init");
+      }
+      initObj.history = directive;
     }
   }
   
@@ -115,6 +123,7 @@ export function machine(title: string, ...args: MachineArguments): Machine {
     frozen: true,
     isAsync: false,
     history: [],
+    historyLimit: 10,
     parallel: {}
   };
 
@@ -147,11 +156,18 @@ export function machine(title: string, ...args: MachineArguments): Machine {
 
     // If the argument is an init directive, process it
     if (isInitDirective(arg)) {
+      // Process history from init first (before initial to apply limit correctly)
+      if (arg.history) {
+        myMachine.historyLimit = arg.history.history;
+      }
+      
       // Process initial from init
       if (arg.initial) {
         myMachine.initial = arg.initial.initial;
         myMachine.current = myMachine.initial;
-        myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
+        if (myMachine.historyLimit !== 0) {
+          myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
+        }
       }
       
       // Process context from init
@@ -198,7 +214,9 @@ export function machine(title: string, ...args: MachineArguments): Machine {
   if (!myMachine.initial && firstStateName) {
     myMachine.initial = firstStateName;
     myMachine.current = myMachine.initial;
-    myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
+    if (myMachine.historyLimit !== 0) {
+      myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
+    }
   }
 
   // If freeze is true, we will deep freeze the context
@@ -212,7 +230,7 @@ export function machine(title: string, ...args: MachineArguments): Machine {
     if (myMachine.states[state].run.length > 0) {
       let hasAsyncPulse = myMachine.states[state].run.some(
         (item) =>
-          isPulse(item) &&
+          isEntry(item) &&
           typeof item.pulse === "function" &&
           item.pulse.constructor.name === "AsyncFunction"
       );
@@ -320,6 +338,21 @@ export function shouldFreeze(freeze: boolean): ShouldFreezeDirective {
 
 /**
  *
+ * @param limit The maximum number of history entries to keep. Set to 0 to disable history.
+ * @returns HistoryDirective
+ * @category Creation
+ */
+export function history(limit: number): HistoryDirective {
+  if (limit < 0) {
+    throw new Error("History limit must be >= 0");
+  }
+  return {
+    history: limit
+  };
+}
+
+/**
+ *
  * @param name The name of the state
  * @param args nested machines, actions, producers, transitions, etc.
  * @returns StateDirective
@@ -338,7 +371,7 @@ export function state(name: string, ...args: RunCollection): StateDirective {
     if (isNestedMachineDirective(arg)) {
       nested.push(arg);
       // If is pulse add it to the run array
-    } else if (isPulse(arg)) {
+    } else if (isEntry(arg)) {
       run.push(arg);
 
       // If pulse has a success transition or failure transition, add them to the on object
@@ -439,25 +472,25 @@ export function state(name: string, ...args: RunCollection): StateDirective {
  *
  * @param transitionName The name of the transition
  * @param target The target state of the transition
- * @param args Guards and optional exitPulse at the end
+ * @param args Guards and optional exit or exitPulse at the end
  * @returns TransitionDirective
  * @category Creation
  */
 export function transition(
   transitionName: string,
   target: string,
-  ...args: (GuardDirective | GuardsDirective | { exitPulse: PulseDirective[] })[]
+  ...args: (GuardDirective | GuardsDirective | { exit: ExitDirective[] })[]
 ): TransitionDirective {
   let guards: GuardsDirective = [];
-  let exitPulse: PulseDirective[] | undefined;
+  let exit: ExitDirective[] | undefined;
   
   for (const arg of args) {
     if (isGuard(arg)) {
       guards.push(arg);
     } else if (Array.isArray(arg)) {
       guards = arg as GuardsDirective;
-    } else if (isExitPulse(arg)) {
-      exitPulse = arg.exitPulse;
+    } else if (isExit(arg)) {
+      exit = arg.exit;
     }
   }
   
@@ -465,19 +498,19 @@ export function transition(
     transition: transitionName,
     target,
     guards,
-    exitPulse
+    exit
   };
 }
 
 /**
  *
- * @param pulse The pulse to be run
- * @param success The transition to run on success (optional)
- * @param failure The transition to run on failure (optional)
+ * @param pulse The function to run when entering the state
+ * @param success Optional success transition string
+ * @param failure Optional failure transition string
  * @returns PulseDirective
  * @category Creation
  */
-export function pulse(
+export function entry(
   pulse: Pulse,
   success?: string | PulseDirective,
   failure?: string | PulseDirective
@@ -513,21 +546,18 @@ export function pulse(
 
 /**
  *
- * @param handler The handler function to run when exiting the state
- * @param success Optional success transition string
+ * @param handler The function to run when exiting the state
  * @param failure Optional failure transition string
- * @returns ExitPulseDirective
+ * @returns ExitDirective
  * @category Creation
  */
-export function exitPulse(
+export function exit(
   handler: Pulse,
-  success?: string,
   failure?: string
-): { exitPulse: PulseDirective[] } {
+): { exit: ExitDirective[] } {
   return {
-    exitPulse: [{
+    exit: [{
       pulse: handler,
-      success,
       failure
     }]
   };

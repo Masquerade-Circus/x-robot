@@ -11,7 +11,8 @@ import {
   context,
   dangerState,
   description,
-  exitPulse,
+  entry,
+  exit,
   guard,
   immediate,
   infoState,
@@ -22,7 +23,6 @@ import {
   nestedGuard,
   parallel,
   primaryState,
-  pulse,
   state,
   successState,
   transition,
@@ -83,14 +83,14 @@ describe("Generate a diagram from a serialized machine", () => {
         "preview",
         description("Initial state"),
         // Save the current title as oldTitle so we can reset later.
-        pulse(cacheTitle),
+        entry(cacheTitle),
         transition("edit", "editMode")
       ),
       infoState(
         "editMode",
         description("The user tries to edit the title"),
         // Update title with the event value
-        pulse(updateTitle),
+        entry(updateTitle),
         transition("input", "editMode"),
         transition("cancel", "cancel"),
         transition(
@@ -106,7 +106,7 @@ describe("Generate a diagram from a serialized machine", () => {
         "cancel",
         description("The user cancels the edition"),
         // Reset the title back to oldTitle
-        pulse(restoreTitle),
+        entry(restoreTitle),
         immediate("preview")
       ),
       primaryState(
@@ -115,9 +115,9 @@ describe("Generate a diagram from a serialized machine", () => {
         // If the guard is true, we try to save the title.
         // If the save action succeeds, we immediately go to the preview state.
         // If the save action fails, we update the context with the error and go to the error state.
-        pulse(saveTitle, "preview", "error")
+        entry(saveTitle, "preview", "error")
       ),
-      dangerState("error", description("We failed to save the title to the db"), pulse(updateError))
+      dangerState("error", description("We failed to save the title to the db"), entry(updateError))
       // Should we provide a retry or...?
     );
 
@@ -1021,7 +1021,7 @@ describe("Readme examples", () => {
         initial("idle")
       ),
       state("idle", transition("fetch", "loading")),
-      state("loading", pulse(fetchDog, "resolved", "rejected"), transition("cancel", "idle")),
+      state("loading", entry(fetchDog, "resolved", "rejected"), transition("cancel", "idle")),
       state("resolved", immediate("idle")),
       state("rejected")
     );

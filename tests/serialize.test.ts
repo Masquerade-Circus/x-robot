@@ -1,7 +1,8 @@
 import {
   context,
   dangerState,
-  exitPulse,
+  entry,
+  exit,
   guard,
   immediate,
   infoState,
@@ -9,7 +10,6 @@ import {
   init,
   machine,
   primaryState,
-  pulse,
   state,
   successState,
   transition,
@@ -66,12 +66,12 @@ describe("Serialize", () => {
       ),
       successState(
         "preview",
-        pulse(cacheTitle),
+        entry(cacheTitle),
         transition("edit", "editMode")
       ),
       infoState(
         "editMode",
-        pulse(updateTitle),
+        entry(updateTitle),
         transition("input", "editMode"),
         transition("cancel", "cancel"),
         transition(
@@ -82,12 +82,12 @@ describe("Serialize", () => {
       ),
       warningState(
         "cancel",
-        pulse(restoreTitle),
+        entry(restoreTitle),
         immediate("preview")
       ),
       primaryState(
         "save",
-        pulse(saveTitle, "preview", "error")
+        entry(saveTitle, "preview", "error")
       ),
       dangerState("error")
     );
@@ -168,7 +168,7 @@ describe("Serialize", () => {
     expect(serialize(myMachine)).toEqual(serializedMachine);
   });
 
-  it("should serialize exitPulse in transitions", () => {
+  it("should serialize exit in transitions", () => {
     function cleanup(context: any) {
       context.cleaned = true;
     }
@@ -176,18 +176,18 @@ describe("Serialize", () => {
     const myMachine = machine(
       "Test",
       init(initial("idle")),
-      state("idle", transition("start", "loading", exitPulse(cleanup))),
+      state("idle", transition("start", "loading", exit(cleanup))),
       state("loading")
     );
 
     const serialized = serialize(myMachine);
     
-    expect(serialized.states.idle.on.start.exitPulse).toBeDefined();
-    expect(serialized.states.idle.on.start.exitPulse).toHaveLength(1);
-    expect(serialized.states.idle.on.start.exitPulse[0].pulse).toBe("cleanup");
+    expect(serialized.states.idle.on.start.exit).toBeDefined();
+    expect(serialized.states.idle.on.start.exit).toHaveLength(1);
+    expect(serialized.states.idle.on.start.exit[0].pulse).toBe("cleanup");
   });
 
-  it("should serialize exitPulse with success and failure transitions", () => {
+  it("should serialize exit with failure transition", () => {
     function cleanup(context: any) {
       context.cleaned = true;
     }
@@ -195,14 +195,14 @@ describe("Serialize", () => {
     const myMachine = machine(
       "Test",
       init(initial("idle")),
-      state("idle", transition("start", "loading", exitPulse(cleanup, "success"))),
+      state("idle", transition("start", "loading", exit(cleanup, "failure"))),
       state("loading"),
-      state("success")
+      state("failure")
     );
 
     const serialized = serialize(myMachine);
     
-    expect(serialized.states.idle.on.start.exitPulse[0].pulse).toBe("cleanup");
-    expect(serialized.states.idle.on.start.exitPulse[0].success).toBe("success");
+    expect(serialized.states.idle.on.start.exit[0].pulse).toBe("cleanup");
+    expect(serialized.states.idle.on.start.exit[0].failure).toBe("failure");
   });
 });

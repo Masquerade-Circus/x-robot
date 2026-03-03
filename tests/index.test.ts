@@ -2,8 +2,11 @@ import {
   context,
   dangerState,
   description,
+  entry,
+  exit,
   getState,
   guard,
+  history,
   immediate,
   infoState,
   init,
@@ -11,7 +14,6 @@ import {
   invoke,
   machine,
   primaryState,
-  pulse,
   start,
   state,
   successState,
@@ -348,10 +350,10 @@ describe("X-Robot", () => {
         "My machine",
         state(
           "idle",
-          pulse(setTitle),
-          pulse(updateTitle),
-          pulse(() => ({})),
-          pulse(function () {
+          entry(setTitle),
+          entry(updateTitle),
+          entry(() => ({})),
+          entry(function () {
             return {};
           })
         )
@@ -367,7 +369,7 @@ describe("X-Robot", () => {
 
     it("should validate that the producer has a valid function", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", pulse(null))));
+        validate(machine("My machine", init(initial("idle")), state("idle", entry(null))));
       }).toThrowError("The pulse 'null' of the state 'idle' must be a function.");
     });
 
@@ -378,7 +380,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle))
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle))
       );
 
       let originalState = myMachine.context;
@@ -396,7 +398,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle))
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle))
       );
 
       let originalState = myMachine.context;
@@ -414,7 +416,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle))
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle))
       );
 
       expect(() => {
@@ -430,7 +432,7 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle), transition("error", "error")), state("error")
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), transition("error", "error")), state("error")
       );
 
       invoke(myMachine, "updateTitle", "Hello");
@@ -445,7 +447,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle)), state("fatal")
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal")
       );
 
       invoke(myMachine, "updateTitle", "Hello");
@@ -460,7 +462,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle)), state("fatal")
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal")
       );
 
       try {
@@ -478,7 +480,7 @@ describe("X-Robot", () => {
         validate(
           machine(
             "My machine",
-            state("idle", transition("updateTitle", "updated")), state("updated", transition("idle", "idle"), pulse(updateTitle))
+            state("idle", transition("updateTitle", "updated")), state("updated", transition("idle", "idle"), entry(updateTitle))
           )
         );
       }).toThrowError("The pulse 'updateTitle' of the state 'updated' must be created before any transitions.");
@@ -500,10 +502,10 @@ describe("X-Robot", () => {
         "My machine",
         state(
           "idle",
-          pulse(setTitle),
-          pulse(updateTitle),
-          pulse(async () => ({})),
-          pulse(async function () {
+          entry(setTitle),
+          entry(updateTitle),
+          entry(async () => ({})),
+          entry(async function () {
             return {};
           })
         ),
@@ -520,7 +522,7 @@ describe("X-Robot", () => {
 
     it("should validate that the action has a valid function", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", pulse(null))));
+        validate(machine("My machine", init(initial("idle")), state("idle", entry(null))));
       }).toThrowError("The pulse 'null' of the state 'idle' must be a function.");
     });
 
@@ -535,7 +537,7 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updating")), state("updating", pulse(setTitle), immediate("idle"))
+        state("idle", transition("updateTitle", "updating")), state("updating", entry(setTitle), immediate("idle"))
       );
 
       // The machine is in the idle state
@@ -566,7 +568,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle), immediate("idle")),
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), immediate("idle")),
         init(initial("idle"))
       );
 
@@ -592,8 +594,8 @@ describe("X-Robot", () => {
         state("idle", transition("updateTitle", "updated")),
         state(
           "updated",
-          pulse(setTitle),
-          pulse(async () => (nextActionFired = true)),
+          entry(setTitle),
+          entry(async () => (nextActionFired = true)),
           immediate("idle")
         ),
         init(initial("idle"))
@@ -617,7 +619,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle), immediate("idle")),
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), immediate("idle")),
         init(initial("idle"))
       );
 
@@ -635,7 +637,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle), transition("error", "error")), state("error"),
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), transition("error", "error")), state("error"),
         init(initial("idle"))
       );
 
@@ -656,7 +658,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle)), state("fatal"),
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal"),
         init(initial("idle"))
       );
 
@@ -677,7 +679,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle)), state("fatal"),
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal"),
         init(initial("idle"))
       );
 
@@ -699,7 +701,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle, "done")), state("done"),
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle, "done")), state("done"),
         init(initial("idle"))
       );
 
@@ -725,7 +727,7 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle, "done")), state("done"),
+        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle, "done")), state("done"),
         init(initial("idle"))
       );
 
@@ -758,7 +760,7 @@ describe("X-Robot", () => {
         "My machine",
         init(initial("idle")),
         state("idle", transition("updateTitle", "updated")),
-        state("updated", pulse(setTitle, pulse(updateContext, "done")), transition("error", "error")),
+        state("updated", entry(setTitle, entry(updateContext, "done")), transition("error", "error")),
         state("done"),
         state("error")
       );
@@ -786,7 +788,7 @@ describe("X-Robot", () => {
         validate(
           machine(
             "My machine",
-            state("idle", transition("updateTitle", "updated")), state("updated", pulse(setTitle, "done", "fatal")), state("done")
+            state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle, "done", "fatal")), state("done")
           )
         );
       }).toThrow("The pulse 'setTitle' of the state 'updated' has a failure transition 'fatal' that does not exists.");
@@ -818,7 +820,7 @@ describe("X-Robot", () => {
         state("idle", transition("updateTitle", "updated", guard(validateTitle))),
         state(
           "updated",
-          pulse((context) => ({ title: context.title }))
+          entry((context) => ({ title: context.title }))
         ),
         init(initial("idle"))
       );
@@ -841,7 +843,7 @@ describe("X-Robot", () => {
         state("idle", transition("updateTitle", "updated", guard(validateTitle))),
         state(
           "updated",
-          pulse((context) => ({ title: context.title }))
+          entry((context) => ({ title: context.title }))
         ),
         init(initial("idle"))
       );
@@ -871,7 +873,7 @@ describe("X-Robot", () => {
         state("idle", transition("updateTitle", "updated", guard(validateTitle))),
         state(
           "updated",
-          pulse((context, payload) => ({ ...context, title: payload }))
+          entry((context, payload) => ({ ...context, title: payload }))
         )
       );
 
@@ -996,13 +998,13 @@ describe("X-Robot", () => {
             "updated",
             guard(
               validateTitle,
-              pulse((context, payload) => ({ ...context, error: payload }))
+              entry((context, payload) => ({ ...context, error: payload }))
             )
           )
         ),
         state(
           "updated",
-          pulse((context, payload) => ({ ...context, title: payload, error: null }))
+          entry((context, payload) => ({ ...context, title: payload, error: null }))
         )
       );
 
@@ -1033,10 +1035,10 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, pulse(guardFailureProducer)))),
+        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailureProducer)))),
         state(
           "updated",
-          pulse((context, payload) => ({ ...context, title: payload, error: null }))
+          entry((context, payload) => ({ ...context, title: payload, error: null }))
         )
       );
 
@@ -1062,7 +1064,7 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, pulse(guardFailureProducer))), transition("error", "error")),
+        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailureProducer))), transition("error", "error")),
         state("updated"),
         state("error")
       );
@@ -1086,10 +1088,10 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, pulse(guardFailureProducer)))),
+        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailureProducer)))),
         state(
           "updated",
-          pulse((context, payload) => ({ ...context, title: payload, error: null }))
+          entry((context, payload) => ({ ...context, title: payload, error: null }))
         ),
         state("fatal")
       );
@@ -1118,9 +1120,9 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        init(initial("idle")),
+        init(initial("idle"), history(20)),
         state("idle", transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", pulse(saveTitle), pulse(updateTitle), immediate("idle"))
+        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
       );
 
       // Invoke the transition with an invalid title
@@ -1163,8 +1165,8 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", pulse(saveTitle), pulse(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", pulse(saveTitle), pulse(updateTitle), immediate("idle"))
+        state("idle", entry(saveTitle), entry(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
+        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
       );
 
       // Check the machine is in the initial state
@@ -1189,8 +1191,8 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", pulse(saveTitle), pulse(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", pulse(saveTitle), pulse(updateTitle), immediate("idle"))
+        state("idle", entry(saveTitle), entry(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
+        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
       );
 
       // Check the machine is in the initial state
@@ -1224,8 +1226,8 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", pulse(saveTitle), pulse(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", pulse(saveTitle), pulse(updateTitle), immediate("idle"))
+        state("idle", entry(saveTitle), entry(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
+        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
       );
 
       // Check the machine is in the initial state

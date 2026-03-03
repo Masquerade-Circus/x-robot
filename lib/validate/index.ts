@@ -12,11 +12,10 @@ import {
   canMakeTransition,
   hasState,
   hasTransition,
-  isExitPulse,
+  isEntry,
   isGuard,
   isNestedTransition,
   isParallelTransition,
-  isPulse,
   isTransition,
   isValidString
 } from "../utils";
@@ -70,7 +69,7 @@ function validateThatAllStatesHaveTransitionsToThem(
 
           // Check for a transition declared in the pulses of the state
           for (let item of machine.states[otherState].run) {
-            if (isPulse(item)) {
+            if (isEntry(item)) {
               // Success is a transition string
               if (isValidString(item.success) && item.success === state) {
                 hasPreviousState = true;
@@ -238,7 +237,7 @@ function validatePulse(
   }
 
   // Validate that success is not a PulseDirective (use multiple pulses instead)
-  if (isPulse(item.success)) {
+  if (isEntry(item.success)) {
     return err(
       new Error(
         `The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid success parameter. Use multiple pulses instead.`
@@ -247,7 +246,7 @@ function validatePulse(
   }
 
   // Validate that failure is not a PulseDirective (use multiple pulses instead)
-  if (isPulse(item.failure)) {
+  if (isEntry(item.failure)) {
     return err(
       new Error(
         `The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid failure parameter. Use multiple pulses instead.`
@@ -277,7 +276,7 @@ function validateRunCollections(machine: Machine): Result<void, Error> {
     // Validate run collection
     for (let item of state.run) {
       // Validate that the run item is a pulse
-      if (!isPulse(item)) {
+      if (!isEntry(item)) {
         return err(
           new Error(
             `The state '${stateName}' has a run collection that contains an item that is not a pulse.`
@@ -286,15 +285,15 @@ function validateRunCollections(machine: Machine): Result<void, Error> {
       }
 
       // Validate pulse
-      if (isPulse(item)) {
-        let isPulseValidResult = validatePulse(
+      if (isEntry(item)) {
+        let isEntryValidResult = validatePulse(
           machine,
           state,
           stateName,
           item
         );
-        if (isPulseValidResult.isErr()) {
-          return isPulseValidResult;
+        if (isEntryValidResult.isErr()) {
+          return isEntryValidResult;
         }
       }
     }
@@ -330,27 +329,19 @@ function validateTransitions(machine: Machine): Result<void, Error> {
         );
       }
 
-      // Validate exitPulse if present
-      if (transition.exitPulse) {
-        const exitPulseArr = Array.isArray(transition.exitPulse) 
-          ? transition.exitPulse 
-          : [transition.exitPulse];
+      // Validate exit if present
+      if (transition.exit) {
+        const exitArr = Array.isArray(transition.exit) 
+          ? transition.exit 
+          : [transition.exit];
         
-        for (const exitPulse of exitPulseArr) {
-          if (isPulse(exitPulse)) {
-            // Validate success transition if present
-            if (typeof exitPulse.success === "string" && !(exitPulse.success in machine.states)) {
-              return err(
-                new Error(
-                  `The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a success transition '${exitPulse.success}' that does not exists.`
-                )
-              );
-            }
+        for (const exitItem of exitArr) {
+          if (isEntry(exitItem)) {
             // Validate failure transition if present
-            if (typeof exitPulse.failure === "string" && !(exitPulse.failure in machine.states)) {
+            if (typeof exitItem.failure === "string" && !(exitItem.failure in machine.states)) {
               return err(
                 new Error(
-                  `The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${exitPulse.failure}' that does not exists.`
+                  `The exit '${exitItem.pulse.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${exitItem.failure}' that does not exists.`
                 )
               );
             }
