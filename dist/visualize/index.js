@@ -40,8 +40,8 @@ function isValidString(str) {
 function isValidObject(obj) {
   return obj !== null && typeof obj === "object";
 }
-function isPulse(pulse) {
-  return isValidObject(pulse) && "pulse" in pulse;
+function isEntry(entry) {
+  return isValidObject(entry) && "pulse" in entry;
 }
 function isNestedMachineDirective(machine) {
   return isValidObject(machine) && "machine" in machine;
@@ -52,41 +52,126 @@ function isNestedTransition(transition) {
 function isParallelTransition(transition) {
   return isValidString(transition) && /^\w+\/.+$/gi.test(transition);
 }
-function cloneContext(context, weakMap = /* @__PURE__ */ new WeakMap()) {
-  if (weakMap.has(context)) {
-    return weakMap.get(context);
+function isPlainObject(value) {
+  if (!value || typeof value !== "object") {
+    return false;
   }
-  if (context === null || context === void 0) {
-    return context;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+function canUseStructuredClone(value) {
+  if (typeof structuredClone !== "function") {
+    return false;
   }
-  let result;
-  if (Array.isArray(context)) {
-    result = context.map((item) => cloneContext(item, weakMap));
-  } else if (typeof context === "object") {
-    result = {};
-    for (let key in context) {
-      result[key] = cloneContext(context[key], weakMap);
+  if (typeof Buffer !== "undefined" && value instanceof Buffer) {
+    return false;
+  }
+  return Array.isArray(value) || isPlainObject(value) || value instanceof Date || value instanceof RegExp || value instanceof Map || value instanceof Set || value instanceof ArrayBuffer || ArrayBuffer.isView(value);
+}
+function deepCloneUnfreeze(obj, cloneClassInstances = false, seen = /* @__PURE__ */ new WeakMap()) {
+  if (typeof obj === "undefined" || obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  const source = obj;
+  if (seen.has(source)) {
+    return seen.get(source);
+  }
+  if (canUseStructuredClone(source)) {
+    const cloned = structuredClone(source);
+    seen.set(source, cloned);
+    return cloned;
+  }
+  let clone;
+  switch (true) {
+    case Array.isArray(source): {
+      clone = [];
+      seen.set(source, clone);
+      for (let i = 0, l = source.length; i < l; i++) {
+        clone[i] = deepCloneUnfreeze(source[i], cloneClassInstances, seen);
+      }
+      return clone;
     }
-  } else if (context instanceof Date) {
-    result = new Date(context.getTime());
-  } else if (context instanceof Set) {
-    result = new Set(context);
-  } else if (context instanceof Map) {
-    let array = Array.from(context, ([key, val]) => [
-      key,
-      cloneContext(val, weakMap)
-    ]);
-    result = new Map(array);
-  } else if (context instanceof RegExp) {
-    return new RegExp(context.source, context.flags);
-  } else if (false) {
-    result = new context.constructor(context);
-  } else {
-    result = context;
-    return result;
+    case source instanceof Date: {
+      clone = new Date(source.getTime());
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof RegExp: {
+      clone = new RegExp(source.source, source.flags);
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof Map: {
+      clone = /* @__PURE__ */ new Map();
+      seen.set(source, clone);
+      for (const [key, value] of source.entries()) {
+        clone.set(deepCloneUnfreeze(key, cloneClassInstances, seen), deepCloneUnfreeze(value, cloneClassInstances, seen));
+      }
+      return clone;
+    }
+    case source instanceof Set: {
+      clone = /* @__PURE__ */ new Set();
+      seen.set(source, clone);
+      for (const value of source.values()) {
+        clone.add(deepCloneUnfreeze(value, cloneClassInstances, seen));
+      }
+      return clone;
+    }
+    case source instanceof ArrayBuffer: {
+      clone = source.slice(0);
+      seen.set(source, clone);
+      return clone;
+    }
+    case ArrayBuffer.isView(source): {
+      clone = new source.constructor(source.buffer.slice(0));
+      seen.set(source, clone);
+      return clone;
+    }
+    case (typeof Buffer !== "undefined" && source instanceof Buffer): {
+      clone = Buffer.from(source);
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof Error: {
+      clone = new source.constructor(source.message);
+      seen.set(source, clone);
+      break;
+    }
+    case (source instanceof Promise || source instanceof WeakMap || source instanceof WeakSet): {
+      clone = source;
+      seen.set(source, clone);
+      return clone;
+    }
+    case (source.constructor && source.constructor !== Object): {
+      if (!cloneClassInstances) {
+        clone = source;
+        seen.set(source, clone);
+        return clone;
+      }
+      clone = Object.create(Object.getPrototypeOf(source));
+      seen.set(source, clone);
+      break;
+    }
+    default: {
+      clone = {};
+      seen.set(source, clone);
+      const keys = Reflect.ownKeys(source);
+      for (let i = 0, l = keys.length; i < l; i++) {
+        const key = keys[i];
+        clone[key] = deepCloneUnfreeze(source[key], cloneClassInstances, seen);
+      }
+      return clone;
+    }
   }
-  weakMap.set(context, result);
-  return result;
+  const descriptors = Object.getOwnPropertyDescriptors(source);
+  for (const key of Reflect.ownKeys(descriptors)) {
+    const descriptor = descriptors[key];
+    if ("value" in descriptor) {
+      descriptor.value = deepCloneUnfreeze(descriptor.value, cloneClassInstances, seen);
+    }
+    Object.defineProperty(clone, key, descriptor);
+  }
+  return clone;
 }
 var titleToId = (str) => str.toLowerCase().replace(/(\s|\W)/g, "");
 
@@ -122,7 +207,7 @@ function serializeRunArguments(run) {
     return null;
   }
   return run.map((item) => {
-    if (isPulse(item)) {
+    if (isEntry(item)) {
       return serializePulse(item);
     }
   });
@@ -141,9 +226,9 @@ function serializeTransition(transition) {
   if (guards) {
     serialized.guards = guards;
   }
-  if (transition.exitPulse) {
-    const exitPulseArray = Array.isArray(transition.exitPulse) ? transition.exitPulse : [transition.exitPulse];
-    serialized.exitPulse = exitPulseArray.map((pulse) => serializePulse(pulse));
+  if (transition.exit) {
+    const exitArray = Array.isArray(transition.exit) ? transition.exit : [transition.exit];
+    serialized.exit = exitArray.map((pulse) => serializePulse(pulse));
   }
   return serialized;
 }
@@ -168,7 +253,7 @@ function serializeTransitions(events) {
   return serialized;
 }
 function serializeContext(context) {
-  return cloneContext(context);
+  return deepCloneUnfreeze(context);
 }
 function serializeNested(nested) {
   if (!nested || nested.length === 0) {
@@ -416,10 +501,10 @@ ${space}[*] --> ${stateNames[serializedMachine.initial]}
               transitions += `\\n${asciiTree}`;
             }
           }
-          const exitPulseData = state.on[transitionName].exitPulse;
-          if (exitPulseData && exitPulseData.length > 0) {
-            const exitPulseNames = exitPulseData.map((ep) => ep.pulse).join(", ");
-            transitions += `\\n[exit: ${exitPulseNames}]`;
+          const exitData = state.on[transitionName].exit;
+          if (exitData && exitData.length > 0) {
+            const exitNames = exitData.map((ep) => ep.pulse).join(", ");
+            transitions += `\\n[exit: ${exitNames}]`;
           }
         }
         transitions += `

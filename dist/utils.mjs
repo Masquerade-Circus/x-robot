@@ -17,11 +17,11 @@ function isProducerWithTransition(producer) {
 function isProducerWithoutTransition(producer) {
   return !isProducerWithTransition(producer);
 }
-function isPulse(pulse) {
-  return isValidObject(pulse) && "pulse" in pulse;
+function isEntry(entry) {
+  return isValidObject(entry) && "pulse" in entry;
 }
-function isExitPulse(exitPulse) {
-  return isValidObject(exitPulse) && "exitPulse" in exitPulse;
+function isExit(exit) {
+  return isValidObject(exit) && "exit" in exit;
 }
 function isAction(action) {
   return isValidObject(action) && "action" in action;
@@ -71,13 +71,17 @@ function isShouldFreezeDirective(shouldFreeze) {
 function isInitialDirective(initial) {
   return isValidObject(initial) && "initial" in initial;
 }
+function isHistoryDirective(history) {
+  return isValidObject(history) && "history" in history && typeof history.history === "number" && history.history >= 0;
+}
 function isInitDirective(init) {
   if (!isValidObject(init))
     return false;
   const hasInitial = "initial" in init;
   const hasContext = "context" in init;
   const hasFreeze = "freeze" in init;
-  return hasInitial || hasContext || hasFreeze;
+  const hasHistory = "history" in init;
+  return hasInitial || hasContext || hasFreeze || hasHistory;
 }
 function isDescriptionDirective(description) {
   return isValidObject(description) && "description" in description;
@@ -94,56 +98,150 @@ function isNestedImmediateDirective(immediate) {
 function isParallelImmediateDirective(immediate) {
   return isImmediate(immediate) && isParallelTransition(immediate.immediate);
 }
-function deepFreeze(obj) {
-  if (typeof obj === "object" && obj !== null && !Object.isFrozen(obj)) {
-    if (Array.isArray(obj)) {
-      for (let i = 0, l = obj.length; i < l; i++) {
-        deepFreeze(obj[i]);
-      }
-    } else {
-      for (let prop in obj) {
-        deepFreeze(obj[prop]);
+function deepFreeze(obj, freezeClassInstances = false, seen = /* @__PURE__ */ new WeakSet()) {
+  if (obj === null || typeof obj !== "object" || seen.has(obj) || Object.isFrozen(obj)) {
+    return obj;
+  }
+  seen.add(obj);
+  if (Array.isArray(obj)) {
+    for (let i = 0, l = obj.length; i < l; i++) {
+      deepFreeze(obj[i], freezeClassInstances, seen);
+    }
+  } else {
+    const props = Reflect.ownKeys(obj);
+    for (let i = 0, l = props.length; i < l; i++) {
+      deepFreeze(obj[props[i]], freezeClassInstances, seen);
+    }
+    if (freezeClassInstances) {
+      const proto = Object.getPrototypeOf(obj);
+      if (proto && proto !== Object.prototype) {
+        deepFreeze(proto, freezeClassInstances, seen);
       }
     }
-    Object.freeze(obj);
   }
+  Object.freeze(obj);
   return obj;
 }
-function cloneContext(context, weakMap = /* @__PURE__ */ new WeakMap()) {
-  if (weakMap.has(context)) {
-    return weakMap.get(context);
+function isPlainObject(value) {
+  if (!value || typeof value !== "object") {
+    return false;
   }
-  if (context === null || context === void 0) {
-    return context;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+function canUseStructuredClone(value) {
+  if (typeof structuredClone !== "function") {
+    return false;
   }
-  let result;
-  if (Array.isArray(context)) {
-    result = context.map((item) => cloneContext(item, weakMap));
-  } else if (typeof context === "object") {
-    result = {};
-    for (let key in context) {
-      result[key] = cloneContext(context[key], weakMap);
+  if (typeof Buffer !== "undefined" && value instanceof Buffer) {
+    return false;
+  }
+  return Array.isArray(value) || isPlainObject(value) || value instanceof Date || value instanceof RegExp || value instanceof Map || value instanceof Set || value instanceof ArrayBuffer || ArrayBuffer.isView(value);
+}
+function deepCloneUnfreeze(obj, cloneClassInstances = false, seen = /* @__PURE__ */ new WeakMap()) {
+  if (typeof obj === "undefined" || obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  const source = obj;
+  if (seen.has(source)) {
+    return seen.get(source);
+  }
+  if (canUseStructuredClone(source)) {
+    const cloned = structuredClone(source);
+    seen.set(source, cloned);
+    return cloned;
+  }
+  let clone;
+  switch (true) {
+    case Array.isArray(source): {
+      clone = [];
+      seen.set(source, clone);
+      for (let i = 0, l = source.length; i < l; i++) {
+        clone[i] = deepCloneUnfreeze(source[i], cloneClassInstances, seen);
+      }
+      return clone;
     }
-  } else if (context instanceof Date) {
-    result = new Date(context.getTime());
-  } else if (context instanceof Set) {
-    result = new Set(context);
-  } else if (context instanceof Map) {
-    let array = Array.from(context, ([key, val]) => [
-      key,
-      cloneContext(val, weakMap)
-    ]);
-    result = new Map(array);
-  } else if (context instanceof RegExp) {
-    return new RegExp(context.source, context.flags);
-  } else if (false) {
-    result = new context.constructor(context);
-  } else {
-    result = context;
-    return result;
+    case source instanceof Date: {
+      clone = new Date(source.getTime());
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof RegExp: {
+      clone = new RegExp(source.source, source.flags);
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof Map: {
+      clone = /* @__PURE__ */ new Map();
+      seen.set(source, clone);
+      for (const [key, value] of source.entries()) {
+        clone.set(deepCloneUnfreeze(key, cloneClassInstances, seen), deepCloneUnfreeze(value, cloneClassInstances, seen));
+      }
+      return clone;
+    }
+    case source instanceof Set: {
+      clone = /* @__PURE__ */ new Set();
+      seen.set(source, clone);
+      for (const value of source.values()) {
+        clone.add(deepCloneUnfreeze(value, cloneClassInstances, seen));
+      }
+      return clone;
+    }
+    case source instanceof ArrayBuffer: {
+      clone = source.slice(0);
+      seen.set(source, clone);
+      return clone;
+    }
+    case ArrayBuffer.isView(source): {
+      clone = new source.constructor(source.buffer.slice(0));
+      seen.set(source, clone);
+      return clone;
+    }
+    case (typeof Buffer !== "undefined" && source instanceof Buffer): {
+      clone = Buffer.from(source);
+      seen.set(source, clone);
+      return clone;
+    }
+    case source instanceof Error: {
+      clone = new source.constructor(source.message);
+      seen.set(source, clone);
+      break;
+    }
+    case (source instanceof Promise || source instanceof WeakMap || source instanceof WeakSet): {
+      clone = source;
+      seen.set(source, clone);
+      return clone;
+    }
+    case (source.constructor && source.constructor !== Object): {
+      if (!cloneClassInstances) {
+        clone = source;
+        seen.set(source, clone);
+        return clone;
+      }
+      clone = Object.create(Object.getPrototypeOf(source));
+      seen.set(source, clone);
+      break;
+    }
+    default: {
+      clone = {};
+      seen.set(source, clone);
+      const keys = Reflect.ownKeys(source);
+      for (let i = 0, l = keys.length; i < l; i++) {
+        const key = keys[i];
+        clone[key] = deepCloneUnfreeze(source[key], cloneClassInstances, seen);
+      }
+      return clone;
+    }
   }
-  weakMap.set(context, result);
-  return result;
+  const descriptors = Object.getOwnPropertyDescriptors(source);
+  for (const key of Reflect.ownKeys(descriptors)) {
+    const descriptor = descriptors[key];
+    if ("value" in descriptor) {
+      descriptor.value = deepCloneUnfreeze(descriptor.value, cloneClassInstances, seen);
+    }
+    Object.defineProperty(clone, key, descriptor);
+  }
+  return clone;
 }
 function canMakeTransition(machine, currentStateObject, transition) {
   if (!isValidString(transition)) {
@@ -181,15 +279,17 @@ function canMakeTransition(machine, currentStateObject, transition) {
 var titleToId = (str) => str.toLowerCase().replace(/(\s|\W)/g, "");
 export {
   canMakeTransition,
-  cloneContext,
+  deepCloneUnfreeze,
   deepFreeze,
   hasState,
   hasTransition,
   isAction,
   isContextDirective,
   isDescriptionDirective,
-  isExitPulse,
+  isEntry,
+  isExit,
   isGuard,
+  isHistoryDirective,
   isImmediate,
   isInitDirective,
   isInitialDirective,
@@ -202,10 +302,10 @@ export {
   isParallelDirective,
   isParallelImmediateDirective,
   isParallelTransition,
+  isPlainObject,
   isProducer,
   isProducerWithTransition,
   isProducerWithoutTransition,
-  isPulse,
   isShouldFreezeDirective,
   isStateDirective,
   isStatesDirective,

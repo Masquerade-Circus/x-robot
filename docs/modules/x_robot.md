@@ -44,6 +44,8 @@ X-Robot is a finite state machine library for nodejs and for the web.
 
 ### Other Functions
 
+- [toSCXML](x_robot.md#toscxml)
+- [fromSCXML](x_robot.md#fromscxml)
 - [invokeAfter](x_robot.md#invokeafter)
 - [snapshot](x_robot.md#snapshot)
 
@@ -630,6 +632,38 @@ ___
 
 ## Other Functions
 
+### toSCXML
+
+▸ **toSCXML**(`machine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `machine` | [`SerializedMachine`](../interfaces/x_robot_serialize.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+___
+
+### fromSCXML
+
+▸ **fromSCXML**(`scxmlString`): [`SerializedMachine`](../interfaces/x_robot_serialize.SerializedMachine.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `scxmlString` | `string` |
+
+#### Returns
+
+[`SerializedMachine`](../interfaces/x_robot_serialize.SerializedMachine.md)
+
+___
+
 ### invokeAfter
 
 ▸ **invokeAfter**(`machine`, `timeInMilliseconds`, `event`, `payload?`): () => `void`
@@ -707,7 +741,7 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/create.ts:739](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/create.ts#L739)
+[lib/machine/create.ts:739](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/create.ts#L739)
 
 ## Variables
 
@@ -717,4 +751,4 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/interfaces.ts:215](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L215)
+[lib/machine/interfaces.ts:215](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L215)

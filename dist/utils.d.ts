@@ -1,12 +1,12 @@
-import { ActionDirective, ContextDirective, DescriptionDirective, GuardDirective, ImmediateDirective, InitialDirective, InitDirective, Machine, NestedGuardDirective, NestedImmediateDirective, ParallelDirective, ParallelImmediateDirective, PulseDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective, NestedMachineDirective, NestedMachineWithTransitionDirective } from "./machine/interfaces";
+import { ActionDirective, ContextDirective, DescriptionDirective, ExitDirective, GuardDirective, HistoryDirective, ImmediateDirective, InitialDirective, InitDirective, Machine, NestedGuardDirective, NestedImmediateDirective, ParallelDirective, ParallelImmediateDirective, PulseDirective, ProducerDirective, ProducerDirectiveWithTransition, ProducerDirectiveWithoutTransition, ShouldFreezeDirective, StateDirective, StatesDirective, TransitionDirective, NestedMachineDirective, NestedMachineWithTransitionDirective } from "./machine/interfaces";
 export declare function isValidString(str?: any): str is string;
 export declare function isValidObject(obj: any): obj is object;
 export declare function isProducer(producer?: any): producer is ProducerDirective;
 export declare function isProducerWithTransition(producer?: any): producer is ProducerDirectiveWithTransition;
 export declare function isProducerWithoutTransition(producer?: any): producer is ProducerDirectiveWithoutTransition;
-export declare function isPulse(pulse?: any): pulse is PulseDirective;
-export declare function isExitPulse(exitPulse?: any): exitPulse is {
-    exitPulse: PulseDirective[];
+export declare function isEntry(entry?: any): entry is PulseDirective;
+export declare function isExit(exit?: any): exit is {
+    exit: ExitDirective[];
 };
 export declare function isAction(action?: any): action is ActionDirective;
 export declare function isImmediate(immediate?: any): immediate is ImmediateDirective;
@@ -24,14 +24,17 @@ export declare function isStatesDirective(states?: any): states is StatesDirecti
 export declare function isParallelDirective(parallel?: any): parallel is ParallelDirective;
 export declare function isShouldFreezeDirective(shouldFreeze?: any): shouldFreeze is ShouldFreezeDirective;
 export declare function isInitialDirective(initial?: any): initial is InitialDirective;
+export declare function isHistoryDirective(history?: any): history is HistoryDirective;
 export declare function isInitDirective(init?: any): init is InitDirective;
 export declare function isDescriptionDirective(description?: any): description is DescriptionDirective;
 export declare function isNestedTransition(transition?: any): boolean;
 export declare function isParallelTransition(transition?: any): boolean;
 export declare function isNestedImmediateDirective(immediate?: any): immediate is NestedImmediateDirective;
 export declare function isParallelImmediateDirective(immediate?: any): immediate is ParallelImmediateDirective;
-export declare function deepFreeze(obj: any): any;
-export declare function cloneContext(context: any, weakMap?: WeakMap<object, any>): any;
+export declare function deepFreeze(obj: any, freezeClassInstances?: boolean, seen?: WeakSet<object>): any;
+declare function isPlainObject(value: any): boolean;
+export { isPlainObject };
+export declare function deepCloneUnfreeze<T>(obj: T, cloneClassInstances?: boolean, seen?: WeakMap<object, any>): T;
 export declare function canMakeTransition(machine: Machine, currentStateObject: StateDirective, transition: string): boolean;
 export declare const titleToId: (str: string) => string;
 //# sourceMappingURL=utils.d.ts.map

@@ -419,28 +419,56 @@ invoke(myMachine, "submit", "hello"); // myMachine.current === 'success'
 invoke(myMachine, "submit", ""); // myMachine.current === 'error'
 ```
 
-### Saving and Restoring State
+### Code Generation
 
-Use `snapshot()` to save the current state and `start()` to restore it:
+Generate TypeScript, ESM, or CJS code from your machines:
 
 ```javascript
-import { snapshot, start } from "x-robot";
+import { generateFromSerializedMachine, Format, serialize } from "x-robot";
 
-// Save current state to database
-const savedSnapshot = snapshot(myMachine);
-await saveToDatabase(userId, savedSnapshot);
+const myMachine = machine(
+  "MyMachine",
+  init(initial("idle"), { context: { count: 0 } }),
+  state("idle", transition("next", "active")),
+  state("active")
+);
 
-// Later: restore machine from saved state
-const savedSnapshot = await loadFromDatabase(userId);
-const myMachine = machine('MyMachine', ...definition);
+const serialized = serialize(myMachine);
 
-// Restore state WITHOUT executing entry actions
-start(myMachine, savedSnapshot);
+// Generate TypeScript with full type definitions
+const tsCode = generateFromSerializedMachine(serialized, Format.TS);
+
+// Generate ESM JavaScript
+const esmCode = generateFromSerializedMachine(serialized, Format.ESM);
+
+// Generate CommonJS JavaScript
+const cjsCode = generateFromSerializedMachine(serialized, Format.CJS);
 ```
 
-The snapshot includes:
-- Current state
-- Context
-- History
-- Parallel machines state
-- Nested machines state
+The TypeScript output includes:
+- `States` interface with all state names
+- `Context` interface with all context properties
+- Full machine definition with types
+
+### SCXML Import/Export
+
+Import and export machines in SCXML (State Chart XML) format - a W3C standard:
+
+```javascript
+import { toSCXML, fromSCXML, serialize } from "x-robot";
+
+// Export to SCXML
+const serialized = serialize(myMachine);
+const scxml = toSCXML(serialized);
+
+// Import from SCXML
+const importedMachine = fromSCXML(scxmlString);
+```
+
+SCXML supports:
+- Simple and nested states
+- Parallel states
+- Transitions with events
+- Guards (conditions)
+- Entry/Exit actions
+- Immediate transitions

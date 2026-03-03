@@ -4,6 +4,7 @@ export interface InitDirective {
     initial?: InitialDirective;
     context?: ContextDirective;
     freeze?: ShouldFreezeDirective;
+    history?: HistoryDirective;
 }
 export interface Context {
     [key: string]: any;
@@ -12,7 +13,7 @@ export interface TransitionDirective {
     transition: string;
     target: string;
     guards: GuardsDirective;
-    exitPulse?: PulseDirective | PulseDirective[];
+    exit?: ExitDirective[];
 }
 export interface TransitionsDirective {
     [key: string]: TransitionDirective;
@@ -50,6 +51,10 @@ export interface PulseDirective {
     success?: string | PulseDirective;
     failure?: string | PulseDirective;
     transition?: string;
+}
+export interface ExitDirective {
+    pulse: Pulse;
+    failure?: string;
 }
 export interface Action {
     (context: Context, payload?: any): Promise<void | any>;
@@ -119,6 +124,7 @@ export interface Machine {
     frozen: boolean;
     fatal?: Error;
     history: string[];
+    historyLimit?: number;
     parallel: ParallelDirective["parallel"];
 }
 export interface NestedMachineDirective {
@@ -136,6 +142,9 @@ export interface InitialDirective {
 }
 export interface ShouldFreezeDirective {
     freeze: boolean;
+}
+export interface HistoryDirective {
+    history: number;
 }
 export declare enum HistoryType {
     Transition = "Transition",

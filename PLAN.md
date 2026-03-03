@@ -1,264 +1,875 @@
 # X-Robot Development Plan
 
 ## Overview
-This document outlines the comprehensive development plan for X-Robot, a finite state machine library for Node.js and the web.
+This document outlines the implementation plan for two high-priority features:
+1. TypeScript Code Generation - Generate TypeScript code with full type definitions
+2. SCXML Import/Export - Import and export machines in SCXML format
 
 ---
 
-## 1. Benchmark vs XState
+# Part 1: TypeScript Code Generation
 
-### Objective
-Create exhaustive benchmarks comparing X-Robot against XState to demonstrate performance and developer experience advantages.
+## Objective
+Generate TypeScript code from serialized machines, including full type definitions for states and context.
 
-### Tests to Create (`tests/benchmark/`)
+## Current State
+- Current code generation supports: ESM (.js), CJS (.js)
+- Format enum: `Format { ESM, CJS }`
+- Located in: `lib/generate/index.ts`
 
-#### 1.1 Performance Benchmark (`performance.test.ts`)
-- **Purpose**: Measure execution time for state transitions
-- **Metrics**:
-  - 10,000 transitions in sequence
-  - 1,000 parallel machines
-  - Cold start time
-  - Hot transition time
+## Target State
+Generate `.ts` files with:
+- Type definitions for states
+- Type definitions for context
+- Machine code with generics
 
-```typescript
-describe("Performance Benchmark", () => {
-  it("should complete 10k transitions in under 100ms", () => {});
-  it("should handle 1k parallel state machines", () => {});
-  it("should have cold start under 10ms", () => {});
-});
-```
+## Example Output
 
-#### 1.2 Bundle Size Benchmark (`bundle-size.test.ts`)
-- **Purpose**: Compare bundle sizes
-- **Metrics**:
-  - Minified size
-  - Gzipped size
-  - Tree-shaking effectiveness
-
-| Library | Minified | Gzipped |
-|---------|-----------|----------|
-| XState | ~40KB | ~12KB |
-| X-Robot | ~13KB | ~4KB |
-
-#### 1.3 Memory Usage (`memory-usage.test.ts`)
-- **Purpose**: Measure memory consumption
-- **Metrics**:
-  - Baseline memory
-  - Memory per state
-  - Memory after 10k transitions
-  - Garbage collection pressure
-
-#### 1.4 Developer Experience (`developer-experience.test.ts`)
-- **Purpose**: Compare Lines of Code (LOC) for equivalent functionality
-- **Metrics**:
-  - LOC for simple machine
-  - LOC for complex machine
-  - LOC for async operations
-
-### Comparison Table
-
-| Metric | XState | X-Robot | Winner |
-|--------|---------|----------|--------|
-| Bundle Size | ~40KB | ~13KB | X-Robot |
-| Transition Time | TBD | TBD | TBD |
-| Memory Usage | TBD | TBD | TBD |
-| Simple Machine LOC | ~50 | ~20 | X-Robot |
-| Async Implementation | Complex | Simple | X-Robot |
-
----
-
-## 2. Documentation
-
-### 2.1 Migration Guide (`docs/migration-guide.md`)
-
-**Purpose**: Guide for developers migrating from XState to X-Robot
-
-**Structure**:
-```markdown
-# Migration Guide: XState → X-Robot
-
-## Quick Comparison
-
-### XState (Traditional)
-```javascript
-createMachine({
-  initial: 'idle',
-  states: {
-    idle: { on: { start: 'loading' }},
-    loading: { entry: 'fetchData' }
+### Input (SerializedMachine)
+```json
+{
+  "title": "MyMachine",
+  "initial": "idle",
+  "context": { "data": "" },
+  "states": {
+    "idle": { "name": "idle", "on": { "load": "loading" }},
+    "loading": { "name": "loading", "run": [{ "pulse": "fetchData", "success": "success", "failure": "error" }]},
+    "success": { "name": "success" },
+    "error": { "name": "error", "run": [{ "pulse": "logError" }]}
   }
-})
+}
 ```
 
-### X-Robot (Equivalent)
-```javascript
-machine(
-  init(initial('idle')),
-  state('idle', transition('start', 'loading')),
-  state('loading', pulse(fetchData))
-)
-```
-
-## Detailed Migrations
-
-1. Basic State Machines
-2. Parallel States
-3. Nested Machines
-4. Async Operations
-5. Guards
-6. Context Management
-```
-
-### 2.2 Async Comparison (`docs/async-comparison.md`)
-
-**Purpose**: Explain how async operations work in both libraries
-
-**Key Differences**:
-
-| Feature | XState | X-Robot |
-|---------|--------|----------|
-| Async Entry | `invoke` + service | `async function` in `pulse` |
-| Async Guards | `invoke` + condition | `async function` in `guard` |
-| Error Handling | Separate error state | Built-in failure transition |
-| Boilerplate | High | Low |
-
-**XState Example**:
-```javascript
-createMachine({
-  states: {
-    loading: {
-      invoke: {
-        src: 'fetchData',
-        onDone: { target: 'success' },
-        onError: { target: 'error' }
-      }
-    }
-  }
-})
-```
-
-**X-Robot Equivalent**:
-```javascript
-state('loading',
-  pulse(async (ctx) => {
-    const data = await fetch('/api/data');
-    ctx.data = data;
-  }, 'success', 'error')
-)
-```
-
-### 2.3 Improve README.md
-
-**Add Sections**:
-- Performance highlights
-- Comparison table
-- Migration teaser
-- Real-world use cases
-- CLI usage
-
-### 2.4 Update API.md
-
-**Add Documentation for**:
-- `exitPulse(handler, success?, failure?)` - NEW
-- Async guards
-- Exit pulse with transitions
-- Context modification in guards
-
----
-
-## 3. CLI + API for Documentation
-
-### 3.1 CLI Tool (`bin/cli.js`)
-
-**Commands**:
-```bash
-# Generate documentation for a machine
-x-robot documentate <file> --output ./docs/
-
-# Generate SVG diagram
-x-robot visualize <machine-name> --svg --output ./media/
-
-# Generate JSON representation
-x-robot serialize <machine-name> --json --output ./serialized/
-
-# Watch mode for development
-x-robot watch <file> --svg --json
-```
-
-### 3.2 Programmatic API (`lib/documentate/index.ts`)
-
+### Output (TypeScript)
 ```typescript
-// Generate documentation package
-export function documentate(machine: Machine, options: DocumentateOptions): Documentation;
+// ===========================================
+// Type definitions for MyMachine
+// Generated by x-robot
+// ===========================================
 
-// Options
-interface DocumentateOptions {
-  output: string;
-  format: 'svg' | 'png' | 'json' | 'all';
-  level?: 'low' | 'high';
-  includeHistory?: boolean;
+export interface MyMachineStates {
+  idle: {};
+  loading: {};
+  success: {};
+  error: {};
 }
 
-// Example usage
-import { documentate } from 'x-robot/documentate';
+export interface MyMachineContext {
+  data: string;
+}
 
-documentate(myMachine, {
-  output: './docs',
-  format: 'all',
-  level: 'high'
+// State-specific context types
+export interface MyMachineLoadingContext extends MyMachineContext {}
+export interface MyMachineErrorContext extends MyMachineContext {
+  error: string;
+}
+
+// Machine with full type safety
+export const myMachine = machine<MyMachineStates, MyMachineContext>(
+  "MyMachine",
+  init(initial("idle"), { context: { data: "" } }),
+  state("idle", transition("load", "loading")),
+  state("loading", entry(fetchData, "success", "error")),
+  state("success"),
+  state("error", entry(logError))
+);
+```
+
+## Implementation Steps
+
+### Step 1: Add TS to Format Enum
+**File:** `lib/generate/index.ts`
+
+```typescript
+export enum Format {
+  ESM = "esm",
+  CJS = "cjs",
+  TS = "ts",  // NEW
+}
+```
+
+### Step 2: Analyze Serialized Machine
+**Function:** `analyzeMachineTypes(serializedMachine)`
+
+Extract:
+- All state names and their types
+- Context properties
+- Which states modify context
+- Which states have entry/exit actions
+
+```typescript
+interface MachineAnalysis {
+  stateNames: string[];
+  contextProperties: string[];
+  stateContextModifiers: Map<string, string[]>;
+  entryActions: Map<string, string[]>;
+  exitActions: Map<string, string[]>;
+}
+```
+
+### Step 3: Generate State Interface
+**Function:** `generateStateInterface(analysis): string`
+
+```typescript
+function generateStateInterface(name: string, analysis: MachineAnalysis): string {
+  let lines = [`export interface ${name}States {`];
+  
+  for (const stateName of analysis.stateNames) {
+    const modifiers = analysis.stateContextModifiers.get(stateName);
+    if (modifiers && modifiers.length > 0) {
+      lines.push(`  ${stateName}: { context: ${name}${capitalize(stateName)}Context };`);
+    } else {
+      lines.push(`  ${stateName}: {};`);
+    }
+  }
+  
+  lines.push("}");
+  return lines.join("\n");
+}
+```
+
+### Step 4: Generate Context Interface
+**Function:** `generateContextInterface(analysis): string`
+
+```typescript
+function generateContextInterface(name: string, analysis: MachineAnalysis): string {
+  const props = analysis.contextProperties.map(prop => `  ${prop}: any;`).join("\n");
+  
+  return `export interface ${name}Context {\n${props}\n}`;
+}
+```
+
+### Step 5: Generate State-Specific Context Types
+**Function:** `generateStateSpecificContexts(analysis): string`
+
+For states that modify context, generate extended types:
+```typescript
+export interface MyMachineLoadingContext extends MyMachineContext {
+  loadingSpecific: string;
+}
+
+export interface MyMachineErrorContext extends MyMachineContext {
+  error: string;
+}
+```
+
+### Step 6: Generate Main Code with Generics
+**Function:** `generateTypeScriptCode(serializedMachine): string`
+
+```typescript
+function generateTypeScriptCode(serializedMachine: SerializedMachine): string {
+  const name = toCamelCase(serializedMachine.title || "Machine");
+  const analysis = analyzeMachineTypes(serializedMachine);
+  
+  let code = "";
+  
+  // Header
+  code += `// Generated by x-robot\n`;
+  code += `// Machine: ${serializedMachine.title}\n\n`;
+  
+  // State interface
+  code += generateStateInterface(name, analysis);
+  code += "\n\n";
+  
+  // Context interface
+  code += generateContextInterface(name, analysis);
+  code += "\n\n";
+  
+  // State-specific contexts
+  code += generateStateSpecificContexts(name, analysis);
+  code += "\n\n";
+  
+  // Main machine code
+  code += generateMachineCode(serializedMachine, name);
+  
+  return code;
+}
+```
+
+### Step 7: Integrate with Existing Generator
+**File:** `lib/generate/index.ts`
+
+Modify `generateFromSerializedMachine`:
+```typescript
+export function generateFromSerializedMachine(
+  serializedMachine: SerializedMachine, 
+  format: Format
+): string {
+  switch (format) {
+    case Format.ESM:
+      return generateESMCode(serializedMachine);
+    case Format.CJS:
+      return generateCJSCode(serializedMachine);
+    case Format.TS:  // NEW
+      return generateTypeScriptCode(serializedMachine);
+    default:
+      throw new Error(`Unsupported format: ${format}`);
+  }
+}
+```
+
+### Step 8: Export from lib/index.ts
+**File:** `lib/index.ts`
+
+Ensure `generateFromSerializedMachine` is exported with the Format enum.
+
+## Tests to Create
+
+### Test File: `tests/generate.test.ts`
+
+```typescript
+describe("TypeScript Generation", () => {
+  it("should generate state interface");
+  it("should generate context interface");
+  it("should generate state-specific context types");
+  it("should generate machine with generics");
+  it("should handle complex nested machines");
+  it("should handle parallel machines");
 });
 ```
 
-### 3.3 CI/CD Integration
+## Edge Cases to Handle
 
-**GitHub Actions**:
-- Auto-generate diagrams on PR
-- Compare machine changes
-- Add badges for documentation coverage
-
----
-
-## 4. Implementation Checklist
-
-### Phase 1: Benchmark (Priority: High)
-- [ ] Create `tests/benchmark/performance.test.ts`
-- [ ] Create `tests/benchmark/bundle-size.test.ts`
-- [ ] Create `tests/benchmark/memory-usage.test.ts`
-- [ ] Create `tests/benchmark/developer-experience.test.ts`
-- [ ] Run benchmarks and document results
-
-### Phase 2: Documentation (Priority: High)
-- [ ] Create `docs/migration-guide.md`
-- [ ] Create `docs/async-comparison.md`
-- [ ] Update `README.md` with benchmarks
-- [ ] Update `API.md` with new features
-
-### Phase 3: CLI + API (Priority: Medium)
-- [ ] Create `bin/cli.js`
-- [ ] Create `lib/documentate/index.ts`
-- [ ] Add tests for CLI
-- [ ] Add GitHub Actions workflow
+1. **No context defined**: Generate empty context interface
+2. **Context as function**: Call function to get initial values
+3. **Nested machines**: Generate types for nested machines
+4. **Parallel machines**: Generate types for parallel machines
+5. **Guards**: Reference guard functions
+6. **Entry/Exit actions**: Reference action functions
+7. **Async actions**: Mark as async in comments
 
 ---
 
-## 5. Success Metrics
+# Part 2: SCXML Import/Export
 
-| Metric | Target |
-|--------|--------|
-| Bundle Size Reduction | 3x smaller than XState |
-| Transition Performance | < 1ms per transition |
-| Documentation Coverage | 100% API coverage |
-| Migration Guide | Cover 90% of XState patterns |
+## Objective
+Implement bidirectional conversion between X-Robot machines and SCXML format.
+
+## What is SCXML?
+SCXML (State Chart XML) is a W3C standard for state machines. It provides:
+- XML-based representation of state machines
+- Standardized format for interoperability
+- Used by various tools and frameworks
+
+## Reference
+- W3C Specification: https://www.w3.org/TR/scxml/
+- XState Compatibility: https://xstate.js.org/docs/guides/scxml.html
+
+## Features Mapping
+
+### SCXML Features Supported by X-Robot
+
+| SCXML Feature | X-Robot Equivalent | Supported |
+|--------------|-------------------|-----------|
+| `<scxml>` | machine() | ✅ |
+| `<state>` | state() | ✅ |
+| Nested `<state>` | nested() | ✅ |
+| `<parallel>` | parallel() | ✅ |
+| `<transition event="" target="">` | transition() | ✅ |
+| `<transition cond="">` | guard() | ✅ |
+| `<initial>` | initial() | ✅ |
+| `<final>` | state without transitions | ✅ |
+| `<onentry>` | entry() | ✅ |
+| `<onexit>` | exit() | ✅ |
+| `<history>` | history() | ✅ |
+| `<invoke>` | nested() with transition | ✅ |
+
+### SCXML Features NOT Supported (skipped)
+
+| SCXML Feature | Reason |
+|--------------|--------|
+| `<script>` | Inline JS - use external functions |
+| `<if>/<else>/<elseif>` | Use external logic |
+| `<foreach>` | Use external iteration |
+| `<send>` | External communication - use custom code |
+| `<cancel>` | External communication |
+| `<raise>` | Use invoke() |
+| `<log>` | Use custom logging |
+| `<datamodel>` | Use context |
+| `<assign>` | Use context updates |
+
+## Implementation: SCXML Export
+
+### Function Signature
+```typescript
+export function toSCXML(machine: Machine | SerializedMachine): string
+```
+
+### Example: Simple Machine
+
+**X-Robot:**
+```typescript
+const myMachine = machine(
+  "MyMachine",
+  init(initial("idle")),
+  state("idle", transition("start", "running")),
+  state("running", transition("stop", "idle"))
+);
+```
+
+**SCXML Output:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" 
+        version="1.0" 
+        initial="idle" 
+        name="MyMachine">
+  
+  <state id="idle">
+    <transition event="start" target="running"/>
+  </state>
+  
+  <state id="running">
+    <transition event="stop" target="idle"/>
+  </state>
+  
+</scxml>
+```
+
+### Example: Machine with Guards
+
+**X-Robot:**
+```typescript
+const myMachine = machine(
+  "MyMachine",
+  init(initial("idle")),
+  state("idle", transition("login", "checking", guard(checkAuth, "error"))),
+  state("checking", transition("success", "authenticated")),
+  state("authenticated"),
+  state("error")
+);
+```
+
+**SCXML Output:**
+```xml
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="MyMachine">
+  
+  <state id="idle">
+    <transition event="login" target="checking" cond="checkAuth()"/>
+  </state>
+  
+  <state id="checking">
+    <transition event="success" target="authenticated"/>
+  </state>
+  
+  <state id="authenticated"/>
+  <state id="error"/>
+  
+</scxml>
+```
+
+### Example: Nested States
+
+**X-Robot:**
+```typescript
+const myMachine = machine(
+  "Order",
+  init(initial("pending")),
+  state("pending", 
+    nested(orderMachine, "process"),
+    transition("cancel", "cancelled")
+  ),
+  state("processing", transition("complete", "completed")),
+  state("cancelled"),
+  state("completed")
+);
+```
+
+**SCXML Output:**
+```xml
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="pending" name="Order">
+  
+  <state id="pending">
+    <state id="process">
+      <!-- nested state content -->
+    </state>
+    <transition event="cancel" target="cancelled"/>
+  </state>
+  
+  <state id="processing">
+    <transition event="complete" target="completed"/>
+  </state>
+  
+  <state id="cancelled"/>
+  <state id="completed"/>
+  
+</scxml>
+```
+
+### Example: Parallel States
+
+**X-Robot:**
+```typescript
+const myMachine = machine(
+  "Editor",
+  parallel(
+    boldMachine,
+    italicMachine,
+    underlineMachine
+  )
+);
+```
+
+**SCXML Output:**
+```xml
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" name="Editor">
+  
+  <parallel id="Editor">
+    <state id="bold">...</state>
+    <state id="italic">...</state>
+    <state id="underline">...</state>
+  </parallel>
+  
+</scxml>
+```
+
+### Implementation Steps: toSCXML
+
+#### Step 1: Create SCXML Module
+**File:** `lib/scxml/index.ts`
+
+```typescript
+import { Machine, SerializedMachine } from "../machine/interfaces";
+
+export function toSCXML(machine: Machine | SerializedMachine): string {
+  const serialized = isMachine(machine) ? serialize(machine) : machine;
+  return generateSCXML(serialized);
+}
+```
+
+#### Step 2: Generate Root Element
+```typescript
+function generateRootElement(machine: SerializedMachine): string {
+  const initial = machine.initial || Object.keys(machine.states)[0];
+  const name = machine.title || "Machine";
+  
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" 
+       version="1.0" 
+       initial="${initial}" 
+       name="${name}">`;
+}
+```
+
+#### Step 3: Generate States
+```typescript
+function generateStates(states: SerializedStates, indent: string = "  "): string {
+  let xml = "";
+  
+  for (const [stateName, state] of Object.entries(states)) {
+    xml += `${indent}<state id="${stateName}">\n`;
+    
+    // Entry actions
+    if (state.run && state.run.length > 0) {
+      xml += `${indent}  <onentry>\n`;
+      for (const action of state.run) {
+        xml += `${indent}    <script>${action.pulse}()</script>\n`;
+      }
+      xml += `${indent}  </onentry>\n`;
+    }
+    
+    // Exit actions
+    // (check if any transition has exit actions)
+    
+    // Transitions
+    if (state.on) {
+      for (const [event, transition] of Object.entries(state.on)) {
+        xml += `${indent}  <transition event="${event}"`;
+        
+        if (transition.target) {
+          xml += ` target="${transition.target}"`;
+        }
+        
+        if (transition.guards && transition.guards.length > 0) {
+          const cond = transition.guards.map(g => g.guard).join(" && ");
+          xml += ` cond="${cond}"`;
+        }
+        
+        xml += "/>\n";
+      }
+    }
+    
+    // Immediate transitions
+    if (state.immediate) {
+      for (const immediate of state.immediate) {
+        xml += `${indent}  <transition`;
+        if (immediate.immediate) {
+          xml += ` target="${immediate.immediate}"`;
+        }
+        if (immediate.guards) {
+          const cond = immediate.guards.map(g => g.guard).join(" && ");
+          xml += ` cond="${cond}"`;
+        }
+        xml += "/>\n";
+      }
+    }
+    
+    // Nested machines
+    if (state.nested) {
+      for (const nested of state.nested) {
+        // Recursively generate nested states
+      }
+    }
+    
+    xml += `${indent}</state>\n`;
+  }
+  
+  return xml;
+}
+```
+
+#### Step 4: Generate Parallel States
+```typescript
+function generateParallelStates(parallel: Record<string, SerializedMachine>): string {
+  let xml = "";
+  
+  for (const [name, machine] of Object.entries(parallel)) {
+    xml += `  <parallel id="${name}">\n`;
+    xml += generateStates(machine.states, "    ");
+    xml += `  </parallel>\n`;
+  }
+  
+  return xml;
+}
+```
+
+#### Step 5: Generate Final Elements
+```typescript
+function generateFinalClosing(): string {
+  return "</scxml>";
+}
+```
 
 ---
 
-## 6. Notes
+## Implementation: SCXML Import
 
-- XState does NOT natively support async states or async methods
-- X-Robot's async support is native to JavaScript functions
-- X-Robot is more declarative than XState
-- Documentation generation helps track changes in machines over time
+### Function Signature
+```typescript
+export function fromSCXML(scxmlString: string): SerializedMachine
+```
+
+### Example: Simple Import
+
+**SCXML Input:**
+```xml
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="MyMachine">
+  
+  <state id="idle">
+    <transition event="start" target="running"/>
+  </state>
+  
+  <state id="running">
+    <transition event="stop" target="idle"/>
+  </state>
+  
+</scxml>
+```
+
+**X-Robot Output:**
+```javascript
+machine(
+  "MyMachine",
+  init(initial("idle")),
+  state("idle", transition("start", "running")),
+  state("running", transition("stop", "idle"))
+);
+```
+
+### Implementation Steps: fromSCXML
+
+#### Step 1: Parse XML
+```typescript
+import { DOMParser } from "xmldom"; // or use native DOMParser in Node.js
+
+export function fromSCXML(scxmlString: string): SerializedMachine {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(scxmlString, "text/xml");
+  
+  return parseSCXMLDocument(doc);
+}
+```
+
+#### Step 2: Parse Root Element
+```typescript
+function parseSCXMLDocument(doc: Document): SerializedMachine {
+  const root = doc.documentElement;
+  
+  if (root.tagName !== "scxml") {
+    throw new Error("Invalid SCXML document: root element must be <scxml>");
+  }
+  
+  const machine: SerializedMachine = {
+    title: root.getAttribute("name") || undefined,
+    initial: root.getAttribute("initial") || "",
+    states: {},
+    parallel: {},
+    context: {}
+  };
+  
+  // Parse child elements
+  const children = Array.from(root.childNodes);
+  
+  for (const child of children) {
+    if (child.nodeType !== 1) continue; // Skip text nodes
+    
+    const element = child as Element;
+    
+    switch (element.tagName) {
+      case "state":
+        const state = parseStateElement(element);
+        machine.states[state.id] = state;
+        break;
+      case "parallel":
+        const parallel = parseParallelElement(element);
+        machine.parallel[parallel.id] = parallel;
+        break;
+    }
+  }
+  
+  return machine;
+}
+```
+
+#### Step 3: Parse State Element
+```typescript
+function parseStateElement(element: Element): SerializedState {
+  const state: SerializedState = {
+    name: element.getAttribute("id") || ""
+  };
+  
+  // Parse <onentry>
+  const onentry = element.getElementsByTagName("onentry")[0];
+  if (onentry) {
+    state.run = parseOnEntryExit(onentry);
+  }
+  
+  // Parse <onexit>
+  const onexit = element.getElementsByTagName("onexit")[0];
+  if (onexit) {
+    // Store exit actions in transitions
+  }
+  
+  // Parse <transition>
+  const transitions = element.getElementsByTagName("transition");
+  if (transitions.length > 0) {
+    state.on = {};
+    for (const trans of Array.from(transitions)) {
+      const event = trans.getAttribute("event") || "";
+      const target = trans.getAttribute("target") || "";
+      const cond = trans.getAttribute("cond") || "";
+      
+      state.on[event] = {
+        target,
+        guards: cond ? [{ guard: cond }] : undefined
+      };
+    }
+  }
+  
+  // Parse nested states
+  const nestedStates = element.getElementsByTagName("state");
+  if (nestedStates.length > 0) {
+    // This is a compound state with nested states
+  }
+  
+  // Parse <invoke>
+  const invoke = element.getElementsByTagName("invoke")[0];
+  if (invoke) {
+    // Handle invocation
+  }
+  
+  // Parse <history>
+  const history = element.getElementsByTagName("history")[0];
+  if (history) {
+    // Handle history pseudo-state
+  }
+  
+  return state;
+}
+```
+
+#### Step 4: Parse Parallel Element
+```typescript
+function parseParallelElement(element: Element): SerializedMachine {
+  const id = element.getAttribute("id") || "";
+  
+  const machine: SerializedMachine = {
+    states: {},
+    parallel: {},
+    context: {},
+    initial: ""
+  };
+  
+  // Parse child states
+  const childStates = element.getElementsByTagName("state");
+  for (const stateEl of Array.from(childStates)) {
+    const state = parseStateElement(stateEl);
+    machine.states[state.name] = state;
+  }
+  
+  return machine;
+}
+```
+
+#### Step 5: Handle Special Elements
+
+##### Guards (cond attribute)
+```typescript
+function parseGuardCondition(cond: string): SerializedGuard[] {
+  if (!cond) return undefined;
+  
+  // Simple case: just a function name
+  // Complex case: expression with &&, ||
+  
+  return [{ guard: cond }];
+}
+```
+
+##### Entry/Exit Actions
+```typescript
+function parseOnEntryExit(element: Element): SerializedPulse[] {
+  const scripts = element.getElementsByTagName("script");
+  const pulses: SerializedPulse[] = [];
+  
+  for (const script of Array.from(scripts)) {
+    const content = script.textContent || "";
+    // Extract function name from content
+    const fnName = content.replace(/[();\s]/g, "").trim();
+    
+    if (fnName) {
+      pulses.push({ pulse: fnName });
+    }
+  }
+  
+  return pulses;
+}
+```
+
+##### Initial State
+```typescript
+function parseInitialElement(element: Element): string {
+  const initial = element.getElementsByTagName("initial")[0];
+  if (initial) {
+    const transition = initial.getElementsByTagName("transition")[0];
+    if (transition) {
+      return transition.getAttribute("target") || "";
+    }
+  }
+  return "";
+}
+```
+
+##### Final State
+```typescript
+function isFinalState(element: Element): boolean {
+  return element.tagName === "final" || 
+         (element.getAttribute("type") === "final");
+}
+```
+
+##### History
+```typescript
+function parseHistoryElement(element: Element): { type: "shallow" | "deep" } | undefined {
+  const type = element.getAttribute("type");
+  if (type === "shallow" || type === "deep") {
+    return { type };
+  }
+  return undefined;
+}
+```
 
 ---
 
-*Last Updated: 2026-03-02*
+## Error Handling
+
+### SCXML Export Errors
+- Invalid machine structure
+- Unsupported features encountered
+- Circular references in nested states
+
+### SCXML Import Errors
+- Invalid XML
+- Missing required attributes (id, initial)
+- Invalid state references
+- Unsupported SCXML features
+
+---
+
+## Testing
+
+### Test File: `tests/scxml.test.ts`
+
+```typescript
+describe("SCXML Export", () => {
+  it("should export simple machine");
+  it("should export machine with guards");
+  it("should export nested states");
+  it("should export parallel states");
+  it("should export entry/exit actions");
+  it("should export history states");
+});
+
+describe("SCXML Import", () => {
+  it("should import simple machine");
+  it("should import machine with guards");
+  it("should import nested states");
+  it("should import parallel states");
+  it("should import entry/exit actions");
+});
+
+describe("Roundtrip", () => {
+  it("should preserve machine through export/import");
+});
+```
+
+---
+
+## File Structure
+
+### New Files
+- `lib/scxml/index.ts` - SCXML module
+
+### Modified Files
+- `lib/generate/index.ts` - Add TS format
+- `lib/index.ts` - Export SCXML functions
+- `lib/serialize/index.ts` - Ensure all needed fields are in SerializedMachine
+
+### Test Files
+- `tests/generate.test.ts` - Add TypeScript tests
+- `tests/scxml.test.ts` - Create SCXML tests
+
+---
+
+## Dependencies
+
+- No external libraries required
+- Uses native `DOMParser` (available in Node.js 18+)
+- For older Node.js, can use `xmldom` package
+
+---
+
+## Priority and Timeline
+
+| Task | Priority | Estimated Time |
+|------|----------|----------------|
+| TypeScript Code Generation | High | 1-2 days |
+| SCXML Export | High | 2-3 days |
+| SCXML Import | High | 2-3 days |
+| Tests | High | 1 day |
+
+**Total Estimated Time:** 6-9 days
+
+---
+
+## Success Criteria
+
+1. TypeScript generation produces valid, compilable TypeScript code
+2. Generated TypeScript code has full type safety
+3. SCXML export produces valid SCXML documents
+4. SCXML import correctly parses standard SCXML documents
+5. Roundtrip (export → import) preserves machine structure
+6. All existing tests continue to pass
+
+---
+
+*Last Updated: 2026-03-03*

@@ -29,11 +29,11 @@ Generated: 2026-03-03
 | invoke() | ✅ | ✅ | ✅ | ✅ |
 | Delayed transitions | ✅ invokeAfter | ❌ | ✅ | ✅ |
 | History tracking | ✅ | ❌ | ❌ | ❌ |
-| Code generation | ✅ ESM/CJS | ❌ | ❌ | ❌ |
+| Code generation | ✅ ESM/CJS/TS | ❌ | ❌ | ❌ |
 | Diagram generation | ✅ PNG/SVG/PlantUML | ❌ | ❌ | ❌ |
 | JSON serialization | ✅ | ❌ | ❌ | ❌ |
 | Actor model | ❌ | ❌ | ❌ | ✅ |
-| SCXML import/export | ❌ | ❌ | ❌ | ✅ |
+| SCXML import/export | ✅ | ❌ | ❌ | ✅ |
 
 ---
 
@@ -66,8 +66,9 @@ Generated: 2026-03-03
 1. **2.3-4.4x smaller** bundle size
 2. **7-30x faster** performance
 3. **1.2-2.2x less code** to write
-4. **More features** - History, Code Gen, Diagrams, Serialization
+4. **More features** - History, Code Gen (ESM/CJS/TS), Diagrams, Serialization, SCXML
 5. **Simpler API** - Declarative, functional approach
 6. **Native async guards** - No workarounds needed
 7. **invokeAfter()** - Built-in with cancel functionality
 8. **Better DX** - Code & diagram generation built-in
+9. **SCXML support** - Import/export machines in standard SCXML format

@@ -189,5 +189,8 @@
         "npm run build"
       ]
     }
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.11"
   }
 }

@@ -37,6 +37,7 @@ function isValidObject(obj) {
 var Format = /* @__PURE__ */ ((Format2) => {
   Format2["ESM"] = "esm";
   Format2["CJS"] = "cjs";
+  Format2["TS"] = "ts";
   return Format2;
 })(Format || {});
 function getGuards(transition, guards = [], declaredGuards = []) {
@@ -64,23 +65,20 @@ function getGuards(transition, guards = [], declaredGuards = []) {
 }
 function getExitPulses(transition, pulses = [], declaredPulses = []) {
   let code = "";
-  if (transition.exitPulse && transition.exitPulse.length > 0) {
-    code += `, exitPulse(`;
-    for (let i = 0; i < transition.exitPulse.length; i++) {
-      const exitPulse = transition.exitPulse[i];
+  if (transition.exit && transition.exit.length > 0) {
+    code += `, exit(`;
+    for (let i = 0; i < transition.exit.length; i++) {
+      const exitPulse = transition.exit[i];
       if (!pulses.includes(exitPulse.pulse) && !declaredPulses.includes(exitPulse.pulse)) {
         pulses.push(exitPulse.pulse);
         declaredPulses.push(exitPulse.pulse);
       }
-      code += `pulse(${exitPulse.pulse}`;
-      if (isValidString(exitPulse.success)) {
-        code += `, "${exitPulse.success}"`;
-      }
+      code += `entry(${exitPulse.pulse}`;
       if (isValidString(exitPulse.failure)) {
-        code += `, undefined, "${exitPulse.failure}"`;
+        code += `, "${exitPulse.failure}"`;
       }
       code += `)`;
-      if (i < transition.exitPulse.length - 1) {
+      if (i < transition.exit.length - 1) {
         code += `, `;
       }
     }
@@ -121,7 +119,7 @@ function getCodeParts(serializedMachine, declaredPulses = [], declaredGuards = [
             pulses.push(runItem.pulse);
             declaredPulses.push(runItem.pulse);
           }
-          stateCode += `      pulse(${runItem.pulse}`;
+          stateCode += `      entry(${runItem.pulse}`;
           if (isValidString(runItem.success)) {
             stateCode += `, "${runItem.success}"`;
             implicitStateTransitions.push(runItem.success);
@@ -217,11 +215,11 @@ function getImports(serializedMachine, imports = ["machine"]) {
                 }
               }
             }
-            if (transition.exitPulse && transition.exitPulse.length > 0) {
-              addImport("exitPulse", imports);
-              for (let exitPulse of transition.exitPulse) {
-                addImport("pulse", imports);
-                if (isValidString(exitPulse.success) || isValidString(exitPulse.failure)) {
+            if (transition.exit && transition.exit.length > 0) {
+              addImport("exit", imports);
+              for (let exitItem of transition.exit) {
+                addImport("entry", imports);
+                if (isValidString(exitItem.failure)) {
                   addImport("transition", imports);
                 }
               }
@@ -232,7 +230,7 @@ function getImports(serializedMachine, imports = ["machine"]) {
       if (state.run && state.run.length > 0) {
         for (let runItem of state.run) {
           if ("pulse" in runItem) {
-            addImport("pulse", imports);
+            addImport("entry", imports);
             if (isValidString(runItem.success) || isValidString(runItem.failure)) {
               addImport("transition", imports);
             }
@@ -296,11 +294,11 @@ function getMachineCode(serializedMachine, format, machines = /* @__PURE__ */ ne
 `;
   }
   if (pulses.length > 0) {
-    let pulseCode = `// Pulses
+    let pulseCode = `// Entries
 `;
     for (let pulse of pulses) {
       pulseCode += `const ${pulse} = (context, payload) => {
-  // TODO: Implement pulse
+  // TODO: Implement entry
   return {...context};
 };
 `;
@@ -352,6 +350,9 @@ function getMachineCode(serializedMachine, format, machines = /* @__PURE__ */ ne
   return code;
 }
 function generateFromSerializedMachine(serializedMachine, format) {
+  if (format === "ts" /* TS */) {
+    return generateTypeScriptCode(serializedMachine);
+  }
   let code = "";
   let imports = getImports(serializedMachine);
   let importCode = "";
@@ -371,10 +372,121 @@ function generateFromSerializedMachine(serializedMachine, format) {
     code += `
 module.exports = { ${Array.from(machines.keys()).join(", ")} };
 `;
+  } else if (format === "ts" /* TS */) {
   } else {
     code += `
 export default { ${Array.from(machines.keys()).join(", ")} };
 `;
   }
+  return code;
+}
+function toCamelCase(str) {
+  return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+    return index === 0 ? word.toLowerCase() : word.toUpperCase();
+  }).replace(/\s+/g, "");
+}
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+function analyzeMachineTypes(serializedMachine) {
+  const stateNames = [];
+  const contextProperties = [];
+  const stateContextModifiers = /* @__PURE__ */ new Map();
+  const entryActions = /* @__PURE__ */ new Map();
+  const exitActions = /* @__PURE__ */ new Map();
+  if (serializedMachine.context && typeof serializedMachine.context === "object") {
+    for (const key of Object.keys(serializedMachine.context)) {
+      contextProperties.push(key);
+    }
+  }
+  for (const [stateName, state] of Object.entries(serializedMachine.states)) {
+    stateNames.push(stateName);
+    if (state.run && state.run.length > 0) {
+      const actions = [];
+      for (const pulse of state.run) {
+        actions.push(pulse.pulse);
+      }
+      entryActions.set(stateName, actions);
+    }
+    if (state.on) {
+      for (const [event, transition] of Object.entries(state.on)) {
+        if (transition.exit && transition.exit.length > 0) {
+          if (!stateContextModifiers.has(stateName)) {
+            stateContextModifiers.set(stateName, []);
+          }
+          for (const exit of transition.exit) {
+            stateContextModifiers.get(stateName).push(exit.pulse);
+          }
+        }
+      }
+    }
+  }
+  return {
+    stateNames,
+    contextProperties,
+    stateContextModifiers,
+    entryActions,
+    exitActions
+  };
+}
+function generateStateInterface(name, analysis) {
+  const lines = [];
+  lines.push(`export interface ${name}States {`);
+  for (const stateName of analysis.stateNames) {
+    const modifiers = analysis.stateContextModifiers.get(stateName);
+    if (modifiers && modifiers.length > 0) {
+      lines.push(`  ${stateName}: { context: ${name}${capitalize(stateName)}Context };`);
+    } else {
+      lines.push(`  ${stateName}: {};`);
+    }
+  }
+  lines.push("}");
+  return lines.join("\n");
+}
+function generateContextInterface(name, contextProperties) {
+  if (contextProperties.length === 0) {
+    return `export interface ${name}Context {
+  [key: string]: any;
+}`;
+  }
+  const props = contextProperties.map((prop) => `  ${prop}: any;`).join("\n");
+  return `export interface ${name}Context {
+${props}
+}`;
+}
+function generateStateSpecificContexts(name, analysis) {
+  const lines = [];
+  for (const [stateName, modifiers] of analysis.stateContextModifiers) {
+    if (modifiers && modifiers.length > 0) {
+      lines.push(`export interface ${name}${capitalize(stateName)}Context extends ${name}Context {`);
+      for (const mod of modifiers) {
+        lines.push(`  ${mod}Result?: any;`);
+      }
+      lines.push("}");
+    }
+  }
+  return lines.join("\n\n");
+}
+function generateTypeScriptCode(serializedMachine) {
+  const machineName = toCamelCase(serializedMachine.title || "Machine");
+  const analysis = analyzeMachineTypes(serializedMachine);
+  let code = "";
+  code += "// ===========================================\n";
+  code += `// Type definitions for ${serializedMachine.title || "Machine"}
+`;
+  code += "// Generated by x-robot\n";
+  code += "// ===========================================\n\n";
+  code += generateStateInterface(machineName, analysis);
+  code += "\n\n";
+  code += generateContextInterface(machineName, analysis.contextProperties);
+  code += "\n\n";
+  const stateSpecificContexts = generateStateSpecificContexts(machineName, analysis);
+  if (stateSpecificContexts) {
+    code += stateSpecificContexts;
+    code += "\n\n";
+  }
+  const jsCode = generateFromSerializedMachine(serializedMachine, "esm" /* ESM */);
+  const tsMachineCode = jsCode.replace(/machine\(/g, `machine<${machineName}States, ${machineName}Context>(`).replace(/export default/g, "// Type-safe machine\nexport default");
+  code += tsMachineCode;
   return code;
 }

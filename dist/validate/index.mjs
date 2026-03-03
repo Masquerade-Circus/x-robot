@@ -50,8 +50,8 @@ function isValidString(str) {
 function isValidObject(obj) {
   return obj !== null && typeof obj === "object";
 }
-function isPulse(pulse) {
-  return isValidObject(pulse) && "pulse" in pulse;
+function isEntry(entry) {
+  return isValidObject(entry) && "pulse" in entry;
 }
 function isGuard(guard) {
   return isValidObject(guard) && "guard" in guard;
@@ -130,7 +130,7 @@ function validateThatAllStatesHaveTransitionsToThem(machine) {
             }
           }
           for (let item of machine.states[otherState].run) {
-            if (isPulse(item)) {
+            if (isEntry(item)) {
               if (isValidString(item.success) && item.success === state) {
                 hasPreviousState = true;
                 break;
@@ -209,10 +209,10 @@ function validatePulse(machine, state, stateName, item) {
   if (isValidString(item.failure) && !hasState(machine, item.failure)) {
     return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has a failure transition '${item.failure}' that does not exists.`));
   }
-  if (isPulse(item.success)) {
+  if (isEntry(item.success)) {
     return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid success parameter. Use multiple pulses instead.`));
   }
-  if (isPulse(item.failure)) {
+  if (isEntry(item.failure)) {
     return err(new Error(`The pulse '${item.pulse.name}' of the state '${stateName}' has an invalid failure parameter. Use multiple pulses instead.`));
   }
   return ok(void 0);
@@ -226,13 +226,13 @@ function validateRunCollections(machine) {
       }
     }
     for (let item of state.run) {
-      if (!isPulse(item)) {
+      if (!isEntry(item)) {
         return err(new Error(`The state '${stateName}' has a run collection that contains an item that is not a pulse.`));
       }
-      if (isPulse(item)) {
-        let isPulseValidResult = validatePulse(machine, state, stateName, item);
-        if (isPulseValidResult.isErr()) {
-          return isPulseValidResult;
+      if (isEntry(item)) {
+        let isEntryValidResult = validatePulse(machine, state, stateName, item);
+        if (isEntryValidResult.isErr()) {
+          return isEntryValidResult;
         }
       }
     }
@@ -250,15 +250,12 @@ function validateTransitions(machine) {
       if (!(transition.target in machine.states)) {
         return err(new Error(`The transition '${transitionName}' of the state '${stateName}' has a target state '${transition.target}' that does not exists.`));
       }
-      if (transition.exitPulse) {
-        const exitPulseArr = Array.isArray(transition.exitPulse) ? transition.exitPulse : [transition.exitPulse];
-        for (const exitPulse of exitPulseArr) {
-          if (isPulse(exitPulse)) {
-            if (typeof exitPulse.success === "string" && !(exitPulse.success in machine.states)) {
-              return err(new Error(`The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a success transition '${exitPulse.success}' that does not exists.`));
-            }
-            if (typeof exitPulse.failure === "string" && !(exitPulse.failure in machine.states)) {
-              return err(new Error(`The exitPulse '${exitPulse.pulse.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${exitPulse.failure}' that does not exists.`));
+      if (transition.exit) {
+        const exitArr = Array.isArray(transition.exit) ? transition.exit : [transition.exit];
+        for (const exitItem of exitArr) {
+          if (isEntry(exitItem)) {
+            if (typeof exitItem.failure === "string" && !(exitItem.failure in machine.states)) {
+              return err(new Error(`The exit '${exitItem.pulse.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${exitItem.failure}' that does not exists.`));
             }
           }
         }

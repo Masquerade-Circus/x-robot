@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[lib/machine/invoke.ts:1018](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/invoke.ts#L1018)
+[lib/machine/invoke.ts:1018](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/invoke.ts#L1018)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[lib/machine/invoke.ts:1019](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/invoke.ts#L1019)
+[lib/machine/invoke.ts:1019](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/invoke.ts#L1019)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[lib/machine/invoke.ts:1020](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/invoke.ts#L1020)
+[lib/machine/invoke.ts:1020](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/invoke.ts#L1020)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[lib/machine/invoke.ts:1021](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/invoke.ts#L1021)
+[lib/machine/invoke.ts:1021](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/invoke.ts#L1021)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-[lib/machine/invoke.ts:1022](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/invoke.ts#L1022)
+[lib/machine/invoke.ts:1022](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/invoke.ts#L1022)

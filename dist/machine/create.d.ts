@@ -1,18 +1,19 @@
-import { Context, ContextDirective, DangerStateDirective, DescriptionDirective, Guard, GuardDirective, GuardsDirective, ImmediateDirective, InfoStateDirective, InitialDirective, InitDirective, Machine, MachineArguments, NestedGuardDirective, NestedMachineDirective, ParallelDirective, PrimaryStateDirective, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, SuccessStateDirective, TransitionDirective, WarningStateDirective, Pulse, PulseDirective } from "./interfaces";
-export declare function init(...directives: (InitialDirective | ContextDirective | ShouldFreezeDirective)[]): InitDirective;
+import { Context, ContextDirective, DangerStateDirective, DescriptionDirective, ExitDirective, Guard, GuardDirective, GuardsDirective, HistoryDirective, ImmediateDirective, InfoStateDirective, InitialDirective, InitDirective, Machine, MachineArguments, NestedGuardDirective, NestedMachineDirective, ParallelDirective, PrimaryStateDirective, RunCollection, ShouldFreezeDirective, StateDirective, StatesDirective, SuccessStateDirective, TransitionDirective, WarningStateDirective, Pulse, PulseDirective } from "./interfaces";
+export declare function init(...directives: (InitialDirective | ContextDirective | ShouldFreezeDirective | HistoryDirective)[]): InitDirective;
 export declare function machine(title: string, ...args: MachineArguments): Machine;
 export declare function states(...states: StateDirective[]): StatesDirective;
 export declare function parallel(...machines: Machine[]): ParallelDirective;
 export declare function context(context: Context | Function): ContextDirective;
 export declare function initial(initial: string): InitialDirective;
 export declare function shouldFreeze(freeze: boolean): ShouldFreezeDirective;
+export declare function history(limit: number): HistoryDirective;
 export declare function state(name: string, ...args: RunCollection): StateDirective;
 export declare function transition(transitionName: string, target: string, ...args: (GuardDirective | GuardsDirective | {
-    exitPulse: PulseDirective[];
+    exit: ExitDirective[];
 })[]): TransitionDirective;
-export declare function pulse(pulse: Pulse, success?: string | PulseDirective, failure?: string | PulseDirective): PulseDirective;
-export declare function exitPulse(handler: Pulse, success?: string, failure?: string): {
-    exitPulse: PulseDirective[];
+export declare function entry(pulse: Pulse, success?: string | PulseDirective, failure?: string | PulseDirective): PulseDirective;
+export declare function exit(handler: Pulse, failure?: string): {
+    exit: ExitDirective[];
 };
 export declare function guard(guard: Guard, failure?: string | PulseDirective): GuardDirective;
 export declare function immediate(target: string, ...guards: GuardsDirective): ImmediateDirective;

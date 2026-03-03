@@ -416,3 +416,57 @@ invoke(myMachine, "submit", "hello"); // myMachine.current === 'success'
 // With invalid payload
 invoke(myMachine, "submit", ""); // myMachine.current === 'error'
 ```
+
+### Code Generation
+
+Generate TypeScript, ESM, or CJS code from your machines:
+
+```javascript
+import { generateFromSerializedMachine, Format, serialize } from "x-robot";
+
+const myMachine = machine(
+  "MyMachine",
+  init(initial("idle"), { context: { count: 0 } }),
+  state("idle", transition("next", "active")),
+  state("active")
+);
+
+const serialized = serialize(myMachine);
+
+// Generate TypeScript with full type definitions
+const tsCode = generateFromSerializedMachine(serialized, Format.TS);
+
+// Generate ESM JavaScript
+const esmCode = generateFromSerializedMachine(serialized, Format.ESM);
+
+// Generate CommonJS JavaScript
+const cjsCode = generateFromSerializedMachine(serialized, Format.CJS);
+```
+
+The TypeScript output includes:
+- `States` interface with all state names
+- `Context` interface with all context properties
+- Full machine definition with types
+
+### SCXML Import/Export
+
+Import and export machines in SCXML (State Chart XML) format - a W3C standard:
+
+```javascript
+import { toSCXML, fromSCXML, serialize } from "x-robot";
+
+// Export to SCXML
+const serialized = serialize(myMachine);
+const scxml = toSCXML(serialized);
+
+// Import from SCXML
+const importedMachine = fromSCXML(scxmlString);
+```
+
+SCXML supports:
+- Simple and nested states
+- Parallel states
+- Transitions with events
+- Guards (conditions)
+- Entry/Exit actions
+- Immediate transitions

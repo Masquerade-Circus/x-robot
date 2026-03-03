@@ -277,3 +277,191 @@ start(newMachine, savedSnapshot);
 - Objeto con: `current`, `context`, `history`, `parallel`, `nested`
 
 **Nota:** El snapshot incluye el estado de todas las máquinas paralelas y anidadas.
+
+---
+
+## serialize(machine)
+
+Serializa la máquina a un objeto JSON que puede ser almacenado o enviado por la red.
+
+```typescript
+import { serialize } from "x-robot";
+
+const myMachine = machine(
+  "Test",
+  init(initial("idle")),
+  state("idle", transition("next", "active")),
+  state("active")
+);
+
+const serialized = serialize(myMachine);
+console.log(serialized);
+// {
+//   "states": { "idle": {...}, "active": {...} },
+//   "parallel": {},
+//   "context": {},
+//   "initial": "idle",
+//   "title": "Test"
+// }
+```
+
+**Parámetros:**
+- `machine`: La máquina a serializar
+
+**Retorna:**
+- Objeto `SerializedMachine` con: `states`, `parallel`, `context`, `initial`, `title`
+
+---
+
+## generateFromSerializedMachine(serializedMachine, format)
+
+Genera código fuente a partir de una máquina serializada. Útil para crear implementacionesbases o documentación.
+
+```typescript
+import { generateFromSerializedMachine, Format, serialize } from "x-robot";
+
+const myMachine = machine(
+  "Test",
+  init(initial("idle"), { context: { count: 0 } }),
+  state("idle", transition("next", "active")),
+  state("active")
+);
+
+const serialized = serialize(myMachine);
+
+// Generar TypeScript
+const tsCode = generateFromSerializedMachine(serialized, Format.TS);
+
+// Generar ESM
+const esmCode = generateFromSerializedMachine(serialized, Format.ESM);
+
+// Generar CJS
+const cjsCode = generateFromSerializedMachine(serialized, Format.CJS);
+```
+
+### Format enum
+
+```typescript
+enum Format {
+  ESM = "esm",  // ES Modules (import/export)
+  CJS = "cjs",  // CommonJS (require/module.exports)
+  TS = "ts",    // TypeScript con tipos
+}
+```
+
+**Parámetros:**
+- `serializedMachine`: Máquina serializada (resultado de `serialize()`)
+- `format`: Formato de salida (`Format.ESM`, `Format.CJS`, `Format.TS`)
+
+**Retorna:**
+- String con el código generado
+
+**Ejemplo de salida TypeScript:**
+
+```typescript
+export interface TestStates {
+  idle: {};
+  active: {};
+}
+
+export interface TestContext {
+  count: number;
+}
+
+import { machine, states, initial, context, transition } from "x-robot";
+
+const getContext = () => ({
+  "count": 0
+});
+
+export const TestMachine = machine(
+  "Test",
+  states(
+    state(
+      "idle",
+      transition("next", "active")
+    ),
+    state(
+      "active"
+    )
+  ),
+  context(getContext),
+  initial("idle")
+);
+
+export default { TestMachine };
+```
+
+---
+
+## toSCXML(machine)
+
+Exporta una máquina a formato SCXML (State Chart XML). SCXML es un estándar W3C para máquinas de estados.
+
+```typescript
+import { toSCXML, serialize } from "x-robot";
+
+const myMachine = machine(
+  "Test",
+  init(initial("idle")),
+  state("idle", transition("start", "running")),
+  state("running", transition("stop", "idle"))
+);
+
+const serialized = serialize(myMachine);
+const scxml = toSCXML(serialized);
+
+console.log(scxml);
+// <?xml version="1.0" encoding="UTF-8"?>
+// <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="Test">
+//   <state id="idle">
+//     <transition event="start" target="running"/>
+//   </state>
+//   <state id="running">
+//     <transition event="stop" target="idle"/>
+//   </state>
+// </scxml>
+```
+
+**Parámetros:**
+- `machine`: Máquina serializada (resultado de `serialize()`)
+
+**Retorna:**
+- String con el documento SCXML
+
+**Características soportadas:**
+- Estados simples y anidados
+- Estados paralelos
+- Transiciones con eventos
+- Guards (condiciones)
+- Acciones de entrada (onentry)
+- Acciones de salida (onexit)
+- Transiciones inmediatas
+
+---
+
+## fromSCXML(scxmlString)
+
+Importa una máquina desde formato SCXML.
+
+```typescript
+import { fromSCXML } from "x-robot";
+
+const scxml = `<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="Test">
+  <state id="idle">
+    <transition event="start" target="running"/>
+  </state>
+  <state id="running">
+    <transition event="stop" target="idle"/>
+  </state>
+</scxml>`;
+
+const machine = fromSCXML(scxml);
+```
+
+**Parámetros:**
+- `scxmlString`: String con el documento SCXML
+
+**Retorna:**
+- Objeto `SerializedMachine` que puede usarse con `serialize()` o pasarse a otras funciones

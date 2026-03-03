@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:206](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L206)
+[lib/machine/interfaces.ts:206](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L206)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:207](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L207)
+[lib/machine/interfaces.ts:207](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L207)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:208](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L208)
+[lib/machine/interfaces.ts:208](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L208)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:209](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L209)
+[lib/machine/interfaces.ts:209](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L209)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:210](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L210)
+[lib/machine/interfaces.ts:210](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L210)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:211](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L211)
+[lib/machine/interfaces.ts:211](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L211)
 
 ___
 
@@ -84,4 +84,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:212](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L212)
+[lib/machine/interfaces.ts:212](https://github.com/Masquerade-Circus/x-robot/blob/43ea191/lib/machine/interfaces.ts#L212)
