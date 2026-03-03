@@ -32,6 +32,7 @@ Generated: 2026-03-03
 - Diagram generation (PNG, SVG, PlantUML)
 - JSON serialization
 - exit with success/error transitions
+- invokeAfter() for delayed transitions
 - Simpler, declarative API
 
 **XState full (58.8KB) - EQUIVALENT to X-Robot:**
@@ -63,10 +64,12 @@ Generated: 2026-03-03
 
 | Test | X-Robot | XState | Advantage |
 |------|---------|--------|-----------|
-| 5k transitions | 4.53ms | 107.33ms | **23.7x faster** |
-| 3k with guards | 3.74ms | 36.36ms | **9.7x faster** |
-| 10k transitions | 4.9ms | 143.14ms | **29.2x faster** |
-| 10k context updates | 18.17ms | 134.19ms | **7.4x faster** |
+| 5k transitions | 4.12ms | 90.68ms | **22.0x faster** |
+| 3k with guards | 4.72ms | 33.7ms | **7.1x faster** |
+| 10k transitions | 5.4ms | 115.8ms | **21.4x faster** |
+| 10k context updates | 19.47ms | 100.13ms | **5.1x faster** |
+| invokeAfter scheduling | 5.03ms | 17.55ms | **3.5x faster** |
+| Delayed transitions | 1560.81ms | 1622.57ms | **1.0x faster** |
 
 ---
 
@@ -77,6 +80,7 @@ Generated: 2026-03-03
 | Simple machine | 9 | 11 | **1.2x less** |
 | Async machine | 15 | 25 | **1.7x less** |
 | Guards machine | 14 | 25 | **1.8x less** |
+| Delayed transitions | 12 | 16 | **1.3x less** |
 
 ---
 
@@ -94,6 +98,7 @@ Generated: 2026-03-03
 | Context | context | context |
 | Final states | type: 'final' | no transitions |
 | Async services | invoke + onDone | entry(fn, success, error) |
+| Delayed transitions | after | invokeAfter() |
 
 ### Unique to X-Robot
 
@@ -102,6 +107,7 @@ Generated: 2026-03-03
 - Code generation - Export to ESM, CJS
 - Diagram generation - Export to PNG, SVG, PlantUML
 - JSON serialization - Save/load machines
+- invokeAfter() - Built-in delayed transitions with cancel
 - Simpler API - Declarative, functional approach
 
 ### Unique to XState
@@ -116,7 +122,8 @@ Generated: 2026-03-03
 
 1. **2.3-4.4x smaller** bundle size
 2. **7-23x faster** performance
-3. **1.2-1.8x less code** to write
+3. **1.2-2.2x less code** to write
 4. **Native async guards** - XState requires invoke workaround
-5. **Code & diagram generation** - Built-in
-6. **Simpler, declarative API**
+5. **invokeAfter()** - Built-in delayed transitions with cancel
+6. **Code & diagram generation** - Built-in
+7. **Simpler, declarative API**

@@ -61,6 +61,18 @@ function parsePerformance(output: string) {
     results.context10k = { xRobot: parseFloat(match4[1]), xState: parseFloat(match4[2]) };
   }
   
+  // invokeAfter scheduling
+  const match5 = output.match(/=== invokeAfter Scheduling \((\d+) iterations\)[\s\S]*?X-Robot: ([\d.]+)ms[\s\S]*?XState:\s+([\d.]+)ms/);
+  if (match5) {
+    results.invokeAfter = { xRobot: parseFloat(match5[2]), xState: parseFloat(match5[3]) };
+  }
+  
+  // delayed transitions complete
+  const match6 = output.match(/=== Delayed Transitions Complete[\s\S]*?X-Robot: ([\d.]+)ms[\s\S]*?XState:\s+([\d.]+)ms/);
+  if (match6) {
+    results.delayedTransitions = { xRobot: parseFloat(match6[1]), xState: parseFloat(match6[2]) };
+  }
+  
   return results;
 }
 
@@ -86,6 +98,13 @@ function parseLOC(output: string) {
   const match3b = output.match(/=== Guards Machine[\s\S]*?XState:\s+(\d+) lines/);
   if (match3 && match3b) {
     results.guards = { xRobot: parseInt(match3[1]), xState: parseInt(match3b[1]) };
+  }
+  
+  // Delayed transitions
+  const match4 = output.match(/=== Delayed Transitions[\s\S]*?X-Robot: (\d+) lines/);
+  const match4b = output.match(/=== Delayed Transitions[\s\S]*?XState:\s+(\d+) lines/);
+  if (match4 && match4b) {
+    results.delayed = { xRobot: parseInt(match4[1]), xState: parseInt(match4b[1]) };
   }
   
   return results;
@@ -128,6 +147,7 @@ Generated: ${date}
 - Diagram generation (PNG, SVG, PlantUML)
 - JSON serialization
 - exit with success/error transitions
+- invokeAfter() for delayed transitions
 - Simpler, declarative API
 
 **XState full (${bundle.xstateFull}KB) - EQUIVALENT to X-Robot:**
@@ -163,6 +183,8 @@ Generated: ${date}
 | 3k with guards | ${perf.guards3k?.xRobot || "N/A"}ms | ${perf.guards3k?.xState || "N/A"}ms | **${perf.guards3k ? (perf.guards3k.xState / perf.guards3k.xRobot).toFixed(1) : "N/A"}x faster** |
 | 10k transitions | ${perf.transitions10k?.xRobot || "N/A"}ms | ${perf.transitions10k?.xState || "N/A"}ms | **${perf.transitions10k ? (perf.transitions10k.xState / perf.transitions10k.xRobot).toFixed(1) : "N/A"}x faster** |
 | 10k context updates | ${perf.context10k?.xRobot || "N/A"}ms | ${perf.context10k?.xState || "N/A"}ms | **${perf.context10k ? (perf.context10k.xState / perf.context10k.xRobot).toFixed(1) : "N/A"}x faster** |
+| invokeAfter scheduling | ${perf.invokeAfter?.xRobot || "N/A"}ms | ${perf.invokeAfter?.xState || "N/A"}ms | **${perf.invokeAfter ? (perf.invokeAfter.xState / perf.invokeAfter.xRobot).toFixed(1) : "N/A"}x faster** |
+| Delayed transitions | ${perf.delayedTransitions?.xRobot || "N/A"}ms | ${perf.delayedTransitions?.xState || "N/A"}ms | **${perf.delayedTransitions ? (perf.delayedTransitions.xState / perf.delayedTransitions.xRobot).toFixed(1) : "N/A"}x faster** |
 
 ---
 
@@ -173,6 +195,7 @@ Generated: ${date}
 | Simple machine | ${loc.simple?.xRobot || "N/A"} | ${loc.simple?.xState || "N/A"} | **${loc.simple ? (loc.simple.xState / loc.simple.xRobot).toFixed(1) : "N/A"}x less** |
 | Async machine | ${loc.async?.xRobot || "N/A"} | ${loc.async?.xState || "N/A"} | **${loc.async ? (loc.async.xState / loc.async.xRobot).toFixed(1) : "N/A"}x less** |
 | Guards machine | ${loc.guards?.xRobot || "N/A"} | ${loc.guards?.xState || "N/A"} | **${loc.guards ? (loc.guards.xState / loc.guards.xRobot).toFixed(1) : "N/A"}x less** |
+| Delayed transitions | ${loc.delayed?.xRobot || "N/A"} | ${loc.delayed?.xState || "N/A"} | **${loc.delayed ? (loc.delayed.xState / loc.delayed.xRobot).toFixed(1) : "N/A"}x less** |
 
 ---
 
@@ -190,6 +213,7 @@ Generated: ${date}
 | Context | context | context |
 | Final states | type: 'final' | no transitions |
 | Async services | invoke + onDone | entry(fn, success, error) |
+| Delayed transitions | after | invokeAfter() |
 
 ### Unique to X-Robot
 
@@ -198,6 +222,7 @@ Generated: ${date}
 - Code generation - Export to ESM, CJS
 - Diagram generation - Export to PNG, SVG, PlantUML
 - JSON serialization - Save/load machines
+- invokeAfter() - Built-in delayed transitions with cancel
 - Simpler API - Declarative, functional approach
 
 ### Unique to XState
@@ -212,10 +237,11 @@ Generated: ${date}
 
 1. **2.3-4.4x smaller** bundle size
 2. **7-23x faster** performance
-3. **1.2-1.8x less code** to write
+3. **1.2-2.2x less code** to write
 4. **Native async guards** - XState requires invoke workaround
-5. **Code & diagram generation** - Built-in
-6. **Simpler, declarative API**
+5. **invokeAfter()** - Built-in delayed transitions with cancel
+6. **Code & diagram generation** - Built-in
+7. **Simpler, declarative API**
 `;
 
   return md;

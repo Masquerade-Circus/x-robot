@@ -7,7 +7,8 @@ import {
   invoke,
   context,
   entry,
-  guard
+  guard,
+  invokeAfter
 } from "../lib";
 import { createMachine, interpret, assign } from "xstate";
 import { describe, it, expect } from "bun:test";
@@ -430,5 +431,88 @@ describe("Performance Benchmark", () => {
     
     const ratio = xStateDuration / xRobotDuration;
     console.log(`X-Robot is ${ratio.toFixed(1)}x ${ratio >= 1 ? 'faster' : 'slower'}`);
+  });
+
+  it("should schedule 1k delayed transitions efficiently", () => {
+    const iterations = 1000;
+
+    // X-Robot: invokeAfter is a simple function call
+    const xRobotStart = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      const myMachine = machine(
+        "PerfTest",
+        init(initial("idle")),
+        state("idle", transition("tick", "tocked")),
+        state("tocked")
+      );
+      invokeAfter(myMachine, 1000, "tick");
+    }
+    const xRobotDuration = performance.now() - xRobotStart;
+
+    // XState: delayed transitions require machine definition with 'after' config
+    const xStateStart = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      createMachine({
+        initial: "idle",
+        states: {
+          idle: { after: { 1000: "tocked" }},
+          tocked: {}
+        }
+      });
+    }
+    const xStateDuration = performance.now() - xStateStart;
+
+    console.log(`\n=== invokeAfter Scheduling (${iterations} iterations) ===`);
+    console.log(`X-Robot: ${xRobotDuration.toFixed(2)}ms`);
+    console.log(`XState:  ${xStateDuration.toFixed(2)}ms`);
+
+    const ratio = xStateDuration / xRobotDuration;
+    console.log(`X-Robot is ${ratio.toFixed(1)}x ${ratio >= 1 ? 'faster' : 'slower'}`);
+
+    expect(xRobotDuration).toBeLessThan(xStateDuration);
+  });
+
+  it("should be faster than XState delayed transitions", async () => {
+    const iterations = 100;
+
+    // X-Robot: setup + invokeAfter + wait for transition
+    let xRobotDuration = 0;
+    for (let i = 0; i < iterations; i++) {
+      const myMachine = machine(
+        "PerfTest",
+        init(initial("idle")),
+        state("idle", transition("tick", "tocked")),
+        state("tocked")
+      );
+      const start = performance.now();
+      invokeAfter(myMachine, 10, "tick");
+      await new Promise<void>((resolve) => setTimeout(resolve, 15));
+      xRobotDuration += performance.now() - start;
+    }
+
+    // XState: createMachine with after config + interpret + start + wait
+    let xStateDuration = 0;
+    for (let i = 0; i < iterations; i++) {
+      const xStateMachine = createMachine({
+        initial: "idle",
+        states: {
+          idle: { after: { 10: "tocked" }},
+          tocked: {}
+        }
+      });
+      const start = performance.now();
+      const service = interpret(xStateMachine).start();
+      await new Promise<void>((resolve) => setTimeout(resolve, 15));
+      xStateDuration += performance.now() - start;
+    }
+
+    console.log(`\n=== Delayed Transitions Complete (${iterations} iterations) ===`);
+    console.log(`X-Robot: ${xRobotDuration.toFixed(2)}ms`);
+    console.log(`XState:  ${xStateDuration.toFixed(2)}ms`);
+
+    const ratio = xStateDuration / xRobotDuration;
+    console.log(`X-Robot is ${ratio.toFixed(1)}x ${ratio >= 1 ? 'faster' : 'slower'}`);
+
+    expect(xRobotDuration).toBeLessThan(xStateDuration);
   });
 });
