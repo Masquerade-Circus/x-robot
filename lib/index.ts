@@ -26,7 +26,7 @@ import {
   transition,
   warningState
 } from "./machine/create";
-import { invoke, start } from "./machine/invoke";
+import { invoke, invokeAfter, start } from "./machine/invoke";
 
 export {
   machine,
@@ -50,6 +50,7 @@ export {
   transition,
   immediate,
   invoke,
+  invokeAfter,
   start,
   getState,
 };

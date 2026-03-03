@@ -231,3 +231,26 @@ Un estado sin transiciones se considera estado final.
 2. Si retorna otro valor:
    - Tiene `failure` → ejecuta/transiciona según failure
    - No tiene `failure` → almacena el valor en `context.error`
+
+---
+
+## invokeAfter(machine, timeInMilliseconds, event, [payload])
+
+Programa una invocación de evento después de un tiempo específico.
+
+```typescript
+// Timeout cancelable
+const cancelTimeout = invokeAfter(myMachine, 5000, 'timeout', { reason: 'network' });
+
+// Para cancelar antes de que ocurra
+cancelTimeout();
+```
+
+**Parámetros:**
+- `machine`: La máquina a invocar
+- `timeInMilliseconds`: Tiempo de espera en milisegundos
+- `event`: El nombre del evento a invocar
+- `payload` (opcional): Datos a pasar al evento
+
+**Retorna:**
+- Función `() => void` para cancelar la invocación programada

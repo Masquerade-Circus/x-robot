@@ -925,3 +925,31 @@ export function start(machine: Machine, payload?: any): Promise<void> | void {
 
   return invoke(machine, START_EVENT, payload);
 }
+
+/**
+ * Invokes an event on the machine after a specified time delay.
+ * 
+ * @param machine The machine to invoke
+ * @param timeInMilliseconds Time to wait before invoking
+ * @param event The event to invoke
+ * @param payload Optional payload for the event
+ * @returns A cancel function to stop the scheduled invocation
+ * 
+ * @example
+ * const cancelTimeout = invokeAfter(myMachine, 5000, 'timeout', { reason: 'network' });
+ * 
+ * // To cancel before it fires
+ * cancelTimeout();
+ */
+export function invokeAfter(
+  machine: Machine,
+  timeInMilliseconds: number,
+  event: string,
+  payload?: any
+): () => void {
+  const timeoutId = setTimeout(() => {
+    invoke(machine, event, payload);
+  }, timeInMilliseconds);
+  
+  return () => clearTimeout(timeoutId);
+}

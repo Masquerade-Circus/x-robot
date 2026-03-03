@@ -42,6 +42,10 @@ X-Robot is a finite state machine library for nodejs and for the web.
 
 - [getState](x_robot.md#getstate)
 
+### Other Functions
+
+- [invokeAfter](x_robot.md#invokeafter)
+
 ### Type Aliases
 
 - [CurrentState](x_robot.md#currentstate)
@@ -603,6 +607,46 @@ Or get the current state of a nested machine if a path is provided
 
 The current state or null if the path is invalid
 
+___
+
+## Other Functions
+
+### invokeAfter
+
+▸ **invokeAfter**(`machine`, `timeInMilliseconds`, `event`, `payload?`): () => `void`
+
+Invokes an event on the machine after a specified time delay.
+
+**`Example`**
+
+```ts
+const cancelTimeout = invokeAfter(myMachine, 5000, 'timeout', { reason: 'network' });
+
+// To cancel before it fires
+cancelTimeout();
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | The machine to invoke |
+| `timeInMilliseconds` | `number` | Time to wait before invoking |
+| `event` | `string` | The event to invoke |
+| `payload?` | `any` | Optional payload for the event |
+
+#### Returns
+
+`fn`
+
+A cancel function to stop the scheduled invocation
+
+▸ (): `void`
+
+##### Returns
+
+`void`
+
 ## Type Aliases
 
 ### CurrentState
@@ -611,7 +655,7 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/create.ts:739](https://github.com/Masquerade-Circus/x-robot/blob/5a7fcfa/lib/machine/create.ts#L739)
+[lib/machine/create.ts:739](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/create.ts#L739)
 
 ## Variables
 
@@ -621,4 +665,4 @@ The current state or null if the path is invalid
 
 #### Defined in
 
-[lib/machine/interfaces.ts:215](https://github.com/Masquerade-Circus/x-robot/blob/5a7fcfa/lib/machine/interfaces.ts#L215)
+[lib/machine/interfaces.ts:215](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L215)
