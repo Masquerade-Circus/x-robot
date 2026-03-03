@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/validate/result.ts#L5)
+[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/validate/result.ts#L5)
 
 ___
 
@@ -149,4 +149,4 @@ ___
 
 #### Defined in
 
-[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/validate/result.ts#L7)
+[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/validate/result.ts#L7)

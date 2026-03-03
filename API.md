@@ -254,3 +254,26 @@ cancelTimeout();
 
 **Retorna:**
 - Función `() => void` para cancelar la invocación programada
+
+---
+
+## snapshot(machine)
+
+Crea un snapshot del estado actual de la máquina.
+
+```typescript
+// Guardar snapshot
+const savedSnapshot = snapshot(myMachine);
+
+// Restaurar máquina desde snapshot
+const newMachine = machine('MyMachine', ...definicion);
+start(newMachine, savedSnapshot);
+```
+
+**Parámetros:**
+- `machine`: La máquina de la cual obtener el snapshot
+
+**Retorna:**
+- Objeto con: `current`, `context`, `history`, `parallel`, `nested`
+
+**Nota:** El snapshot incluye el estado de todas las máquinas paralelas y anidadas.

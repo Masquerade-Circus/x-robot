@@ -418,3 +418,29 @@ invoke(myMachine, "submit", "hello"); // myMachine.current === 'success'
 // With invalid payload
 invoke(myMachine, "submit", ""); // myMachine.current === 'error'
 ```
+
+### Saving and Restoring State
+
+Use `snapshot()` to save the current state and `start()` to restore it:
+
+```javascript
+import { snapshot, start } from "x-robot";
+
+// Save current state to database
+const savedSnapshot = snapshot(myMachine);
+await saveToDatabase(userId, savedSnapshot);
+
+// Later: restore machine from saved state
+const savedSnapshot = await loadFromDatabase(userId);
+const myMachine = machine('MyMachine', ...definition);
+
+// Restore state WITHOUT executing entry actions
+start(myMachine, savedSnapshot);
+```
+
+The snapshot includes:
+- Current state
+- Context
+- History
+- Parallel machines state
+- Nested machines state

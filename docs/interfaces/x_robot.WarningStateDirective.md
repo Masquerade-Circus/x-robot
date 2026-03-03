@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:141](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L141)
+[lib/machine/interfaces.ts:141](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L141)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L120)
+[lib/machine/interfaces.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L120)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L121)
+[lib/machine/interfaces.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L121)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L122)
+[lib/machine/interfaces.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L122)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:123](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L123)
+[lib/machine/interfaces.ts:123](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L123)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:124](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L124)
+[lib/machine/interfaces.ts:124](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L124)
 
 ___
 
@@ -119,7 +119,7 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L132)
+[lib/machine/interfaces.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L132)
 
 ___
 
@@ -133,4 +133,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:133](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L133)
+[lib/machine/interfaces.ts:133](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L133)

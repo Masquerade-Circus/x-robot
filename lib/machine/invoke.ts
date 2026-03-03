@@ -905,13 +905,32 @@ function continueTransition(
 }
 
 /**
- *
- * @param machine The machine to run the initial state arguments
- * @param payload The optional payload to pass to the initial state
+ * Starts the machine from its initial state, or restores it from a snapshot.
+ * 
+ * @param machine The machine to start
+ * @param snapshotOrPayload Optional: MachineSnapshot to restore state, or payload for initial invocation
  * @returns Void or a promise if the machine is async
  * @category Invocation
+ * 
+ * @example
+ * // Start normally (executes entry actions)
+ * start(myMachine);
+ * 
+ * @example
+ * // Restore from snapshot (does NOT execute entry actions)
+ * const savedSnapshot = snapshot(myMachine);
+ * start(myMachine, savedSnapshot);
  */
-export function start(machine: Machine, payload?: any): Promise<void> | void {
+export function start(
+  machine: Machine,
+  snapshotOrPayload?: MachineSnapshot | any
+): Promise<void> | void {
+  // Check if it's a snapshot (has current property)
+  if (snapshotOrPayload && typeof snapshotOrPayload === 'object' && 'current' in snapshotOrPayload) {
+    return restoreFromSnapshot(machine, snapshotOrPayload as MachineSnapshot);
+  }
+  
+  // Original behavior: start normally with optional payload
   // Validate initial transition before invoking
   let canStartMachine = canMakeTransition(
     machine,
@@ -923,7 +942,48 @@ export function start(machine: Machine, payload?: any): Promise<void> | void {
     throw new Error(`The machine has already been started.`);
   }
 
-  return invoke(machine, START_EVENT, payload);
+  return invoke(machine, START_EVENT, snapshotOrPayload);
+}
+
+function restoreFromSnapshot(machine: Machine, snapshot: MachineSnapshot): void {
+  // Restore main machine state
+  machine.current = snapshot.current;
+  machine.context = deepCloneUnfreeze(snapshot.context);
+  machine.history = [...snapshot.history];
+  
+  // Add to history if not already present
+  if (machine.historyLimit !== 0 && machine.history.length > 0) {
+    const lastEntry = machine.history[machine.history.length - 1];
+    if (!lastEntry.startsWith('State: ')) {
+      machine.history.push(`${HistoryType.State}: ${snapshot.current}`);
+    }
+  }
+
+  // Restore parallel machines
+  if (snapshot.parallel) {
+    for (let parallelName in snapshot.parallel) {
+      if (machine.parallel[parallelName]) {
+        restoreFromSnapshot(machine.parallel[parallelName], snapshot.parallel[parallelName]);
+      }
+    }
+  }
+
+  // Restore nested machines
+  if (snapshot.nested) {
+    for (let stateName in snapshot.nested) {
+      const state = machine.states[stateName];
+      if (state && state.nested) {
+        for (let nested of state.nested) {
+          if (snapshot.nested[stateName] && snapshot.nested[stateName][nested.machine.id]) {
+            restoreFromSnapshot(
+              nested.machine, 
+              snapshot.nested[stateName][nested.machine.id]
+            );
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -952,4 +1012,60 @@ export function invokeAfter(
   }, timeInMilliseconds);
   
   return () => clearTimeout(timeoutId);
+}
+
+export interface MachineSnapshot {
+  current: string;
+  context: any;
+  history: string[];
+  parallel?: Record<string, MachineSnapshot>;
+  nested?: Record<string, Record<string, MachineSnapshot>>;
+}
+
+/**
+ * Creates a snapshot of the machine's current state.
+ * 
+ * @param machine The machine to snapshot
+ * @returns An object containing current state, context, history, and nested/parallel states
+ * 
+ * @example
+ * const savedSnapshot = snapshot(myMachine);
+ * // savedSnapshot = {
+ * //   current: 'loading',
+ * //   context: { count: 5 },
+ * //   history: ['State: idle', 'Transition: start', 'State: loading'],
+ * //   parallel: { bold: {...}, underline: {...} },
+ * //   nested: { loading: { fetchData: {...} } }
+ * // }
+ */
+export function snapshot(machine: Machine): MachineSnapshot {
+  const snap: MachineSnapshot = {
+    current: machine.current,
+    context: deepCloneUnfreeze(machine.context),
+    history: [...machine.history],
+  };
+
+  // Snapshot parallel machines
+  if (Object.keys(machine.parallel).length > 0) {
+    snap.parallel = {};
+    for (let parallelName in machine.parallel) {
+      snap.parallel[parallelName] = snapshot(machine.parallel[parallelName]);
+    }
+  }
+
+  // Snapshot nested machines
+  for (let stateName in machine.states) {
+    const state = machine.states[stateName];
+    if (state.nested && state.nested.length > 0) {
+      if (!snap.nested) {
+        snap.nested = {};
+      }
+      snap.nested[stateName] = {};
+      for (let nested of state.nested) {
+        snap.nested[stateName][nested.machine.id] = snapshot(nested.machine);
+      }
+    }
+  }
+
+  return snap;
 }

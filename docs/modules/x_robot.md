@@ -45,6 +45,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 ### Other Functions
 
 - [invokeAfter](x_robot.md#invokeafter)
+- [snapshot](x_robot.md#snapshot)
 
 ### Type Aliases
 
@@ -91,6 +92,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 - [InitialDirective](../interfaces/x_robot.InitialDirective.md)
 - [ShouldFreezeDirective](../interfaces/x_robot.ShouldFreezeDirective.md)
 - [HistoryDirective](../interfaces/x_robot.HistoryDirective.md)
+- [MachineSnapshot](../interfaces/x_robot.MachineSnapshot.md)
 
 ### Enumerations
 
@@ -568,14 +570,31 @@ ___
 
 ### start
 
-▸ **start**(`machine`, `payload?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`void`\> \| `void`
+▸ **start**(`machine`, `snapshotOrPayload?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`void`\> \| `void`
+
+Starts the machine from its initial state, or restores it from a snapshot.
+
+**`Example`**
+
+```ts
+// Start normally (executes entry actions)
+start(myMachine);
+```
+
+**`Example`**
+
+```ts
+// Restore from snapshot (does NOT execute entry actions)
+const savedSnapshot = snapshot(myMachine);
+start(myMachine, savedSnapshot);
+```
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | The machine to run the initial state arguments |
-| `payload?` | `any` | The optional payload to pass to the initial state |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | The machine to start |
+| `snapshotOrPayload?` | `any` | Optional: MachineSnapshot to restore state, or payload for initial invocation |
 
 #### Returns
 
@@ -647,6 +666,39 @@ A cancel function to stop the scheduled invocation
 
 `void`
 
+___
+
+### snapshot
+
+▸ **snapshot**(`machine`): [`MachineSnapshot`](../interfaces/x_robot.MachineSnapshot.md)
+
+Creates a snapshot of the machine's current state.
+
+**`Example`**
+
+```ts
+const savedSnapshot = snapshot(myMachine);
+// savedSnapshot = {
+//   current: 'loading',
+//   context: { count: 5 },
+//   history: ['State: idle', 'Transition: start', 'State: loading'],
+//   parallel: { bold: {...}, underline: {...} },
+//   nested: { loading: { fetchData: {...} } }
+// }
+```
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | The machine to snapshot |
+
+#### Returns
+
+[`MachineSnapshot`](../interfaces/x_robot.MachineSnapshot.md)
+
+An object containing current state, context, history, and nested/parallel states
+
 ## Type Aliases
 
 ### CurrentState
@@ -655,7 +707,7 @@ A cancel function to stop the scheduled invocation
 
 #### Defined in
 
-[lib/machine/create.ts:739](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/create.ts#L739)
+[lib/machine/create.ts:739](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/create.ts#L739)
 
 ## Variables
 
@@ -665,4 +717,4 @@ A cancel function to stop the scheduled invocation
 
 #### Defined in
 
-[lib/machine/interfaces.ts:215](https://github.com/Masquerade-Circus/x-robot/blob/dc79239/lib/machine/interfaces.ts#L215)
+[lib/machine/interfaces.ts:215](https://github.com/Masquerade-Circus/x-robot/blob/6561229/lib/machine/interfaces.ts#L215)
