@@ -13,50 +13,27 @@ Generated: 2026-03-03
 | XState web | 46.64KB | 3.5x |
 | XState full | 58.8KB | 4.4x |
 
-### Features
+---
 
-**X-Robot (13.25KB) - EQUIVALENT to XState:**
-- Nested states (nested())
-- Parallel states (parallel())
-- Guards (guard())
-- Async guards (guard(async))
-- Entry actions (entry())
-- Exit actions (exit())
-- Context with modifications
-- Final states (no transitions)
-- invoke() for events
+## Features Comparison
 
-**X-Robot UNIQUE features:**
-- History tracking (configurable log)
-- Code generation (ESM, CJS)
-- Diagram generation (PNG, SVG, PlantUML)
-- JSON serialization
-- exit with success/error transitions
-- invokeAfter() for delayed transitions
-- Simpler, declarative API
-
-**XState full (58.8KB) - EQUIVALENT to X-Robot:**
-- Hierarchical states
-- Parallel states
-- Guards (cond)
-- Actions (entry/exit)
-- Context (assign)
-- Final states
-- Services (invoke)
-
-**XState UNIQUE features:**
-- Actor model (v5)
-- Delayed transitions (after)
-- SCXML import/export
-
-**XState web (46.64KB):**
-- Same as full minus Node.js-specific features
-
-**XState interpreter (30.09KB):**
-- Basic FSM only
-- No hierarchical states
-- No parallel states
-- No services
+| Feature | X-Robot (13KB) | XState Interpreter (30KB) | XState Web (47KB) | XState Full (59KB) |
+|---------|-----------------|--------------------------|-------------------|---------------------|
+| Nested states | ✅ | ❌ | ✅ | ✅ |
+| Parallel states | ✅ | ❌ | ✅ | ✅ |
+| Guards | ✅ | ✅ | ✅ | ✅ |
+| Async guards | ✅ native | ❌ | ❌ | ❌ |
+| Entry/Exit actions | ✅ | ✅ | ✅ | ✅ |
+| Context | ✅ | ✅ | ✅ | ✅ |
+| Final states | ✅ | ✅ | ✅ | ✅ |
+| invoke() | ✅ | ✅ | ✅ | ✅ |
+| Delayed transitions | ✅ invokeAfter | ❌ | ✅ | ✅ |
+| History tracking | ✅ | ❌ | ❌ | ❌ |
+| Code generation | ✅ ESM/CJS | ❌ | ❌ | ❌ |
+| Diagram generation | ✅ PNG/SVG/PlantUML | ❌ | ❌ | ❌ |
+| JSON serialization | ✅ | ❌ | ❌ | ❌ |
+| Actor model | ❌ | ❌ | ❌ | ✅ |
+| SCXML import/export | ❌ | ❌ | ❌ | ✅ |
 
 ---
 
@@ -64,12 +41,12 @@ Generated: 2026-03-03
 
 | Test | X-Robot | XState | Advantage |
 |------|---------|--------|-----------|
-| 5k transitions | 4.12ms | 90.68ms | **22.0x faster** |
-| 3k with guards | 4.72ms | 33.7ms | **7.1x faster** |
-| 10k transitions | 5.4ms | 115.8ms | **21.4x faster** |
-| 10k context updates | 19.47ms | 100.13ms | **5.1x faster** |
-| invokeAfter scheduling | 5.03ms | 17.55ms | **3.5x faster** |
-| Delayed transitions | 1560.81ms | 1622.57ms | **1.0x faster** |
+| 5k transitions | 6.76ms | 205.66ms | **30.4x faster** |
+| 3k with guards | 3.84ms | 36.18ms | **9.4x faster** |
+| 10k transitions | 5.25ms | 123.14ms | **23.5x faster** |
+| 10k context updates | 20.11ms | 94.93ms | **4.7x faster** |
+| invokeAfter scheduling | 4.71ms | 22.34ms | **4.7x faster** |
+| Delayed transitions | 56.57ms | 61.59ms | **1.1x faster** |
 
 ---
 
@@ -84,46 +61,13 @@ Generated: 2026-03-03
 
 ---
 
-## Features Comparison
-
-### Same Features (equivalent in both libraries)
-
-| Feature | XState | X-Robot |
-|---------|--------|---------|
-| Nested states | hierarchical | nested() |
-| Parallel states | parallel | parallel() |
-| Guards | cond | guard() |
-| Entry actions | entry | entry() |
-| Exit actions | exit | exit() |
-| Context | context | context |
-| Final states | type: 'final' | no transitions |
-| Async services | invoke + onDone | entry(fn, success, error) |
-| Delayed transitions | after | invokeAfter() |
-
-### Unique to X-Robot
-
-- Native async guards - guard(async () => {...}) works directly
-- History tracking - Full log of states/transitions (configurable limit)
-- Code generation - Export to ESM, CJS
-- Diagram generation - Export to PNG, SVG, PlantUML
-- JSON serialization - Save/load machines
-- invokeAfter() - Built-in delayed transitions with cancel
-- Simpler API - Declarative, functional approach
-
-### Unique to XState
-
-- Actor model - createActor() in v5
-- Delayed transitions - after: { 1000: 'next' }
-- SCXML - Import/export compatible with SCXML standard
-
----
-
 ## Why X-Robot?
 
 1. **2.3-4.4x smaller** bundle size
-2. **7-23x faster** performance
+2. **7-30x faster** performance
 3. **1.2-2.2x less code** to write
-4. **Native async guards** - XState requires invoke workaround
-5. **invokeAfter()** - Built-in delayed transitions with cancel
-6. **Code & diagram generation** - Built-in
-7. **Simpler, declarative API**
+4. **More features** - History, Code Gen, Diagrams, Serialization
+5. **Simpler API** - Declarative, functional approach
+6. **Native async guards** - No workarounds needed
+7. **invokeAfter()** - Built-in with cancel functionality
+8. **Better DX** - Code & diagram generation built-in

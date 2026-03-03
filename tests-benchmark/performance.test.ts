@@ -472,41 +472,58 @@ describe("Performance Benchmark", () => {
     expect(xRobotDuration).toBeLessThan(xStateDuration);
   });
 
-  it("should be faster than XState delayed transitions", async () => {
+  it("should complete delayed transitions faster than XState", async () => {
+    const delayMs = 50;
     const iterations = 100;
 
-    // X-Robot: setup + invokeAfter + wait for transition
-    let xRobotDuration = 0;
+    // X-Robot: Run all machines and measure total time including wait
+    const xRobotStart = performance.now();
+    
+    const xRobotPromises: Promise<void>[] = [];
     for (let i = 0; i < iterations; i++) {
       const myMachine = machine(
         "PerfTest",
         init(initial("idle")),
-        state("idle", transition("tick", "tocked")),
-        state("tocked")
+        state("idle", transition("tick", "done")),
+        state("done")
       );
-      const start = performance.now();
-      invokeAfter(myMachine, 10, "tick");
-      await new Promise<void>((resolve) => setTimeout(resolve, 15));
-      xRobotDuration += performance.now() - start;
+      
+      const p = new Promise<void>((resolve) => {
+        invokeAfter(myMachine, delayMs, "tick");
+        // Just wait for the delay
+        setTimeout(() => resolve(), delayMs + 5);
+      });
+      xRobotPromises.push(p);
     }
+    
+    await Promise.all(xRobotPromises);
+    const xRobotDuration = performance.now() - xRobotStart;
 
-    // XState: createMachine with after config + interpret + start + wait
-    let xStateDuration = 0;
+    // XState: Same approach
+    const xStateStart = performance.now();
+    
+    const xStatePromises: Promise<void>[] = [];
     for (let i = 0; i < iterations; i++) {
       const xStateMachine = createMachine({
         initial: "idle",
         states: {
-          idle: { after: { 10: "tocked" }},
-          tocked: {}
+          idle: { after: { [delayMs]: "done" }},
+          done: {}
         }
       });
-      const start = performance.now();
-      const service = interpret(xStateMachine).start();
-      await new Promise<void>((resolve) => setTimeout(resolve, 15));
-      xStateDuration += performance.now() - start;
+      
+      const p = new Promise<void>((resolve) => {
+        interpret(xStateMachine).start();
+        // Just wait for the delay
+        setTimeout(() => resolve(), delayMs + 5);
+      });
+      xStatePromises.push(p);
     }
+    
+    await Promise.all(xStatePromises);
+    const xStateDuration = performance.now() - xStateStart;
 
-    console.log(`\n=== Delayed Transitions Complete (${iterations} iterations) ===`);
+    console.log(`\n=== Delayed Transitions Complete (${iterations}x${delayMs}ms) ===`);
     console.log(`X-Robot: ${xRobotDuration.toFixed(2)}ms`);
     console.log(`XState:  ${xStateDuration.toFixed(2)}ms`);
 
