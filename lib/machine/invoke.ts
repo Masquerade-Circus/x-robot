@@ -133,8 +133,8 @@ function runPulse(
               return runPulse(machine, pulse.success);
             }
             return invoke(machine, pulse.success);
-          } else if ((pulse as any).transition) {
-            return invoke(machine, (pulse as any).transition);
+          } else if (pulse.transition) {
+            return invoke(machine, pulse.transition);
           }
         })
         .catch((error: unknown) => {
@@ -170,8 +170,8 @@ function runPulse(
             return runPulse(machine, pulse.success);
           }
           return invoke(machine, pulse.success);
-        } else if ((pulse as any).transition) {
-          return invoke(machine, (pulse as any).transition);
+        } else if (pulse.transition) {
+          return invoke(machine, pulse.transition);
         }
       } catch (error) {
         machine.context = context;
@@ -336,99 +336,7 @@ function runGuards(
   transition: TransitionDirective,
   payload: any
 ): Promise<boolean> | boolean {
-  for (let i = 0; i < transition.guards.length; i++) {
-    // Run the guard
-    let guard = transition.guards[i];
-
-    try {
-      // If the item is not a guard then return false
-      // ? Should we throw an error instead?
-      if (!isGuard(guard)) {
-        return false;
-      }
-
-      // Add the guard to the history
-      addToHistory(machine, `${HistoryType.Guard}: ${guard.guard.name}`);
-
-      // Get context - clone if frozen for guards that might modify it
-      let guardContext = machine.context;
-      if (machine.frozen) {
-        guardContext = deepCloneUnfreeze(machine.context);
-      }
-
-      // Result could be a boolean or anything else
-      let result;
-
-      // If the guard is a nested guard run it with the nested machine context
-      if (isNestedGuard(guard)) {
-        result = guard.guard(guard.machine.context, payload);
-      } else {
-        result = guard.guard(guardContext, payload);
-      }
-
-      // Check if result is a Promise (async guard)
-      if (result instanceof Promise) {
-        // For async guards, we need to handle it differently
-        // Return a Promise that chains all async guards
-        return result.then((resolvedResult: any) => {
-          // Update context if it was modified by async guard
-          if (machine.frozen && guardContext !== machine.context) {
-            machine.context = guardContext;
-            deepFreeze(machine.context);
-          }
-          
-          // If the result is different than true we return false
-          if (resolvedResult !== true) {
-            // Handle failure
-            if (isValidString(guard.failure)) {
-              invoke(machine, guard.failure, resolvedResult);
-            } else if (isEntry(guard.failure)) {
-              runPulse(machine, guard.failure, resolvedResult);
-            } else if (isValidString(resolvedResult)) {
-              if (machine.frozen) {
-                machine.context = deepCloneUnfreeze(machine.context);
-              }
-              machine.context.error = resolvedResult;
-            }
-            return false;
-          }
-          
-          // Guard passed, continue with remaining guards
-          // Create a new promise chain for remaining guards
-          return runGuardsFromIndex(machine, state, transition, payload, i + 1);
-        });
-      }
-
-      // If the result is different than true we break the loop and return false
-      if (result !== true) {
-        // If the result is other than true, we can return false and check if
-        // we have a failure transition or pulse and invoke it if so, passing
-        // the result as the payload (This is useful for error handling)
-        if (isValidString(guard.failure)) {
-          invoke(machine, guard.failure, result);
-        } else if (isEntry(guard.failure)) {
-          runPulse(machine, guard.failure, result);
-        } else if (isValidString(result)) {
-          // If no failure transition/pulse is defined, store the result in context.error
-          // If frozen, we need to clone the context first
-          if (machine.frozen) {
-            machine.context = deepCloneUnfreeze(machine.context);
-          }
-          machine.context.error = result;
-        }
-
-        return false;
-      }
-    } catch (error) {
-      // Catch the error and invoke the error transition if we have one
-      catchError(machine, state, error as Error);
-
-      return false;
-    }
-  }
-
-  // If we get here, we have a success and we can return true
-  return true;
+  return runGuardsFromIndex(machine, state, transition, payload, 0);
 }
 
 function runGuardsFromIndex(

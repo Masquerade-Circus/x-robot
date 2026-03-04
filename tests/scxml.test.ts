@@ -1,20 +1,20 @@
-import { toSCXML, fromSCXML, serialize, machine, init, initial, state, transition, nested, parallel, entry, exit, guard, immediate, primaryState, infoState, successState, warningState, dangerState, description } from "../lib";
+import { documentate } from "../lib/documentate";
+import { machine, init, initial, state, transition, nested, parallel, entry, exit, guard, immediate, primaryState, infoState, successState, warningState, dangerState, description } from "../lib";
 import { describe, it } from "mocha";
 
 import expect from "expect";
 
 describe("SCXML Export", () => {
-  it("should export simple machine to SCXML", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("start", "running")),
-        state("running", transition("stop", "idle"))
-      )
+  it("should export simple machine to SCXML", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "running")),
+      state("running", transition("stop", "idle"))
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain('<?xml version="1.0"');
     expect(scxml).toContain("<scxml");
@@ -25,39 +25,37 @@ describe("SCXML Export", () => {
     expect(scxml).toContain('event="stop"');
   });
 
-  it("should export machine with guards", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("login", "checking", guard((ctx: any) => true, "error"))),
-        state("checking", transition("success", "authenticated")),
-        state("authenticated"),
-        state("error")
-      )
+  it("should export machine with guards", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("login", "checking", guard((ctx: any) => true, "error"))),
+      state("checking", transition("success", "authenticated")),
+      state("authenticated"),
+      state("error")
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain('cond="');
   });
 
-  it("should export final states", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("complete", "done")),
-        state("done")
-      )
+  it("should export final states", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("complete", "done")),
+      state("done")
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain('id="done"');
   });
 
-  it("should export parallel states", () => {
+  it("should export parallel states", async () => {
     const timerMachine = machine(
       "Timer",
       init(initial("stopped")),
@@ -65,23 +63,22 @@ describe("SCXML Export", () => {
       state("started", transition("stop", "stopped"))
     );
 
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("start", "running")),
-        state("running", transition("stop", "idle")),
-        parallel(timerMachine)
-      )
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "running")),
+      state("running", transition("stop", "idle")),
+      parallel(timerMachine)
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain("<parallel");
     expect(scxml).toContain('id="Timer"');
   });
 
-  it("should export nested machines", () => {
+  it("should export nested machines", async () => {
     const childMachine = machine(
       "Child",
       init(initial("a")),
@@ -89,101 +86,95 @@ describe("SCXML Export", () => {
       state("b")
     );
 
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("start", "parent")),
-        state("parent", nested(childMachine, "a"))
-      )
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "parent")),
+      state("parent", nested(childMachine, "a"))
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain("<state");
     expect(scxml).toContain('id="parent"');
   });
 
-  it("should export entry actions", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", entry(() => {}), transition("start", "running")),
-        state("running")
-      )
+  it("should export entry actions", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", entry(() => {}), transition("start", "running")),
+      state("running")
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain("<onentry>");
   });
 
-  it("should export exit actions", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("start", "running", exit(() => {}))),
-        state("running")
-      )
+  it("should export exit actions", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "running", exit(() => {}))),
+      state("running")
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain("<onexit>");
   });
 
-  it("should export immediate transitions", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", immediate("running")),
-        state("running")
-      )
+  it("should export immediate transitions", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", immediate("running")),
+      state("running")
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain('type="internal"');
     expect(scxml).toContain('event="');
   });
 
-  it("should export multiple guards", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("check", "running", 
-          guard((ctx: any) => true, "error1"),
-          guard((ctx: any) => true, "error2")
-        )),
-        state("running"),
-        state("error1"),
-        state("error2")
-      )
+  it("should export multiple guards", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("check", "running", 
+        guard((ctx: any) => true, "error1"),
+        guard((ctx: any) => true, "error2")
+      )),
+      state("running"),
+      state("error1"),
+      state("error2")
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toMatch(/cond="/g);
   });
 
-  it("should export all state types", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        primaryState("idle", description("Primary state"), transition("next", "info")),
-        infoState("info", description("Info state"), transition("next", "success")),
-        successState("success", description("Success state"), transition("next", "warning")),
-        warningState("warning", description("Warning state"), transition("next", "danger")),
-        dangerState("danger", description("Danger state"))
-      )
+  it("should export all state types", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      primaryState("idle", description("Primary state"), transition("next", "info")),
+      infoState("info", description("Info state"), transition("next", "success")),
+      successState("success", description("Success state"), transition("next", "warning")),
+      warningState("warning", description("Warning state"), transition("next", "danger")),
+      dangerState("danger", description("Danger state"))
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain('id="idle"');
     expect(scxml).toContain('id="info"');
@@ -193,17 +184,16 @@ describe("SCXML Export", () => {
     expect(scxml).toContain("description");
   });
 
-  it("should export machine with context", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle"), { context: { count: 0, name: "" } }),
-        state("idle", transition("next", "active")),
-        state("active")
-      )
+  it("should export machine with context", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle"), { context: { count: 0, name: "" } }),
+      state("idle", transition("next", "active")),
+      state("active")
     );
 
-    const scxml = toSCXML(myMachine);
+    const result = await documentate(myMachine, { format: 'scxml' });
+    const scxml = result.scxml!;
 
     expect(scxml).toContain("Test");
     expect(scxml).toContain('initial="idle"');
@@ -211,7 +201,7 @@ describe("SCXML Export", () => {
 });
 
 describe("SCXML Import", () => {
-  it("should import simple SCXML", () => {
+  it("should import simple SCXML", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="Test">
   <state id="idle">
@@ -222,7 +212,8 @@ describe("SCXML Import", () => {
   </state>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.initial).toEqual("idle");
     expect(machine.states.idle).toBeDefined();
@@ -230,7 +221,7 @@ describe("SCXML Import", () => {
     expect(machine.states.idle.on!.start.target).toEqual("running");
   });
 
-  it("should import machine with guards", () => {
+  it("should import machine with guards", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle">
   <state id="idle">
@@ -242,13 +233,14 @@ describe("SCXML Import", () => {
   <state id="authenticated"/>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.states.idle.on!.login.guards).toBeDefined();
     expect(machine.states.idle.on!.login.guards![0].guard).toContain("checkAuth");
   });
 
-  it("should import parallel states", () => {
+  it("should import parallel states", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle">
   <state id="idle">
@@ -265,13 +257,14 @@ describe("SCXML Import", () => {
   </parallel>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.parallel).toBeDefined();
     expect(machine.parallel.Timer).toBeDefined();
   });
 
-  it("should import nested states", () => {
+  it("should import nested states", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle">
   <state id="idle">
@@ -285,13 +278,14 @@ describe("SCXML Import", () => {
   </state>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.states.parent).toBeDefined();
     expect(machine.states.parent.nested).toBeDefined();
   });
 
-  it("should import entry actions", () => {
+  it("should import entry actions", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle">
   <state id="idle">
@@ -303,13 +297,14 @@ describe("SCXML Import", () => {
   <state id="running"/>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.states.idle.run).toBeDefined();
     expect(machine.states.idle.run!.length).toBeGreaterThan(0);
   });
 
-  it("should import exit actions", () => {
+  it("should import exit actions", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle">
   <state id="idle">
@@ -322,13 +317,14 @@ describe("SCXML Import", () => {
   <state id="running"/>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.states.idle.on!.start.exit).toBeDefined();
     expect(machine.states.idle.on!.start.exit!.length).toBeGreaterThan(0);
   });
 
-  it("should import immediate transitions", () => {
+  it("should import immediate transitions", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle">
   <state id="idle">
@@ -337,43 +333,47 @@ describe("SCXML Import", () => {
   <state id="running"/>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.states.idle.immediate).toBeDefined();
     expect(machine.states.idle.immediate![0].immediate).toEqual("running");
   });
 
-  it("should import machine title", () => {
+  it("should import machine title", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="MyTestMachine">
   <state id="idle"/>
 </scxml>`;
 
-    const machine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const machine = result.serialized!;
 
     expect(machine.title).toEqual("MyTestMachine");
   });
 });
 
 describe("SCXML Roundtrip", () => {
-  it("should preserve machine structure through export/import", () => {
-    const originalMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("start", "running")),
-        state("running", transition("stop", "idle"))
-      )
+  it("should preserve machine structure through export/import", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "running")),
+      state("running", transition("stop", "idle"))
     );
 
-    const scxml = toSCXML(originalMachine);
-    const importedMachine = fromSCXML(scxml);
+    const serializedResult = await documentate(myMachine, { format: 'serialized' });
+    const originalMachine = serializedResult.serialized!;
+
+    const scxmlResult = await documentate(myMachine, { format: 'scxml' });
+    const importedResult = await documentate(scxmlResult.scxml!, { format: 'serialized' });
+    const importedMachine = importedResult.serialized!;
 
     expect(importedMachine.initial).toEqual(originalMachine.initial);
     expect(Object.keys(importedMachine.states)).toEqual(Object.keys(originalMachine.states));
   });
 
-  it("should preserve parallel states through roundtrip", () => {
+  it("should preserve parallel states through roundtrip", async () => {
     const timerMachine = machine(
       "Timer",
       init(initial("stopped")),
@@ -381,24 +381,26 @@ describe("SCXML Roundtrip", () => {
       state("started", transition("stop", "stopped"))
     );
 
-    const originalMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("start", "running")),
-        state("running", transition("stop", "idle")),
-        parallel(timerMachine)
-      )
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "running")),
+      state("running", transition("stop", "idle")),
+      parallel(timerMachine)
     );
 
-    const scxml = toSCXML(originalMachine);
-    const importedMachine = fromSCXML(scxml);
+    const serializedResult = await documentate(myMachine, { format: 'serialized' });
+    const originalMachine = serializedResult.serialized!;
+
+    const scxmlResult = await documentate(myMachine, { format: 'scxml' });
+    const importedResult = await documentate(scxmlResult.scxml!, { format: 'serialized' });
+    const importedMachine = importedResult.serialized!;
 
     expect(importedMachine.parallel).toBeDefined();
     expect(Object.keys(importedMachine.parallel)).toContain("Timer");
   });
 
-  it("should preserve nested states through roundtrip", () => {
+  it("should preserve nested states through roundtrip", async () => {
     const childMachine = machine(
       "Child",
       init(initial("a")),
@@ -406,23 +408,25 @@ describe("SCXML Roundtrip", () => {
       state("b")
     );
 
-    const originalMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("start", "parent")),
-        state("parent", nested(childMachine, "a"))
-      )
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("start", "parent")),
+      state("parent", nested(childMachine, "a"))
     );
 
-    const scxml = toSCXML(originalMachine);
-    const importedMachine = fromSCXML(scxml);
+    const serializedResult = await documentate(myMachine, { format: 'serialized' });
+    const originalMachine = serializedResult.serialized!;
+
+    const scxmlResult = await documentate(myMachine, { format: 'scxml' });
+    const importedResult = await documentate(scxmlResult.scxml!, { format: 'serialized' });
+    const importedMachine = importedResult.serialized!;
 
     expect(importedMachine.states.parent).toBeDefined();
     expect(importedMachine.states.parent.nested).toBeDefined();
   });
 
-  it("should preserve guards through roundtrip", () => {
+  it("should preserve guards through roundtrip", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle">
   <state id="idle">
@@ -431,13 +435,14 @@ describe("SCXML Roundtrip", () => {
   <state id="running"/>
 </scxml>`;
 
-    const importedMachine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const importedMachine = result.serialized!;
 
     expect(importedMachine.states.idle.on!.check.guards).toBeDefined();
     expect(importedMachine.states.idle.on!.check.guards![0]).toBeDefined();
   });
 
-  it("should preserve context through roundtrip", () => {
+  it("should preserve context through roundtrip", async () => {
     const scxml = `<?xml version="1.0" encoding="UTF-8"?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="Test">
   <datamodel>
@@ -449,7 +454,8 @@ describe("SCXML Roundtrip", () => {
   <state id="active"/>
 </scxml>`;
 
-    const importedMachine = fromSCXML(scxml);
+    const result = await documentate(scxml, { format: 'serialized' });
+    const importedMachine = result.serialized!;
 
     expect(importedMachine.context).toBeDefined();
   });

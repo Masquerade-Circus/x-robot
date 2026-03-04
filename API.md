@@ -280,188 +280,102 @@ start(newMachine, savedSnapshot);
 
 ---
 
-## serialize(machine)
+## documentate(input, options)
 
-Serializa la máquina a un objeto JSON que puede ser almacenado o enviado por la red.
+Función unificada para generar documentación y convertir entre formatos para máquinas X-Robot.
 
 ```typescript
-import { serialize } from "x-robot";
-
-const myMachine = machine(
-  "Test",
-  init(initial("idle")),
-  state("idle", transition("next", "active")),
-  state("active")
-);
-
-const serialized = serialize(myMachine);
-console.log(serialized);
-// {
-//   "states": { "idle": {...}, "active": {...} },
-//   "parallel": {},
-//   "context": {},
-//   "initial": "idle",
-//   "title": "Test"
-// }
+import { documentate } from "x-robot";
 ```
 
-**Parámetros:**
-- `machine`: La máquina a serializar
+### Input
 
-**Retorna:**
-- Objeto `SerializedMachine` con: `states`, `parallel`, `context`, `initial`, `title`
+Acepta diferentes tipos de entrada:
+- **Machine**: Instancia de máquina creada con `machine()`
+- **SerializedMachine**: Objeto JSON con la estructura de la máquina
+- **SCXML string**: Documento SCXML válido
+- **PlantUML string**: Código PlantUML válido
 
----
+### Opciones
 
-## generateFromSerializedMachine(serializedMachine, format)
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `format` | OutputFormat | Formato de salida requerido |
+| `level` | 'low' \\| 'high' | Nivel de detalle del diagrama |
+| `skinparam` | string | Personalización de PlantUML |
 
-Genera código fuente a partir de una máquina serializada. Útil para crear implementacionesbases o documentación.
+### Formatos de Output
 
-```typescript
-import { generateFromSerializedMachine, Format, serialize } from "x-robot";
+| Formato | Descripción |
+|---------|-------------|
+| `ts` | Código TypeScript |
+| `mjs` | Código JavaScript ESM |
+| `cjs` | Código JavaScript CommonJS |
+| `json` | Objeto JSON de la máquina |
+| `scxml` | Documento SCXML |
+| `plantuml` | Código PlantUML |
+| `svg` | Imagen SVG del diagrama |
+| `png` | Imagen PNG del diagrama |
+| `serialized` | Objeto SerializedMachine |
+| `all` | Todos los formatos |
 
-const myMachine = machine(
-  "Test",
-  init(initial("idle"), { context: { count: 0 } }),
-  state("idle", transition("next", "active")),
-  state("active")
-);
+### Tabla de Interoperabilidad
 
-const serialized = serialize(myMachine);
+| Input \\ Output | ts | mjs | cjs | json | scxml | plantuml | svg | png | serialized |
+|----------------|----|-----|-----|------|-------|----------|-----|-----|------------|
+| Machine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SerializedMachine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| SCXML | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
+| PlantUML | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ |
 
-// Generar TypeScript
-const tsCode = generateFromSerializedMachine(serialized, Format.TS);
-
-// Generar ESM
-const esmCode = generateFromSerializedMachine(serialized, Format.ESM);
-
-// Generar CJS
-const cjsCode = generateFromSerializedMachine(serialized, Format.CJS);
-```
-
-### Format enum
-
-```typescript
-enum Format {
-  ESM = "esm",  // ES Modules (import/export)
-  CJS = "cjs",  // CommonJS (require/module.exports)
-  TS = "ts",    // TypeScript con tipos
-}
-```
-
-**Parámetros:**
-- `serializedMachine`: Máquina serializada (resultado de `serialize()`)
-- `format`: Formato de salida (`Format.ESM`, `Format.CJS`, `Format.TS`)
-
-**Retorna:**
-- String con el código generado
-
-**Ejemplo de salida TypeScript:**
+### Ejemplos
 
 ```typescript
-export interface TestStates {
-  idle: {};
-  active: {};
-}
+// Generar todos los formatos desde una máquina
+const result = await documentate(myMachine, { format: 'all' });
 
-export interface TestContext {
-  count: number;
-}
+// Generar código TypeScript
+const result = await documentate(myMachine, { format: 'ts' });
 
-import { machine, states, initial, context, transition } from "x-robot";
+// Generar código ESM (JavaScript módulos)
+const result = await documentate(myMachine, { format: 'mjs' });
 
-const getContext = () => ({
-  "count": 0
+// Generar código CommonJS
+const result = await documentate(myMachine, { format: 'cjs' });
+
+// Generar JSON
+const result = await documentate(myMachine, { format: 'json' });
+
+// Generar SCXML
+const result = await documentate(myMachine, { format: 'scxml' });
+
+// Generar PlantUML
+const result = await documentate(myMachine, { format: 'plantuml' });
+
+// Generar SVG
+const result = await documentate(myMachine, { format: 'svg' });
+
+// Generar PNG
+const result = await documentate(myMachine, { format: 'png' });
+
+// Generar SerializedMachine
+const result = await documentate(myMachine, { format: 'serialized' });
+
+// Generar TypeScript desde SCXML
+const scxmlString = `...`;
+const result = await documentate(scxmlString, { format: 'ts' });
+
+// Generar SVG desde PlantUML
+const plantUmlCode = `@startuml ... @enduml`;
+const result = await documentate(plantUmlCode, { format: 'svg' });
+
+// Generar SerializedMachine desde SCXML
+const result = await documentate(scxmlString, { format: 'serialized' });
+
+// Generar diagrama con opciones personalizadas
+const result = await documentate(myMachine, { 
+  format: 'svg', 
+  level: 'high',
+  skinparam: 'skinparam backgroundColor white'
 });
-
-export const TestMachine = machine(
-  "Test",
-  states(
-    state(
-      "idle",
-      transition("next", "active")
-    ),
-    state(
-      "active"
-    )
-  ),
-  context(getContext),
-  initial("idle")
-);
-
-export default { TestMachine };
 ```
-
----
-
-## toSCXML(machine)
-
-Exporta una máquina a formato SCXML (State Chart XML). SCXML es un estándar W3C para máquinas de estados.
-
-```typescript
-import { toSCXML, serialize } from "x-robot";
-
-const myMachine = machine(
-  "Test",
-  init(initial("idle")),
-  state("idle", transition("start", "running")),
-  state("running", transition("stop", "idle"))
-);
-
-const serialized = serialize(myMachine);
-const scxml = toSCXML(serialized);
-
-console.log(scxml);
-// <?xml version="1.0" encoding="UTF-8"?>
-// <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="Test">
-//   <state id="idle">
-//     <transition event="start" target="running"/>
-//   </state>
-//   <state id="running">
-//     <transition event="stop" target="idle"/>
-//   </state>
-// </scxml>
-```
-
-**Parámetros:**
-- `machine`: Máquina serializada (resultado de `serialize()`)
-
-**Retorna:**
-- String con el documento SCXML
-
-**Características soportadas:**
-- Estados simples y anidados
-- Estados paralelos
-- Transiciones con eventos
-- Guards (condiciones)
-- Acciones de entrada (onentry)
-- Acciones de salida (onexit)
-- Transiciones inmediatas
-
----
-
-## fromSCXML(scxmlString)
-
-Importa una máquina desde formato SCXML.
-
-```typescript
-import { fromSCXML } from "x-robot";
-
-const scxml = `<?xml version="1.0" encoding="UTF-8"?>
-<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="idle" name="Test">
-  <state id="idle">
-    <transition event="start" target="running"/>
-  </state>
-  <state id="running">
-    <transition event="stop" target="idle"/>
-  </state>
-</scxml>`;
-
-const machine = fromSCXML(scxml);
-```
-
-**Parámetros:**
-- `scxmlString`: String con el documento SCXML
-
-**Retorna:**
-- Objeto `SerializedMachine` que puede usarse con `serialize()` o pasarse a otras funciones

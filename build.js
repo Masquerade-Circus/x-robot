@@ -38,7 +38,7 @@ async function build({
   libCheck = false,
   minify = true,
   minifyAs = "cjs",
-  external = []
+  external = ["path", "child_process", "fs", "os"]
 }) {
   try {
     let header = `\n/*** ${entryPoint} ***/`;
@@ -189,9 +189,9 @@ async function build({
   });
 
   await build({
-    globalName: "XRobotSerialize",
-    entryPoint: "./lib/serialize/index.ts",
-    outfileName: "./dist/serialize/index",
+    globalName: "XRobotDocumentate",
+    entryPoint: "./lib/documentate/index.ts",
+    outfileName: "./dist/documentate/index",
     libCheck: true
   });
 
@@ -200,22 +200,6 @@ async function build({
     entryPoint: "./lib/validate/index.ts",
     outfileName: "./dist/validate/index",
     minify: false
-  });
-
-  await build({
-    globalName: "XRobotVisualize",
-    entryPoint: "./lib/visualize/index.ts",
-    outfileName: "./dist/visualize/index",
-    minify: false,
-    external: ["child_process", "fs", "os", "path", "__dirname"]
-  });
-
-  await build({
-    globalName: "XRobotGenerate",
-    entryPoint: "./lib/generate/index.ts",
-    outfileName: "./dist/generate/index",
-    minify: false,
-    external: ["child_process", "fs", "os", "path"]
   });
 
   await build({

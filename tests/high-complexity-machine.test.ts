@@ -1,5 +1,5 @@
-import { Format, generateFromSerializedMachine } from "../lib/generate";
-import { VISUALIZATION_LEVEL, createSvgFromPlantUmlCode, getPlantUmlCode } from "../lib/visualize";
+import { documentate } from "../lib/documentate";
+import type { DocumentateOptions } from "../lib/documentate/types";
 import {
   context,
   dangerState,
@@ -19,7 +19,6 @@ import { describe, it } from "mocha";
 
 import expect from "expect";
 import fs from "fs";
-import { serialize } from "../lib/serialize";
 import { validate } from "../lib/validate";
 
 describe("X-Robot", () => {
@@ -380,7 +379,8 @@ describe("X-Robot", () => {
   it("should generate a diagram from a very high complexity machine", async () => {
     let myMachine = getMachine();
 
-    let plantUmlCode = getPlantUmlCode(serialize(myMachine), VISUALIZATION_LEVEL.HIGH);
+    const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
+    let plantUmlCode = result.plantuml!;
 
     let expectedPlantUmlCode = `
 @startuml
@@ -518,7 +518,8 @@ skinparam state {
     expect(plantUmlCode).toContain("T:authorizationFailure");
     expect(plantUmlCode).not.toContain("A:authorize");
 
-    const svg = await createSvgFromPlantUmlCode(plantUmlCode, { outDir: "./tmp", fileName: "test.svg" });
+    const svgResult = await documentate(plantUmlCode, { format: 'svg' });
+    const svg = svgResult.svg!;
 
     expect(svg).toBeDefined();
 
@@ -529,10 +530,10 @@ skinparam state {
     fs.unlinkSync(svg);
   });
 
-  it("should generate esm code from a very high complexity machine", () => {
+  it("should generate esm code from a very high complexity machine", async () => {
     let myMachine = getMachine();
-    let serializedMachine = serialize(myMachine);
-    let esmCode = generateFromSerializedMachine(serializedMachine, Format.ESM);
+    const result = await documentate(myMachine, { format: 'mjs' });
+    let esmCode = result.mjs;
 
     let expectedCode = `import { entry } from "x-robot";
 

@@ -1,21 +1,21 @@
-import { generateFromSerializedMachine, Format, serialize, machine, init, initial, state, transition, exit } from "../lib";
+import { documentate } from "../lib/documentate";
+import { machine, init, initial, state, transition, exit } from "../lib";
 import { describe, it } from "mocha";
 
 import bird from "./bird-machine-ts";
 import expect from "expect";
 
 describe("TypeScript Generation", () => {
-  it("should generate state interface", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle")),
-        state("idle", transition("next", "active")),
-        state("active")
-      )
+  it("should generate state interface", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("next", "active")),
+      state("active")
     );
 
-    const code = generateFromSerializedMachine(myMachine, Format.TS);
+    const result = await documentate(myMachine, { format: 'ts' });
+    const code = result.ts!;
 
     expect(code).toContain("export interface");
     expect(code).toContain("States {");
@@ -23,17 +23,16 @@ describe("TypeScript Generation", () => {
     expect(code).toContain("active:");
   });
 
-  it("should generate context interface", () => {
-    const myMachine = serialize(
-      machine(
-        "Test",
-        init(initial("idle"), { context: { count: 0, name: "" } }),
-        state("idle", transition("next", "active")),
-        state("active")
-      )
+  it("should generate context interface", async () => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle"), { context: { count: 0, name: "" } }),
+      state("idle", transition("next", "active")),
+      state("active")
     );
 
-    const code = generateFromSerializedMachine(myMachine, Format.TS);
+    const result = await documentate(myMachine, { format: 'ts' });
+    const code = result.ts!;
 
     expect(code).toContain("export interface");
     expect(code).toContain("Context {");
@@ -41,29 +40,24 @@ describe("TypeScript Generation", () => {
     expect(code).toContain("name:");
   });
 
-  it("should include generics in machine call", () => {
-    const myMachine = serialize(
-      machine(
-        "MyMachine",
-        init(initial("idle")),
-        state("idle", transition("next", "active")),
-        state("active")
-      )
+  it("should include generics in machine call", async () => {
+    const myMachine = machine(
+      "MyMachine",
+      init(initial("idle")),
+      state("idle", transition("next", "active")),
+      state("active")
     );
 
-    const code = generateFromSerializedMachine(myMachine, Format.TS);
+    const result = await documentate(myMachine, { format: 'ts' });
+    const code = result.ts!;
 
     expect(code).toContain("machine<");
     expect(code).toContain("Context>");
   });
 
-  it("should generate code from a complex machine (bird)", () => {
-    const getMachine = () => {
-      return serialize(bird);
-    };
-
-    let myMachine = getMachine();
-    let code = generateFromSerializedMachine(myMachine, Format.TS);
+  it("should generate code from a complex machine (bird)", async () => {
+    const result = await documentate(bird, { format: 'ts' });
+    const code = result.ts!;
 
     expect(code).toContain("export interface");
     expect(code).toContain("birdContext");
@@ -72,7 +66,7 @@ describe("TypeScript Generation", () => {
     expect(code).toContain("flying:");
   });
 
-  it("should generate code with exit", () => {
+  it("should generate code with exit", async () => {
     function cleanup(context: any) {
       context.cleaned = true;
     }
@@ -84,8 +78,8 @@ describe("TypeScript Generation", () => {
       state("loading")
     );
 
-    const serialized = serialize(myMachine);
-    const code = generateFromSerializedMachine(serialized, Format.TS);
+    const result = await documentate(myMachine, { format: 'ts' });
+    const code = result.ts!;
     
     expect(code).toContain("exit");
     expect(code).toContain("cleanup");

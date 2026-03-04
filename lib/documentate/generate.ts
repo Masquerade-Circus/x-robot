@@ -1,0 +1,623 @@
+/**
+ * @module x-robot/documentate/generate
+ * @description Generate code from a serialized machine
+ * */
+import { SerializedImmediate, SerializedMachine, SerializedTransition } from "./types";
+import { isValidObject, isValidString } from "../utils";
+
+export enum Format {
+  ESM = "esm",
+  CJS = "cjs",
+  TS = "ts",
+}
+
+function getGuards(
+  transition: SerializedTransition | SerializedImmediate,
+  guards: string[] = [],
+  declaredGuards: string[] = []
+): string {
+  let code = "";
+  if (transition.guards) {
+    // Add the guards to the list
+    for (let item of transition.guards) {
+      let guardName = item.guard;
+      if (!guards.includes(guardName) && !declaredGuards.includes(guardName)) {
+        guards.push(guardName);
+        declaredGuards.push(guardName);
+      }
+
+      if (item.machine) {
+        let { machineName } = getMachineName(item.machine);
+        code += `, nestedGuard(${machineName}, ${guardName}`;
+      } else {
+        code += `, guard(${guardName}`;
+      }
+
+      if (isValidString(item.failure)) {
+        code += `, "${item.failure}"`;
+      }
+      code += `)`;
+    }
+  }
+
+  return code;
+}
+
+function getExitPulses(
+  transition: SerializedTransition,
+  pulses: string[] = [],
+  declaredPulses: string[] = []
+): string {
+  let code = "";
+  if (transition.exit && transition.exit.length > 0) {
+    code += `, exit(`;
+    for (let i = 0; i < transition.exit.length; i++) {
+      const exitPulse = transition.exit[i];
+      if (!pulses.includes(exitPulse.pulse) && !declaredPulses.includes(exitPulse.pulse)) {
+        pulses.push(exitPulse.pulse);
+        declaredPulses.push(exitPulse.pulse);
+      }
+      
+      code += `entry(${exitPulse.pulse}`;
+      if (isValidString(exitPulse.failure)) {
+        code += `, "${exitPulse.failure}"`;
+      }
+      code += `)`;
+      
+      if (i < transition.exit.length - 1) {
+        code += `, `;
+      }
+    }
+    code += `)`;
+  }
+  return code;
+}
+
+function getCodeParts(
+  serializedMachine: SerializedMachine,
+  declaredPulses: string[] = [],
+  declaredGuards: string[] = []
+): {
+  pulses: string[];
+  guards: string[];
+  states: Record<string, string>;
+} {
+  let pulses: string[] = [];
+  let guards: string[] = [];
+
+  let states: { [key: string]: string } = {};
+
+  for (let stateName in serializedMachine.states) {
+    let state = serializedMachine.states[stateName];
+    let stateCode = "";
+    let implicitStateTransitions = [];
+
+    // Check if we need to add the state type
+    let stateTypeName = state.type === "default" ? "state" : `${state.type}State`;
+
+    stateCode += `${stateTypeName}(\n      "${stateName}",\n`;
+
+    // Check if we need to add the description
+    if (isValidString(state.description)) {
+      stateCode += `      description("${state.description}"),\n`;
+    }
+
+    // Check if we need to add nested machines
+    if (state.nested && state.nested.length > 0) {
+      for (let nestedMachine of state.nested) {
+        let { machineName } = getMachineName(nestedMachine.machine);
+        stateCode += `      nested(${machineName}`;
+        // Nested machine can have a initial transition
+        if (nestedMachine.transition) {
+          stateCode += `, "${nestedMachine.transition}"`;
+        }
+        stateCode += "),\n";
+      }
+    }
+
+    // Check if we need to add entries
+    if (state.run && state.run.length > 0) {
+      // For each item in the run array, check if we need to add the entry
+      for (let runItem of state.run) {
+        if ("pulse" in runItem) {
+          if (!pulses.includes(runItem.pulse) && !declaredPulses.includes(runItem.pulse)) {
+            pulses.push(runItem.pulse);
+            declaredPulses.push(runItem.pulse);
+          }
+
+          stateCode += `      entry(${runItem.pulse}`;
+
+          if (isValidString(runItem.success)) {
+            stateCode += `, "${runItem.success}"`;
+            implicitStateTransitions.push(runItem.success);
+          }
+
+          if (isValidString(runItem.failure)) {
+            if (!isValidString(runItem.success)) {
+              stateCode += `, undefined`;
+            }
+            stateCode += `, "${runItem.failure}"`;
+            implicitStateTransitions.push(runItem.failure);
+          }
+
+          stateCode += `),\n`;
+        }
+      }
+    }
+
+    // Add the immediate transitions
+    if (state.immediate) {
+      for (let immediate of state.immediate) {
+        stateCode += `      immediate("${immediate.immediate}"`;
+        stateCode += getGuards(
+          { target: immediate.immediate, guards: immediate.guards },
+          guards,
+          declaredGuards
+        );
+        stateCode += `),\n`;
+      }
+    }
+
+    // Add the state transitions to the code
+    for (let transitionName in state.on) {
+      let transition = state.on[transitionName];
+
+      if (!implicitStateTransitions.includes(transition.target) || transition.guards) {
+        if (!state.immediate || !state.immediate.find((immediate) => immediate.immediate === transition.target)) {
+          stateCode += `      transition("${transitionName}", "${transition.target}"`;
+          stateCode += getGuards(transition, guards, declaredGuards);
+          stateCode += getExitPulses(transition, pulses, declaredPulses);
+          stateCode += `),\n`;
+        }
+      }
+    }
+
+    stateCode = stateCode.replace(/,\n$/, `\n`);
+    stateCode += `    )`;
+
+    states[stateName] = stateCode.replace(/\(\n\s+\)$/, "()");
+  }
+
+  return { pulses, guards, states };
+}
+
+function addImport(importName: string, imports: string[] = ["machine"]) {
+  if (!imports.includes(importName)) {
+    imports.push(importName);
+  }
+}
+
+function getImports(serializedMachine: SerializedMachine, imports: string[] = ["machine"]) {
+  if (Object.keys(serializedMachine.states).length > 0) {
+    addImport("states", imports);
+  }
+
+  if (serializedMachine.initial) {
+    addImport("initial", imports);
+  }
+
+  if (serializedMachine.context) {
+    addImport("context", imports);
+  }
+
+  if (isValidObject(serializedMachine.states) && Object.keys(serializedMachine.states).length > 0) {
+    addImport("states", imports);
+
+    for (let stateName in serializedMachine.states) {
+      let state = serializedMachine.states[stateName];
+
+      // Check if we have nested machines
+      if (state.nested && state.nested.length > 0) {
+        addImport("nested", imports);
+
+        for (let nestedMachine of state.nested) {
+          getImports(nestedMachine.machine, imports);
+        }
+      }
+
+      // Check if we need to import the state type
+      let stateImport = state.type !== "default" ? `${state.type}State` : "state";
+      addImport(stateImport, imports);
+
+      // Check if we need to import the description
+      if (isValidString(state.description)) {
+        addImport("description", imports);
+      }
+
+      // Check if we need to import the immediate
+      if (state.immediate) {
+        addImport("immediate", imports);
+      }
+
+      if (isValidObject(state.on)) {
+        // Transitions can have guards
+        if (
+          !imports.includes("transition") ||
+          !imports.includes("guard") ||
+          !imports.includes("nestedGuard")
+        ) {
+          for (let transitionName in state.on) {
+            // Check if we need to import the transition
+            if (!imports.includes("transition") && (!isValidString(state.immediate) || state.immediate !== transitionName)) {
+              addImport("transition", imports);
+            }
+
+            // Check if we need to import the guards
+            let transition = state.on[transitionName];
+            if (transition.guards) {
+              for (let item of transition.guards) {
+                if (item.machine) {
+                  addImport("nestedGuard", imports);
+                } else {
+                  addImport("guard", imports);
+                }
+
+                if (isValidString(item.failure)) {
+                  addImport("transition", imports);
+                }
+              }
+            }
+
+            // Check if we need to import exit
+            if (transition.exit && transition.exit.length > 0) {
+              addImport("exit", imports);
+              for (let exitItem of transition.exit) {
+                addImport("entry", imports);
+                if (isValidString(exitItem.failure)) {
+                  addImport("transition", imports);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Run items are entries and can have success/failure transitions
+      if (state.run && state.run.length > 0) {
+        for (let runItem of state.run) {
+          if ("pulse" in runItem) {
+            addImport("entry", imports);
+
+            if (isValidString(runItem.success) || isValidString(runItem.failure)) {
+              addImport("transition", imports);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (serializedMachine.parallel && Object.keys(serializedMachine.parallel).length > 0) {
+    addImport("parallel", imports);
+  }
+
+  return imports;
+}
+
+const toCammelCase = (str: string) =>
+  str
+    .replace(/(^\w)/g, ($1) => $1.toUpperCase())
+    .replace(/\s(.)/g, ($1) => $1.toUpperCase())
+    .replace(/\W/g, "");
+
+function getMachineName(serializedMachine: SerializedMachine) {
+  let randomString = Math.random().toString(36).substring(2, 15);
+  let camelizedTitle = toCammelCase(serializedMachine.title || randomString);
+  let machineName = `${camelizedTitle}Machine`;
+
+  return { machineName, camelizedTitle };
+}
+
+function getMachineCode(
+  serializedMachine: SerializedMachine,
+  format: Format,
+  machines: Map<string, string> = new Map(),
+  declaredPulses: string[] = [],
+  declaredGuards: string[] = []
+): string {
+  let code = "";
+
+  // For each nested machine, add the code first
+  for (let stateName in serializedMachine.states) {
+    let state = serializedMachine.states[stateName];
+    if (state.nested && state.nested.length > 0) {
+      for (let nestedMachine of state.nested) {
+        let { machineName } = getMachineName(nestedMachine.machine);
+        // We only want to add the machine if it hasn't been added yet
+        if (!machines.has(machineName)) {
+          code += getMachineCode(
+            nestedMachine.machine,
+            format,
+            machines,
+            declaredPulses,
+            declaredGuards
+          );
+        }
+      }
+    }
+  }
+
+  // For each parallel machine, add the code first
+  for (let parallelMachineId in serializedMachine.parallel) {
+    let parallelMachine = serializedMachine.parallel[parallelMachineId];
+    let { machineName } = getMachineName(parallelMachine);
+    // We only want to add the machine if it hasn't been added yet
+    if (!machines.has(machineName)) {
+      code += getMachineCode(
+        parallelMachine,
+        format,
+        machines,
+        declaredPulses,
+        declaredGuards
+      );
+    }
+  }
+
+  let { machineName, camelizedTitle } = getMachineName(serializedMachine);
+  let { pulses, guards, states } = getCodeParts(
+    serializedMachine,
+    declaredPulses,
+    declaredGuards
+  );
+
+  code += `\n/******************** ${machineName} Start ********************/\n\n`;
+
+  // Context code
+  code += `const get${camelizedTitle}Context = () => (${JSON.stringify(serializedMachine.context, null, 2)});\n\n`;
+
+  // Guards
+  if (guards.length > 0) {
+    let guardCode = `// Guards\n`;
+    for (let guard of guards) {
+      guardCode += `const ${guard} = (context, payload) => {\n  // TODO: Implement guard\n  return true;\n};\n`;
+    }
+    code += `${guardCode}\n`;
+  }
+
+  // Entries
+  if (pulses.length > 0) {
+    let pulseCode = `// Entries\n`;
+    for (let pulse of pulses) {
+      pulseCode += `const ${pulse} = (context, payload) => {\n  // TODO: Implement entry\n  return {...context};\n};\n`;
+    }
+    code += `${pulseCode}\n`;
+  }
+
+  // Add export declaration for esm
+  if (format === Format.ESM) {
+    code += `export `;
+  }
+
+  // Machine declaration and initial state
+  code += `const ${machineName} = machine(
+  "${serializedMachine.title ? serializedMachine.title : ""}",`;
+  if (Object.keys(states).length > 0) {
+    code += `
+  states(\n`;
+    // States
+    for (let stateName in states) {
+      code += `    ${states[stateName]},\n`;
+    }
+    code = code.replace(/,\n$/, `\n`);
+    code += `  ),\n`;
+  }
+
+  // Parallel machines
+  if (Object.keys(serializedMachine.parallel).length > 0) {
+    code += `  parallel(\n`;
+    for (let parallelMachineId in serializedMachine.parallel) {
+      let parallelMachine = serializedMachine.parallel[parallelMachineId];
+      let { machineName } = getMachineName(parallelMachine);
+      code += `    ${machineName},\n`;
+    }
+    code = code.replace(/,\n$/, `\n`);
+    code += `  ),\n`;
+  }
+
+  // Initial context
+  code += `  context(get${camelizedTitle}Context),\n`;
+
+  // Initial state
+  code += `  initial("${serializedMachine.initial}")\n);\n\n`;
+
+  // Add machine to map
+  machines.set(machineName, code);
+
+  code += `/******************** ${machineName} End ********************/\n`;
+
+  return code;
+}
+
+/**
+ *
+ * @param serializedMachine The machine to generate code for
+ * @param format The format to generate code for, either esm or cjs
+ * @returns The generated code as a string
+ */
+export function generateFromSerializedMachine(serializedMachine: SerializedMachine, format: Format): string {
+  // Handle TypeScript format separately
+  if (format === Format.TS) {
+    return generateTypeScriptCode(serializedMachine);
+  }
+
+  let code = "";
+
+  let imports = getImports(serializedMachine);
+
+  // Import statements
+  let importCode = "";
+  let importItems = imports.join(", ");
+  if (format === Format.CJS) {
+    importCode += `const { ${importItems} } = require("x-robot");\n`;
+  } else {
+    importCode += `import { ${importItems} } from "x-robot";\n`;
+  }
+
+  code += importCode;
+
+  let machines = new Map();
+
+  let machineCode = getMachineCode(serializedMachine, format, machines);
+
+  code += machineCode;
+
+  if (format === Format.CJS) {
+    code += `\nmodule.exports = { ${Array.from(machines.keys()).join(", ")} };\n`;
+  } else if ((format as string) === Format.TS) {
+    // TypeScript doesn't need module.exports
+  } else {
+    code += `\nexport default { ${Array.from(machines.keys()).join(", ")} };\n`;
+  }
+
+  return code;
+}
+
+function toCamelCase(str: string): string {
+  return str.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+    return index === 0 ? word.toLowerCase() : word.toUpperCase();
+  }).replace(/\s+/g, "");
+}
+
+function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function analyzeMachineTypes(serializedMachine: SerializedMachine): {
+  stateNames: string[];
+  contextProperties: string[];
+  stateContextModifiers: Map<string, string[]>;
+  entryActions: Map<string, string[]>;
+  exitActions: Map<string, string[]>;
+} {
+  const stateNames: string[] = [];
+  const contextProperties: string[] = [];
+  const stateContextModifiers = new Map<string, string[]>();
+  const entryActions = new Map<string, string[]>();
+  const exitActions = new Map<string, string[]>();
+
+  // Get context properties
+  if (serializedMachine.context && typeof serializedMachine.context === 'object') {
+    for (const key of Object.keys(serializedMachine.context)) {
+      contextProperties.push(key);
+    }
+  }
+
+  // Analyze states
+  for (const [stateName, state] of Object.entries(serializedMachine.states)) {
+    stateNames.push(stateName);
+
+    // Entry actions
+    if (state.run && state.run.length > 0) {
+      const actions: string[] = [];
+      for (const pulse of state.run) {
+        actions.push(pulse.pulse);
+      }
+      entryActions.set(stateName, actions);
+    }
+
+    // Context modifiers from transitions
+    if (state.on) {
+      for (const [event, transition] of Object.entries(state.on)) {
+        if (transition.exit && transition.exit.length > 0) {
+          if (!stateContextModifiers.has(stateName)) {
+            stateContextModifiers.set(stateName, []);
+          }
+          for (const exit of transition.exit) {
+            stateContextModifiers.get(stateName)!.push(exit.pulse);
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    stateNames,
+    contextProperties,
+    stateContextModifiers,
+    entryActions,
+    exitActions
+  };
+}
+
+function generateStateInterface(name: string, analysis: ReturnType<typeof analyzeMachineTypes>): string {
+  const lines: string[] = [];
+  lines.push(`export interface ${name}States {`);
+
+  for (const stateName of analysis.stateNames) {
+    const modifiers = analysis.stateContextModifiers.get(stateName);
+    if (modifiers && modifiers.length > 0) {
+      lines.push(`  ${stateName}: { context: ${name}${capitalize(stateName)}Context };`);
+    } else {
+      lines.push(`  ${stateName}: {};`);
+    }
+  }
+
+  lines.push("}");
+  return lines.join("\n");
+}
+
+function generateContextInterface(name: string, contextProperties: string[]): string {
+  if (contextProperties.length === 0) {
+    return `export interface ${name}Context {\n  [key: string]: any;\n}`;
+  }
+
+  const props = contextProperties.map(prop => `  ${prop}: any;`).join("\n");
+  return `export interface ${name}Context {\n${props}\n}`;
+}
+
+function generateStateSpecificContexts(
+  name: string, 
+  analysis: ReturnType<typeof analyzeMachineTypes>
+): string {
+  const lines: string[] = [];
+
+  for (const [stateName, modifiers] of analysis.stateContextModifiers) {
+    if (modifiers && modifiers.length > 0) {
+      lines.push(`export interface ${name}${capitalize(stateName)}Context extends ${name}Context {`);
+      for (const mod of modifiers) {
+        lines.push(`  ${mod}Result?: any;`);
+      }
+      lines.push("}");
+    }
+  }
+
+  return lines.join("\n\n");
+}
+
+function generateTypeScriptCode(serializedMachine: SerializedMachine): string {
+  const machineName = toCamelCase(serializedMachine.title || "Machine");
+  const analysis = analyzeMachineTypes(serializedMachine);
+
+  let code = "";
+  code += "// ===========================================\n";
+  code += `// Type definitions for ${serializedMachine.title || "Machine"}\n`;
+  code += "// Generated by x-robot\n";
+  code += "// ===========================================\n\n";
+
+  // State interface
+  code += generateStateInterface(machineName, analysis);
+  code += "\n\n";
+
+  // Context interface
+  code += generateContextInterface(machineName, analysis.contextProperties);
+  code += "\n\n";
+
+  // State-specific contexts
+  const stateSpecificContexts = generateStateSpecificContexts(machineName, analysis);
+  if (stateSpecificContexts) {
+    code += stateSpecificContexts;
+    code += "\n\n";
+  }
+
+  // Generate JavaScript code with ESM format
+  const jsCode = generateFromSerializedMachine(serializedMachine, Format.ESM);
+  
+  // Convert to TypeScript (add type parameters to machine calls)
+  const tsMachineCode = jsCode
+    .replace(/machine\(/g, `machine<${machineName}States, ${machineName}Context>(`)
+    .replace(/export default/g, "// Type-safe machine\nexport default");
+
+  code += tsMachineCode;
+
+  return code;
+}

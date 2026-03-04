@@ -1,22 +1,17 @@
-import {
-  VISUALIZATION_LEVEL,
-  getPlantUmlCode,
-} from "../lib/visualize";
+import { documentate } from "../lib/documentate";
 import {
   exit,
   init,
   initial,
   machine,
-  pulse,
   state,
   transition,
 } from "../lib";
 import { describe, it } from "mocha";
 import expect from "expect";
-import { serialize } from "../lib/serialize";
 
 describe("Visualize exit", () => {
-  it("should show exit in plantuml diagram", () => {
+  it("should show exit in plantuml diagram", async () => {
     function cleanup(context: any) {
       context.cleaned = true;
     }
@@ -28,8 +23,8 @@ describe("Visualize exit", () => {
       state("loading")
     );
 
-    const serialized = serialize(myMachine);
-    const plantUmlCode = getPlantUmlCode(serialized, VISUALIZATION_LEVEL.HIGH);
+    const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
+    const plantUmlCode = result.plantuml!;
     
     expect(plantUmlCode).toContain("[exit: cleanup]");
   });

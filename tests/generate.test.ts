@@ -1,5 +1,5 @@
-import { Format, generateFromSerializedMachine } from "../lib/generate";
-import { SerializedMachine, serialize } from "../lib/serialize";
+import { documentate } from "../lib/documentate";
+import type { SerializedMachine } from "../lib/documentate/types";
 import { describe, it } from "mocha";
 
 import bird from "./bird-machine-ts";
@@ -7,11 +7,12 @@ import expect from "expect";
 
 // Generate code from a serialized machine
 describe("Generate code from a serialized machine", () => {
-  const getMachine = (): SerializedMachine => {
-    return serialize(bird);
+  const getMachine = async (): Promise<SerializedMachine> => {
+    const result = await documentate(bird, { format: 'json' });
+    return JSON.parse(result.json || '{}');
   };
 
-  it("should generate code from a serialized machine in esm format", () => {
+  it("should generate code from a serialized machine in esm format", async () => {
     let expectedCode = `import { machine, states, initial, context, primaryState, description, immediate, transition, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel, entry, exit } from "x-robot";
 
 /******************** LeftWingMachine Start ********************/
@@ -323,8 +324,9 @@ export const BirdMachine = machine(
 
 export default { LeftWingMachine, RightWingMachine, FlyingTimeMachine, WalkingTimeMachine, BirdMachine };
 `;
-    let myMachine = getMachine();
-    let code = generateFromSerializedMachine(myMachine, Format.ESM);
+    let myMachine = await getMachine();
+    const result = await documentate(myMachine, { format: 'mjs' });
+    let code = result.mjs;
 
     expect(code).toContain('import { machine, states, initial, context, primaryState, description, immediate, transition, entry');
     expect(code).toContain('entry(sendStateToApiForBird, undefined, "fatal")');
@@ -334,7 +336,7 @@ export default { LeftWingMachine, RightWingMachine, FlyingTimeMachine, WalkingTi
     expect(code).not.toMatch(/\bproducer\b/);
   });
 
-  it("should generate code from a serialized machine in cjs format", () => {
+  it("should generate code from a serialized machine in cjs format", async () => {
     let expectedCode = `const { machine, states, initial, context, primaryState, description, immediate, transition, nested, state, guard, infoState, nestedGuard, successState, warningState, dangerState, parallel, entry, exit } = require("x-robot");
 
 /******************** LeftWingMachine Start ********************/
@@ -646,8 +648,9 @@ const BirdMachine = machine(
 
 module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, WalkingTimeMachine, BirdMachine };
 `;
-    let myMachine = getMachine();
-    let code = generateFromSerializedMachine(myMachine, Format.CJS);
+    let myMachine = await getMachine();
+    const result = await documentate(myMachine, { format: 'cjs' });
+    let code = result.cjs;
     expect(code).toContain('const { machine, states, initial, context, primaryState, description, immediate, transition, entry');
     expect(code).toContain('entry(sendStateToApiForBird, undefined, "fatal")');
     expect(code).toContain('immediate("flying", nestedGuard(LeftWingMachine, isLeftWingOpened), nestedGuard(RightWingMachine, isRightWingOpened))');
@@ -659,10 +662,9 @@ module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, Walking
   it("should save the generated code in esm format into a js file");
   it("should save the generated code in cjs format into a js file");
 
-  it("should generate code with exit", () => {
-    const { serialize } = require("../lib/serialize");
-    const { Format, generateFromSerializedMachine } = require("../lib/generate");
-    const { exit, initial, init, machine, pulse, state, transition } = require("../lib");
+  it("should generate code with exit", async () => {
+    const { exit, initial, init, machine, state, transition } = require("../lib");
+    const { documentate } = require("../lib/documentate");
     
     function cleanup(context: any) {
       context.cleaned = true;
@@ -675,8 +677,8 @@ module.exports = { LeftWingMachine, RightWingMachine, FlyingTimeMachine, Walking
       state("loading")
     );
 
-    const serialized = serialize(myMachine);
-    const code = generateFromSerializedMachine(serialized, Format.ESM);
+    const result = await documentate(myMachine, { format: 'mjs' });
+    const code = result.mjs;
     
     expect(code).toContain("exit");
     expect(code).toContain("cleanup");

@@ -1,0 +1,216 @@
+[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/visualize
+
+# Module: x-robot/documentate/visualize
+
+**`Description`**
+
+Generate a visual representation of a machine in plant uml format or get a png/svg image of the diagram.
+
+## Table of contents
+
+### Visualization Functions
+
+- [getPlantUmlCode](x_robot_documentate_visualize.md#getplantumlcode)
+- [getPlantUmlCodeFromMachine](x_robot_documentate_visualize.md#getplantumlcodefrommachine)
+- [createPngFromPlantUmlCode](x_robot_documentate_visualize.md#createpngfromplantumlcode)
+- [createSvgFromPlantUmlCode](x_robot_documentate_visualize.md#createsvgfromplantumlcode)
+- [createPngFromMachine](x_robot_documentate_visualize.md#createpngfrommachine)
+- [createSvgFromSerializedMachine](x_robot_documentate_visualize.md#createsvgfromserializedmachine)
+- [createPngFromSerializedMachine](x_robot_documentate_visualize.md#createpngfromserializedmachine)
+- [createSvgFromMachine](x_robot_documentate_visualize.md#createsvgfrommachine)
+
+### Interfaces
+
+- [SerializedCollectionWithGuards](../interfaces/x_robot_documentate_visualize.SerializedCollectionWithGuards.md)
+- [options](../interfaces/x_robot_documentate_visualize.options.md)
+- [imageFromPlantUmlCodeOptions](../interfaces/x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md)
+- [imageFromMachineOptions](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md)
+
+### Variables
+
+- [VISUALIZATION\_LEVEL](x_robot_documentate_visualize.md#visualization_level)
+
+## Visualization Functions
+
+### getPlantUmlCode
+
+▸ **getPlantUmlCode**(`serializedMachine`, `optionsOrLevel?`): `string`
+
+This function will get a serialized machine and will return plantuml code representation of it.
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` | The serialized machine to be visualized. |
+| `optionsOrLevel` | `string` \| [`options`](../interfaces/x_robot_documentate_visualize.options.md) | `VISUALIZATION_LEVEL.LOW` | - |
+
+#### Returns
+
+`string`
+
+The plantuml code for the visualization.
+
+___
+
+### getPlantUmlCodeFromMachine
+
+▸ **getPlantUmlCodeFromMachine**(`machine`, `optionsOrLevel?`): `string`
+
+This function will get a machine and will return a plant uml code representation of it.
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` | The machine to get the plant uml code from |
+| `optionsOrLevel` | `string` \| [`options`](../interfaces/x_robot_documentate_visualize.options.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+
+#### Returns
+
+`string`
+
+The plant uml code
+
+___
+
+### createPngFromPlantUmlCode
+
+▸ **createPngFromPlantUmlCode**(`plantUmlCode`, `options?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+Create a png file from a plant uml code
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `plantUmlCode` | `string` | The plant uml code |
+| `options` | [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | Options for the image |
+
+#### Returns
+
+[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+The path to the png file
+
+___
+
+### createSvgFromPlantUmlCode
+
+▸ **createSvgFromPlantUmlCode**(`plantUmlCode`, `options?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+Create a svg file from a plant uml code
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `plantUmlCode` | `string` | The plant uml code |
+| `options` | [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | Options for the image |
+
+#### Returns
+
+[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+The path to the svg file
+
+___
+
+### createPngFromMachine
+
+▸ **createPngFromMachine**(`machine`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+Create a png file from a machine
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` | The machine to get the plant uml code from |
+| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+
+#### Returns
+
+[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+The path to the png file
+
+___
+
+### createSvgFromSerializedMachine
+
+▸ **createSvgFromSerializedMachine**(`serialized`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+Create a svg file from a SerializedMachine
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `serialized` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` | The serialized machine to get the plant uml code from |
+| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+
+#### Returns
+
+[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+The path to the svg file
+
+___
+
+### createPngFromSerializedMachine
+
+▸ **createPngFromSerializedMachine**(`serialized`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+Create a png file from a SerializedMachine
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `serialized` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` | The serialized machine to get the plant uml code from |
+| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+
+#### Returns
+
+[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+The path to the png file
+
+___
+
+### createSvgFromMachine
+
+▸ **createSvgFromMachine**(`machine`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+Create a svg file from a machine
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` | The machine to get the plant uml code from |
+| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+
+#### Returns
+
+[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+
+The path to the svg file
+
+## Variables
+
+### VISUALIZATION\_LEVEL
+
+• `Const` **VISUALIZATION\_LEVEL**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `LOW` | `string` |
+| `HIGH` | `string` |
+
+#### Defined in
+
+lib/documentate/visualize.ts:37

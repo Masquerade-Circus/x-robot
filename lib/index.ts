@@ -27,9 +27,6 @@ import {
   warningState
 } from "./machine/create";
 import { invoke, invokeAfter, snapshot, start } from "./machine/invoke";
-import { toSCXML, fromSCXML } from "./scxml";
-import { generateFromSerializedMachine, Format } from "./generate";
-import { serialize } from "./serialize";
 
 export {
   machine,
@@ -57,9 +54,4 @@ export {
   snapshot,
   start,
   getState,
-  toSCXML,
-  fromSCXML,
-  generateFromSerializedMachine,
-  Format,
-  serialize,
 };

@@ -385,8 +385,7 @@ export function state(name: string, ...args: RunCollection): StateDirective {
             guards: []
           };
         } else if (typeof successTransition === 'object' && 'transition' in successTransition) {
-          // If success is a PulseDirective with transition property, extract and add it
-          let transitionValue = (successTransition as any).transition;
+          let transitionValue = (successTransition as PulseDirective).transition;
           if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
             on[transitionValue] = {
               transition: transitionValue,
@@ -397,9 +396,8 @@ export function state(name: string, ...args: RunCollection): StateDirective {
         }
       }
 
-      // Also check for top-level transition property (when success is a PulseDirective at top level)
-      if ((arg as any).transition) {
-        let transitionValue = (arg as any).transition;
+      if (arg.transition) {
+        let transitionValue = arg.transition;
         if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
           on[transitionValue] = {
             transition: transitionValue,
@@ -419,8 +417,7 @@ export function state(name: string, ...args: RunCollection): StateDirective {
             guards: []
           };
         } else if (typeof failureTransition === 'object' && 'transition' in failureTransition) {
-          // If failure is a PulseDirective with transition property, extract and add it
-          let transitionValue = (failureTransition as any).transition;
+          let transitionValue = (failureTransition as PulseDirective).transition;
           if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
             on[transitionValue] = {
               transition: transitionValue,

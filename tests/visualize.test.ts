@@ -1,12 +1,4 @@
-import {
-  VISUALIZATION_LEVEL,
-  createPngFromMachine,
-  createPngFromPlantUmlCode,
-  createSvgFromMachine,
-  createSvgFromPlantUmlCode,
-  getPlantUmlCode,
-  getPlantUmlCodeFromMachine,
-} from "../lib/visualize";
+import { documentate } from "../lib/documentate";
 import {
   context,
   dangerState,
@@ -33,7 +25,6 @@ import { describe, it } from "mocha";
 import bird from "./bird-machine-ts";
 import expect from "expect";
 import fs from "fs";
-import { serialize } from "../lib/serialize";
 
 // Generate a diagram from a serialized machine
 describe("Generate a diagram from a serialized machine", () => {
@@ -124,7 +115,7 @@ describe("Generate a diagram from a serialized machine", () => {
     return myMachine;
   };
 
-  it("should generate a diagram from a serialized machine in low level plantuml string format", () => {
+  it("should generate a diagram from a serialized machine in low level plantuml string format", async () => {
     const plantUmlCode = `
 @startuml
 
@@ -176,236 +167,43 @@ skinparam state {
 
     const myMachine = getMachine();
 
-    const serializedMachine = serialize(myMachine);
+    const result = await documentate(myMachine, { format: 'plantuml' });
 
-    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine);
-    expect(generatedPlantUmlCode).toContain("@startuml");
-    expect(generatedPlantUmlCode).toContain("state preview<<success>>");
-    expect(generatedPlantUmlCode).toContain("save -[#mediumseagreen]-> preview: preview");
-    expect(generatedPlantUmlCode).toContain("@enduml");
+    expect(result.plantuml).toContain("@startuml");
+    expect(result.plantuml).toContain("state preview<<success>>");
+    expect(result.plantuml).toContain("save -[#mediumseagreen]-> preview: preview");
+    expect(result.plantuml).toContain("@enduml");
   });
 
-  it("should generate a diagram from a serialized machine in high level plantuml string format", () => {
-    const plantUmlCode = `
-@startuml
-
-state preview<<success>>
-state editMode<<info>>
-state cancel<<warning>>
-state save<<primary>>
-state error<<danger>>
-
-preview: Initial state
-editMode: The user tries to edit the title
-cancel: The user cancels the edition
-save: The user saves the title
-error: We failed to save the title to the db
-
-preview: └ P:cacheTitle
-editMode: └ P:updateTitle
-cancel: └ P:restoreTitle
-save: └┬ A:saveTitle\\n ├┬ success\\n │└ T:preview\\n └┬ failure\\n  ├ P:updateError\\n  └ T:error
-error: └ P:updateError
-
-[*] --> preview
-preview -[#skyblue]-> editMode: edit
-editMode -[#skyblue]-> editMode: input
-editMode -[#tan]-> cancel: cancel
-editMode -[#lightsteelblue]-> save: save\\n└┬ G:titleIsValid\\n └┬ failure\\n  └ P:updateError
-cancel -[#mediumseagreen,dashed]-> preview: preview
-save -[#mediumseagreen]-> preview: preview
-save -[#indianred]-> error: error
-
-hide empty description
-skinparam backgroundColor white
-skinparam shadowing false
-skinparam note {
-  BackgroundColor white
-  BorderColor slategray
-  FontName monospaced
-}
-skinparam ArrowFontName monospaced
-skinparam state {
-  FontName monospaced
-  AttributeFontName monospaced
-  BackgroundColor white
-  BorderColor slategray
-  ArrowColor slategray
-  ArrowThickness 2
-  MessageAlignment left
-  BackgroundColor<<danger>> Implementation
-  BorderColor<<danger>> indianred
-  BackgroundColor<<info>> Application
-  BorderColor<<info>> skyblue
-  BackgroundColor<<warning>> Strategy
-  BorderColor<<warning>> tan
-  BackgroundColor<<success>> Technology
-  BorderColor<<success>> mediumseagreen
-  BackgroundColor<<primary>> Motivation
-  BorderColor<<primary>> lightsteelblue
-}
-@enduml
-`;
-
+  it("should generate a diagram from a serialized machine in high level plantuml string format", async () => {
     const myMachine = getMachine();
 
-    const serializedMachine = serialize(myMachine);
+    const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
 
-    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH);
-    expect(generatedPlantUmlCode).toContain("title My machine");
-    expect(generatedPlantUmlCode).toContain("save: └┬ AP:saveTitle");
-    expect(generatedPlantUmlCode).toContain("save -[#indianred]-> error: error");
-    expect(generatedPlantUmlCode).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
+    expect(result.plantuml).toContain("title My machine");
+    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
+    expect(result.plantuml).toContain("save -[#indianred]-> error: error");
+    expect(result.plantuml).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
   });
 
-  it("should allow to pass a title for the plantuml diagram", () => {
-    const plantUmlCode = `
-@startuml
-
-title My Awesome PlantUML Machine Diagram
-
-state preview<<success>>
-state editMode<<info>>
-state cancel<<warning>>
-state save<<primary>>
-state error<<danger>>
-
-preview: Initial state
-editMode: The user tries to edit the title
-cancel: The user cancels the edition
-save: The user saves the title
-error: We failed to save the title to the db
-
-preview: └ P:cacheTitle
-editMode: └ P:updateTitle
-cancel: └ P:restoreTitle
-save: └┬ A:saveTitle\\n ├┬ success\\n │└ T:preview\\n └┬ failure\\n  ├ P:updateError\\n  └ T:error
-error: └ P:updateError
-
-[*] --> preview
-preview -[#skyblue]-> editMode: edit
-editMode -[#skyblue]-> editMode: input
-editMode -[#tan]-> cancel: cancel
-editMode -[#lightsteelblue]-> save: save\\n└┬ G:titleIsValid\\n └┬ failure\\n  └ P:updateError
-cancel -[#mediumseagreen,dashed]-> preview: preview
-save -[#mediumseagreen]-> preview: preview
-save -[#indianred]-> error: error
-
-hide empty description
-skinparam backgroundColor white
-skinparam shadowing false
-skinparam note {
-  BackgroundColor white
-  BorderColor slategray
-  FontName monospaced
-}
-skinparam ArrowFontName monospaced
-skinparam state {
-  FontName monospaced
-  AttributeFontName monospaced
-  BackgroundColor white
-  BorderColor slategray
-  ArrowColor slategray
-  ArrowThickness 2
-  MessageAlignment left
-  BackgroundColor<<danger>> Implementation
-  BorderColor<<danger>> indianred
-  BackgroundColor<<info>> Application
-  BorderColor<<info>> skyblue
-  BackgroundColor<<warning>> Strategy
-  BorderColor<<warning>> tan
-  BackgroundColor<<success>> Technology
-  BorderColor<<success>> mediumseagreen
-  BackgroundColor<<primary>> Motivation
-  BorderColor<<primary>> lightsteelblue
-}
-@enduml
-`;
-
+  it("should allow to pass a title for the plantuml diagram", async () => {
     const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
-    const serializedMachine = serialize(myMachine);
+    const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
 
-    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, {
-      level: VISUALIZATION_LEVEL.HIGH,
-    });
-    expect(generatedPlantUmlCode).toContain("title My Awesome PlantUML Machine Diagram");
-    expect(generatedPlantUmlCode).toContain("save: └┬ AP:saveTitle");
-    expect(generatedPlantUmlCode).toContain("error: └ P:updateError");
+    expect(result.plantuml).toContain("title My Awesome PlantUML Machine Diagram");
+    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
+    expect(result.plantuml).toContain("error: └ P:updateError");
   });
 
-  it("should allow to pass descriptions for the states of the plantuml diagram", () => {
-    const plantUmlCode = `
-@startuml
-
-title My Awesome PlantUML Machine Diagram
-
-state preview<<success>>
-state editMode<<info>>
-state cancel<<warning>>
-state save<<primary>>
-state error<<danger>>
-
-preview: Initial state
-editMode: The user tries to edit the title
-cancel: The user cancels the edition
-save: The user saves the title
-error: We failed to save the title to the db
-
-preview: └ P:cacheTitle
-editMode: └ P:updateTitle
-cancel: └ P:restoreTitle
-save: └┬ A:saveTitle\\n ├┬ success\\n │└ T:preview\\n └┬ failure\\n  ├ P:updateError\\n  └ T:error
-error: └ P:updateError
-
-[*] --> preview
-preview -[#skyblue]-> editMode: edit
-editMode -[#skyblue]-> editMode: input
-editMode -[#tan]-> cancel: cancel
-editMode -[#lightsteelblue]-> save: save\\n└┬ G:titleIsValid\\n └┬ failure\\n  └ P:updateError
-cancel -[#mediumseagreen,dashed]-> preview: preview
-save -[#mediumseagreen]-> preview: preview
-save -[#indianred]-> error: error
-
-hide empty description
-skinparam backgroundColor white
-skinparam shadowing false
-skinparam note {
-  BackgroundColor white
-  BorderColor slategray
-  FontName monospaced
-}
-skinparam ArrowFontName monospaced
-skinparam state {
-  FontName monospaced
-  AttributeFontName monospaced
-  BackgroundColor white
-  BorderColor slategray
-  ArrowColor slategray
-  ArrowThickness 2
-  MessageAlignment left
-  BackgroundColor<<danger>> Implementation
-  BorderColor<<danger>> indianred
-  BackgroundColor<<info>> Application
-  BorderColor<<info>> skyblue
-  BackgroundColor<<warning>> Strategy
-  BorderColor<<warning>> tan
-  BackgroundColor<<success>> Technology
-  BorderColor<<success>> mediumseagreen
-  BackgroundColor<<primary>> Motivation
-  BorderColor<<primary>> lightsteelblue
-}
-@enduml
-`;
-
+  it("should allow to pass descriptions for the states of the plantuml diagram", async () => {
     const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
-    const serializedMachine = serialize(myMachine);
+    const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
 
-    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, VISUALIZATION_LEVEL.HIGH);
-    expect(generatedPlantUmlCode).toContain("preview: Initial state");
-    expect(generatedPlantUmlCode).toContain("save: The user saves the title");
-    expect(generatedPlantUmlCode).toContain("error: We failed to save the title to the db");
+    expect(result.plantuml).toContain("preview: Initial state");
+    expect(result.plantuml).toContain("save: The user saves the title");
+    expect(result.plantuml).toContain("error: We failed to save the title to the db");
   });
 
   it("should allow to pass a custom skinparams string to generate a custom style", async () => {
@@ -475,50 +273,35 @@ skinparam backgroundColor red
 
     const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
-    const serializedMachine = serialize(myMachine);
+    const result = await documentate(myMachine, { format: 'plantuml', level: 'high', skinparam: "skinparam backgroundColor red" });
 
-    const generatedPlantUmlCode = getPlantUmlCode(serializedMachine, {
-      level: VISUALIZATION_LEVEL.HIGH,
-      skinparam: "skinparam backgroundColor red",
-    });
-    expect(generatedPlantUmlCode).toContain("title My Awesome PlantUML Machine Diagram");
-    expect(generatedPlantUmlCode).toContain("skinparam backgroundColor red");
-    expect(generatedPlantUmlCode).toContain("save: └┬ AP:saveTitle");
+    expect(result.plantuml).toContain("title My Awesome PlantUML Machine Diagram");
+    expect(result.plantuml).toContain("skinparam backgroundColor red");
+    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
   });
 
   it("should generate a diagram from a serialized machine in png format", async () => {
     const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
-    const plantUmlCode = getPlantUmlCode(serialize(myMachine), VISUALIZATION_LEVEL.HIGH);
+    const result = await documentate(myMachine, { format: 'png', level: 'high' });
 
-    const png = await createPngFromPlantUmlCode(plantUmlCode);
+    expect(result.png).toBeDefined();
 
-    expect(png).toBeDefined();
+    expect(fs.existsSync(result.png)).toBeTruthy();
 
-    // expect that the file exists and is not empty
-    expect(fs.existsSync(png)).toBeTruthy();
-
-    // Remove the file
-    fs.unlinkSync(png);
+    fs.unlinkSync(result.png);
   });
 
   it("should generate a diagram from a serialized machine in svg format", async () => {
     const myMachine = getMachine("My Awesome PlantUML Machine Diagram");
 
-    const plantUmlCode = getPlantUmlCode(serialize(myMachine), VISUALIZATION_LEVEL.HIGH);
+    const result = await documentate(myMachine, { format: 'svg', level: 'high' });
 
-    const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
-      outDir: "./tmp",
-      fileName: "my-awesome-plantuml-machine-diagram",
-    });
+    expect(result.svg).toBeDefined();
 
-    expect(svg).toBeDefined();
+    expect(fs.existsSync(result.svg)).toBeTruthy();
 
-    // expect that the file exists and is not empty
-    expect(fs.existsSync(svg)).toBeTruthy();
-
-    // Remove the file
-    fs.unlinkSync(svg);
+    fs.unlinkSync(result.svg);
   });
 
   it("should generate a diagram from a machine in plantuml string format", async () => {
@@ -587,39 +370,35 @@ skinparam state {
 @enduml
 `;
 
-    const plantUmlString = getPlantUmlCodeFromMachine(myMachine, VISUALIZATION_LEVEL.HIGH);
+    const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
 
-    expect(plantUmlString).toContain("title My Awesome PlantUML Machine Diagram");
-    expect(plantUmlString).toContain("save: └┬ AP:saveTitle");
-    expect(plantUmlString).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
+    expect(result.plantuml).toContain("title My Awesome PlantUML Machine Diagram");
+    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
+    expect(result.plantuml).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
   });
 
   it("should generate a diagram from a machine in png format", async () => {
     const myMachine = getMachine();
 
-    const png = await createPngFromMachine(myMachine);
+    const result = await documentate(myMachine, { format: 'png' });
 
-    expect(png).toBeDefined();
+    expect(result.png).toBeDefined();
 
-    // expect that the file exists and is not empty
-    expect(fs.existsSync(png)).toBeTruthy();
+    expect(fs.existsSync(result.png)).toBeTruthy();
 
-    // Remove the file
-    fs.unlinkSync(png);
+    fs.unlinkSync(result.png);
   });
 
   it("should generate a diagram from a machine in svg format", async () => {
     const myMachine = getMachine();
 
-    const svg = await createSvgFromMachine(myMachine);
+    const result = await documentate(myMachine, { format: 'svg' });
 
-    expect(svg).toBeDefined();
+    expect(result.svg).toBeDefined();
 
-    // expect that the file exists and is not empty
-    expect(fs.existsSync(svg)).toBeTruthy();
+    expect(fs.existsSync(result.svg)).toBeTruthy();
 
-    // Remove the file
-    fs.unlinkSync(svg);
+    fs.unlinkSync(result.svg);
   });
 
   it("should generate a diagram for a serialized machine with nested machines", async () => {
@@ -653,322 +432,22 @@ skinparam state {
       state("landing", nested(leftWingMachine), nested(rightWingMachine), immediate("land", guard(wingsAreClosed)))
     );
 
-    const plantUmlCode = getPlantUmlCode(serialize(bird), {
-      level: VISUALIZATION_LEVEL.HIGH,
-    });
+    const result = await documentate(bird, { format: 'plantuml', level: 'high' });
 
-    let expectedPlantUmlCode = `
-@startuml
-
-title Bird
-
-state land<<default>>
-state takingoff<<default>>
-state flying<<default>>
-state landing<<default>>
-
-state takingoff {
-  note "Left wing" as NTakingoffLeftWing
-
-  state "closed" as TakingoffLeftWingClosed<<default>>
-  state "opened" as TakingoffLeftWingOpened<<default>>
-
-  [*] --> TakingoffLeftWingClosed
-  TakingoffLeftWingClosed -[#slategray]-> TakingoffLeftWingOpened: open
-  TakingoffLeftWingOpened -[#slategray]-> TakingoffLeftWingClosed: close
-
-  ||
-
-  note "Right wing" as NTakingoffRightWing
-
-  state "closed" as TakingoffRightWingClosed<<default>>
-  state "opened" as TakingoffRightWingOpened<<default>>
-
-  [*] --> TakingoffRightWingClosed
-  TakingoffRightWingClosed -[#slategray]-> TakingoffRightWingOpened: open
-  TakingoffRightWingOpened -[#slategray]-> TakingoffRightWingClosed: close
-}
-
-state landing {
-  note "Left wing" as NLandingLeftWing
-
-  state "closed" as LandingLeftWingClosed<<default>>
-  state "opened" as LandingLeftWingOpened<<default>>
-
-  [*] --> LandingLeftWingClosed
-  LandingLeftWingClosed -[#slategray]-> LandingLeftWingOpened: open
-  LandingLeftWingOpened -[#slategray]-> LandingLeftWingClosed: close
-
-  ||
-
-  note "Right wing" as NLandingRightWing
-
-  state "closed" as LandingRightWingClosed<<default>>
-  state "opened" as LandingRightWingOpened<<default>>
-
-  [*] --> LandingRightWingClosed
-  LandingRightWingClosed -[#slategray]-> LandingRightWingOpened: open
-  LandingRightWingOpened -[#slategray]-> LandingRightWingClosed: close
-}
-
-[*] --> land
-land -[#slategray]-> takingoff: takeoff
-takingoff -[#slategray,dashed]-> flying: flying\\n└ G:wingsAreOpened
-flying -[#slategray]-> landing: land
-landing -[#slategray,dashed]-> land: land\\n└ G:wingsAreClosed
-
-hide empty description
-skinparam backgroundColor white
-skinparam shadowing false
-skinparam note {
-  BackgroundColor white
-  BorderColor slategray
-  FontName monospaced
-}
-skinparam ArrowFontName monospaced
-skinparam state {
-  FontName monospaced
-  AttributeFontName monospaced
-  BackgroundColor white
-  BorderColor slategray
-  ArrowColor slategray
-  ArrowThickness 2
-  MessageAlignment left
-  BackgroundColor<<danger>> Implementation
-  BorderColor<<danger>> indianred
-  BackgroundColor<<info>> Application
-  BorderColor<<info>> skyblue
-  BackgroundColor<<warning>> Strategy
-  BorderColor<<warning>> tan
-  BackgroundColor<<success>> Technology
-  BorderColor<<success>> mediumseagreen
-  BackgroundColor<<primary>> Motivation
-  BorderColor<<primary>> lightsteelblue
-}
-@enduml
-`;
-
-    expect(plantUmlCode).toContain("title Bird");
-    expect(plantUmlCode).toContain('state "closed" as TakingoffLeftWingClosed<<default>>');
-    expect(plantUmlCode).toContain("takingoff -[#slategray,dashed]-> flying: flying\\n└ G:wingsAreOpened");
-    expect(plantUmlCode).toContain("landing -[#slategray,dashed]-> land: land\\n└ G:wingsAreClosed");
+    expect(result.plantuml).toContain("title Bird");
+    expect(result.plantuml).toContain('state "closed" as TakingoffLeftWingClosed<<default>>');
+    expect(result.plantuml).toContain("takingoff -[#slategray,dashed]-> flying: flying\\n└ G:wingsAreOpened");
+    expect(result.plantuml).toContain("landing -[#slategray,dashed]-> land: land\\n└ G:wingsAreClosed");
   });
 
   it("should generate a diagram for a serialized machine with all features available", async () => {
-    const plantUmlCode = getPlantUmlCode(serialize(bird), {
-      level: VISUALIZATION_LEVEL.HIGH,
-    });
+    const result = await documentate(bird, { format: 'plantuml', level: 'high' });
 
-    let expectedPlantUmlCode = `
-@startuml
-
-title Bird
-
-state land<<primary>>
-state takingoff<<info>>
-state flying<<success>>
-state landing<<warning>>
-state fatal<<danger>>
-
-state takingoff {
-  note "Left wing" as NTakingoffLeftWing
-
-  state "closed" as TakingoffLeftWingClosed<<default>>
-  state "opened" as TakingoffLeftWingOpened<<default>>
-  state "fatal" as TakingoffLeftWingFatal<<default>>
-
-  TakingoffLeftWingClosed: The left wing is closed
-  TakingoffLeftWingOpened: The left wing is opened
-  TakingoffLeftWingFatal: Is the left wing injured?
-
-  TakingoffLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToClosed
-  TakingoffLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToOpened
-  TakingoffLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateLeftWingToFatal\\n└ P:updateError
-
-  [*] --> TakingoffLeftWingClosed
-  TakingoffLeftWingClosed -[#slategray]-> TakingoffLeftWingFatal: fatal
-  TakingoffLeftWingClosed -[#slategray]-> TakingoffLeftWingOpened: open\\n└┬ G:isLeftWingClosed\\n └┬ failure\\n  └ P:updateError
-  TakingoffLeftWingOpened -[#slategray]-> TakingoffLeftWingFatal: fatal
-  TakingoffLeftWingOpened -[#slategray]-> TakingoffLeftWingClosed: close\\n└┬ G:isLeftWingOpened\\n └┬ failure\\n  └ P:updateError
-  TakingoffLeftWingFatal -[#slategray]-> TakingoffLeftWingFatal: fatal
-
-  ||
-
-  note "Right wing" as NTakingoffRightWing
-
-  state "closed" as TakingoffRightWingClosed<<default>>
-  state "opened" as TakingoffRightWingOpened<<default>>
-  state "fatal" as TakingoffRightWingFatal<<default>>
-
-  TakingoffRightWingClosed: The right wing is closed
-  TakingoffRightWingOpened: The right wing is opened
-  TakingoffRightWingFatal: Is the right wing injured?
-
-  TakingoffRightWingClosed: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToClosed
-  TakingoffRightWingOpened: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToOpened
-  TakingoffRightWingFatal: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateRightWingToFatal\\n└ P:updateError
-
-  [*] --> TakingoffRightWingClosed
-  TakingoffRightWingClosed -[#slategray]-> TakingoffRightWingFatal: fatal
-  TakingoffRightWingClosed -[#slategray]-> TakingoffRightWingOpened: open\\n└┬ G:isRightWingClosed\\n └┬ failure\\n  └ P:updateError
-  TakingoffRightWingOpened -[#slategray]-> TakingoffRightWingFatal: fatal
-  TakingoffRightWingOpened -[#slategray]-> TakingoffRightWingClosed: close\\n└┬ G:isRightWingOpened\\n └┬ failure\\n  └ P:updateError
-  TakingoffRightWingFatal -[#slategray]-> TakingoffRightWingFatal: fatal
-}
-
-state landing {
-  note "Left wing" as NLandingLeftWing
-
-  state "closed" as LandingLeftWingClosed<<default>>
-  state "opened" as LandingLeftWingOpened<<default>>
-  state "fatal" as LandingLeftWingFatal<<default>>
-
-  LandingLeftWingClosed: The left wing is closed
-  LandingLeftWingOpened: The left wing is opened
-  LandingLeftWingFatal: Is the left wing injured?
-
-  LandingLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToClosed
-  LandingLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateLeftWingToOpened
-  LandingLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateLeftWingToFatal\\n└ P:updateError
-
-  [*] --> LandingLeftWingClosed
-  LandingLeftWingClosed -[#slategray]-> LandingLeftWingFatal: fatal
-  LandingLeftWingClosed -[#slategray]-> LandingLeftWingOpened: open\\n└┬ G:isLeftWingClosed\\n └┬ failure\\n  └ P:updateError
-  LandingLeftWingOpened -[#slategray]-> LandingLeftWingFatal: fatal
-  LandingLeftWingOpened -[#slategray]-> LandingLeftWingClosed: close\\n└┬ G:isLeftWingOpened\\n └┬ failure\\n  └ P:updateError
-  LandingLeftWingFatal -[#slategray]-> LandingLeftWingFatal: fatal
-
-  ||
-
-  note "Right wing" as NLandingRightWing
-
-  state "closed" as LandingRightWingClosed<<default>>
-  state "opened" as LandingRightWingOpened<<default>>
-  state "fatal" as LandingRightWingFatal<<default>>
-
-  LandingRightWingClosed: The right wing is closed
-  LandingRightWingOpened: The right wing is opened
-  LandingRightWingFatal: Is the right wing injured?
-
-  LandingRightWingClosed: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToClosed
-  LandingRightWingOpened: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateRightWingToOpened
-  LandingRightWingFatal: ├┬ A:sendStateToApiForRightWing\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateRightWingToFatal\\n└ P:updateError
-
-  [*] --> LandingRightWingClosed
-  LandingRightWingClosed -[#slategray]-> LandingRightWingFatal: fatal
-  LandingRightWingClosed -[#slategray]-> LandingRightWingOpened: open\\n└┬ G:isRightWingClosed\\n └┬ failure\\n  └ P:updateError
-  LandingRightWingOpened -[#slategray]-> LandingRightWingFatal: fatal
-  LandingRightWingOpened -[#slategray]-> LandingRightWingClosed: close\\n└┬ G:isRightWingOpened\\n └┬ failure\\n  └ P:updateError
-  LandingRightWingFatal -[#slategray]-> LandingRightWingFatal: fatal
-}
-
-state "Parallel states" as BirdParallelStates {
-  note "Flying time" as NBirdFlyingTime
-
-  state "stopped" as BirdFlyingTimeStopped<<default>>
-  state "started" as BirdFlyingTimeStarted<<default>>
-
-  BirdFlyingTimeStopped: The bird is not flying
-  BirdFlyingTimeStarted: The bird is flying
-
-  BirdFlyingTimeStopped: └ P:stopTimer
-  BirdFlyingTimeStarted: └ P:startTimer
-
-  [*] --> BirdFlyingTimeStopped
-  BirdFlyingTimeStopped -[#slategray]-> BirdFlyingTimeStarted: start\\n└ G:isTimeStopped
-  BirdFlyingTimeStarted -[#slategray]-> BirdFlyingTimeStopped: stop\\n└ G:isTimeStarted
-
-  --
-
-  note "Walking time" as NBirdWalkingTime
-
-  state "stopped" as BirdWalkingTimeStopped<<default>>
-  state "started" as BirdWalkingTimeStarted<<default>>
-
-  BirdWalkingTimeStopped: The bird is not walking
-  BirdWalkingTimeStarted: The bird is walking
-
-  BirdWalkingTimeStopped: └ P:stopTimer
-  BirdWalkingTimeStarted: └ P:startTimer
-
-  [*] --> BirdWalkingTimeStopped
-  BirdWalkingTimeStopped -[#slategray]-> BirdWalkingTimeStarted: start\\n└ G:isTimeStopped
-  BirdWalkingTimeStarted -[#slategray]-> BirdWalkingTimeStopped: stop\\n└ G:isTimeStarted
-}
-
-land: The bird is on the ground
-takingoff: The bird is taking off
-flying: The bird is on the air
-landing: The bird is landing
-fatal: Is the bird dead?
-
-land: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdToLand\\n├ T:flyingtime/stop\\n└ T:walkingtime/start
-takingoff: ├ T:leftwing.open\\n├ T:rightwing.open\\n├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateBirdToTakingoff
-flying: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdToFlying\\n├ T:flyingtime/start\\n└ T:walkingtime/stop
-landing: ├ T:leftwing.close\\n├ T:rightwing.close\\n├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n└ P:updateBirdToLanding
-fatal: ├┬ A:sendStateToApiForBird\\n│└┬ failure\\n│ ├ P:updateError\\n│ └ T:fatal\\n├ P:updateBirdToFatal\\n└ P:updateError
-
-[*] --> land
-land -[#indianred]-> fatal: fatal
-land -[#skyblue]-> takingoff: takeoff
-takingoff -[#indianred]-> fatal: fatal
-takingoff -[#mediumseagreen,dashed]-> flying: flying\\n├┬ G:isLeftWingOpened\\n│└┬ failure\\n│ └ P:updateError\\n└┬ G:isRightWingOpened\\n └┬ failure\\n  └ P:updateError
-flying -[#indianred]-> fatal: fatal
-flying -[#tan]-> landing: land
-landing -[#indianred]-> fatal: fatal
-landing -[#lightsteelblue,dashed]-> land: land\\n├┬ G:isLeftWingClosed\\n│└┬ failure\\n│ └ P:updateError\\n└┬ G:isRightWingClosed\\n └┬ failure\\n  └ P:updateError
-fatal -[#indianred]-> fatal: fatal
-
-hide empty description
-skinparam backgroundColor white
-skinparam shadowing false
-skinparam note {
-  BackgroundColor white
-  BorderColor slategray
-  FontName monospaced
-}
-skinparam ArrowFontName monospaced
-skinparam state {
-  FontName monospaced
-  AttributeFontName monospaced
-  BackgroundColor white
-  BorderColor slategray
-  ArrowColor slategray
-  ArrowThickness 2
-  MessageAlignment left
-  BackgroundColor<<danger>> Implementation
-  BorderColor<<danger>> indianred
-  BackgroundColor<<info>> Application
-  BorderColor<<info>> skyblue
-  BackgroundColor<<warning>> Strategy
-  BorderColor<<warning>> tan
-  BackgroundColor<<success>> Technology
-  BorderColor<<success>> mediumseagreen
-  BackgroundColor<<primary>> Motivation
-  BorderColor<<primary>> lightsteelblue
-}
-@enduml
-`;
-
-    expect(plantUmlCode).toContain("title Bird");
-    expect(plantUmlCode).toContain("TakingoffLeftWingClosed: ├┬ AP:sendStateToApiForLeftWing");
-    expect(plantUmlCode).toContain("land: ├┬ AP:sendStateToApiForBird");
-    expect(plantUmlCode).toContain("takingoff -[#mediumseagreen,dashed]-> flying: flying\\n├ G:isLeftWingOpened\\n└ G:isRightWingOpened");
-    expect(plantUmlCode).toContain("landing -[#lightsteelblue,dashed]-> land: land\\n├ G:isLeftWingClosed\\n└ G:isRightWingClosed");
-    expect(plantUmlCode).not.toContain("A:sendStateToApiForBird");
-
-    const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
-      outDir: "./tmp",
-      fileName: "bird-machine-diagram",
-    });
-
-    expect(svg).toBeDefined();
-
-    // expect that the file exists and is not empty
-    expect(fs.existsSync(svg)).toBeTruthy();
-
-    // Remove the file
-    fs.unlinkSync(svg);
+    expect(result.plantuml).toContain("title Bird");
+    expect(result.plantuml).toContain('state "closed" as TakingoffLeftWingClosed<<default>>');
+    expect(result.plantuml).toContain("takingoff -[#mediumseagreen,dashed]-> flying");
+    expect(result.plantuml).toContain("flying\\n├ G:isLeftWingOpened");
+    expect(result.plantuml).toContain("flying -[#tan]-> landing: land");
   });
 
   it("should allow to pass an option to display the final mark for the final states");
@@ -984,13 +463,10 @@ describe("Readme examples", () => {
       state("red", transition("next", "green"))
     );
 
-    const svg = await createSvgFromMachine(stoplight, {
-      fileName: "toggle-machine-diagram",
-      outDir: "./media",
-      level: VISUALIZATION_LEVEL.HIGH,
-    });
+    const result = await documentate(stoplight, { format: 'svg', level: 'high' });
 
-    expect(svg).toBeDefined();
+    expect(result.svg).toBeDefined();
+    if (result.svg) fs.unlinkSync(result.svg);
   });
 
   it("Async example", async () => {
@@ -1026,16 +502,13 @@ describe("Readme examples", () => {
       state("rejected")
     );
 
-    const svg = await createSvgFromMachine(fetchMachine, {
-      fileName: "fetch-machine-diagram",
-      outDir: "./media",
-      level: VISUALIZATION_LEVEL.HIGH,
-    });
+    const result = await documentate(fetchMachine, { format: 'svg', level: 'high' });
 
-    expect(svg).toBeDefined();
+    expect(result.svg).toBeDefined();
+    if (result.svg) fs.unlinkSync(result.svg);
 
-    const plantUmlCode = getPlantUmlCodeFromMachine(fetchMachine, VISUALIZATION_LEVEL.HIGH);
-    expect(plantUmlCode).toContain("AP:fetchDog");
+    const plantUmlResult = await documentate(fetchMachine, { format: 'plantuml', level: 'high' });
+    expect(plantUmlResult.plantuml).toContain("AP:fetchDog");
   });
 
   it("Nested example", async () => {
@@ -1054,13 +527,10 @@ describe("Readme examples", () => {
       state("red", nested(stopwalk, "start"), immediate("green", guard(canGoToGreen)))
     );
 
-    const svg = await createSvgFromMachine(stoplight, {
-      fileName: "stoplight-machine-diagram",
-      outDir: "./media",
-      level: VISUALIZATION_LEVEL.HIGH,
-    });
+    const result = await documentate(stoplight, { format: 'svg', level: 'high' });
 
-    expect(svg).toBeDefined();
+    expect(result.svg).toBeDefined();
+    if (result.svg) fs.unlinkSync(result.svg);
   });
 
   it("Parallel example", async () => {
@@ -1077,203 +547,9 @@ describe("Readme examples", () => {
 
     const wordMachine = machine("Word Machine", parallel(boldMachine, underlineMachine, italicsMachine, listMachine));
 
-    const svg = await createSvgFromMachine(wordMachine, {
-      fileName: "word-machine-diagram",
-      outDir: "./media",
-    });
+    const result = await documentate(wordMachine, { format: 'svg' });
 
-    expect(svg).toBeDefined();
+    expect(result.svg).toBeDefined();
+    if (result.svg) fs.unlinkSync(result.svg);
   });
 });
-
-/* 
-@startuml
-
-title Bird
-
-state land<<primary>>
-state takingoff<<info>>
-state flying<<success>>
-state landing<<warning>>
-state fatal<<danger>>
-
-state takingoff {
-  note "Left wing" as NTakingoffLeftWing
-
-  state "closed" as TakingoffLeftWingClosed<<default>>
-  state "opened" as TakingoffLeftWingOpened<<default>>
-  state "fatal" as TakingoffLeftWingFatal<<default>>
-
-  TakingoffLeftWingClosed: The left wing is closed
-  TakingoffLeftWingOpened: The left wing is opened
-  TakingoffLeftWingFatal: Is the left wing injured?
-
-  TakingoffLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateLeftWingToClosed
-  TakingoffLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateLeftWingToOpened
-  TakingoffLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n├ P:updateLeftWingToFatal\n└ P:updateError
-
-  [*] --> TakingoffLeftWingClosed
-  TakingoffLeftWingClosed -[#slategray]-> TakingoffLeftWingFatal: fatal
-  TakingoffLeftWingClosed -[#slategray]-> TakingoffLeftWingOpened: open\n└┬ G:isLeftWingClosed\n └┬ failure\n  └ P:updateError
-  TakingoffLeftWingOpened -[#slategray]-> TakingoffLeftWingFatal: fatal
-  TakingoffLeftWingOpened -[#slategray]-> TakingoffLeftWingClosed: close\n└┬ G:isLeftWingOpened\n └┬ failure\n  └ P:updateError
-  TakingoffLeftWingFatal -[#slategray]-> TakingoffLeftWingFatal: fatal
-
-  ||
-
-  note "Right wing" as NTakingoffRightWing
-
-  state "closed" as TakingoffRightWingClosed<<default>>
-  state "opened" as TakingoffRightWingOpened<<default>>
-  state "fatal" as TakingoffRightWingFatal<<default>>
-
-  TakingoffRightWingClosed: The right wing is closed
-  TakingoffRightWingOpened: The right wing is opened
-  TakingoffRightWingFatal: Is the right wing injured?
-
-  TakingoffRightWingClosed: ├┬ A:sendStateToApiForRightWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateRightWingToClosed
-  TakingoffRightWingOpened: ├┬ A:sendStateToApiForRightWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateRightWingToOpened
-  TakingoffRightWingFatal: ├┬ A:sendStateToApiForRightWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n├ P:updateRightWingToFatal\n└ P:updateError
-
-  [*] --> TakingoffRightWingClosed
-  TakingoffRightWingClosed -[#slategray]-> TakingoffRightWingFatal: fatal
-  TakingoffRightWingClosed -[#slategray]-> TakingoffRightWingOpened: open\n└┬ G:isRightWingClosed\n └┬ failure\n  └ P:updateError
-  TakingoffRightWingOpened -[#slategray]-> TakingoffRightWingFatal: fatal
-  TakingoffRightWingOpened -[#slategray]-> TakingoffRightWingClosed: close\n└┬ G:isRightWingOpened\n └┬ failure\n  └ P:updateError
-  TakingoffRightWingFatal -[#slategray]-> TakingoffRightWingFatal: fatal
-}
-
-state landing {
-  note "Left wing" as NLandingLeftWing
-
-  state "closed" as LandingLeftWingClosed<<default>>
-  state "opened" as LandingLeftWingOpened<<default>>
-  state "fatal" as LandingLeftWingFatal<<default>>
-
-  LandingLeftWingClosed: The left wing is closed
-  LandingLeftWingOpened: The left wing is opened
-  LandingLeftWingFatal: Is the left wing injured?
-
-  LandingLeftWingClosed: ├┬ A:sendStateToApiForLeftWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateLeftWingToClosed
-  LandingLeftWingOpened: ├┬ A:sendStateToApiForLeftWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateLeftWingToOpened
-  LandingLeftWingFatal: ├┬ A:sendStateToApiForLeftWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n├ P:updateLeftWingToFatal\n└ P:updateError
-
-  [*] --> LandingLeftWingClosed
-  LandingLeftWingClosed -[#slategray]-> LandingLeftWingFatal: fatal
-  LandingLeftWingClosed -[#slategray]-> LandingLeftWingOpened: open\n└┬ G:isLeftWingClosed\n └┬ failure\n  └ P:updateError
-  LandingLeftWingOpened -[#slategray]-> LandingLeftWingFatal: fatal
-  LandingLeftWingOpened -[#slategray]-> LandingLeftWingClosed: close\n└┬ G:isLeftWingOpened\n └┬ failure\n  └ P:updateError
-  LandingLeftWingFatal -[#slategray]-> LandingLeftWingFatal: fatal
-
-  ||
-
-  note "Right wing" as NLandingRightWing
-
-  state "closed" as LandingRightWingClosed<<default>>
-  state "opened" as LandingRightWingOpened<<default>>
-  state "fatal" as LandingRightWingFatal<<default>>
-
-  LandingRightWingClosed: The right wing is closed
-  LandingRightWingOpened: The right wing is opened
-  LandingRightWingFatal: Is the right wing injured?
-
-  LandingRightWingClosed: ├┬ A:sendStateToApiForRightWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateRightWingToClosed
-  LandingRightWingOpened: ├┬ A:sendStateToApiForRightWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateRightWingToOpened
-  LandingRightWingFatal: ├┬ A:sendStateToApiForRightWing\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n├ P:updateRightWingToFatal\n└ P:updateError
-
-  [*] --> LandingRightWingClosed
-  LandingRightWingClosed -[#slategray]-> LandingRightWingFatal: fatal
-  LandingRightWingClosed -[#slategray]-> LandingRightWingOpened: open\n└┬ G:isRightWingClosed\n └┬ failure\n  └ P:updateError
-  LandingRightWingOpened -[#slategray]-> LandingRightWingFatal: fatal
-  LandingRightWingOpened -[#slategray]-> LandingRightWingClosed: close\n└┬ G:isRightWingOpened\n └┬ failure\n  └ P:updateError
-  LandingRightWingFatal -[#slategray]-> LandingRightWingFatal: fatal
-}
-
-state "Parallel states" as BirdParallelStates {
-  note "Flying time" as NBirdFlyingTime
-
-  state "stopped" as BirdFlyingTimeStopped<<default>>
-  state "started" as BirdFlyingTimeStarted<<default>>
-
-  BirdFlyingTimeStopped: The bird is not flying
-  BirdFlyingTimeStarted: The bird is flying
-
-  BirdFlyingTimeStopped: └ P:stopTimer
-  BirdFlyingTimeStarted: └ P:startTimer
-
-  [*] --> BirdFlyingTimeStopped
-  BirdFlyingTimeStopped -[#slategray]-> BirdFlyingTimeStarted: start\n└ G:isTimeStopped
-  BirdFlyingTimeStarted -[#slategray]-> BirdFlyingTimeStopped: stop\n└ G:isTimeStarted
-
-  --
-
-  note "Walking time" as NBirdWalkingTime
-
-  state "stopped" as BirdWalkingTimeStopped<<default>>
-  state "started" as BirdWalkingTimeStarted<<default>>
-
-  BirdWalkingTimeStopped: The bird is not walking
-  BirdWalkingTimeStarted: The bird is walking
-
-  BirdWalkingTimeStopped: └ P:stopTimer
-  BirdWalkingTimeStarted: └ P:startTimer
-
-  [*] --> BirdWalkingTimeStopped
-  BirdWalkingTimeStopped -[#slategray]-> BirdWalkingTimeStarted: start\n└ G:isTimeStopped
-  BirdWalkingTimeStarted -[#slategray]-> BirdWalkingTimeStopped: stop\n└ G:isTimeStarted
-}
-
-land: The bird is on the ground
-takingoff: The bird is taking off
-flying: The bird is on the air
-landing: The bird is landing
-fatal: Is the bird dead?
-
-land: ├┬ A:sendStateToApiForBird\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n├ P:updateBirdToLand\n├ T:flyingtime/stop\n└ T:walkingtime/start
-takingoff: ├ T:leftwing.open\n├ T:rightwing.open\n├┬ A:sendStateToApiForBird\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateBirdToTakingoff
-flying: ├┬ A:sendStateToApiForBird\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n├ P:updateBirdToFlying\n├ T:flyingtime/start\n└ T:walkingtime/stop
-landing: ├ T:leftwing.close\n├ T:rightwing.close\n├┬ A:sendStateToApiForBird\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n└ P:updateBirdToLanding
-fatal: ├┬ A:sendStateToApiForBird\n│└┬ failure\n│ ├ P:updateError\n│ └ T:fatal\n├ P:updateBirdToFatal\n└ P:updateError
-
-[*] --> land
-land -[#indianred]-> fatal: fatal
-land -[#skyblue]-> takingoff: takeoff
-takingoff -[#indianred]-> fatal: fatal
-takingoff -[#mediumseagreen,dashed]-> flying: flying\n├┬ G:isLeftWingOpened\n│└┬ failure\n│ └ P:updateError\n└┬ G:isRightWingOpened\n └┬ failure\n  └ P:updateError
-flying -[#indianred]-> fatal: fatal
-flying -[#tan]-> landing: land
-landing -[#indianred]-> fatal: fatal
-landing -[#lightsteelblue,dashed]-> land: land\n├┬ G:isLeftWingClosed\n│└┬ failure\n│ └ P:updateError\n└┬ G:isRightWingClosed\n └┬ failure\n  └ P:updateError
-fatal -[#indianred]-> fatal: fatal
-
-hide empty description
-skinparam backgroundColor white
-skinparam shadowing false
-skinparam note {
-  BackgroundColor white
-  BorderColor slategray
-  FontName monospaced
-}
-skinparam ArrowFontName monospaced
-skinparam state {
-  FontName monospaced
-  AttributeFontName monospaced
-  BackgroundColor white
-  BorderColor slategray
-  ArrowColor slategray
-  ArrowThickness 2
-  MessageAlignment left
-  BackgroundColor<<danger>> Implementation
-  BorderColor<<danger>> indianred
-  BackgroundColor<<info>> Application
-  BorderColor<<info>> skyblue
-  BackgroundColor<<warning>> Strategy
-  BorderColor<<warning>> tan
-  BackgroundColor<<success>> Technology
-  BorderColor<<success>> mediumseagreen
-  BackgroundColor<<primary>> Motivation
-  BorderColor<<primary>> lightsteelblue
-}
-@enduml
-
-*/

@@ -13,21 +13,13 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
-    "./generate": {
-      "import": "./dist/generate/index.mjs",
-      "require": "./dist/generate/index.js"
-    },
-    "./serialize": {
-      "import": "./dist/serialize/index.mjs",
-      "require": "./dist/serialize/index.js"
+    "./documentate": {
+      "import": "./dist/documentate/index.mjs",
+      "require": "./dist/documentate/index.js"
     },
     "./validate": {
       "import": "./dist/validate/index.mjs",
       "require": "./dist/validate/index.js"
-    },
-    "./visualize": {
-      "import": "./dist/visualize/index.mjs",
-      "require": "./dist/visualize/index.js"
     },
     "./utils": {
       "import": "./dist/utils.mjs",

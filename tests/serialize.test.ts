@@ -18,11 +18,11 @@ import {
 import { describe, it } from "mocha";
 
 import expect from "expect";
-import { serialize } from "../lib/serialize";
+import { documentate } from "../lib/documentate";
 
 // Serialize
 describe("Serialize", () => {
-  it("should serialize a machine correctly", () => {
+  it("should serialize a machine correctly", async () => {
     const getState = () => ({
       title: "Ok",
       error: null,
@@ -165,10 +165,11 @@ describe("Serialize", () => {
       context: getState(),
     };
 
-    expect(serialize(myMachine)).toEqual(serializedMachine);
+    const result = await documentate(myMachine, { format: 'serialized' });
+    expect(result.serialized).toEqual(serializedMachine);
   });
 
-  it("should serialize exit in transitions", () => {
+  it("should serialize exit in transitions", async () => {
     function cleanup(context: any) {
       context.cleaned = true;
     }
@@ -180,14 +181,15 @@ describe("Serialize", () => {
       state("loading")
     );
 
-    const serialized = serialize(myMachine);
+    const result = await documentate(myMachine, { format: 'serialized' });
+    const serialized = result.serialized!;
     
     expect(serialized.states.idle.on.start.exit).toBeDefined();
     expect(serialized.states.idle.on.start.exit).toHaveLength(1);
     expect(serialized.states.idle.on.start.exit[0].pulse).toBe("cleanup");
   });
 
-  it("should serialize exit with failure transition", () => {
+  it("should serialize exit with failure transition", async () => {
     function cleanup(context: any) {
       context.cleaned = true;
     }
@@ -200,7 +202,8 @@ describe("Serialize", () => {
       state("failure")
     );
 
-    const serialized = serialize(myMachine);
+    const result = await documentate(myMachine, { format: 'serialized' });
+    const serialized = result.serialized!;
     
     expect(serialized.states.idle.on.start.exit[0].pulse).toBe("cleanup");
     expect(serialized.states.idle.on.start.exit[0].failure).toBe("failure");

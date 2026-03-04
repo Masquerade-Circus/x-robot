@@ -422,7 +422,7 @@ invoke(myMachine, "submit", ""); // myMachine.current === 'error'
 Generate TypeScript, ESM, or CJS code from your machines:
 
 ```javascript
-import { generateFromSerializedMachine, Format, serialize } from "x-robot";
+import { documentate } from "x-robot";
 
 const myMachine = machine(
   "MyMachine",
@@ -431,16 +431,17 @@ const myMachine = machine(
   state("active")
 );
 
-const serialized = serialize(myMachine);
-
 // Generate TypeScript with full type definitions
-const tsCode = generateFromSerializedMachine(serialized, Format.TS);
+const { ts } = await documentate(myMachine, { format: 'ts' });
 
 // Generate ESM JavaScript
-const esmCode = generateFromSerializedMachine(serialized, Format.ESM);
+const { mjs } = await documentate(myMachine, { format: 'mjs' });
 
 // Generate CommonJS JavaScript
-const cjsCode = generateFromSerializedMachine(serialized, Format.CJS);
+const { cjs } = await documentate(myMachine, { format: 'cjs' });
+
+// Or generate all formats at once
+const { ts, mjs, cjs, json, scxml, plantuml, svg, png } = await documentate(myMachine, { format: 'all' });
 ```
 
 The TypeScript output includes:
@@ -453,14 +454,13 @@ The TypeScript output includes:
 Import and export machines in SCXML (State Chart XML) format - a W3C standard:
 
 ```javascript
-import { toSCXML, fromSCXML, serialize } from "x-robot";
+import { documentate } from "x-robot";
 
 // Export to SCXML
-const serialized = serialize(myMachine);
-const scxml = toSCXML(serialized);
+const { scxml } = await documentate(myMachine, { format: 'scxml' });
 
 // Import from SCXML
-const importedMachine = fromSCXML(scxmlString);
+const { serialized } = await documentate(scxmlString, { format: 'serialized' });
 ```
 
 SCXML supports:
