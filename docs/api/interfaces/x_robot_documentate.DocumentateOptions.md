@@ -26,7 +26,7 @@ Output format (required)
 
 #### Defined in
 
-lib/documentate/types.ts:28
+[lib/documentate/types.ts:28](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L28)
 
 ___
 
@@ -38,7 +38,7 @@ Detail level for diagrams
 
 #### Defined in
 
-lib/documentate/types.ts:30
+[lib/documentate/types.ts:30](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L30)
 
 ___
 
@@ -50,7 +50,7 @@ Output file path
 
 #### Defined in
 
-lib/documentate/types.ts:32
+[lib/documentate/types.ts:32](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L32)
 
 ___
 
@@ -62,7 +62,7 @@ Output file name
 
 #### Defined in
 
-lib/documentate/types.ts:34
+[lib/documentate/types.ts:34](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L34)
 
 ___
 
@@ -74,4 +74,4 @@ PlantUML skinparam customization
 
 #### Defined in
 
-lib/documentate/types.ts:36
+[lib/documentate/types.ts:36](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L36)

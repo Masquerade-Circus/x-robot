@@ -1,1 +1,1 @@
-{"version":3,"file":"scxml.d.ts","sourceRoot":"","sources":["../../lib/documentate/scxml.ts"],"names":[],"mappings":"AAKA,OAAO,EAEL,iBAAiB,EAKlB,MAAM,SAAS,CAAC;AAEjB,wBAAgB,OAAO,CAAC,OAAO,EAAE,iBAAiB,GAAG,MAAM,CAwB1D;AA8ID,wBAAgB,SAAS,CAAC,WAAW,EAAE,MAAM,GAAG,iBAAiB,CAyChE"}
+{"version":3,"file":"scxml.d.ts","sourceRoot":"","sources":["../../lib/documentate/scxml.ts"],"names":[],"mappings":"AAKA,OAAO,EAEL,iBAAiB,EAKlB,MAAM,SAAS,CAAC;AAEjB,wBAAgB,OAAO,CAAC,OAAO,EAAE,iBAAiB,GAAG,MAAM,CAwB1D;AA8ID,wBAAgB,SAAS,CAAC,WAAW,EAAE,MAAM,GAAG,iBAAiB,CAyDhE"}

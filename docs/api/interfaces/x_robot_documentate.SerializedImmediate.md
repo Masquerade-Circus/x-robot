@@ -21,7 +21,7 @@ Serialized immediate transition definition
 
 #### Defined in
 
-lib/documentate/types.ts:148
+[lib/documentate/types.ts:148](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L148)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:149
+[lib/documentate/types.ts:149](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L149)

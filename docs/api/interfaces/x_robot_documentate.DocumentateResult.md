@@ -31,7 +31,7 @@ Generated TypeScript code
 
 #### Defined in
 
-lib/documentate/types.ts:44
+[lib/documentate/types.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L44)
 
 ___
 
@@ -43,7 +43,7 @@ Generated JavaScript ESM code
 
 #### Defined in
 
-lib/documentate/types.ts:46
+[lib/documentate/types.ts:46](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L46)
 
 ___
 
@@ -55,7 +55,7 @@ Generated JavaScript CommonJS code
 
 #### Defined in
 
-lib/documentate/types.ts:48
+[lib/documentate/types.ts:48](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L48)
 
 ___
 
@@ -67,7 +67,7 @@ JSON representation of the machine
 
 #### Defined in
 
-lib/documentate/types.ts:50
+[lib/documentate/types.ts:50](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L50)
 
 ___
 
@@ -79,7 +79,7 @@ SCXML document
 
 #### Defined in
 
-lib/documentate/types.ts:52
+[lib/documentate/types.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L52)
 
 ___
 
@@ -91,7 +91,7 @@ PlantUML code
 
 #### Defined in
 
-lib/documentate/types.ts:54
+[lib/documentate/types.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L54)
 
 ___
 
@@ -103,7 +103,7 @@ SVG image path
 
 #### Defined in
 
-lib/documentate/types.ts:56
+[lib/documentate/types.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L56)
 
 ___
 
@@ -115,7 +115,7 @@ PNG image path
 
 #### Defined in
 
-lib/documentate/types.ts:58
+[lib/documentate/types.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L58)
 
 ___
 
@@ -127,7 +127,7 @@ SerializedMachine object
 
 #### Defined in
 
-lib/documentate/types.ts:60
+[lib/documentate/types.ts:60](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L60)
 
 ___
 
@@ -139,4 +139,4 @@ Generated file paths
 
 #### Defined in
 
-lib/documentate/types.ts:62
+[lib/documentate/types.ts:62](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L62)

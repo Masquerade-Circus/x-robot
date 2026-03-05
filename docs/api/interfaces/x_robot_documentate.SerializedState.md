@@ -26,7 +26,7 @@ Serialized state definition
 
 #### Defined in
 
-lib/documentate/types.ts:95
+[lib/documentate/types.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L95)
 
 ___
 
@@ -36,7 +36,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:96
+[lib/documentate/types.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L96)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:97
+[lib/documentate/types.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L97)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:98
+[lib/documentate/types.ts:98](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L98)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:99
+[lib/documentate/types.ts:99](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L99)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:100
+[lib/documentate/types.ts:100](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L100)
 
 ___
 
@@ -86,4 +86,4 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:101
+[lib/documentate/types.ts:101](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L101)

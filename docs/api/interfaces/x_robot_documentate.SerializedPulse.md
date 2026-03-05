@@ -23,7 +23,7 @@ Serialized pulse (entry/exit action)
 
 #### Defined in
 
-lib/documentate/types.ts:124
+[lib/documentate/types.ts:124](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L124)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:125
+[lib/documentate/types.ts:125](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L125)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:126
+[lib/documentate/types.ts:126](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L126)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:127
+[lib/documentate/types.ts:127](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L127)

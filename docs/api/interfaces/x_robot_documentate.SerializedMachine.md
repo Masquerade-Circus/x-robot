@@ -24,7 +24,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-lib/documentate/types.ts:77
+[lib/documentate/types.ts:77](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L77)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:78
+[lib/documentate/types.ts:78](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L78)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:79
+[lib/documentate/types.ts:79](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L79)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:80
+[lib/documentate/types.ts:80](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L80)
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:81
+[lib/documentate/types.ts:81](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L81)

@@ -22,7 +22,7 @@ Serialized guard definition
 
 #### Defined in
 
-lib/documentate/types.ts:139
+[lib/documentate/types.ts:139](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L139)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:140
+[lib/documentate/types.ts:140](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L140)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-lib/documentate/types.ts:141
+[lib/documentate/types.ts:141](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L141)

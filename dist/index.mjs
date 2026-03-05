@@ -59,8 +59,8 @@ function isStatesDirective(states) {
 function isParallelDirective(parallel2) {
   return isValidObject(parallel2) && "parallel" in parallel2;
 }
-function isShouldFreezeDirective(shouldFreeze) {
-  return isValidObject(shouldFreeze) && "freeze" in shouldFreeze;
+function isShouldFreezeDirective(shouldFreeze2) {
+  return isValidObject(shouldFreeze2) && "freeze" in shouldFreeze2;
 }
 function isInitialDirective(initial2) {
   return isValidObject(initial2) && "initial" in initial2;
@@ -423,6 +423,11 @@ function context(context2) {
 function initial(initial2) {
   return {
     initial: initial2
+  };
+}
+function shouldFreeze(freeze) {
+  return {
+    freeze
   };
 }
 function history(limit) {
@@ -1193,6 +1198,7 @@ export {
   nestedGuard,
   parallel,
   primaryState,
+  shouldFreeze,
   snapshot,
   start,
   state,

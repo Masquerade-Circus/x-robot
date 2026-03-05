@@ -40,8 +40,6 @@
     "test-min": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.min.js",
     "test-all": "npm run test && npm run test-cjs && npm run test-mjs && npm run test-min",
     "dev:test": "nodemon -e ts,js -w ./tests -w ./lib --exec 'npm run test'",
-    "bench": "buffalo-test --require=ts-node/register ./bench/**/*.ts",
-    "dev:bench": "nodemon -e ts,js -w ./bench -w ./lib --exec 'npm run bench'",
     "bench:report": "bun tests-benchmark/generate-report.ts",
     "build": "node build.js",
     "remark": "remark . -o",
@@ -76,7 +74,6 @@
     "@types/bun": "^1.3.10",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.0.0",
-    "buffalo-test": "^2.0.0",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.14.47",
     "expect": "^28.1.1",
@@ -183,6 +180,6 @@
     }
   },
   "dependencies": {
-    "@xmldom/xmldom": "^0.8.11"
+    "fast-xml-parser": "^5.4.2"
   }
 }

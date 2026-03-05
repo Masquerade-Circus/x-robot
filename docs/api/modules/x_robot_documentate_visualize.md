@@ -213,4 +213,4 @@ The path to the svg file
 
 #### Defined in
 
-lib/documentate/visualize.ts:37
+[lib/documentate/visualize.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/visualize.ts#L37)
