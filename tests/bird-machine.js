@@ -7,7 +7,7 @@ const {
   description,
   immediate,
   transition,
-  pulse,
+  entry,
   nested,
   state,
   guard,

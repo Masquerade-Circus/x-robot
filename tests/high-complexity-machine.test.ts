@@ -27,7 +27,7 @@ describe("X-Robot", () => {
       return { ...context, ...payload };
     }
 
-    // Actions
+    // Async entries
     async function getClient() {}
     async function getItemsAndTaxes() {}
     async function getAmounts() {}
@@ -541,93 +541,93 @@ skinparam state {
 
 const getMyMachineContext = () => ({});
 
-// Producers
+// Entries
 const updateState = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
-// Actions
+// Async entries
 const update = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const updateTransaction = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const getClient = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const getItemsAndTaxes = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const getAmounts = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const draft = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const expireDraft = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const getStore = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const getRetailer = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const setI18N = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const validatePickupTime = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const getCard = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const create = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const authorize = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const createTransaction = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const expire = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const getTransaction = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const voidOrRefundOrder = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const sendNotificationToClient = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const setError = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const throwError = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const setTimeoutTasks = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const sendNotificationToStore = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const setCancelledById = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const decreaseSuccessfulStoreOrderCount = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const capture = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 const increaseSuccessfulStoreOrderCount = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 
 export const MyMachineMachine = machine(

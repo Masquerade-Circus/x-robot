@@ -2,11 +2,7 @@
  * @module x-robot/validate
  * @description Validates the machine prior to its use.
  * */
-import {
-  Machine,
-  PulseDirective,
-  StateDirective
-} from "../machine/interfaces";
+import { Machine, PulseDirective, StateDirective } from "../machine/interfaces";
 import { Result, err, ok } from "./result";
 import {
   canMakeTransition,
@@ -18,7 +14,7 @@ import {
   isParallelTransition,
   isTransition,
   isValidString
-} from "../utils";
+} from "../utils/utils";
 
 function validateInitialState(machine: Machine): Result<void, Error> {
   let hasStates = Object.keys(machine.states).length > 0;
@@ -207,10 +203,7 @@ function validatePulse(
     isTransition(arg)
   );
   let indexOfCurrentPulse = state.args.findIndex((arg: any) => arg === item);
-  if (
-    firstTransitionIndex >= 0 &&
-    indexOfCurrentPulse > firstTransitionIndex
-  ) {
+  if (firstTransitionIndex >= 0 && indexOfCurrentPulse > firstTransitionIndex) {
     return err(
       new Error(
         `The pulse '${item.pulse.name}' of the state '${stateName}' must be created before any transitions.`
@@ -265,11 +258,7 @@ function validateRunCollections(machine: Machine): Result<void, Error> {
     // Validate that guards are not used directly in states (they must be inside transitions)
     for (let arg of state.args) {
       if (isGuard(arg)) {
-        return err(
-          new Error(
-            `The guard must be used inside a transition.`
-          )
-        );
+        return err(new Error(`The guard must be used inside a transition.`));
       }
     }
 
@@ -286,12 +275,7 @@ function validateRunCollections(machine: Machine): Result<void, Error> {
 
       // Validate pulse
       if (isEntry(item)) {
-        let isEntryValidResult = validatePulse(
-          machine,
-          state,
-          stateName,
-          item
-        );
+        let isEntryValidResult = validatePulse(machine, state, stateName, item);
         if (isEntryValidResult.isErr()) {
           return isEntryValidResult;
         }
@@ -331,14 +315,17 @@ function validateTransitions(machine: Machine): Result<void, Error> {
 
       // Validate exit if present
       if (transition.exit) {
-        const exitArr = Array.isArray(transition.exit) 
-          ? transition.exit 
+        const exitArr = Array.isArray(transition.exit)
+          ? transition.exit
           : [transition.exit];
-        
+
         for (const exitItem of exitArr) {
           if (isEntry(exitItem)) {
             // Validate failure transition if present
-            if (typeof exitItem.failure === "string" && !(exitItem.failure in machine.states)) {
+            if (
+              typeof exitItem.failure === "string" &&
+              !(exitItem.failure in machine.states)
+            ) {
               return err(
                 new Error(
                   `The exit '${exitItem.pulse.name}' of the transition '${stateName}.${transitionName}' has a failure transition '${exitItem.failure}' that does not exists.`
@@ -374,10 +361,7 @@ function validateGuards(machine: Machine): Result<void, Error> {
             );
           }
 
-          if (
-            guard.failure !== undefined &&
-            !isValidString(guard.failure)
-          ) {
+          if (guard.failure !== undefined && !isValidString(guard.failure)) {
             return err(
               new Error(
                 `The guard '${guard.guard.name}' of the transition '${stateName}.${transitionName}' failure must be a string.`

@@ -1,8 +1,32 @@
 # X-Robot Performance Report
 
-Generated: 2026-03-04
+Generated: 2026-03-06
 
 ---
+## How to Run
+
+To regenerate this report, run:
+
+```bash
+bun bench:report
+```
+
+This will execute all benchmarks in `tests-benchmark/` and generate this file.
+
+**Requirements:**
+- [bun](https://bun.sh) must be installed
+- Dependencies must be installed: `npm install` or `bun install`
+
+**Benchmark files:**
+- `tests-benchmark/performance.test.ts` - Performance benchmarks
+- `tests-benchmark/bundle-size.test.ts` - Bundle size analysis
+- `tests-benchmark/developer-experience.test.ts` - Lines of code comparison
+- `tests-benchmark/memory-usage.test.ts` - Memory usage tests
+- `tests-benchmark/scxml-performance.test.ts` - SCXML import/export performance
+
+---
+
+
 
 ## Bundle Size
 
@@ -10,25 +34,25 @@ Generated: 2026-03-04
 
 | Library                 | Size     | vs X-Robot Core |
 | ----------------------- | -------- | --------------- |
-| X-Robot Core (minified) | **15.57KB** | 1x              |
-| XState interpreter      | 30.09KB  | 1.9x            |
-| XState web              | 46.64KB  | 3.0x            |
-| XState full             | 58.80KB   | 3.8x            |
+| X-Robot Core (minified) | **15.06KB** | 1x              |
+| XState interpreter      | 30.09KB  | 2.0x            |
+| XState web              | 46.64KB  | 3.1x            |
+| XState full             | 58.80KB   | 3.9x            |
 
 ### With Modules (x-robot + documentate + validate)
 
 | Module                                                   | Size      |
 | -------------------------------------------------------- | --------- |
-| X-Robot Core                                             | 15.57KB   |
-| + documentate (code gen, diagrams, serialization, SCXML) | +80.95KB     |
-| + validate (machine validation)                          | +13.66KB     |
-| **Total**                                                | **110.19KB** |
+| X-Robot Core                                             | 15.06KB   |
+| + documentate (code gen, diagrams, serialization, SCXML) | +26.11KB     |
+| + validate (machine validation)                          | +13.67KB     |
+| **Total**                                                | **54.83KB** |
 
 ---
 
 ## Features Comparison
 
-| Feature             | X-Robot Core (15.57KB) | X-Robot + Modules (110.19KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
+| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (54.83KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
 | ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ |
 | Nested states       | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
 | Parallel states     | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
@@ -53,12 +77,12 @@ Generated: 2026-03-04
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 4.36ms  | 86.49ms | **19.8x faster** |
-| 3k with guards         | 3.77ms  | 31.56ms  | **8.4x faster**  |
-| 10k transitions        | 5.01ms  | 112.13ms | **22.4x faster** |
-| 10k context updates    | 15.70ms | 104.06ms  | **6.6x faster**  |
-| invokeAfter scheduling | 4.54ms  | 14.65ms  | **3.2x faster**  |
-| Delayed transitions    | 56.15ms | 60.06ms  | **1.1x faster**  |
+| 5k transitions         | 4.28ms  | 104.64ms | **24.4x faster** |
+| 3k with guards         | 3.66ms  | 40.62ms  | **11.1x faster**  |
+| 10k transitions        | 6.35ms  | 127.72ms | **20.1x faster** |
+| 10k context updates    | 18.37ms | 114.02ms  | **6.2x faster**  |
+| invokeAfter scheduling | 4.49ms  | 16.09ms  | **3.6x faster**  |
+| Delayed transitions    | 58.57ms | 60.50ms  | **1.0x faster**  |
 
 ---
 
@@ -75,8 +99,8 @@ Generated: 2026-03-04
 
 ## Why X-Robot?
 
-1. **1.9-3.8x smaller** bundle size (core only)
-2. **1.1-22.4x faster** performance
+1. **2.0-3.9x smaller** bundle size (core only)
+2. **1.0-24.4x faster** performance
 3. **1.2-1.8x less code** to write
 4. **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
 5. **Simpler API** - Declarative, functional approach

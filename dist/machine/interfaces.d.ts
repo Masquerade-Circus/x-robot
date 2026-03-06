@@ -30,19 +30,6 @@ export interface ParallelImmediateDirective extends ImmediateDirective {
     immediate: string;
     guards: GuardsDirective;
 }
-export interface Producer {
-    (context: Context, payload?: any): Context | void;
-}
-export interface ProducerDirective {
-    producer: Producer;
-    transition?: string;
-}
-export interface ProducerDirectiveWithTransition extends ProducerDirective {
-    transition: string;
-}
-export interface ProducerDirectiveWithoutTransition {
-    producer: Producer;
-}
 export interface Pulse {
     (context: Context, payload?: any): Promise<void | any> | void;
 }
@@ -55,14 +42,6 @@ export interface PulseDirective {
 export interface ExitDirective {
     pulse: Pulse;
     failure?: string;
-}
-export interface Action {
-    (context: Context, payload?: any): Promise<void | any>;
-}
-export interface ActionDirective {
-    action: Action;
-    success?: ProducerDirective | string | null;
-    failure?: ProducerDirective | string | null;
 }
 export interface Guard {
     (context: Context, payload?: any): boolean | any;
@@ -148,8 +127,6 @@ export interface HistoryDirective {
 }
 export declare enum HistoryType {
     Transition = "Transition",
-    Action = "Action",
-    Producer = "Producer",
     Pulse = "Pulse",
     AsyncPulse = "Async Pulse",
     State = "State",

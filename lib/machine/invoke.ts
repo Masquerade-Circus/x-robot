@@ -1,9 +1,7 @@
 /** @module x-robot */
 import {
-  ActionDirective,
   HistoryType,
   Machine,
-  ProducerDirective,
   PulseDirective,
   START_EVENT,
   StateDirective,
@@ -14,77 +12,23 @@ import {
   deepCloneUnfreeze,
   deepFreeze,
   hasTransition,
-  isAction,
   isEntry,
   isGuard,
   isNestedGuard,
   isNestedMachineWithTransitionDirective,
   isNestedTransition,
   isParallelTransition,
-  isProducer,
-  isProducerWithTransition,
   isValidObject,
   isValidString
-} from "../utils";
+} from "../utils/utils";
 
 function addToHistory(machine: Machine, entry: string): void {
   if (machine.historyLimit === undefined) return;
   if (machine.historyLimit === 0) return;
-  
+
   machine.history.push(entry);
   if (machine.history.length > machine.historyLimit) {
     machine.history.shift();
-  }
-}
-
-/**
- * @param machine The machine that is running
- * @param producer The producer to invoke
- * @param payload The payload to pass to the producer
- * @returns Promise or void depending if the machine is async or not
- */
-function runProducer(
-  machine: Machine,
-  producer?: ProducerDirective | string | null,
-  payload?: any
-): Promise<void> | void {
-  // If it is a producer then we run it
-  if (isProducer(producer)) {
-    // Add the producer to the history
-    addToHistory(machine, `${HistoryType.Producer}: ${producer.producer.name}`);
-
-    // Get the context
-    let context = machine.context;
-
-    // If the machine is frozen we need to clone the context
-    if (machine.frozen) {
-      context = deepCloneUnfreeze(context);
-    }
-
-    // Run the producer
-    let newContext = producer.producer(context, payload);
-
-    // Check if the producer returned a context and if so we update the context
-    if (isValidObject(newContext)) {
-      context = newContext;
-    }
-
-    // Set the new context
-    machine.context = context;
-
-    // If the machine is frozen, we will deep freeze the context again
-    if (machine.frozen) {
-      deepFreeze(machine.context);
-    }
-
-    // If the producer has a transition then we run it
-    if (isProducerWithTransition(producer)) {
-      return invoke(machine, producer.transition);
-    }
-
-    // If is a string, we assume it is a transition instead of a producer and we run it
-  } else if (isValidString(producer)) {
-    return invoke(machine, producer);
   }
 }
 
@@ -104,7 +48,7 @@ function runPulse(
 
     addToHistory(
       machine,
-      isAsync 
+      isAsync
         ? `${HistoryType.AsyncPulse}: ${pulse.pulse.name}`
         : `${HistoryType.Pulse}: ${pulse.pulse.name}`
     );
@@ -194,34 +138,6 @@ function runPulse(
   }
 }
 
-/**
- * Actions are always async and the existence of an action in a machine means that the machine is async too
- * @param machine The machine that is running
- * @param action The action to invoke
- * @param payload The payload to pass to the action
- * @returns Promise
- */
-async function runAction(
-  machine: Machine,
-  action: ActionDirective,
-  payload?: any
-): Promise<void> {
-  // Add the action to the history
-  addToHistory(machine, `${HistoryType.Action}: ${action.action.name}`);
-
-  // Run the action
-  try {
-    let result = await action.action(machine.context, payload);
-    await runProducer(machine, action.success, result);
-  } catch (error) {
-    if (isProducer(action.failure) || isValidString(action.failure)) {
-      await runProducer(machine, action.failure, error);
-    } else {
-      throw error;
-    }
-  }
-}
-
 function hasFatalError(machine: Machine): boolean {
   return machine.fatal instanceof Error;
 }
@@ -247,7 +163,7 @@ function catchError(
   if (machine.frozen) {
     machine.context = deepCloneUnfreeze(machine.context);
   }
-  
+
   // Store error in context for easy access (always, as fallback in case pulse doesn't set it)
   machine.context.error = error;
 
@@ -274,22 +190,18 @@ function catchError(
  *
  * @param machine The machine that is running
  * @param state The current state of the machine
- * @param payload The payload to pass to the actions and producers
+ * @param payload The payload to pass to the entry pulses
  * @returns Promise as we know that the machine is async
  */
-async function runActionsAndProducers(
+async function runStatePulsesAsync(
   machine: Machine,
   state: StateDirective,
   payload: any
 ): Promise<void> {
   for (let i = 0; i < state.run.length; i++) {
-    let item = state.run[i];
+    const item = state.run[i];
     try {
-      if (isAction(item)) {
-        await runAction(machine, item, payload);
-      } else if (isProducer(item)) {
-        await runProducer(machine, item, payload);
-      } else if (isEntry(item)) {
+      if (isEntry(item)) {
         await runPulse(machine, item, payload);
       }
     } catch (error) {
@@ -302,16 +214,18 @@ async function runActionsAndProducers(
 /**
  * @param machine The machine that is running
  * @param state The current state of the machine
- * @param payload The payload to pass to the producers
+ * @param payload The payload to pass to the entry pulses
  * @returns void as we know that the machine is not async
  */
-function runProducers(machine: Machine, state: StateDirective, payload: any) {
+function runStatePulsesSync(
+  machine: Machine,
+  state: StateDirective,
+  payload: any
+) {
   for (let i = 0; i < state.run.length; i++) {
-    let item = state.run[i];
+    const item = state.run[i];
     try {
-      if (isProducer(item)) {
-        runProducer(machine, item, payload);
-      } else if (isEntry(item)) {
+      if (isEntry(item)) {
         runPulse(machine, item, payload);
       }
     } catch (error) {
@@ -419,7 +333,7 @@ function runGuardsFromIndex(
  *
  * @param machine The machine that is running
  * @param state The current state of the machine
- * @param payload The payload to pass to the actions and producers of the nested machine
+ * @param payload The payload to pass to the entry pulses of the nested machine
  * @returns Promise or void depending if the machine is async or not
  */
 function runNestedMachines(
@@ -460,7 +374,7 @@ function runNestedMachines(
  *
  * @param machine The machine that is running
  * @param transition The transition that is being invoked
- * @param payload The payload to pass to the actions and producers of the nested machine
+ * @param payload The payload to pass to the entry pulses of the nested machine
  * @returns Promise or void depending if the machine is async or not
  */
 function runNestedTransition(
@@ -515,7 +429,7 @@ function runNestedTransition(
  *
  * @param machine The machine that is running
  * @param transition The transition that is being invoked
- * @param payload The payload to pass to the actions and producers of the parallel machine
+ * @param payload The payload to pass to the entry pulses of the parallel machine
  * @returns Promise or void depending if the machine is async or not
  */
 function runParallelTransition(
@@ -547,7 +461,7 @@ function runParallelTransition(
  *
  * @param machine The machine that is running
  * @param state The current state of the machine
- * @param payload The payload to pass to the actions and producers of the transition
+ * @param payload The payload to pass to the entry pulses of the transition
  * @returns Promise or void depending if the machine is async or not
  */
 function invokeImmediateDirectives(
@@ -693,11 +607,20 @@ export function invoke(
     if (guardsResult instanceof Promise) {
       return guardsResult.then((shouldContinue: boolean) => {
         if (shouldContinue === false) {
-          addToHistory(machine, `${HistoryType.State}: ${currentStateObject.name}`);
+          addToHistory(
+            machine,
+            `${HistoryType.State}: ${currentStateObject.name}`
+          );
           return;
         }
         // Continue with exit handling after async guards
-        return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
+        return handleExitAndContinue(
+          machine,
+          currentStateObject,
+          transitionObject,
+          trimmedTransition,
+          payload
+        );
       });
     }
 
@@ -708,11 +631,22 @@ export function invoke(
     }
 
     // Run exit(s) from the current state if the transition has them
-    return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
+    return handleExitAndContinue(
+      machine,
+      currentStateObject,
+      transitionObject,
+      trimmedTransition,
+      payload
+    );
   }
 
   // Continue with the rest of the transition
-  return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+  return continueTransition(
+    machine,
+    currentStateObject,
+    trimmedTransition,
+    payload
+  );
 }
 
 function handleExitAndContinue(
@@ -724,25 +658,40 @@ function handleExitAndContinue(
 ): Promise<void> | void {
   const exitItems = transitionObject.exit;
   if (exitItems && Array.isArray(exitItems)) {
-    const pulsesToRun = Array.isArray(exitItems[0]) 
-      ? exitItems[0] 
-      : exitItems as PulseDirective[];
-    
+    const pulsesToRun = Array.isArray(exitItems[0])
+      ? exitItems[0]
+      : (exitItems as PulseDirective[]);
+
     for (const exitItem of pulsesToRun) {
       if (machine.isAsync) {
         let promise = Promise.resolve();
         promise = promise.then(() => runPulse(machine, exitItem, payload));
         return promise.then(() => {
-          return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+          return continueTransition(
+            machine,
+            currentStateObject,
+            trimmedTransition,
+            payload
+          );
         });
       } else {
         runPulse(machine, exitItem, payload);
       }
     }
-    return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+    return continueTransition(
+      machine,
+      currentStateObject,
+      trimmedTransition,
+      payload
+    );
   }
 
-  return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+  return continueTransition(
+    machine,
+    currentStateObject,
+    trimmedTransition,
+    payload
+  );
 }
 
 function continueTransition(
@@ -788,9 +737,9 @@ function continueTransition(
       runNestedMachines(machine, targetStateObject, payload)
     );
 
-    // Run the actions and producers
+    // Run the state entry pulses
     promise = promise.then(() =>
-      runActionsAndProducers(machine, targetStateObject, payload)
+      runStatePulsesAsync(machine, targetStateObject, payload)
     );
 
     // If there are immediate directives, run them
@@ -805,8 +754,8 @@ function continueTransition(
   // Try to run nested machines if any
   runNestedMachines(machine, targetStateObject, payload);
 
-  // Run the actions or producers of the target state
-  runProducers(machine, targetStateObject, payload);
+  // Run the state entry pulses of the target state
+  runStatePulsesSync(machine, targetStateObject, payload);
 
   // If there are immediate directives, run them
   invokeImmediateDirectives(machine, targetStateObject, payload);
@@ -814,18 +763,18 @@ function continueTransition(
 
 /**
  * Starts the machine from its initial state, or restores it from a snapshot.
- * 
+ *
  * @param machine The machine to start
  * @param snapshotOrPayload Optional: MachineSnapshot to restore state, or payload for initial invocation
  * @returns Void or a promise if the machine is async
  * @category Invocation
- * 
+ *
  * @example
- * // Start normally (executes entry actions)
+ * // Start normally (executes entry pulses)
  * start(myMachine);
- * 
+ *
  * @example
- * // Restore from snapshot (does NOT execute entry actions)
+ * // Restore from snapshot (does NOT execute entry pulses)
  * const savedSnapshot = snapshot(myMachine);
  * start(myMachine, savedSnapshot);
  */
@@ -834,10 +783,14 @@ export function start(
   snapshotOrPayload?: MachineSnapshot | any
 ): Promise<void> | void {
   // Check if it's a snapshot (has current property)
-  if (snapshotOrPayload && typeof snapshotOrPayload === 'object' && 'current' in snapshotOrPayload) {
+  if (
+    snapshotOrPayload &&
+    typeof snapshotOrPayload === "object" &&
+    "current" in snapshotOrPayload
+  ) {
     return restoreFromSnapshot(machine, snapshotOrPayload as MachineSnapshot);
   }
-  
+
   // Original behavior: start normally with optional payload
   // Validate initial transition before invoking
   let canStartMachine = canMakeTransition(
@@ -853,16 +806,19 @@ export function start(
   return invoke(machine, START_EVENT, snapshotOrPayload);
 }
 
-function restoreFromSnapshot(machine: Machine, snapshot: MachineSnapshot): void {
+function restoreFromSnapshot(
+  machine: Machine,
+  snapshot: MachineSnapshot
+): void {
   // Restore main machine state
   machine.current = snapshot.current;
   machine.context = deepCloneUnfreeze(snapshot.context);
   machine.history = [...snapshot.history];
-  
+
   // Add to history if not already present
   if (machine.historyLimit !== 0 && machine.history.length > 0) {
     const lastEntry = machine.history[machine.history.length - 1];
-    if (!lastEntry.startsWith('State: ')) {
+    if (!lastEntry.startsWith("State: ")) {
       machine.history.push(`${HistoryType.State}: ${snapshot.current}`);
     }
   }
@@ -871,7 +827,10 @@ function restoreFromSnapshot(machine: Machine, snapshot: MachineSnapshot): void 
   if (snapshot.parallel) {
     for (let parallelName in snapshot.parallel) {
       if (machine.parallel[parallelName]) {
-        restoreFromSnapshot(machine.parallel[parallelName], snapshot.parallel[parallelName]);
+        restoreFromSnapshot(
+          machine.parallel[parallelName],
+          snapshot.parallel[parallelName]
+        );
       }
     }
   }
@@ -882,9 +841,12 @@ function restoreFromSnapshot(machine: Machine, snapshot: MachineSnapshot): void 
       const state = machine.states[stateName];
       if (state && state.nested) {
         for (let nested of state.nested) {
-          if (snapshot.nested[stateName] && snapshot.nested[stateName][nested.machine.id]) {
+          if (
+            snapshot.nested[stateName] &&
+            snapshot.nested[stateName][nested.machine.id]
+          ) {
             restoreFromSnapshot(
-              nested.machine, 
+              nested.machine,
               snapshot.nested[stateName][nested.machine.id]
             );
           }
@@ -896,16 +858,16 @@ function restoreFromSnapshot(machine: Machine, snapshot: MachineSnapshot): void 
 
 /**
  * Invokes an event on the machine after a specified time delay.
- * 
+ *
  * @param machine The machine to invoke
  * @param timeInMilliseconds Time to wait before invoking
  * @param event The event to invoke
  * @param payload Optional payload for the event
  * @returns A cancel function to stop the scheduled invocation
- * 
+ *
  * @example
  * const cancelTimeout = invokeAfter(myMachine, 5000, 'timeout', { reason: 'network' });
- * 
+ *
  * // To cancel before it fires
  * cancelTimeout();
  */
@@ -918,7 +880,7 @@ export function invokeAfter(
   const timeoutId = setTimeout(() => {
     invoke(machine, event, payload);
   }, timeInMilliseconds);
-  
+
   return () => clearTimeout(timeoutId);
 }
 
@@ -932,10 +894,10 @@ export interface MachineSnapshot {
 
 /**
  * Creates a snapshot of the machine's current state.
- * 
+ *
  * @param machine The machine to snapshot
  * @returns An object containing current state, context, history, and nested/parallel states
- * 
+ *
  * @example
  * const savedSnapshot = snapshot(myMachine);
  * // savedSnapshot = {
@@ -950,7 +912,7 @@ export function snapshot(machine: Machine): MachineSnapshot {
   const snap: MachineSnapshot = {
     current: machine.current,
     context: deepCloneUnfreeze(machine.context),
-    history: [...machine.history],
+    history: [...machine.history]
   };
 
   // Snapshot parallel machines

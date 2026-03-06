@@ -1,27 +1,18 @@
 // lib/machine/interfaces.ts
 var START_EVENT = "__start__";
 
-// lib/utils.ts
+// lib/utils/utils.ts
 function isValidString(str) {
   return str !== null && typeof str === "string" && str.trim().length > 0;
 }
 function isValidObject(obj) {
   return obj !== null && typeof obj === "object";
 }
-function isProducer(producer) {
-  return isValidObject(producer) && "producer" in producer;
-}
-function isProducerWithTransition(producer) {
-  return isProducer(producer) && isValidString(producer.transition);
-}
 function isEntry(entry2) {
   return isValidObject(entry2) && "pulse" in entry2;
 }
 function isExit(exit2) {
   return isValidObject(exit2) && "exit" in exit2;
-}
-function isAction(action) {
-  return isValidObject(action) && "action" in action;
 }
 function isImmediate(immediate2) {
   return isValidObject(immediate2) && "immediate" in immediate2;
@@ -568,10 +559,12 @@ function entry(pulse, success, failure) {
 }
 function exit(handler, failure) {
   return {
-    exit: [{
-      pulse: handler,
-      failure
-    }]
+    exit: [
+      {
+        pulse: handler,
+        failure
+      }
+    ]
   };
 }
 function guard(guard2, failure) {
@@ -694,28 +687,6 @@ function addToHistory(machine2, entry2) {
     machine2.history.shift();
   }
 }
-function runProducer(machine2, producer, payload) {
-  if (isProducer(producer)) {
-    addToHistory(machine2, `${"Producer" /* Producer */}: ${producer.producer.name}`);
-    let context2 = machine2.context;
-    if (machine2.frozen) {
-      context2 = deepCloneUnfreeze(context2);
-    }
-    let newContext = producer.producer(context2, payload);
-    if (isValidObject(newContext)) {
-      context2 = newContext;
-    }
-    machine2.context = context2;
-    if (machine2.frozen) {
-      deepFreeze(machine2.context);
-    }
-    if (isProducerWithTransition(producer)) {
-      return invoke(machine2, producer.transition);
-    }
-  } else if (isValidString(producer)) {
-    return invoke(machine2, producer);
-  }
-}
 function runPulse(machine2, pulse, payload) {
   if (isEntry(pulse)) {
     const isAsync = pulse.pulse.constructor.name === "AsyncFunction";
@@ -791,19 +762,6 @@ function runPulse(machine2, pulse, payload) {
     return invoke(machine2, pulse);
   }
 }
-async function runAction(machine2, action, payload) {
-  addToHistory(machine2, `${"Action" /* Action */}: ${action.action.name}`);
-  try {
-    let result = await action.action(machine2.context, payload);
-    await runProducer(machine2, action.success, result);
-  } catch (error) {
-    if (isProducer(action.failure) || isValidString(action.failure)) {
-      await runProducer(machine2, action.failure, error);
-    } else {
-      throw error;
-    }
-  }
-}
 function hasFatalError(machine2) {
   return machine2.fatal instanceof Error;
 }
@@ -823,15 +781,11 @@ function catchError(machine2, state2, error) {
   machine2.fatal = error;
   throw error;
 }
-async function runActionsAndProducers(machine2, state2, payload) {
+async function runStatePulsesAsync(machine2, state2, payload) {
   for (let i = 0; i < state2.run.length; i++) {
-    let item = state2.run[i];
+    const item = state2.run[i];
     try {
-      if (isAction(item)) {
-        await runAction(machine2, item, payload);
-      } else if (isProducer(item)) {
-        await runProducer(machine2, item, payload);
-      } else if (isEntry(item)) {
+      if (isEntry(item)) {
         await runPulse(machine2, item, payload);
       }
     } catch (error) {
@@ -840,13 +794,11 @@ async function runActionsAndProducers(machine2, state2, payload) {
     }
   }
 }
-function runProducers(machine2, state2, payload) {
+function runStatePulsesSync(machine2, state2, payload) {
   for (let i = 0; i < state2.run.length; i++) {
-    let item = state2.run[i];
+    const item = state2.run[i];
     try {
-      if (isProducer(item)) {
-        runProducer(machine2, item, payload);
-      } else if (isEntry(item)) {
+      if (isEntry(item)) {
         runPulse(machine2, item, payload);
       }
     } catch (error) {
@@ -1098,12 +1050,12 @@ function continueTransition(machine2, currentStateObject, trimmedTransition, pay
   if (machine2.isAsync) {
     let promise = Promise.resolve();
     promise = promise.then(() => runNestedMachines(machine2, targetStateObject, payload));
-    promise = promise.then(() => runActionsAndProducers(machine2, targetStateObject, payload));
+    promise = promise.then(() => runStatePulsesAsync(machine2, targetStateObject, payload));
     promise = promise.then(() => invokeImmediateDirectives(machine2, targetStateObject, payload));
     return promise;
   }
   runNestedMachines(machine2, targetStateObject, payload);
-  runProducers(machine2, targetStateObject, payload);
+  runStatePulsesSync(machine2, targetStateObject, payload);
   invokeImmediateDirectives(machine2, targetStateObject, payload);
 }
 function start(machine2, snapshotOrPayload) {

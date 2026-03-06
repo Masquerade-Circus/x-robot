@@ -168,7 +168,7 @@ describe("X-Robot", () => {
         args: [], // This are the arguments passed to the state when it is invoked,
         immediate: [],
         on: {}, // This object will keep the transitions that are triggered by the state
-        run: [], // This is the list of actions/producers that will be executed when the state is entered
+        run: [], // This is the list of entry pulses that will be executed when the state is entered
         type: "default", // This is the type of the state, it will be used to determine the style of the state in the visualization or to listen to events
         description: undefined, // This is the description of the state, it will be used to show the description in the visualization
       });
@@ -335,9 +335,9 @@ describe("X-Robot", () => {
     });
   });
 
-  // Producers
-  describe("Producers", () => {
-    it("should create a machine with a state that has producers", () => {
+  // Entry pulses (sync)
+  describe("Entry Pulses (Sync)", () => {
+    it("should create a machine with a state that has entry pulses", () => {
       let setTitle = (context, title) => {
         return { ...context, title };
       };
@@ -367,13 +367,13 @@ describe("X-Robot", () => {
       ]);
     });
 
-    it("should validate that the producer has a valid function", () => {
+    it("should validate that the pulse has a valid function", () => {
       expect(() => {
         validate(machine("My machine", init(initial("idle")), state("idle", entry(null))));
       }).toThrowError("The pulse 'null' of the state 'idle' must be a function.");
     });
 
-    it("should use the producer to update the context returning a new context", () => {
+    it("should use the pulse to update the context returning a new context", () => {
       let setTitle = (context, title) => {
         return { ...context, title };
       };
@@ -391,7 +391,7 @@ describe("X-Robot", () => {
       expect(myMachine.context === originalState).toBeFalsy();
     });
 
-    it("should use the producer to mutate the context without returning a new context", () => {
+    it("should use the pulse to mutate the context without returning a new context", () => {
       let setTitle = (context, title) => {
         context.title = title;
       };
@@ -409,7 +409,7 @@ describe("X-Robot", () => {
       expect(myMachine.context === originalState).toBeFalsy();
     });
 
-    it("should throw a fatal error if an error ocurred in a producer", () => {
+    it("should throw a fatal error if an error occurred in a sync entry pulse", () => {
       let setTitle = (context, title) => {
         throw new Error("Error");
       };
@@ -424,7 +424,7 @@ describe("X-Robot", () => {
       }).toThrowError("Error");
     });
 
-    it("should go to an error state if a fatal error ocurred in a producer and we have an error transition", () => {
+    it("should go to an error state if a fatal error occurred in a sync entry pulse and we have an error transition", () => {
       let setTitle = (context, title) => {
         throw new Error("Error");
       };
@@ -440,7 +440,7 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("error");
     });
 
-    it("should move to a fatal state if a fatal error ocurred in a producer and we have a fatal state", () => {
+    it("should move to a fatal state if a fatal error occurred in a sync entry pulse and we have a fatal state", () => {
       let setTitle = (context, title) => {
         throw new Error("Error");
       };
@@ -472,7 +472,7 @@ describe("X-Robot", () => {
       expect(myMachine.context.error).toEqual(new Error("Error"));
     });
 
-    it("should validate that producers are created before any transitions", () => {
+    it("should validate that entry pulses are created before any transitions", () => {
       let updateTitle = (context, title) => {
         return { ...context, title };
       };
@@ -487,9 +487,9 @@ describe("X-Robot", () => {
     });
   });
 
-  // Actions
-  describe("Actions", () => {
-    it("should create a machine with a state that has actions", () => {
+  // Entry pulses (async)
+  describe("Entry Pulses (Async)", () => {
+    it("should create a machine with a state that has async entry pulses", () => {
       let setTitle = async (context) => {
         await new Promise((resolve) => setTimeout(resolve, 100));
       };
@@ -520,18 +520,12 @@ describe("X-Robot", () => {
       ]);
     });
 
-    it("should validate that the action has a valid function", () => {
-      expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", entry(null))));
-      }).toThrowError("The pulse 'null' of the state 'idle' must be a function.");
-    });
-
-    it("should fire the action when enter to the state", async () => {
-      let actionFired = false;
+    it("should fire the async entry pulse when entering the state", async () => {
+      let pulseFired = false;
 
       let setTitle = async (context) => {
         await new Promise((resolve) => setTimeout(resolve, 100));
-        actionFired = true;
+        pulseFired = true;
       };
 
       const myMachine = machine(
@@ -546,24 +540,24 @@ describe("X-Robot", () => {
       // Invoke the transition
       invoke(myMachine, "updateTitle");
 
-      // The machine is in the updating state and the action was fired but not yet resolved
+      // The machine is in the updating state and the async entry pulse was fired but not yet resolved
       expect(getState(myMachine)).toEqual("updating");
-      expect(actionFired).toBe(false);
+      expect(pulseFired).toBe(false);
 
-      // Wait for the action to be resolved
+      // Wait for the async entry pulse to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
 
-      // The machine is in the idle state and the action was resolved
+      // The machine is in the idle state and the async entry pulse was resolved
       expect(getState(myMachine)).toEqual("idle");
-      expect(actionFired).toBe(true);
+      expect(pulseFired).toBe(true);
     });
 
-    it("should be able to await when entering a state that has an action", async () => {
-      let actionFired = false;
+    it("should be able to await when entering a state that has an async entry pulse", async () => {
+      let pulseFired = false;
 
       let setTitle = async (context) => {
         await new Promise((resolve) => setTimeout(resolve, 100));
-        actionFired = true;
+        pulseFired = true;
       };
 
       const myMachine = machine(
@@ -574,15 +568,15 @@ describe("X-Robot", () => {
 
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
-      // Invoke the transition and wait for the action to be resolved
+      // Invoke the transition and wait for the async entry pulse to be resolved
       await invoke(myMachine, "updateTitle");
 
-      // The machine is in the idle state again and the action was resolved
+      // The machine is in the idle state again and the async entry pulse was resolved
       expect(getState(myMachine)).toEqual("idle");
-      expect(actionFired).toBe(true);
+      expect(pulseFired).toBe(true);
     });
 
-    it("should move to the next producer/action if the action is successful", async () => {
+    it("should move to the next entry pulse if an async entry pulse is successful", async () => {
       let setTitle = async (context) => {
         await new Promise((resolve) => setTimeout(resolve, 100));
       };
@@ -604,7 +598,7 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // Invoke the transition and wait for the actions to be resolved
+      // Invoke the transition and wait for the entry pulses to be resolved
       await invoke(myMachine, "updateTitle");
 
       // The machine is in the idle state again
@@ -612,7 +606,7 @@ describe("X-Robot", () => {
       expect(nextActionFired).toBe(true);
     });
 
-    it("should throw a fatal error if an error ocurred in an action", async () => {
+    it("should throw a fatal error if an error occurred in an async entry pulse", async () => {
       let setTitle = async (context) => {
         throw new Error("Error");
       };
@@ -626,11 +620,11 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // Invoke the transition and wait for the actions to be resolved
+      // Invoke the transition and wait for the entry pulses to be resolved
       await expect(invoke(myMachine, "updateTitle")).rejects.toThrow(new Error("Error"));
     });
 
-    it("should go to an error state if a fatal error ocurred in an action and we have an error transition", async () => {
+    it("should go to an error state if a fatal error occurred in an async entry pulse and we have an error transition", async () => {
       let setTitle = async (context) => {
         throw new Error("Error");
       };
@@ -644,14 +638,14 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // Invoke the transition and wait for the actions to be resolved
+      // Invoke the transition and wait for the entry pulses to be resolved
       await expect(invoke(myMachine, "updateTitle")).resolves.toBeUndefined();
 
       // The machine is in the fatal state
       expect(getState(myMachine)).toEqual("error");
     });
 
-    it("should move to a fatal state if a fatal error ocurred in an action and we have a fatal state", async () => {
+    it("should move to a fatal state if a fatal error occurred in an async entry pulse and we have a fatal state", async () => {
       let setTitle = async (context) => {
         throw new Error("Error");
       };
@@ -665,14 +659,14 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // Invoke the transition and wait for the actions to be resolved
+      // Invoke the transition and wait for the entry pulses to be resolved
       await expect(invoke(myMachine, "updateTitle")).resolves.toBeUndefined();
 
       // The machine is in the fatal state
       expect(getState(myMachine)).toEqual("fatal");
     });
 
-    it("should be able to get the catched error if a fatal error ocurred in an action and we have a fatal state", async () => {
+    it("should be able to get the catched error if a fatal error occurred in an async entry pulse and we have a fatal state", async () => {
       let setTitle = async (context) => {
         throw new Error("Error");
       };
@@ -686,7 +680,7 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // Invoke the transition and wait for the actions to be resolved
+      // Invoke the transition and wait for the entry pulses to be resolved
       await expect(invoke(myMachine, "updateTitle")).resolves.toBeUndefined();
 
       // The machine is in the fatal state
@@ -720,7 +714,7 @@ describe("X-Robot", () => {
       });
     });
 
-    it("should go to the done state if the action is successfull and have a done transition", async () => {
+    it("should go to the done state if the async entry pulse is successful and has a done transition", async () => {
       let setTitle = async (context) => {
         await new Promise((resolve) => setTimeout(resolve, 100));
       };
@@ -737,17 +731,17 @@ describe("X-Robot", () => {
       // Invoke the transition
       invoke(myMachine, "updateTitle");
 
-      // The machine is in the updating state and the action was fired but not yet resolved
+      // The machine is in the updating state and the async entry pulse was fired but not yet resolved
       expect(getState(myMachine)).toEqual("updated");
 
-      // Wait for the action to be resolved
+      // Wait for the async entry pulse to be resolved
       await new Promise((resolve) => setTimeout(resolve, 110));
 
       // The machine is in the done state
       expect(getState(myMachine)).toEqual("done");
     });
 
-    it("should go to an error state if an error ocurred in the done producer and we have an error transition", async () => {
+    it("should go to an error state if an error occurred in the done entry pulse and we have an error transition", async () => {
       let setTitle = async (context) => {
         await new Promise((resolve) => setTimeout(resolve, 100));
       };
@@ -985,7 +979,7 @@ describe("X-Robot", () => {
       expect(myMachine.fatal).toEqual(new Error("Error"));
     });
 
-    it("should update the context with the producer if the guard returns other than true", () => {
+    it("should update the context with the guard failure pulse if the guard returns other than true", () => {
       let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
 
       const myMachine = machine(
@@ -1026,16 +1020,16 @@ describe("X-Robot", () => {
       expect(myMachine.context.error).toBeNull();
     });
 
-    it("should throw a fatal error if an error ocurred in the guard producer", () => {
+    it("should throw a fatal error if an error occurred in the guard failure pulse", () => {
       let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
-      let guardFailureProducer = (context, payload) => {
+      let guardFailurePulse = (context, payload) => {
         throw new Error("Error");
       };
 
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailureProducer)))),
+        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailurePulse)))),
         state(
           "updated",
           entry((context, payload) => ({ ...context, title: payload, error: null }))
@@ -1055,16 +1049,16 @@ describe("X-Robot", () => {
       expect(myMachine.fatal).toEqual(new Error("Error"));
     });
 
-    it("should go to an error state if an error ocurred in the guard producer and we have an error transition", () => {
+    it("should go to an error state if an error occurred in the guard failure pulse and we have an error transition", () => {
       let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
-      let guardFailureProducer = (context, payload) => {
+      let guardFailurePulse = (context, payload) => {
         throw new Error("Error");
       };
 
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailureProducer))), transition("error", "error")),
+        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailurePulse))), transition("error", "error")),
         state("updated"),
         state("error")
       );
@@ -1079,16 +1073,16 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("error");
     });
 
-    it("should move to a fatal state if an error ocurred in the guard producer and we have a fatal state", () => {
+    it("should move to a fatal state if an error occurred in the guard failure pulse and we have a fatal state", () => {
       let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
-      let guardFailureProducer = (context, payload) => {
+      let guardFailurePulse = (context, payload) => {
         throw new Error("Error");
       };
 
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailureProducer)))),
+        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailurePulse)))),
         state(
           "updated",
           entry((context, payload) => ({ ...context, title: payload, error: null }))
@@ -1146,8 +1140,8 @@ describe("X-Robot", () => {
         "Transition: updateTitle", // Second try to update the title
         "Guard: canUpdateTitle", // Runs the guard
         "State: updated", // As the guard passed, the machine goes to the updated state
-        "Pulse: saveTitle", // Runs the action
-        "Pulse: updateTitle", // Runs the producer
+        "Pulse: saveTitle", // Runs the async pulse
+        "Pulse: updateTitle", // Runs the sync pulse
         "Transition: idle", // The immediate transition
         "State: idle", // The machine goes back to the initial state
       ]);
@@ -1179,7 +1173,7 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // The history should have the initial state, the idle action and the idle producer
+      // The history should have the initial state, the idle async pulse and the idle sync pulse
       expect(myMachine.history).toEqual(["State: idle", "Pulse: saveTitle", "Pulse: updateTitle"]);
     });
 
@@ -1205,7 +1199,7 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // The history should have the initial state, the idle action and the idle producer
+      // The history should have the initial state, the idle async pulse and the idle sync pulse
       expect(myMachine.history).toEqual(["State: idle", "Pulse: saveTitle", "Pulse: updateTitle"]);
 
       // Try to start the machine again
@@ -1240,7 +1234,7 @@ describe("X-Robot", () => {
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
-      // The history should have the initial state, plus the transitions and actions of update and then the ones of the idle state
+      // The history should have the initial state, plus the transitions and entry pulses of update and then the ones of the idle state
       expect(myMachine.history).toEqual([
         "State: idle",
         "Transition: updateTitle",

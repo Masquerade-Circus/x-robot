@@ -1,8 +1,4 @@
-import {
-  VISUALIZATION_LEVEL,
-  createSvgFromPlantUmlCode,
-  getPlantUmlCode
-} from "../dist/visualize/index.mjs";
+import { documentate } from "../dist/documentate/index.mjs";
 import {
   BirdMachine as bird,
   LeftWingMachine as leftWing,
@@ -13,14 +9,14 @@ import { getState, invoke } from "../dist/index.mjs";
 
 import { expect } from "expect";
 import fs from "fs";
-import { serialize } from "../dist/serialize/index.mjs";
 
 // Generate a diagram from a serialized machine
 describe("Esm version test", () => {
   // With this test we are testing the creation, serialization and visualization of a machine with all the features of the library
   it("should generate a diagram for a serialized machine with all features available", async () => {
-    const plantUmlCode = getPlantUmlCode(serialize(bird), {
-      level: VISUALIZATION_LEVEL.HIGH
+    const { plantuml: plantUmlCode } = await documentate(bird, {
+      format: "plantuml",
+      level: "high"
     });
 
     let expectedPlantUmlCode = `
@@ -221,9 +217,8 @@ skinparam state {
     expect(plantUmlCode).toContain("landing -[#lightsteelblue,dashed]-> land: land\\n├ G:isLeftWingClosed\\n└ G:isRightWingClosed");
     expect(plantUmlCode).not.toContain("A:sendStateToApiForBird");
 
-    const svg = await createSvgFromPlantUmlCode(plantUmlCode, {
-      outDir: "./tmp",
-      fileName: "bird-machine-diagram"
+    const { svg } = await documentate(plantUmlCode, {
+      format: "svg"
     });
 
     expect(svg).toBeDefined();

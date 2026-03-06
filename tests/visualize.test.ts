@@ -104,8 +104,8 @@ describe("Generate a diagram from a serialized machine", () => {
         "save",
         description("The user saves the title"),
         // If the guard is true, we try to save the title.
-        // If the save action succeeds, we immediately go to the preview state.
-        // If the save action fails, we update the context with the error and go to the error state.
+        // If the save pulse succeeds, we immediately go to the preview state.
+        // If the save pulse fails, we update the context with the error and go to the error state.
         entry(saveTitle, "preview", "error")
       ),
       dangerState("error", description("We failed to save the title to the db"), entry(updateError))
@@ -470,14 +470,14 @@ describe("Readme examples", () => {
   });
 
   it("Async example", async () => {
-    // Action
+    // Async entry pulse
     async function fetchDog() {
       let response = await fetch("https://dog.ceo/api/breeds/image/random");
       let json = await response.json();
       return json.data;
     }
 
-    // Producers
+    // Entry pulses
     function assignDog(context, dog) {
       context.dog = dog;
     }

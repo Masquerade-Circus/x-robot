@@ -58,7 +58,7 @@ import {
   isValidObject,
   isValidString,
   titleToId
-} from "../utils";
+} from "../utils/utils";
 
 /**
  * We will create a finite state machine manager
@@ -74,9 +74,16 @@ import {
  * @returns InitDirective
  * @category Creation
  */
-export function init(...directives: (InitialDirective | ContextDirective | ShouldFreezeDirective | HistoryDirective)[]): InitDirective {
+export function init(
+  ...directives: (
+    | InitialDirective
+    | ContextDirective
+    | ShouldFreezeDirective
+    | HistoryDirective
+  )[]
+): InitDirective {
   let initObj: InitDirective = {};
-  
+
   for (const directive of directives) {
     if (isInitialDirective(directive)) {
       if (initObj.initial) {
@@ -90,7 +97,9 @@ export function init(...directives: (InitialDirective | ContextDirective | Shoul
       initObj.context = directive;
     } else if (isShouldFreezeDirective(directive)) {
       if (initObj.freeze) {
-        throw new Error("Cannot have more than one shouldFreeze directive in init");
+        throw new Error(
+          "Cannot have more than one shouldFreeze directive in init"
+        );
       }
       initObj.freeze = directive;
     } else if (isHistoryDirective(directive)) {
@@ -100,7 +109,7 @@ export function init(...directives: (InitialDirective | ContextDirective | Shoul
       initObj.history = directive;
     }
   }
-  
+
   return initObj;
 }
 
@@ -133,7 +142,7 @@ export function machine(title: string, ...args: MachineArguments): Machine {
   // First pass: collect init directive and find first state name
   for (let i = 0; i < args.length; i++) {
     let arg = args[i];
-    
+
     // If the argument is an init directive
     if (isInitDirective(arg)) {
       if (foundInit !== null) {
@@ -141,7 +150,7 @@ export function machine(title: string, ...args: MachineArguments): Machine {
       }
       foundInit = arg;
     }
-    
+
     // If the argument is a state directive, track the first state
     if (isStateDirective(arg)) {
       if (!firstStateName) {
@@ -160,7 +169,7 @@ export function machine(title: string, ...args: MachineArguments): Machine {
       if (arg.history) {
         myMachine.historyLimit = arg.history.history;
       }
-      
+
       // Process initial from init
       if (arg.initial) {
         myMachine.initial = arg.initial.initial;
@@ -169,12 +178,12 @@ export function machine(title: string, ...args: MachineArguments): Machine {
           myMachine.history.push(`${HistoryType.State}: ${myMachine.initial}`);
         }
       }
-      
+
       // Process context from init
       if (arg.context) {
         let newContext =
-          typeof arg.context.context === "function" 
-            ? arg.context.context() 
+          typeof arg.context.context === "function"
+            ? arg.context.context()
             : arg.context.context;
         if (!isValidObject(newContext)) {
           throw new Error(
@@ -183,12 +192,12 @@ export function machine(title: string, ...args: MachineArguments): Machine {
         }
         myMachine.context = { ...myMachine.context, ...newContext };
       }
-      
+
       // Process freeze from init
       if (arg.freeze) {
         myMachine.frozen = arg.freeze.freeze;
       }
-      
+
       continue;
     }
 
@@ -203,10 +212,12 @@ export function machine(title: string, ...args: MachineArguments): Machine {
       myMachine.states[arg.name] = arg;
       continue;
     }
-    
+
     // If the argument is a states directive (legacy - should not be used)
     if (isStatesDirective(arg)) {
-      throw new Error("states() wrapper is no longer supported. Pass states directly to machine().");
+      throw new Error(
+        "states() wrapper is no longer supported. Pass states directly to machine()."
+      );
     }
   }
 
@@ -354,7 +365,7 @@ export function history(limit: number): HistoryDirective {
 /**
  *
  * @param name The name of the state
- * @param args nested machines, actions, producers, transitions, etc.
+ * @param args nested machines, entry pulses, transitions, etc.
  * @returns StateDirective
  * @category Creation
  */
@@ -378,15 +389,25 @@ export function state(name: string, ...args: RunCollection): StateDirective {
       if (arg.success) {
         let successTransition = arg.success;
         // If success is a string, use it directly
-        if (isValidString(successTransition) && hasTransition({ on } as StateDirective, successTransition) === false) {
+        if (
+          isValidString(successTransition) &&
+          hasTransition({ on } as StateDirective, successTransition) === false
+        ) {
           on[successTransition] = {
             transition: successTransition,
             target: successTransition,
             guards: []
           };
-        } else if (typeof successTransition === 'object' && 'transition' in successTransition) {
-          let transitionValue = (successTransition as PulseDirective).transition;
-          if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
+        } else if (
+          typeof successTransition === "object" &&
+          "transition" in successTransition
+        ) {
+          let transitionValue = (successTransition as PulseDirective)
+            .transition;
+          if (
+            isValidString(transitionValue) &&
+            hasTransition({ on } as StateDirective, transitionValue) === false
+          ) {
             on[transitionValue] = {
               transition: transitionValue,
               target: transitionValue,
@@ -398,7 +419,10 @@ export function state(name: string, ...args: RunCollection): StateDirective {
 
       if (arg.transition) {
         let transitionValue = arg.transition;
-        if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
+        if (
+          isValidString(transitionValue) &&
+          hasTransition({ on } as StateDirective, transitionValue) === false
+        ) {
           on[transitionValue] = {
             transition: transitionValue,
             target: transitionValue,
@@ -410,15 +434,25 @@ export function state(name: string, ...args: RunCollection): StateDirective {
       if (arg.failure) {
         let failureTransition = arg.failure;
         // If failure is a string, use it directly
-        if (isValidString(failureTransition) && hasTransition({ on } as StateDirective, failureTransition) === false) {
+        if (
+          isValidString(failureTransition) &&
+          hasTransition({ on } as StateDirective, failureTransition) === false
+        ) {
           on[failureTransition] = {
             transition: failureTransition,
             target: failureTransition,
             guards: []
           };
-        } else if (typeof failureTransition === 'object' && 'transition' in failureTransition) {
-          let transitionValue = (failureTransition as PulseDirective).transition;
-          if (isValidString(transitionValue) && hasTransition({ on } as StateDirective, transitionValue) === false) {
+        } else if (
+          typeof failureTransition === "object" &&
+          "transition" in failureTransition
+        ) {
+          let transitionValue = (failureTransition as PulseDirective)
+            .transition;
+          if (
+            isValidString(transitionValue) &&
+            hasTransition({ on } as StateDirective, transitionValue) === false
+          ) {
             on[transitionValue] = {
               transition: transitionValue,
               target: transitionValue,
@@ -480,7 +514,7 @@ export function transition(
 ): TransitionDirective {
   let guards: GuardsDirective = [];
   let exit: ExitDirective[] | undefined;
-  
+
   for (const arg of args) {
     if (isGuard(arg)) {
       guards.push(arg);
@@ -490,7 +524,7 @@ export function transition(
       exit = arg.exit;
     }
   }
-  
+
   return {
     transition: transitionName,
     target,
@@ -514,7 +548,7 @@ export function entry(
 ): PulseDirective {
   // If success is a PulseDirective, transform it
   let successValue: string | PulseDirective | undefined = success;
-  if (success && typeof success === 'object' && 'pulse' in success) {
+  if (success && typeof success === "object" && "pulse" in success) {
     const innerPulse = success as PulseDirective;
     successValue = {
       pulse: innerPulse.pulse,
@@ -522,10 +556,10 @@ export function entry(
       transition: innerPulse.success
     } as PulseDirective;
   }
-  
+
   // If failure is a PulseDirective, transform it
   let failureValue: string | PulseDirective | undefined = failure;
-  if (failure && typeof failure === 'object' && 'pulse' in failure) {
+  if (failure && typeof failure === "object" && "pulse" in failure) {
     const innerPulse = failure as PulseDirective;
     failureValue = {
       pulse: innerPulse.pulse,
@@ -533,7 +567,7 @@ export function entry(
       transition: innerPulse.success
     } as PulseDirective;
   }
-  
+
   return {
     pulse,
     success: successValue,
@@ -553,10 +587,12 @@ export function exit(
   failure?: string
 ): { exit: ExitDirective[] } {
   return {
-    exit: [{
-      pulse: handler,
-      failure
-    }]
+    exit: [
+      {
+        pulse: handler,
+        failure
+      }
+    ]
   };
 }
 
@@ -600,7 +636,7 @@ export function immediate(
  *
  * @param machine The nested machine to be run
  * @param guard The guard to be run
- * @param onFailureProducer The producer to be run on failure, this producer should not have a transition name
+ * @param failure The pulse to be run on failure
  * @returns NestedGuardDirective
  * @category Creation
  */
@@ -651,7 +687,7 @@ export function description(description: string): DescriptionDirective {
  * State directive that represents an info state. This is used as documentation for the serialization and in the diagram generation of the machine.
  * Not to be used in the machine execution itself.
  * @param name The name of the state
- * @param args nested machines, actions, producers, transitions, etc.
+ * @param args nested machines, entry pulses, transitions, etc.
  * @returns InfoStateDirective
  * @category Creation
  */
@@ -668,7 +704,7 @@ export function infoState(
  * State directive that represents a primary state. This is used as documentation for the serialization and in the diagram generation of the machine.
  * Not to be used in the machine execution itself.
  * @param name The name of the state
- * @param args nested machines, actions, producers, transitions, etc.
+ * @param args nested machines, entry pulses, transitions, etc.
  * @returns PrimaryStateDirective
  * @category Creation
  */
@@ -685,7 +721,7 @@ export function primaryState(
  * State directive that represents a success state. This is used as documentation for the serialization and in the diagram generation of the machine.
  * Not to be used in the machine execution itself.
  * @param name The name of the state
- * @param args nested machines, actions, producers, transitions, etc.
+ * @param args nested machines, entry pulses, transitions, etc.
  * @returns SuccessStateDirective
  * @category Creation
  */
@@ -702,7 +738,7 @@ export function successState(
  * State directive that represents a warning state. This is used as documentation for the serialization and in the diagram generation of the machine.
  * Not to be used in the machine execution itself.
  * @param name The name of the state
- * @param args nested machines, actions, producers, transitions, etc.
+ * @param args nested machines, entry pulses, transitions, etc.
  * @returns WarningStateDirective
  * @category Creation
  */
@@ -719,7 +755,7 @@ export function warningState(
  * State directive that represents a danger state. This is used as documentation for the serialization and in the diagram generation of the machine.
  * Not to be used in the machine execution itself.
  * @param name The name of the state
- * @param args nested machines, actions, producers, transitions, etc.
+ * @param args nested machines, entry pulses, transitions, etc.
  * @returns DangerStateDirective
  * @category Creation
  */

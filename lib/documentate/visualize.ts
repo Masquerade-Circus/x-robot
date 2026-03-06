@@ -172,10 +172,10 @@ function getInnerPlantUmlCode(
     }
   }
 
-  // If visualization level is high, add the actions, producers and transitions
+  // If visualization level is high, add the entry pulses and transitions
   let highData = "";
   if (level === VISUALIZATION_LEVEL.HIGH) {
-    // Add the actions, producers and transitions
+    // Add the entry pulses and transitions
     for (const stateName in serializedMachine.states) {
       const state = serializedMachine.states[stateName];
       const run = [];
@@ -438,26 +438,26 @@ function getTree(
 }
 
 /***
-This function will get a collection of guards, producers and actions and will return a ascii art tree representation of them.
+This function will get a collection of guards and pulses and will return a ascii art tree representation of them.
 
 Example:
 let collection = [
 {
   guard: "titleIsValid",
   failure: {
-    producer: "updateError"
+    pulse: "updateError"
   }
 },
 {
-  action: "saveTitle",
+  pulse: "saveTitle",
   success: "preview",
   failure: {
-    producer: "updateError",
+    pulse: "updateError",
     transition: "error"
   }
 }
 ]
-let result = "G:'titleIsValid'\n│ └failure\n│   └M:'updateError'\n└A:'saveTitle'\n  ├success\n  │ └T:'preview'\n  └failure\n    ├M:'updateError'\n    └T:'error"
+let result = "G:'titleIsValid'\n│ └failure\n│   └M:'updateError'\n└P:'saveTitle'\n  ├success\n  │ └T:'preview'\n  └failure\n    ├M:'updateError'\n    └T:'error"
 
 ***/
 function getAsciiTree(collection: SerializedCollectionWithGuards): string {

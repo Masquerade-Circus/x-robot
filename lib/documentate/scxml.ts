@@ -2,7 +2,7 @@
  * @module x-robot/documentate/scxml
  * @description SCXML import/export functionality
  * */
-import { XMLParser } from "fast-xml-parser";
+import { parseScxml, domToScxml, Element, Text, Document } from "../utils/tree-adapter";
 import {
   SerializedGuard,
   SerializedMachine,
@@ -13,263 +13,258 @@ import {
 } from "./types";
 
 export function toSCXML(machine: SerializedMachine): string {
-  let xml = "";
+  const doc = new Document();
 
-  // XML declaration and root element
+  // Root scxml element
   const initial = machine.initial || Object.keys(machine.states)[0] || "";
   const name = machine.title || "Machine";
 
-  xml += `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="${initial}" name="${name}">\n`;
+  const scxml = doc.createElement("scxml");
+  scxml.setAttribute("xmlns", "http://www.w3.org/2005/07/scxml");
+  scxml.setAttribute("version", "1.0");
+  scxml.setAttribute("initial", initial);
+  scxml.setAttribute("name", name);
 
   // Generate parallel states first
   for (const [parallelName, parallelMachine] of Object.entries(machine.parallel)) {
-    xml += `  <parallel id="${parallelMachine.title || parallelName}">\n`;
-    xml += generateStates(parallelMachine.states, "    ");
-    xml += `  </parallel>\n`;
+    const parallel = doc.createElement("parallel");
+    parallel.setAttribute("id", parallelMachine.title || parallelName);
+    generateStatesElement(parallelMachine.states, parallel, doc);
+    scxml.appendChild(parallel);
   }
 
   // Generate regular states
-  xml += generateStates(machine.states, "  ");
+  generateStatesElement(machine.states, scxml, doc);
 
-  // Close root element
-  xml += "</scxml>";
+  // Build XML string
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += domToScxml(scxml);
 
   return xml;
 }
 
-function generateStates(states: SerializedStates, indent: string): string {
-  let xml = "";
-
+function generateStatesElement(states: SerializedStates, parent: Element, doc: Document): void {
   for (const [stateName, state] of Object.entries(states)) {
-    xml += generateState(stateName, state, indent);
+    const stateEl = generateStateElement(stateName, state, doc);
+    parent.appendChild(stateEl);
   }
-
-  return xml;
 }
 
-function generateState(stateName: string, state: SerializedState, indent: string): string {
-  let xml = "";
-
-  // Check if this is a final state (no transitions)
+function generateStateElement(stateName: string, state: SerializedState, doc: Document): Element {
   const isFinal = !state.on || Object.keys(state.on).length === 0;
 
+  let stateEl: Element;
   if (isFinal && !state.nested) {
-    xml += `${indent}<final id="${stateName}"/>\n`;
-  } else {
-    xml += `${indent}<state id="${stateName}">\n`;
-
-    // Description (datamodel)
-    if (state.description) {
-      xml += `${indent}  <datamodel>\n`;
-      xml += `${indent}    <data id="description">${state.description}</data>\n`;
-      xml += `${indent}  </datamodel>\n`;
-    }
-
-    // Entry actions (onentry)
-    if (state.run && state.run.length > 0) {
-      xml += `${indent}  <onentry>\n`;
-      for (const pulse of state.run) {
-        xml += `${indent}    <script>${pulse.pulse}()</script>\n`;
-      }
-      xml += `${indent}  </onentry>\n`;
-    }
-
-    // Nested states
-    if (state.nested && state.nested.length > 0) {
-      for (const nested of state.nested) {
-        xml += generateNestedMachine(nested, indent + "  ");
-      }
-    }
-
-    // Transitions
-    if (state.on) {
-      for (const [event, transition] of Object.entries(state.on)) {
-        xml += generateTransition(event, transition, indent + "  ");
-      }
-    }
-
-    // Immediate transitions
-    if (state.immediate) {
-      for (const immediate of state.immediate) {
-        xml += generateImmediateTransition(immediate, indent + "  ");
-      }
-    }
-
-    xml += `${indent}</state>\n`;
+    stateEl = doc.createElement("final");
+    stateEl.setAttribute("id", stateName);
+    return stateEl;
   }
 
-  return xml;
+  stateEl = doc.createElement("state");
+  stateEl.setAttribute("id", stateName);
+
+  // Description (datamodel)
+  if (state.description) {
+    const datamodel = doc.createElement("datamodel");
+    const data = doc.createElement("data");
+    data.setAttribute("id", "description");
+    data.appendChild(doc.createTextNode(state.description));
+    datamodel.appendChild(data);
+    stateEl.appendChild(datamodel);
+  }
+
+  // Entry pulses (onentry)
+  if (state.run && state.run.length > 0) {
+    const onentry = doc.createElement("onentry");
+    for (const pulse of state.run) {
+      const script = doc.createElement("script");
+      script.appendChild(doc.createTextNode(pulse.pulse + "()"));
+      onentry.appendChild(script);
+    }
+    stateEl.appendChild(onentry);
+  }
+
+  // Nested states
+  if (state.nested && state.nested.length > 0) {
+    for (const nested of state.nested) {
+      const nestedEl = generateNestedMachineElement(nested, doc);
+      stateEl.appendChild(nestedEl);
+    }
+  }
+
+  // Transitions
+  if (state.on) {
+    for (const [event, transition] of Object.entries(state.on)) {
+      const transEl = generateTransitionElement(event, transition, doc);
+      stateEl.appendChild(transEl);
+    }
+  }
+
+  // Immediate transitions
+  if (state.immediate) {
+    for (const immediate of state.immediate) {
+      const transEl = generateImmediateTransitionElement(immediate, doc);
+      stateEl.appendChild(transEl);
+    }
+  }
+
+  return stateEl;
 }
 
-function generateTransition(
+function generateTransitionElement(
   event: string,
   transition: { target?: string; guards?: SerializedGuard[]; exit?: SerializedPulse[] },
-  indent: string
-): string {
-  let xml = `${indent}<transition event="${event}"`;
+  doc: Document
+): Element {
+  const transEl = doc.createElement("transition");
+  transEl.setAttribute("event", event);
 
   if (transition.target) {
-    xml += ` target="${transition.target}"`;
+    transEl.setAttribute("target", transition.target);
   }
 
   if (transition.guards && transition.guards.length > 0) {
     const conditions = transition.guards.map((g) => g.guard).join(" && ");
-    xml += ` cond="${conditions}"`;
+    transEl.setAttribute("cond", conditions);
   }
 
-  // Exit actions
+  // Exit pulses
   if (transition.exit && transition.exit.length > 0) {
-    xml += ">\n";
-    xml += `${indent}  <onexit>\n`;
+    const onexit = doc.createElement("onexit");
     for (const pulse of transition.exit) {
-      xml += `${indent}    <script>${pulse.pulse}()</script>\n`;
+      const script = doc.createElement("script");
+      script.appendChild(doc.createTextNode(pulse.pulse + "()"));
+      onexit.appendChild(script);
     }
-    xml += `${indent}  </onexit>\n`;
-    xml += `${indent}</transition>\n`;
-  } else {
-    xml += "/>\n";
+    transEl.appendChild(onexit);
   }
-  return xml;
+
+  return transEl;
 }
 
-function generateImmediateTransition(
+function generateImmediateTransitionElement(
   immediate: { immediate?: string; guards?: SerializedGuard[] },
-  indent: string
-): string {
-  let xml = `${indent}<transition type="internal"`;
+  doc: Document
+): Element {
+  const transEl = doc.createElement("transition");
+  transEl.setAttribute("type", "internal");
 
   if (immediate.immediate) {
-    xml += ` target="${immediate.immediate}"`;
+    transEl.setAttribute("target", immediate.immediate);
   }
 
   if (immediate.guards && immediate.guards.length > 0) {
     const conditions = immediate.guards.map((g) => g.guard).join(" && ");
-    xml += ` cond="${conditions}"`;
+    transEl.setAttribute("cond", conditions);
   }
 
-  xml += "/>\n";
-  return xml;
+  return transEl;
 }
 
-function generateNestedMachine(nested: SerializedNestedMachine, indent: string): string {
-  let xml = "";
-
+function generateNestedMachineElement(nested: SerializedNestedMachine, doc: Document): Element {
   const machineTitle = nested.machine.title || "nested";
   const initial = nested.machine.initial || Object.keys(nested.machine.states)[0] || "";
 
-  xml += `${indent}<state id="${machineTitle}">\n`;
-  xml += `${indent}  <initial id="${initial}">\n`;
-  xml += `${indent}    <transition target="${initial}"/>\n`;
-  xml += `${indent}  </initial>\n`;
+  const stateEl = doc.createElement("state");
+  stateEl.setAttribute("id", machineTitle);
+
+  // Initial element
+  const initialEl = doc.createElement("initial");
+  initialEl.setAttribute("id", initial);
+  const initialTrans = doc.createElement("transition");
+  initialTrans.setAttribute("target", initial);
+  initialEl.appendChild(initialTrans);
+  stateEl.appendChild(initialEl);
 
   // Generate states from the nested machine
-  xml += generateStates(nested.machine.states, indent + "  ");
+  generateStatesElement(nested.machine.states, stateEl, doc);
 
   // Handle nested machine's parallel states
   for (const [parallelName, parallelMachine] of Object.entries(nested.machine.parallel)) {
-    xml += `${indent}  <parallel id="${parallelMachine.title || parallelName}">\n`;
-    xml += generateStates(parallelMachine.states, indent + "    ");
-    xml += `${indent}  </parallel>\n`;
+    const parallel = doc.createElement("parallel");
+    parallel.setAttribute("id", parallelMachine.title || parallelName);
+    generateStatesElement(parallelMachine.states, parallel, doc);
+    stateEl.appendChild(parallel);
   }
 
-  xml += `${indent}</state>\n`;
-
-  return xml;
+  return stateEl;
 }
 
 export function fromSCXML(scxmlString: string): SerializedMachine {
-  const parser = new XMLParser({
-    ignoreAttributes: false,
-    attributeNamePrefix: "@_",
-    textNodeName: "#text",
-    preserveOrder: false,
-    parseAttributeValue: false,
-    parseTagValue: false
-  });
-  
-  const result = parser.parse(scxmlString);
-  
-  // Extraer el elemento raíz (puede ser con namespace o sin él)
-  const root = result.scxml || result;
-  
-  if (!root || (!root['@_xmlns'] && !root['@_version'] && !root['@_initial'] && !root['@_name'])) {
+  // Parse using tree-adapter instead of fast-xml-parser
+  const root = parseScxml(scxmlString);
+
+  // Validate root element is scxml
+  if (root.nodeName.toLowerCase() !== "scxml") {
     throw new Error("Invalid SCXML document: root element must be <scxml>");
   }
-  
+
   const machine: SerializedMachine = {
-    title: root['@_name'] || undefined,
-    initial: root['@_initial'] || "",
+    title: root.getAttribute("name") || undefined,
+    initial: root.getAttribute("initial") || "",
     states: {},
     parallel: {},
     context: {},
   };
-  
-  // Procesar hijos del root (states y parallel)
-  // Puede venir como array, objeto, o undefined
-  const rootKeys = Object.keys(root).filter(k => !k.startsWith('@_'));
-  const childStates = root.state;
-  const childParallel = root.parallel;
-  
-  // Procesar states regulares
-  if (childStates) {
-    const statesArray = Array.isArray(childStates) ? childStates : [childStates];
-    for (const stateEl of statesArray) {
-      if (stateEl && stateEl['@_id']) {
-        const state = parseStateElementFromObject(stateEl);
-        if (state.name) {
-          machine.states[state.name] = state;
-        }
+
+  // Process child elements (states and parallel)
+  for (const child of root.childNodes) {
+    if (child.nodeType !== 1) continue;
+
+    const el = child as Element;
+    const tagName = el.nodeName.toLowerCase();
+
+    if (tagName === "state") {
+      const state = parseStateElement(el);
+      if (state.name) {
+        machine.states[state.name] = state;
+      }
+    } else if (tagName === "parallel") {
+      const id = el.getAttribute("id");
+      if (id) {
+        machine.parallel[id] = parseParallelElement(el);
       }
     }
   }
-  
-  // Procesar parallel states
-  if (childParallel) {
-    const parallelArray = Array.isArray(childParallel) ? childParallel : [childParallel];
-    for (const parallelEl of parallelArray) {
-      if (parallelEl && parallelEl['@_id']) {
-        machine.parallel[parallelEl['@_id']] = parseParallelElementFromObject(parallelEl);
-      }
-    }
-  }
-  
+
   return machine;
 }
 
-function parseStateElementFromObject(stateEl: any): SerializedState {
+function parseStateElement(el: Element): SerializedState {
   const state: SerializedState = {
-    name: stateEl['@_id'] || "",
+    name: el.getAttribute("id") || "",
   };
-  
+
   // Parse datamodel (description)
-  if (stateEl.datamodel && stateEl.datamodel.data) {
-    const data = Array.isArray(stateEl.datamodel.data) 
-      ? stateEl.datamodel.data[0] 
-      : stateEl.datamodel.data;
-    state.description = data['#text'] || data;
+  const datamodel = el.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "datamodel") as Element | undefined;
+  if (datamodel) {
+    const data = datamodel.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "data") as Element | undefined;
+    if (data) {
+      const textNode = data.childNodes.find(c => c.nodeType === 3) as Text | undefined;
+      if (textNode) {
+        state.description = textNode.textContent || textNode.nodeValue;
+      }
+    }
   }
-  
+
   // Parse onentry
-  if (stateEl.onentry && stateEl.onentry.script) {
-    state.run = parseScriptElements(stateEl.onentry.script);
+  const onentry = el.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "onentry") as Element | undefined;
+  if (onentry) {
+    state.run = parseScriptElements(onentry);
   }
-  
+
   // Parse transitions
-  const transitions = stateEl.transition;
-  if (transitions) {
+  const transitions = el.childNodes.filter(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "transition") as Element[];
+  if (transitions.length > 0) {
     state.on = {};
-    const transArray = Array.isArray(transitions) ? transitions : [transitions];
-    
-    for (const trans of transArray) {
-      if (!trans) continue;
-      
-      const event = trans['@_event'];
-      const target = trans['@_target'];
-      const cond = trans['@_cond'];
-      const type = trans['@_type'];
-      
-      // Immediate transitions (type="internal") - can have no event
+
+    for (const transEl of transitions) {
+      const event = transEl.getAttribute("event");
+      const target = transEl.getAttribute("target");
+      const cond = transEl.getAttribute("cond");
+      const type = transEl.getAttribute("type");
+
+      // Immediate transitions (type="internal")
       if (type === "internal" && target) {
         if (!state.immediate) state.immediate = [];
         state.immediate.push({
@@ -278,139 +273,113 @@ function parseStateElementFromObject(stateEl: any): SerializedState {
         });
         continue;
       }
-      
+
       if (!event) continue;
-      
-      
-      const transitionObj: any = {
-        target: target || "",
-      };
-      
+
+      const transitionObj: any = { target: target || "" };
+
       if (cond) {
         transitionObj.guards = [{ guard: cond }];
       }
-      
+
       // Parse onexit inside transition
-      if (trans.onexit && trans.onexit.script) {
-        transitionObj.exit = parseScriptElements(trans.onexit.script);
+      const onexit = transEl.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "onexit") as Element | undefined;
+      if (onexit) {
+        transitionObj.exit = parseScriptElements(onexit);
       }
-      
+
       state.on[event] = transitionObj;
     }
   }
-  
-  // Parse nested states (child state elements)
-  const nestedStates = stateEl.state;
-  if (nestedStates) {
-    const nestedArray = Array.isArray(nestedStates) ? nestedStates : [nestedStates];
-    const validNested = nestedArray.filter((n: any) => n && n['@_id']);
-    if (validNested.length > 0) {
-      state.nested = [];
-      for (const nestedEl of validNested) {
-        const nestedMachine = parseNestedMachineFromObject(nestedEl);
-        state.nested.push(nestedMachine);
-      }
+
+  // Parse nested states
+  const nestedStates = el.childNodes.filter(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "state") as Element[];
+  if (nestedStates.length > 0) {
+    state.nested = [];
+    for (const nestedEl of nestedStates) {
+      const nestedMachine = parseNestedMachineFromElement(nestedEl);
+      state.nested.push(nestedMachine);
     }
   }
-  
+
   return state;
 }
 
-function parseScriptElements(scripts: any): SerializedPulse[] {
+function parseScriptElements(parentEl: Element): SerializedPulse[] {
   const pulses: SerializedPulse[] = [];
-  if (!scripts) return pulses;
-  
-  const scriptArray = Array.isArray(scripts) ? scripts : [scripts];
-  
-  for (const script of scriptArray) {
-    if (!script) continue;
-    const content = script['#text'] || script;
-    if (content && typeof content === 'string') {
+
+  const scripts = parentEl.childNodes.filter(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "script") as Element[];
+
+  for (const script of scripts) {
+    const textNode = script.childNodes.find(c => c.nodeType === 3) as Text | undefined;
+    const content = textNode?.textContent || textNode?.nodeValue || "";
+
+    if (content) {
       const fnMatch = content.match(/^([\w.]+)\(/);
       if (fnMatch) {
         pulses.push({ pulse: fnMatch[1] });
       }
     }
   }
-  
+
   return pulses;
 }
 
-function parseParallelElementFromObject(element: any): SerializedMachine {
+function parseParallelElement(el: Element): SerializedMachine {
   const machine: SerializedMachine = {
     states: {},
     parallel: {},
     context: {},
     initial: "",
   };
-  
+
   // Get initial from <initial> child
-  if (element.initial) {
-    const initialEl = Array.isArray(element.initial) 
-      ? element.initial[0] 
-      : element.initial;
-    if (initialEl && initialEl.transition) {
-      const trans = Array.isArray(initialEl.transition) 
-        ? initialEl.transition[0] 
-        : initialEl.transition;
-      if (trans) {
-        machine.initial = trans['@_target'] || "";
-      }
+  const initialEl = el.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "initial") as Element | undefined;
+  if (initialEl) {
+    const transEl = initialEl.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "transition") as Element | undefined;
+    if (transEl) {
+      machine.initial = transEl.getAttribute("target") || "";
     }
   }
-  
+
   // Parse child states
-  if (element.state) {
-    const statesArray = Array.isArray(element.state) ? element.state : [element.state];
-    for (const stateEl of statesArray) {
-      if (stateEl && stateEl['@_id']) {
-        const state = parseStateElementFromObject(stateEl);
-        if (state.name) {
-          machine.states[state.name] = state;
-        }
-      }
+  const stateElements = el.childNodes.filter(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "state") as Element[];
+  for (const stateEl of stateElements) {
+    const state = parseStateElement(stateEl);
+    if (state.name) {
+      machine.states[state.name] = state;
     }
   }
-  
+
   return machine;
 }
 
-function parseNestedMachineFromObject(element: any): SerializedNestedMachine {
+function parseNestedMachineFromElement(el: Element): SerializedNestedMachine {
   const machine: SerializedMachine = {
     states: {},
     parallel: {},
     context: {},
     initial: "",
   };
-  
+
   // Get initial
-  if (element.initial) {
-    const initialEl = Array.isArray(element.initial) 
-      ? element.initial[0] 
-      : element.initial;
-    if (initialEl && initialEl.transition) {
-      const trans = Array.isArray(initialEl.transition) 
-        ? initialEl.transition[0] 
-        : initialEl.transition;
-      if (trans) {
-        machine.initial = trans['@_target'] || "";
-      }
+  const initialEl = el.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "initial") as Element | undefined;
+  if (initialEl) {
+    const transEl = initialEl.childNodes.find(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "transition") as Element | undefined;
+    if (transEl) {
+      machine.initial = transEl.getAttribute("target") || "";
     }
   }
-  
+
   // Parse states
-  if (element.state) {
-    const statesArray = Array.isArray(element.state) ? element.state : [element.state];
-    for (const stateEl of statesArray) {
-      if (stateEl && stateEl['@_id']) {
-        const state = parseStateElementFromObject(stateEl);
-        if (state.name) {
-          machine.states[state.name] = state;
-        }
-      }
+  const stateElements = el.childNodes.filter(c => c.nodeType === 1 && (c as Element).nodeName.toLowerCase() === "state") as Element[];
+  for (const stateEl of stateElements) {
+    const state = parseStateElement(stateEl);
+    if (state.name) {
+      machine.states[state.name] = state;
     }
   }
-  
+
   return {
     machine,
     transition: machine.initial,

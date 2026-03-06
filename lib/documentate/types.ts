@@ -118,7 +118,7 @@ export interface SerializedTransition {
 }
 
 /**
- * Serialized pulse (entry/exit action)
+ * Serialized pulse (entry/exit pulse)
  */
 export interface SerializedPulse {
   pulse: string;

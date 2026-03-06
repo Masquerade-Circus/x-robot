@@ -113,7 +113,34 @@ function parseLOC(output: string) {
 
 function generateMarkdown(bundle: any, perf: any, loc: any, distSizes: any) {
   const date = new Date().toISOString().split("T")[0];
-  
+
+  // Generate the "How to Run" section
+  const howToRun = `
+## How to Run
+
+To regenerate this report, run:
+
+\`\`\`bash
+bun bench:report
+\`\`\`
+
+This will execute all benchmarks in \`tests-benchmark/\` and generate this file.
+
+**Requirements:**
+- [bun](https://bun.sh) must be installed
+- Dependencies must be installed: \`npm install\` or \`bun install\`
+
+**Benchmark files:**
+- \`tests-benchmark/performance.test.ts\` - Performance benchmarks
+- \`tests-benchmark/bundle-size.test.ts\` - Bundle size analysis
+- \`tests-benchmark/developer-experience.test.ts\` - Lines of code comparison
+- \`tests-benchmark/memory-usage.test.ts\` - Memory usage tests
+- \`tests-benchmark/scxml-performance.test.ts\` - SCXML import/export performance
+
+---
+
+`;
+
   const xrKB = distSizes.core;
   const xsIntKB = distSizes.xstateInterpreter;
   const xsWebKB = distSizes.xstateWeb;
@@ -155,7 +182,7 @@ function generateMarkdown(bundle: any, perf: any, loc: any, distSizes: any) {
 
 Generated: ${date}
 
----
+---${howToRun}
 
 ## Bundle Size
 
@@ -290,7 +317,7 @@ function main() {
   
   const md = generateMarkdown(bundle, perf, loc, distSizes);
   
-  const outputPath = join(ROOT_DIR, "PERFORMANCE.md");
+  const outputPath = join(ROOT_DIR, "docs/performance.md");
   writeFileSync(outputPath, md);
   
   console.log(`\n✓ Performance report generated: ${outputPath}`);

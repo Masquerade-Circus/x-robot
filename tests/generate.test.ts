@@ -32,27 +32,27 @@ const isLeftWingOpened = (context, payload) => {
   return true;
 };
 
-// Producers
+// Entries
 const updateError = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateLeftWingToClosed = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateLeftWingToOpened = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateLeftWingToFatal = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
-// Actions
+// Async entries
 const sendStateToApiForLeftWing = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 
 export const LeftWingMachine = machine(
@@ -103,23 +103,23 @@ const isRightWingOpened = (context, payload) => {
   return true;
 };
 
-// Producers
+// Entries
 const updateRightWingToClosed = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateRightWingToOpened = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateRightWingToFatal = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
-// Actions
+// Async entries
 const sendStateToApiForRightWing = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 
 export const RightWingMachine = machine(
@@ -170,13 +170,13 @@ const isTimeStarted = (context, payload) => {
   return true;
 };
 
-// Producers
+// Entries
 const stopTimer = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const startTimer = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
@@ -238,31 +238,31 @@ const getBirdContext = () => ({
   "state": null
 });
 
-// Producers
+// Entries
 const updateBirdToLand = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToTakingoff = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToFlying = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToLanding = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToFatal = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
-// Actions
+// Async entries
 const sendStateToApiForBird = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 
 export const BirdMachine = machine(
@@ -356,27 +356,27 @@ const isLeftWingOpened = (context, payload) => {
   return true;
 };
 
-// Producers
+// Entries
 const updateError = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateLeftWingToClosed = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateLeftWingToOpened = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateLeftWingToFatal = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
-// Actions
+// Async entries
 const sendStateToApiForLeftWing = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 
 const LeftWingMachine = machine(
@@ -427,23 +427,23 @@ const isRightWingOpened = (context, payload) => {
   return true;
 };
 
-// Producers
+// Entries
 const updateRightWingToClosed = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateRightWingToOpened = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateRightWingToFatal = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
-// Actions
+// Async entries
 const sendStateToApiForRightWing = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 
 const RightWingMachine = machine(
@@ -494,13 +494,13 @@ const isTimeStarted = (context, payload) => {
   return true;
 };
 
-// Producers
+// Entries
 const stopTimer = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const startTimer = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
@@ -562,31 +562,31 @@ const getBirdContext = () => ({
   "state": null
 });
 
-// Producers
+// Entries
 const updateBirdToLand = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToTakingoff = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToFlying = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToLanding = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 const updateBirdToFatal = (context, payload) => {
-  // TODO: Implement producer
+  // TODO: Implement entry
   return {...context};
 };
 
-// Actions
+// Async entries
 const sendStateToApiForBird = async (context, payload) => {
-  // TODO: Implement action
+  // TODO: Implement entry
 };
 
 const BirdMachine = machine(

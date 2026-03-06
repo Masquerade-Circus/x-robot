@@ -33,7 +33,7 @@ const getLeftWingContext = () => ({
 const isLeftWingClosed = (context) => context.state === "closed";
 const isLeftWingOpened = (context) => context.state === "opened";
 
-// Producers
+// Entries
 const updateError = (context, payload) => {
   context.error = payload;
 };
@@ -47,7 +47,7 @@ const updateLeftWingToFatal = (context) => {
   context.state = "fatal";
 };
 
-// Actions
+// Async entries
 const sendStateToApiForLeftWing = async (context, payload) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 };
@@ -94,7 +94,7 @@ const getRightWingContext = () => ({
 const isRightWingClosed = (context) => context.state === "closed";
 const isRightWingOpened = (context) => context.state === "opened";
 
-// Producers
+// Entries
 const updateRightWingToClosed = (context) => {
   context.state = "closed";
 };
@@ -105,7 +105,7 @@ const updateRightWingToFatal = (context) => {
   context.state = "fatal";
 };
 
-// Actions
+// Async entries
 const sendStateToApiForRightWing = async (context, payload) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 };
@@ -143,7 +143,7 @@ export const RightWingMachine = machine(
 
 /******************** FlyingTimeCounter Start ********************/
 
-// Producers
+// Entries
 function startTimer(context) {
   context.timer = setInterval(() => {
     context.time = context.time + 1;
@@ -217,7 +217,7 @@ const getBirdContext = () => ({
   state: null
 });
 
-// Producers
+// Entries
 const updateBirdToLand = (context) => {
   context.state = "land";
 };
@@ -234,7 +234,7 @@ const updateBirdToFatal = (context) => {
   context.state = "fatal";
 };
 
-// Actions
+// Async entries
 const sendStateToApiForBird = async (context, payload) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 };

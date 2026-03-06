@@ -7,8 +7,8 @@ A lightweight, developer-friendly finite state machine library for JavaScript an
 - **Entry pulses** — Async state management without boilerplate
 - **Frozen state by default** — No manual cloning required
 - **Native async guards** — No workarounds needed
-- **Small bundle** — 15.57KB core, 110KB with full features
-- **Fast** — 4-23x faster than XState in benchmarks
+- **Small bundle** — 15.06KB core, 54.83KB with full features
+- **Fast** — 1-30x faster than XState in benchmarks
 - **TypeScript** — Full type safety out of the box
 
 ## Quick Start

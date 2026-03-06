@@ -1,30 +1,18 @@
 // lib/machine/interfaces.ts
 var START_EVENT = "__start__";
 
-// lib/utils.ts
+// lib/utils/utils.ts
 function isValidString(str) {
   return str !== null && typeof str === "string" && str.trim().length > 0;
 }
 function isValidObject(obj) {
   return obj !== null && typeof obj === "object";
 }
-function isProducer(producer) {
-  return isValidObject(producer) && "producer" in producer;
-}
-function isProducerWithTransition(producer) {
-  return isProducer(producer) && isValidString(producer.transition);
-}
-function isProducerWithoutTransition(producer) {
-  return !isProducerWithTransition(producer);
-}
 function isEntry(entry) {
   return isValidObject(entry) && "pulse" in entry;
 }
 function isExit(exit) {
   return isValidObject(exit) && "exit" in exit;
-}
-function isAction(action) {
-  return isValidObject(action) && "action" in action;
 }
 function isImmediate(immediate) {
   return isValidObject(immediate) && "immediate" in immediate;
@@ -277,13 +265,243 @@ function canMakeTransition(machine, currentStateObject, transition) {
   return hasTransition(currentStateObject, trimmedTransition);
 }
 var titleToId = (str) => str.toLowerCase().replace(/(\s|\W)/g, "");
+
+// lib/utils/tree-adapter.ts
+var Node = class {
+  nodeType = 0;
+  nodeName = "";
+  nodeValue = "";
+  childNodes = [];
+  parentNode = null;
+  attributes = [];
+  appendChild(node) {
+    if (node) {
+      node.parentNode && node.parentNode.removeChild(node);
+      this.childNodes.push(node);
+      node.parentNode = this;
+    }
+    return node;
+  }
+  removeChild(child) {
+    const idx = this.childNodes.indexOf(child);
+    if (idx > -1) {
+      this.childNodes.splice(idx, 1);
+      child.parentNode = null;
+    }
+    return child;
+  }
+  cloneNode(deep) {
+    const node = new Node();
+    node.nodeType = this.nodeType;
+    node.nodeName = this.nodeName;
+    node.nodeValue = this.nodeValue;
+    if (this.attributes) {
+      for (const attr of this.attributes) {
+        const newAttr = { nodeName: attr.nodeName, nodeValue: attr.nodeValue };
+        node.attributes.push(newAttr);
+      }
+    }
+    if (deep) {
+      for (const child of this.childNodes) {
+        node.appendChild(child.cloneNode(deep));
+      }
+    }
+    return node;
+  }
+};
+var Element = class extends Node {
+  nodeType = 1;
+  get tagName() {
+    return this.nodeName;
+  }
+  set tagName(name) {
+    this.nodeName = name;
+  }
+  getAttribute(name) {
+    for (const attr of this.attributes) {
+      if (attr.nodeName === name) {
+        return attr.nodeValue;
+      }
+    }
+    return null;
+  }
+  setAttribute(name, value) {
+    for (const attr of this.attributes) {
+      if (attr.nodeName === name) {
+        attr.nodeValue = value;
+        return;
+      }
+    }
+    this.attributes.push({ nodeName: name, nodeValue: value });
+  }
+  removeAttribute(name) {
+    const idx = this.attributes.findIndex((a) => a.nodeName === name);
+    if (idx > -1) {
+      this.attributes.splice(idx, 1);
+    }
+  }
+};
+var Text = class extends Node {
+  nodeType = 3;
+  nodeName = "#text";
+  textContent = "";
+  constructor(textContent = "") {
+    super();
+    this.textContent = textContent;
+    this.nodeValue = textContent;
+  }
+};
+var Document = class extends Element {
+  nodeType = 9;
+  nodeName = "#document";
+  createElement(tagName) {
+    const el = new Element();
+    el.nodeName = tagName.toLowerCase();
+    return el;
+  }
+  createTextNode(text) {
+    return new Text(text);
+  }
+};
+function escapeXml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+}
+function domToXml(node, indent = "") {
+  if (node.nodeType === 3) {
+    const text = node.nodeValue || node.textContent || "";
+    return text ? escapeXml(text) : "";
+  }
+  if (node.nodeType === 1) {
+    const el = node;
+    const tagName = el.nodeName.toLowerCase();
+    let xml = indent + "<" + tagName;
+    for (const attr of el.attributes) {
+      xml += ` ${attr.nodeName}="${escapeXml(attr.nodeValue)}"`;
+    }
+    if (el.childNodes.length > 0) {
+      xml += ">\n";
+      for (const child of el.childNodes) {
+        xml += domToXml(child, indent + "  ") + "\n";
+      }
+      xml += indent + "</" + tagName + ">";
+    } else {
+      xml += "/>";
+    }
+    return xml;
+  }
+  return "";
+}
+function domToScxml(node, indent = "") {
+  if (node.nodeType === 3) {
+    const text = node.nodeValue || node.textContent || "";
+    return text ? escapeXml(text) : "";
+  }
+  if (node.nodeType === 1) {
+    const el = node;
+    const tagName = el.nodeName.toLowerCase();
+    let xml = indent + "<" + tagName;
+    for (const attr of el.attributes) {
+      xml += ` ${attr.nodeName}="${escapeXml(attr.nodeValue)}"`;
+    }
+    const childElements = el.childNodes.filter((c) => c.nodeType === 1);
+    const childTexts = el.childNodes.filter((c) => c.nodeType === 3 && c.nodeValue.trim());
+    if (childElements.length > 0) {
+      xml += ">\n";
+      for (const child of el.childNodes) {
+        xml += domToScxml(child, indent + "  ") + "\n";
+      }
+      xml += indent + "</" + tagName + ">";
+    } else if (childTexts.length > 0) {
+      xml += ">";
+      for (const child of el.childNodes) {
+        if (child.nodeType === 3) {
+          xml += escapeXml(child.nodeValue || child.textContent || "");
+        }
+      }
+      xml += "</" + tagName + ">";
+    } else {
+      xml += "/>";
+    }
+    return xml;
+  }
+  return "";
+}
+function parseXml(xmlString) {
+  const doc = new Document();
+  const tagRegex = /<(\/?)([a-zA-Z_][\w.-]*)([^>]*?)(\/?)>/g;
+  let lastIndex = 0;
+  let match;
+  let rootElement = null;
+  const elementStack = [];
+  while ((match = tagRegex.exec(xmlString)) !== null) {
+    if (match.index > lastIndex) {
+      const textContent = xmlString.substring(lastIndex, match.index);
+      if (textContent.trim() && elementStack.length > 0) {
+        elementStack[elementStack.length - 1].appendChild(doc.createTextNode(textContent.trim()));
+      }
+    }
+    const isClosing = match[1] === "/";
+    const tagName = match[2];
+    const attrString = match[3];
+    const isSelfClosing = match[4] === "/";
+    if (!tagName) {
+      lastIndex = match.index + match[0].length;
+      continue;
+    }
+    const attrs = [];
+    const attrRegex = /([a-zA-Z_][\w.-]*)="([^"]*)"/g;
+    let attrMatch;
+    while ((attrMatch = attrRegex.exec(attrString)) !== null) {
+      attrs.push({ nodeName: attrMatch[1], nodeValue: attrMatch[2] });
+    }
+    if (isClosing) {
+      if (elementStack.length > 0) {
+        elementStack.pop();
+      }
+    } else if (isSelfClosing) {
+      const el = doc.createElement(tagName);
+      for (const attr of attrs) {
+        el.setAttribute(attr.nodeName, attr.nodeValue);
+      }
+      if (elementStack.length > 0) {
+        elementStack[elementStack.length - 1].appendChild(el);
+      } else if (!rootElement) {
+        rootElement = el;
+      }
+    } else {
+      const el = doc.createElement(tagName);
+      for (const attr of attrs) {
+        el.setAttribute(attr.nodeName, attr.nodeValue);
+      }
+      if (elementStack.length > 0) {
+        elementStack[elementStack.length - 1].appendChild(el);
+      } else {
+        rootElement = el;
+      }
+      elementStack.push(el);
+    }
+    lastIndex = match.index + match[0].length;
+  }
+  return rootElement || doc.createElement("root");
+}
+function parseScxml(scxmlString) {
+  const cleanString = scxmlString.replace(/^<\?xml[^?]*\?>/, "").trim();
+  return parseXml(cleanString);
+}
+var document = new Document();
 export {
+  Document,
+  Element,
+  Node,
+  Text,
   canMakeTransition,
   deepCloneUnfreeze,
   deepFreeze,
+  document,
+  domToScxml,
+  domToXml,
   hasState,
   hasTransition,
-  isAction,
   isContextDirective,
   isDescriptionDirective,
   isEntry,
@@ -303,14 +521,13 @@ export {
   isParallelImmediateDirective,
   isParallelTransition,
   isPlainObject,
-  isProducer,
-  isProducerWithTransition,
-  isProducerWithoutTransition,
   isShouldFreezeDirective,
   isStateDirective,
   isStatesDirective,
   isTransition,
   isValidObject,
   isValidString,
+  parseScxml,
+  parseXml,
   titleToId
 };

@@ -1,6 +1,5 @@
 /** @module x-robot/utils */
 import {
-  ActionDirective,
   ContextDirective,
   DescriptionDirective,
   ExitDirective,
@@ -15,9 +14,6 @@ import {
   ParallelDirective,
   ParallelImmediateDirective,
   PulseDirective,
-  ProducerDirective,
-  ProducerDirectiveWithTransition,
-  ProducerDirectiveWithoutTransition,
   START_EVENT,
   ShouldFreezeDirective,
   StateDirective,
@@ -25,7 +21,7 @@ import {
   TransitionDirective,
   NestedMachineDirective,
   NestedMachineWithTransitionDirective
-} from "./machine/interfaces";
+} from "../machine/interfaces";
 
 export function isValidString(str?: any): str is string {
   return str !== null && typeof str === "string" && str.trim().length > 0;
@@ -35,32 +31,12 @@ export function isValidObject(obj: any): obj is object {
   return obj !== null && typeof obj === "object";
 }
 
-export function isProducer(producer?: any): producer is ProducerDirective {
-  return isValidObject(producer) && "producer" in producer;
-}
-
-export function isProducerWithTransition(
-  producer?: any
-): producer is ProducerDirectiveWithTransition {
-  return isProducer(producer) && isValidString(producer.transition);
-}
-
-export function isProducerWithoutTransition(
-  producer?: any
-): producer is ProducerDirectiveWithoutTransition {
-  return !isProducerWithTransition(producer);
-}
-
 export function isEntry(entry?: any): entry is PulseDirective {
   return isValidObject(entry) && "pulse" in entry;
 }
 
 export function isExit(exit?: any): exit is { exit: ExitDirective[] } {
   return isValidObject(exit) && "exit" in exit;
-}
-
-export function isAction(action?: any): action is ActionDirective {
-  return isValidObject(action) && "action" in action;
 }
 
 export function isImmediate(immediate?: any): immediate is ImmediateDirective {

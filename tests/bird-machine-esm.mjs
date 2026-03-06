@@ -12,7 +12,7 @@ import {
   nestedGuard,
   parallel,
   primaryState,
-  pulse,
+  entry,
   state,
   successState,
   transition,

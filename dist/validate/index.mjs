@@ -43,7 +43,7 @@ function err(err2) {
 // lib/machine/interfaces.ts
 var START_EVENT = "__start__";
 
-// lib/utils.ts
+// lib/utils/utils.ts
 function isValidString(str) {
   return str !== null && typeof str === "string" && str.trim().length > 0;
 }

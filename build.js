@@ -204,7 +204,7 @@ async function build({
 
   await build({
     globalName: "XRobotUtils",
-    entryPoint: "./lib/utils.ts",
+    entryPoint: "./lib/utils/index.ts",
     outfileName: "./dist/utils",
     minify: false
   });
