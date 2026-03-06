@@ -44,15 +44,15 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 | Module                                                   | Size      |
 | -------------------------------------------------------- | --------- |
 | X-Robot Core                                             | 15.06KB   |
-| + documentate (code gen, diagrams, serialization, SCXML) | +26.11KB     |
+| + documentate (code gen, diagrams, serialization, SCXML) | +27.96KB     |
 | + validate (machine validation)                          | +13.67KB     |
-| **Total**                                                | **54.83KB** |
+| **Total**                                                | **56.69KB** |
 
 ---
 
 ## Features Comparison
 
-| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (54.83KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
+| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (56.69KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
 | ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ |
 | Nested states       | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
 | Parallel states     | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
@@ -63,6 +63,7 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 | Final states        | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
 | invoke()            | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
 | Delayed transitions | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
+| Immediate transitions | ✅                  | ✅                        | ❌                        | ❌                | ❌                 |
 | History tracking    | ✅                  | ✅                        | ❌                        | ❌                | ❌                 |
 | Machine validation  | ❌                  | ✅ validate()             | ❌                        | ❌                | ❌                 |
 | Code generation     | ❌                  | ✅ documentate()          | ❌                        | ❌                | ❌                 |
@@ -77,12 +78,12 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 4.28ms  | 104.64ms | **24.4x faster** |
-| 3k with guards         | 3.66ms  | 40.62ms  | **11.1x faster**  |
-| 10k transitions        | 6.35ms  | 127.72ms | **20.1x faster** |
-| 10k context updates    | 18.37ms | 114.02ms  | **6.2x faster**  |
-| invokeAfter scheduling | 4.49ms  | 16.09ms  | **3.6x faster**  |
-| Delayed transitions    | 58.57ms | 60.50ms  | **1.0x faster**  |
+| 5k transitions         | 4.46ms  | 90.92ms | **20.4x faster** |
+| 3k with guards         | 3.52ms  | 34.47ms  | **9.8x faster**  |
+| 10k transitions        | 4.54ms  | 106.26ms | **23.4x faster** |
+| 10k context updates    | 15.95ms | 110.10ms  | **6.9x faster**  |
+| invokeAfter scheduling | 6.32ms  | 20.64ms  | **3.3x faster**  |
+| Delayed transitions    | 56.19ms | 61.02ms  | **1.1x faster**  |
 
 ---
 
@@ -100,7 +101,7 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 ## Why X-Robot?
 
 1. **2.0-3.9x smaller** bundle size (core only)
-2. **1.0-24.4x faster** performance
+2. **1.1-23.4x faster** performance
 3. **1.2-1.8x less code** to write
 4. **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
 5. **Simpler API** - Declarative, functional approach

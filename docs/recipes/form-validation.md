@@ -11,7 +11,7 @@ Track form states: pristine, dirty, validating, valid, invalid, submitting, succ
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry, guard } from "x-robot";
 
-const validate = (values) => {
+function validateForm(values) {
   const errors = {};
   if (!values.email || !/@/.test(values.email)) {
     errors.email = "Invalid email";
@@ -20,7 +20,25 @@ const validate = (values) => {
     errors.password = "Password must be 8+ characters";
   }
   return errors;
-};
+}
+
+function canSubmitForm(ctx) {
+  const errors = validateForm(ctx.values);
+  return Object.keys(errors).length === 0;
+}
+
+function validateFormInContext(ctx) {
+  ctx.errors = validateForm(ctx.values);
+}
+
+async function submitForm(ctx) {
+  const res = await fetch("/api/submit", {
+    method: "POST",
+    body: JSON.stringify(ctx.values)
+  });
+  if (!res.ok) throw new Error("Submit failed");
+  ctx.submitted = true;
+}
 
 const formMachine = machine(
   "Form",
@@ -33,15 +51,10 @@ const formMachine = machine(
   ),
   state("dirty", 
     transition("validate", "validating"),
-    transition("submit", "validating", guard((ctx) => {
-      const errors = validate(ctx.values);
-      return Object.keys(errors).length === 0;
-    }))
+    transition("submit", "validating", guard(canSubmitForm))
   ),
   state("validating", 
-    entry((ctx) => {
-      ctx.errors = validate(ctx.values);
-    }, "valid", "invalid")
+    entry(validateFormInContext, "valid", "invalid")
   ),
   state("valid", 
     transition("submit", "submitting")
@@ -51,14 +64,7 @@ const formMachine = machine(
     transition("submit", "invalid")
   ),
   state("submitting", 
-    entry(async (ctx) => {
-      const res = await fetch("/api/submit", {
-        method: "POST",
-        body: JSON.stringify(ctx.values)
-      });
-      if (!res.ok) throw new Error("Submit failed");
-      ctx.submitted = true;
-    }, "success", "error")
+    entry(submitForm, "success", "error")
   ),
   state("success", 
     transition("reset", "pristine")
@@ -75,34 +81,61 @@ invoke(formMachine, "validate");
 await invoke(formMachine, "submit");
 ```
 
-## State Diagram
+## Diagram
 
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state pristine
+state dirty
+state validating
+state valid
+state invalid
+state submitting
+state success
+state error
+
+[*] --> pristine
+pristine --> dirty: change
+dirty --> validating: validate
+dirty --> validating: submit
+validating --> valid: done
+validating --> invalid: done
+valid --> submitting: submit
+invalid --> dirty: change
+invalid --> invalid: submit
+submitting --> success: done
+submitting --> error: done
+success --> pristine: reset
+error --> valid: retry
+error --> pristine: reset
 ```
-pristine → dirty → validating → valid → submitting → success
-                ↑            ↓         ↓          |
-                └────────────┴──────────┴──→ error
-                                    ↑      ↓
-                              invalid ←────┘
-```
-
-## Key Points
-
-- Guard on submit prevents invalid submissions
-- Validation runs before submit
-- Error state allows retry
 
 ## With Async Validation
 
 ```javascript
+async function validateOnServer(ctx) {
+  // Server-side validation
+  const res = await fetch("/api/validate", {
+    method: "POST",
+    body: JSON.stringify(ctx.values)
+  });
+  ctx.errors = await res.json();
+}
+
 state("validating", 
-  entry(async (ctx) => {
-    // Server-side validation
-    const res = await fetch("/api/validate", {
-      method: "POST",
-      body: JSON.stringify(ctx.values)
-    });
-    ctx.errors = await res.json();
-  }, "valid", "invalid")
+  entry(validateOnServer, "valid", "invalid")
 )
 ```
 

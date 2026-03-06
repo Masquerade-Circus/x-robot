@@ -18,7 +18,7 @@ import {
   state,
   successState,
   transition,
-  warningState,
+  warningState
 } from "../lib";
 import { describe, it } from "mocha";
 
@@ -43,7 +43,9 @@ describe("X-Robot", () => {
     it("should validate that the machine has a title", () => {
       const myMachine = machine(null);
 
-      expect(() => validate(myMachine)).toThrow("The machine must have a title");
+      expect(() => validate(myMachine)).toThrow(
+        "The machine must have a title"
+      );
     });
   });
 
@@ -57,7 +59,7 @@ describe("X-Robot", () => {
 
     it("should create a context if a context object is passed", () => {
       let myMachineState = {
-        title: "Ok",
+        title: "Ok"
       };
       const myMachine = machine("My machine", init(context(myMachineState)));
 
@@ -66,7 +68,7 @@ describe("X-Robot", () => {
 
     it("should create a context if a function is passed", () => {
       let myMachineState = {
-        title: "Ok",
+        title: "Ok"
       };
 
       const myMachine = machine(
@@ -79,8 +81,14 @@ describe("X-Robot", () => {
 
     it("should throw an error if a context is passed but is not an object or function", () => {
       expect(() => {
-        machine("My machine", init(context("not an object" as {})), state("idle"));
-      }).toThrowError("The context passed to the machine must be an object or a function that returns an object.");
+        machine(
+          "My machine",
+          init(context("not an object" as {})),
+          state("idle")
+        );
+      }).toThrowError(
+        "The context passed to the machine must be an object or a function that returns an object."
+      );
     });
 
     it("should throw an error if a context function is passed but this does not return an object", () => {
@@ -90,7 +98,9 @@ describe("X-Robot", () => {
           init(context(() => "not an object" as {})),
           state("idle")
         );
-      }).toThrowError("The context passed to the machine must be an object or a function that returns an object.");
+      }).toThrowError(
+        "The context passed to the machine must be an object or a function that returns an object."
+      );
     });
   });
 
@@ -115,10 +125,7 @@ describe("X-Robot", () => {
     });
 
     it("should create a frozen context if the context is passed as a function", () => {
-      const myMachine = machine(
-        "My machine",
-        init(context(() => ({})))
-      );
+      const myMachine = machine("My machine", init(context(() => ({}))));
 
       expect(Object.isFrozen(myMachine.context)).toBe(true);
     });
@@ -132,15 +139,25 @@ describe("X-Robot", () => {
     });
 
     it("should throw an error if the context is frozen and try to mutate a deeper property of the context directly", () => {
-      const myMachine = machine("My machine", init(context({ title: { ok: "Ok" } })), state("idle"));
+      const myMachine = machine(
+        "My machine",
+        init(context({ title: { ok: "Ok" } })),
+        state("idle")
+      );
 
       expect(() => {
         myMachine.context.title.ok = "Not ok";
-      }).toThrowError("Cannot assign to read only property 'ok' of object '#<Object>'");
+      }).toThrowError(
+        "Cannot assign to read only property 'ok' of object '#<Object>'"
+      );
     });
 
     it("should throw an error if the context is frozen and try to remove a property of the context directly", () => {
-      const myMachine = machine("My machine", init(context({ title: "Ok" })), state("idle"));
+      const myMachine = machine(
+        "My machine",
+        init(context({ title: "Ok" })),
+        state("idle")
+      );
 
       expect(() => {
         delete myMachine.context.title;
@@ -148,11 +165,37 @@ describe("X-Robot", () => {
     });
 
     it("should throw an error if the context is frozen and try to remove a deeper property of the context directly", () => {
-      const myMachine = machine("My machine", init(context({ title: { ok: "Ok" } })), state("idle"));
+      const myMachine = machine(
+        "My machine",
+        init(context({ title: { ok: "Ok" } })),
+        state("idle")
+      );
 
       expect(() => {
         delete myMachine.context.title.ok;
       }).toThrowError("Cannot delete property 'ok' of #<Object>");
+    });
+
+    it("should handle Symbol in frozen context", () => {
+      const myMachine = machine(
+        "Test",
+        init(initial("idle"), context({ sym: Symbol("test") })),
+        state("idle", transition("next", "done")),
+        state("done")
+      );
+
+      expect(() => invoke(myMachine, "next")).not.toThrow();
+    });
+
+    it("should handle function in frozen context", () => {
+      const myMachine = machine(
+        "Test",
+        init(initial("idle"), context({ fn: () => "test" })),
+        state("idle", transition("next", "done")),
+        state("done")
+      );
+
+      expect(() => invoke(myMachine, "next")).not.toThrow();
     });
   });
 
@@ -170,25 +213,40 @@ describe("X-Robot", () => {
         on: {}, // This object will keep the transitions that are triggered by the state
         run: [], // This is the list of entry pulses that will be executed when the state is entered
         type: "default", // This is the type of the state, it will be used to determine the style of the state in the visualization or to listen to events
-        description: undefined, // This is the description of the state, it will be used to show the description in the visualization
+        description: undefined // This is the description of the state, it will be used to show the description in the visualization
       });
     });
 
     it("should validate that the machine has a initial state", () => {
       expect(() => {
-        validate(machine("My machine", state("loading"), init(initial("notAString" as any))));
+        validate(
+          machine(
+            "My machine",
+            state("loading"),
+            init(initial("notAString" as any))
+          )
+        );
       }).toThrowError("The initial state");
     });
 
     it("should validate that the machine has a state for the initial state", () => {
       expect(() => {
-        validate(machine("My machine", state("loading"), init(initial("idle"))));
+        validate(
+          machine("My machine", state("loading"), init(initial("idle")))
+        );
       }).toThrowError("The initial state 'idle'");
     });
 
     it("should validate that a state has a previous transition to get there if this state is not the initial state", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle"), state("loading")));
+        validate(
+          machine(
+            "My machine",
+            init(initial("idle")),
+            state("idle"),
+            state("loading")
+          )
+        );
       }).toThrowError("The state 'loading' does not have a transition to it.");
     });
 
@@ -196,7 +254,9 @@ describe("X-Robot", () => {
       const myMachine = machine("My machine", state("idle"), state("fatal"));
       expect(() => {
         validate(myMachine);
-      }).not.toThrowError("The state 'fatal' does not have a transition to it.");
+      }).not.toThrowError(
+        "The state 'fatal' does not have a transition to it."
+      );
 
       expect(myMachine.states.fatal).toBeDefined();
     });
@@ -242,34 +302,63 @@ describe("X-Robot", () => {
     });
 
     it("should allow to add a description to a state", () => {
-      const myMachine = machine("My machine", state("idle", description("This is the idle state")));
+      const myMachine = machine(
+        "My machine",
+        state("idle", description("This is the idle state"))
+      );
 
-      expect(myMachine.states.idle.description).toEqual("This is the idle state");
+      expect(myMachine.states.idle.description).toEqual(
+        "This is the idle state"
+      );
     });
   });
 
   // Transitions
   describe("Transitions", () => {
     it("should create a machine with a state that has a transition", () => {
-      const myMachine = machine("My machine", state("idle", transition("load", "loading")));
+      const myMachine = machine(
+        "My machine",
+        state("idle", transition("load", "loading"))
+      );
 
       expect(Object.keys(myMachine.states.idle.on)).toEqual(["load"]);
     });
 
     it("should validate that the transition has an event and a target state", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", transition("load", null))));
-      }).toThrowError("The transition 'load' of the state 'idle' must have a target state.");
+        validate(
+          machine(
+            "My machine",
+            init(initial("idle")),
+            state("idle", transition("load", null))
+          )
+        );
+      }).toThrowError(
+        "The transition 'load' of the state 'idle' must have a target state."
+      );
     });
 
     it("should validate that the target state exists for a transition", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", transition("load", "loading"))));
-      }).toThrowError("The transition 'load' of the state 'idle' has a target state 'loading' that does not exists.");
+        validate(
+          machine(
+            "My machine",
+            init(initial("idle")),
+            state("idle", transition("load", "loading"))
+          )
+        );
+      }).toThrowError(
+        "The transition 'load' of the state 'idle' has a target state 'loading' that does not exists."
+      );
     });
 
     it("should move between states invoking the correct event", () => {
-      const myMachine = machine("My machine", init(initial("idle")), state("idle", transition("load", "loading")), state("loading"));
+      const myMachine = machine(
+        "My machine",
+        init(initial("idle")),
+        state("idle", transition("load", "loading")),
+        state("loading")
+      );
 
       expect(getState(myMachine)).toEqual("idle");
 
@@ -279,14 +368,76 @@ describe("X-Robot", () => {
     });
 
     it("should validate that the event can be handled from the current state", () => {
-      let myMachine = machine("My machine", init(initial("idle")), state("idle", transition("load", "loading")), state("loading"));
+      let myMachine = machine(
+        "My machine",
+        init(initial("idle")),
+        state("idle", transition("load", "loading")),
+        state("loading")
+      );
 
       invoke(myMachine, "load");
       expect(getState(myMachine)).toEqual("loading");
 
       expect(() => {
         invoke(myMachine, "load");
-      }).toThrowError("The transition 'load' does not exist in the current state 'loading'");
+      }).toThrowError(
+        "The transition 'load' does not exist in the current state 'loading'"
+      );
+    });
+
+    it("should throw error when target state doesn't exist", () => {
+      const myMachine = machine(
+        "Test",
+        init(initial("idle")),
+        state("idle", transition("go", "nonexistent")),
+        state("done")
+      );
+
+      expect(() => invoke(myMachine, "go")).toThrow(
+        "Invalid target state 'nonexistent'"
+      );
+    });
+
+    it("should handle concurrent transitions without race conditions", () => {
+      const myMachine = machine(
+        "Test",
+        init(initial("idle")),
+        state("idle", transition("go", "done")),
+        state("done")
+      );
+
+      invoke(myMachine, "go");
+      expect(getState(myMachine)).toBe("done");
+
+      expect(() => invoke(myMachine, "go")).toThrow();
+    });
+
+    it("should throw error when initial state doesn't exist in machine", () => {
+      const myMachine = machine(
+        "Test",
+        init(initial("nonexistent")),
+        state("idle"),
+        state("running")
+      );
+
+      // Should throw when trying to start the machine
+      expect(() => validate(myMachine)).toThrow(
+        "The initial state 'nonexistent' is not in the machine's states."
+      );
+    });
+
+    it("should handle invoke on machine at final state", () => {
+      const myMachine = machine(
+        "Test",
+        init(initial("idle")),
+        state("idle", transition("end", "done")),
+        state("done")
+      );
+
+      invoke(myMachine, "end");
+      expect(getState(myMachine)).toBe("done");
+
+      expect(() => invoke(myMachine, "end")).toThrow();
     });
   });
 
@@ -298,35 +449,60 @@ describe("X-Robot", () => {
   // Immediate transitions
   describe("Immediate transitions", () => {
     it("should create a machine with a state that has a immediate transition", () => {
-      const myMachine = machine("My machine", init(initial("idle")), state("idle", immediate("loading")), state("loading"));
+      const myMachine = machine(
+        "My machine",
+        init(initial("idle")),
+        state("idle", immediate("loading")),
+        state("loading")
+      );
 
       expect(myMachine.states.idle.on).toEqual({
         loading: {
           guards: [],
           target: "loading",
-          transition: "loading",
-        },
+          transition: "loading"
+        }
       });
-      expect(myMachine.states.idle.immediate).toEqual([{ immediate: "loading", guards: [] }]);
+      expect(myMachine.states.idle.immediate).toEqual([
+        { immediate: "loading", guards: [] }
+      ]);
     });
 
     it("should validate that the immediate transition has a target state", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", immediate(null))));
-      }).toThrowError("The immediate transition of the state 'idle' must have a target state.");
+        validate(
+          machine(
+            "My machine",
+            init(initial("idle")),
+            state("idle", immediate(null))
+          )
+        );
+      }).toThrowError(
+        "The immediate transition of the state 'idle' must have a target state."
+      );
     });
 
     it("should validate that the target state exists for a immediate transition", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", immediate("loading"))));
-      }).toThrowError("The immediate transition of the state 'idle' has a target state 'loading' that does not exists.");
+        validate(
+          machine(
+            "My machine",
+            init(initial("idle")),
+            state("idle", immediate("loading"))
+          )
+        );
+      }).toThrowError(
+        "The immediate transition of the state 'idle' has a target state 'loading' that does not exists."
+      );
     });
 
     it("should move between transitions with the correct event for immediate transitions", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("load", "loading")), state("loading", immediate("loaded")), state("loaded")
+        state("idle", transition("load", "loading")),
+        state("loading", immediate("loaded")),
+        state("loaded")
       );
 
       invoke(myMachine, "load");
@@ -363,14 +539,22 @@ describe("X-Robot", () => {
         { pulse: setTitle },
         { pulse: updateTitle },
         { pulse: expect.any(Function) },
-        { pulse: expect.any(Function) },
+        { pulse: expect.any(Function) }
       ]);
     });
 
     it("should validate that the pulse has a valid function", () => {
       expect(() => {
-        validate(machine("My machine", init(initial("idle")), state("idle", entry(null))));
-      }).toThrowError("The pulse 'null' of the state 'idle' must be a function.");
+        validate(
+          machine(
+            "My machine",
+            init(initial("idle")),
+            state("idle", entry(null))
+          )
+        );
+      }).toThrowError(
+        "The pulse 'null' of the state 'idle' must be a function."
+      );
     });
 
     it("should use the pulse to update the context returning a new context", () => {
@@ -380,7 +564,8 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle))
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle))
       );
 
       let originalState = myMachine.context;
@@ -398,7 +583,8 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle))
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle))
       );
 
       let originalState = myMachine.context;
@@ -416,7 +602,8 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle))
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle))
       );
 
       expect(() => {
@@ -432,7 +619,9 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), transition("error", "error")), state("error")
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle), transition("error", "error")),
+        state("error")
       );
 
       invoke(myMachine, "updateTitle", "Hello");
@@ -447,7 +636,9 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal")
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle)),
+        state("fatal")
       );
 
       invoke(myMachine, "updateTitle", "Hello");
@@ -462,7 +653,9 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal")
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle)),
+        state("fatal")
       );
 
       try {
@@ -480,10 +673,13 @@ describe("X-Robot", () => {
         validate(
           machine(
             "My machine",
-            state("idle", transition("updateTitle", "updated")), state("updated", transition("idle", "idle"), entry(updateTitle))
+            state("idle", transition("updateTitle", "updated")),
+            state("updated", transition("idle", "idle"), entry(updateTitle))
           )
         );
-      }).toThrowError("The pulse 'updateTitle' of the state 'updated' must be created before any transitions.");
+      }).toThrowError(
+        "The pulse 'updateTitle' of the state 'updated' must be created before any transitions."
+      );
     });
   });
 
@@ -516,7 +712,7 @@ describe("X-Robot", () => {
         { pulse: setTitle },
         { pulse: updateTitle },
         { pulse: expect.any(Function) },
-        { pulse: expect.any(Function) },
+        { pulse: expect.any(Function) }
       ]);
     });
 
@@ -531,7 +727,8 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updating")), state("updating", entry(setTitle), immediate("idle"))
+        state("idle", transition("updateTitle", "updating")),
+        state("updating", entry(setTitle), immediate("idle"))
       );
 
       // The machine is in the idle state
@@ -562,7 +759,8 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), immediate("idle")),
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle), immediate("idle")),
         init(initial("idle"))
       );
 
@@ -613,7 +811,8 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), immediate("idle")),
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle), immediate("idle")),
         init(initial("idle"))
       );
 
@@ -621,7 +820,9 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // Invoke the transition and wait for the entry pulses to be resolved
-      await expect(invoke(myMachine, "updateTitle")).rejects.toThrow(new Error("Error"));
+      await expect(invoke(myMachine, "updateTitle")).rejects.toThrow(
+        new Error("Error")
+      );
     });
 
     it("should go to an error state if a fatal error occurred in an async entry pulse and we have an error transition", async () => {
@@ -631,7 +832,9 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle), transition("error", "error")), state("error"),
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle), transition("error", "error")),
+        state("error"),
         init(initial("idle"))
       );
 
@@ -652,7 +855,9 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal"),
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle)),
+        state("fatal"),
         init(initial("idle"))
       );
 
@@ -673,7 +878,9 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle)), state("fatal"),
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle)),
+        state("fatal"),
         init(initial("idle"))
       );
 
@@ -695,22 +902,24 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle, "done")), state("done"),
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle, "done")),
+        state("done"),
         init(initial("idle"))
       );
 
       expect(myMachine.states.updated.run).toHaveLength(1);
       expect(myMachine.states.updated.run[0]).toEqual({
         pulse: setTitle,
-        success: "done",
+        success: "done"
       });
       // The transition is created if does not exists in the state
       expect(myMachine.states.updated.on).toEqual({
         done: {
           guards: [],
           target: "done",
-          transition: "done",
-        },
+          transition: "done"
+        }
       });
     });
 
@@ -721,7 +930,9 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle, "done")), state("done"),
+        state("idle", transition("updateTitle", "updated")),
+        state("updated", entry(setTitle, "done")),
+        state("done"),
         init(initial("idle"))
       );
 
@@ -754,7 +965,11 @@ describe("X-Robot", () => {
         "My machine",
         init(initial("idle")),
         state("idle", transition("updateTitle", "updated")),
-        state("updated", entry(setTitle, entry(updateContext, "done")), transition("error", "error")),
+        state(
+          "updated",
+          entry(setTitle, entry(updateContext, "done")),
+          transition("error", "error")
+        ),
         state("done"),
         state("error")
       );
@@ -782,10 +997,14 @@ describe("X-Robot", () => {
         validate(
           machine(
             "My machine",
-            state("idle", transition("updateTitle", "updated")), state("updated", entry(setTitle, "done", "fatal")), state("done")
+            state("idle", transition("updateTitle", "updated")),
+            state("updated", entry(setTitle, "done", "fatal")),
+            state("done")
           )
         );
-      }).toThrow("The pulse 'setTitle' of the state 'updated' has a failure transition 'fatal' that does not exists.");
+      }).toThrow(
+        "The pulse 'setTitle' of the state 'updated' has a failure transition 'fatal' that does not exists."
+      );
     });
   });
 
@@ -796,22 +1015,30 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated", guard(validateTitle))), state("updated"),
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle))
+        ),
+        state("updated"),
         init(initial("idle"))
       );
 
       expect(myMachine.states.idle.on.updateTitle.guards).toHaveLength(1);
       expect(myMachine.states.idle.on.updateTitle.guards[0]).toEqual({
-        guard: validateTitle,
+        guard: validateTitle
       });
     });
 
     it("should move to the state if the guard returns true", () => {
-      let validateTitle = (context, payload) => typeof payload === "string" && payload.length > 0;
+      let validateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length > 0;
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated", guard(validateTitle))),
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle))
+        ),
         state(
           "updated",
           entry((context) => ({ title: context.title }))
@@ -830,11 +1057,15 @@ describe("X-Robot", () => {
     });
 
     it("should not move to the next state if the guard returns other than true", () => {
-      let validateTitle = (context, payload) => typeof payload === "string" && payload.length > 0;
+      let validateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length > 0;
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated", guard(validateTitle))),
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle))
+        ),
         state(
           "updated",
           entry((context) => ({ title: context.title }))
@@ -859,12 +1090,18 @@ describe("X-Robot", () => {
     });
 
     it("should not change the state if the guard returns other than true", () => {
-      let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
+      let validateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length > 0
+          ? true
+          : "Must pass a valid title";
 
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle))),
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle))
+        ),
         state(
           "updated",
           entry((context, payload) => ({ ...context, title: payload }))
@@ -896,7 +1133,11 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated", guard(validateTitle))), state("updated"),
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle))
+        ),
+        state("updated"),
         init(initial("idle"))
       );
 
@@ -904,7 +1145,9 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // Invoke the transition
-      expect(() => invoke(myMachine, "updateTitle", "Title")).toThrow(new Error("Error"));
+      expect(() => invoke(myMachine, "updateTitle", "Title")).toThrow(
+        new Error("Error")
+      );
 
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
@@ -920,7 +1163,13 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated", guard(validateTitle)), transition("error", "error")), state("updated"), state("error"),
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle)),
+          transition("error", "error")
+        ),
+        state("updated"),
+        state("error"),
         init(initial("idle"))
       );
 
@@ -928,7 +1177,9 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // Invoke the transition
-      expect(() => invoke(myMachine, "updateTitle", "Title")).not.toThrow(new Error("Error"));
+      expect(() => invoke(myMachine, "updateTitle", "Title")).not.toThrow(
+        new Error("Error")
+      );
 
       // The machine is in the error state
       expect(getState(myMachine)).toEqual("error");
@@ -941,7 +1192,12 @@ describe("X-Robot", () => {
 
       const myMachine = machine(
         "My machine",
-        state("idle", transition("updateTitle", "updated", guard(validateTitle))), state("updated"), state("fatal"),
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle))
+        ),
+        state("updated"),
+        state("fatal"),
         init(initial("idle"))
       );
 
@@ -949,7 +1205,9 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // Invoke the transition
-      expect(() => invoke(myMachine, "updateTitle", "Title")).not.toThrow(new Error("Error"));
+      expect(() => invoke(myMachine, "updateTitle", "Title")).not.toThrow(
+        new Error("Error")
+      );
 
       // The machine is in the fatal state
       expect(getState(myMachine)).toEqual("fatal");
@@ -963,7 +1221,12 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle))), state("updated"), state("fatal")
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(validateTitle))
+        ),
+        state("updated"),
+        state("fatal")
       );
 
       // The machine is in the idle state
@@ -980,7 +1243,10 @@ describe("X-Robot", () => {
     });
 
     it("should update the context with the guard failure pulse if the guard returns other than true", () => {
-      let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
+      let validateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length > 0
+          ? true
+          : "Must pass a valid title";
 
       const myMachine = machine(
         "My machine",
@@ -998,7 +1264,11 @@ describe("X-Robot", () => {
         ),
         state(
           "updated",
-          entry((context, payload) => ({ ...context, title: payload, error: null }))
+          entry((context, payload) => ({
+            ...context,
+            title: payload,
+            error: null
+          }))
         )
       );
 
@@ -1021,7 +1291,10 @@ describe("X-Robot", () => {
     });
 
     it("should throw a fatal error if an error occurred in the guard failure pulse", () => {
-      let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
+      let validateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length > 0
+          ? true
+          : "Must pass a valid title";
       let guardFailurePulse = (context, payload) => {
         throw new Error("Error");
       };
@@ -1029,10 +1302,21 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailurePulse)))),
+        state(
+          "idle",
+          transition(
+            "updateTitle",
+            "updated",
+            guard(validateTitle, entry(guardFailurePulse))
+          )
+        ),
         state(
           "updated",
-          entry((context, payload) => ({ ...context, title: payload, error: null }))
+          entry((context, payload) => ({
+            ...context,
+            title: payload,
+            error: null
+          }))
         )
       );
 
@@ -1040,7 +1324,9 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // Invoke the transition
-      expect(() => invoke(myMachine, "updateTitle", null)).toThrow(new Error("Error"));
+      expect(() => invoke(myMachine, "updateTitle", null)).toThrow(
+        new Error("Error")
+      );
 
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
@@ -1050,7 +1336,10 @@ describe("X-Robot", () => {
     });
 
     it("should go to an error state if an error occurred in the guard failure pulse and we have an error transition", () => {
-      let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
+      let validateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length > 0
+          ? true
+          : "Must pass a valid title";
       let guardFailurePulse = (context, payload) => {
         throw new Error("Error");
       };
@@ -1058,7 +1347,15 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailurePulse))), transition("error", "error")),
+        state(
+          "idle",
+          transition(
+            "updateTitle",
+            "updated",
+            guard(validateTitle, entry(guardFailurePulse))
+          ),
+          transition("error", "error")
+        ),
         state("updated"),
         state("error")
       );
@@ -1067,14 +1364,19 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // Invoke the transition
-      expect(() => invoke(myMachine, "updateTitle", null)).not.toThrow(new Error("Error"));
+      expect(() => invoke(myMachine, "updateTitle", null)).not.toThrow(
+        new Error("Error")
+      );
 
       // The machine is in the error state
       expect(getState(myMachine)).toEqual("error");
     });
 
     it("should move to a fatal state if an error occurred in the guard failure pulse and we have a fatal state", () => {
-      let validateTitle = (context, payload) => (typeof payload === "string" && payload.length > 0 ? true : "Must pass a valid title");
+      let validateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length > 0
+          ? true
+          : "Must pass a valid title";
       let guardFailurePulse = (context, payload) => {
         throw new Error("Error");
       };
@@ -1082,10 +1384,21 @@ describe("X-Robot", () => {
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", transition("updateTitle", "updated", guard(validateTitle, entry(guardFailurePulse)))),
+        state(
+          "idle",
+          transition(
+            "updateTitle",
+            "updated",
+            guard(validateTitle, entry(guardFailurePulse))
+          )
+        ),
         state(
           "updated",
-          entry((context, payload) => ({ ...context, title: payload, error: null }))
+          entry((context, payload) => ({
+            ...context,
+            title: payload,
+            error: null
+          }))
         ),
         state("fatal")
       );
@@ -1094,7 +1407,9 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // Invoke the transition
-      expect(() => invoke(myMachine, "updateTitle", null)).not.toThrow(new Error("Error"));
+      expect(() => invoke(myMachine, "updateTitle", null)).not.toThrow(
+        new Error("Error")
+      );
 
       // The machine is in the error state
       expect(getState(myMachine)).toEqual("fatal");
@@ -1109,14 +1424,26 @@ describe("X-Robot", () => {
     // Should be able to get the history of the machine
     it("should be able to get the history of the machine", async () => {
       let updateTitle = (context, payload) => ({ ...context, title: payload });
-      let saveTitle = (context, payload) => new Promise((resolve) => setTimeout(() => resolve(1), 100));
-      let canUpdateTitle = (context, payload) => (typeof payload === "string" && payload.length ? true : "Must pass a valid title");
+      let saveTitle = (context, payload) =>
+        new Promise((resolve) => setTimeout(() => resolve(1), 100));
+      let canUpdateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length
+          ? true
+          : "Must pass a valid title";
 
       const myMachine = machine(
         "My machine",
         init(initial("idle"), history(20)),
-        state("idle", transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
+        state(
+          "idle",
+          transition("updateTitle", "updated", guard(canUpdateTitle))
+        ),
+        state(
+          "updated",
+          entry(saveTitle),
+          entry(updateTitle),
+          immediate("idle")
+        )
       );
 
       // Invoke the transition with an invalid title
@@ -1143,7 +1470,7 @@ describe("X-Robot", () => {
         "Pulse: saveTitle", // Runs the async pulse
         "Pulse: updateTitle", // Runs the sync pulse
         "Transition: idle", // The immediate transition
-        "State: idle", // The machine goes back to the initial state
+        "State: idle" // The machine goes back to the initial state
       ]);
     });
   });
@@ -1153,14 +1480,28 @@ describe("X-Robot", () => {
     // Should be able to start the machine
     it("should be able to start the machine", async () => {
       let updateTitle = (context, payload) => ({ ...context, title: payload });
-      let saveTitle = (context, payload) => new Promise((resolve) => setTimeout(() => resolve(1), 100));
-      let canUpdateTitle = (context, payload) => (typeof payload === "string" && payload.length ? true : "Must pass a valid title");
+      let saveTitle = (context, payload) =>
+        new Promise((resolve) => setTimeout(() => resolve(1), 100));
+      let canUpdateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length
+          ? true
+          : "Must pass a valid title";
 
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", entry(saveTitle), entry(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
+        state(
+          "idle",
+          entry(saveTitle),
+          entry(updateTitle),
+          transition("updateTitle", "updated", guard(canUpdateTitle))
+        ),
+        state(
+          "updated",
+          entry(saveTitle),
+          entry(updateTitle),
+          immediate("idle")
+        )
       );
 
       // Check the machine is in the initial state
@@ -1174,19 +1515,37 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // The history should have the initial state, the idle async pulse and the idle sync pulse
-      expect(myMachine.history).toEqual(["State: idle", "Pulse: saveTitle", "Pulse: updateTitle"]);
+      expect(myMachine.history).toEqual([
+        "State: idle",
+        "Pulse: saveTitle",
+        "Pulse: updateTitle"
+      ]);
     });
 
     it("should not be able to start the machine if already started it", async () => {
       let updateTitle = (context, payload) => ({ ...context, title: payload });
-      let saveTitle = (context, payload) => new Promise((resolve) => setTimeout(() => resolve(1), 100));
-      let canUpdateTitle = (context, payload) => (typeof payload === "string" && payload.length ? true : "Must pass a valid title");
+      let saveTitle = (context, payload) =>
+        new Promise((resolve) => setTimeout(() => resolve(1), 100));
+      let canUpdateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length
+          ? true
+          : "Must pass a valid title";
 
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", entry(saveTitle), entry(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
+        state(
+          "idle",
+          entry(saveTitle),
+          entry(updateTitle),
+          transition("updateTitle", "updated", guard(canUpdateTitle))
+        ),
+        state(
+          "updated",
+          entry(saveTitle),
+          entry(updateTitle),
+          immediate("idle")
+        )
       );
 
       // Check the machine is in the initial state
@@ -1200,28 +1559,52 @@ describe("X-Robot", () => {
       expect(getState(myMachine)).toEqual("idle");
 
       // The history should have the initial state, the idle async pulse and the idle sync pulse
-      expect(myMachine.history).toEqual(["State: idle", "Pulse: saveTitle", "Pulse: updateTitle"]);
+      expect(myMachine.history).toEqual([
+        "State: idle",
+        "Pulse: saveTitle",
+        "Pulse: updateTitle"
+      ]);
 
       // Try to start the machine again
-      await expect(() => start(myMachine, "Initial title")).toThrow(new Error("The machine has already been started."));
+      await expect(() => start(myMachine, "Initial title")).toThrow(
+        new Error("The machine has already been started.")
+      );
 
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
 
       // The history should not be updated
-      expect(myMachine.history).toEqual(["State: idle", "Pulse: saveTitle", "Pulse: updateTitle"]);
+      expect(myMachine.history).toEqual([
+        "State: idle",
+        "Pulse: saveTitle",
+        "Pulse: updateTitle"
+      ]);
     });
 
     it("should not be able to start the machine if already moved it to another state", async () => {
       let updateTitle = (context, payload) => ({ ...context, title: payload });
-      let saveTitle = (context, payload) => new Promise((resolve) => setTimeout(() => resolve(1), 100));
-      let canUpdateTitle = (context, payload) => (typeof payload === "string" && payload.length ? true : "Must pass a valid title");
+      let saveTitle = (context, payload) =>
+        new Promise((resolve) => setTimeout(() => resolve(1), 100));
+      let canUpdateTitle = (context, payload) =>
+        typeof payload === "string" && payload.length
+          ? true
+          : "Must pass a valid title";
 
       const myMachine = machine(
         "My machine",
         init(initial("idle")),
-        state("idle", entry(saveTitle), entry(updateTitle), transition("updateTitle", "updated", guard(canUpdateTitle))),
-        state("updated", entry(saveTitle), entry(updateTitle), immediate("idle"))
+        state(
+          "idle",
+          entry(saveTitle),
+          entry(updateTitle),
+          transition("updateTitle", "updated", guard(canUpdateTitle))
+        ),
+        state(
+          "updated",
+          entry(saveTitle),
+          entry(updateTitle),
+          immediate("idle")
+        )
       );
 
       // Check the machine is in the initial state
@@ -1245,11 +1628,13 @@ describe("X-Robot", () => {
         "Transition: idle",
         "State: idle",
         "Pulse: saveTitle",
-        "Pulse: updateTitle",
+        "Pulse: updateTitle"
       ]);
 
       // Try to start the machine again
-      await expect(() => start(myMachine, "Initial title")).toThrow(new Error("The machine has already been started."));
+      await expect(() => start(myMachine, "Initial title")).toThrow(
+        new Error("The machine has already been started.")
+      );
 
       // The machine is in the idle state
       expect(getState(myMachine)).toEqual("idle");
@@ -1265,7 +1650,7 @@ describe("X-Robot", () => {
         "Transition: idle",
         "State: idle",
         "Pulse: saveTitle",
-        "Pulse: updateTitle",
+        "Pulse: updateTitle"
       ]);
     });
   });

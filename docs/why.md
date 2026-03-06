@@ -118,9 +118,9 @@ transition("submit", "validating", guard(async (ctx) => {
 
 ### 4. Small Bundle, High Performance
 
-- Core: 15.57KB minified
-- With modules: 110KB (documentate, validate)
-- Performance: 4-23x faster than XState
+- Core: 15.06KB minified
+- With modules: 54.83KB (documentate, validate)
+- Performance: 1-24x faster than XState
 
 ### 5. Built-in Tools
 

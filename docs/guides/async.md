@@ -7,14 +7,16 @@ X-Robot's Pulse concept makes async state management simple. One function handle
 ```javascript
 import { machine, state, transition, invoke, entry, initial, init, context } from "x-robot";
 
+async function fetchData(ctx) {
+  const res = await fetch("/api/data");
+  ctx.data = await res.json();
+}
+
 const fetchMachine = machine(
   "Fetch",
   init(initial("idle"), context({ data: null, error: null })),
   state("idle", transition("fetch", "loading")),
-  state("loading", entry(async (ctx) => {
-    const res = await fetch("/api/data");
-    ctx.data = await res.json();
-  }, "success", "error")),
+  state("loading", entry(fetchData, "success", "error")),
   state("success"),
   state("error")
 );
@@ -47,19 +49,21 @@ console.log(fetchMachine.current); // "success" or "error"
 ### Automatic Error Transitions
 
 ```javascript
-state("loading", entry(async (ctx) => {
+async function fetchWithErrorCheck(ctx) {
   const res = await fetch("/api/data");
   if (!res.ok) {
     throw new Error("HTTP " + res.status);
   }
   ctx.data = await res.json();
-}, "success", "error"))
+}
+
+state("loading", entry(fetchWithErrorCheck, "success", "error"))
 ```
 
 ### Manual Error Handling
 
 ```javascript
-state("loading", entry(async (ctx) => {
+async function fetchWithTryCatch(ctx) {
   try {
     const res = await fetch("/api/data");
     ctx.data = await res.json();
@@ -67,25 +71,33 @@ state("loading", entry(async (ctx) => {
     ctx.error = e.message;
     throw e; // Trigger failure transition
   }
-}, "success", "error"))
+}
+
+state("loading", entry(fetchWithTryCatch, "success", "error"))
 ```
 
 ## Multiple Async Operations
 
 ```javascript
+async function runStep1(ctx) {
+  await step1(ctx);
+}
+
+async function runStep2(ctx) {
+  await step2(ctx);
+}
+
+async function runStep3(ctx) {
+  await step3(ctx);
+}
+
 const workflow = machine(
   "Workflow",
   init(initial("idle")),
   state("idle", transition("start", "step1")),
-  state("step1", entry(async (ctx) => {
-    await step1(ctx);
-  }, "step2", "error")),
-  state("step2", entry(async (ctx) => {
-    await step2(ctx);
-  }, "step3", "error")),
-  state("step3", entry(async (ctx) => {
-    await step3(ctx);
-  }, "complete", "error")),
+  state("step1", entry(runStep1, "step2", "error")),
+  state("step2", entry(runStep2, "step3", "error")),
+  state("step3", entry(runStep3, "complete", "error")),
   state("complete"),
   state("error")
 );
@@ -94,23 +106,25 @@ const workflow = machine(
 ## Retrying Failed Operations
 
 ```javascript
+async function runWithRetry(ctx) {
+  let attempts = 0;
+  while (attempts < 3) {
+    try {
+      await riskyOperation();
+      return;
+    } catch (e) {
+      attempts++;
+      if (attempts >= 3) throw e;
+      await delay(1000 * attempts);
+    }
+  }
+}
+
 const withRetry = machine(
   "Retry",
   init(initial("idle")),
   state("idle", transition("start", "running")),
-  state("running", entry(async (ctx) => {
-    let attempts = 0;
-    while (attempts < 3) {
-      try {
-        await riskyOperation();
-        return;
-      } catch (e) {
-        attempts++;
-        if (attempts >= 3) throw e;
-        await delay(1000 * attempts);
-      }
-    }
-  }, "success", "failed")),
+  state("running", entry(runWithRetry, "success", "failed")),
   state("success"),
   state("failed", transition("retry", "running"))
 );
@@ -121,10 +135,12 @@ const withRetry = machine(
 Combine async operations with guards:
 
 ```javascript
-state("idle", transition("proceed", "active", guard(async (ctx) => {
+async function checkUserPermission(ctx) {
   const permission = await checkPermission(ctx.userId);
   return permission.granted;
-})))
+}
+
+state("idle", transition("proceed", "active", guard(checkUserPermission)))
 ```
 
 ## Comparison: X-Robot vs Redux
@@ -133,19 +149,29 @@ Redux requires multiple functions:
 
 ```javascript
 // Redux: Action + Thunk + Reducer
-const fetchRequest = () => ({ type: "FETCH_REQUEST" });
-const fetchSuccess = (data) => ({ type: "FETCH_SUCCESS", payload: data });
-const fetchFailure = (error) => ({ type: "FETCH_FAILURE", payload: error });
+function fetchRequest() {
+  return { type: "FETCH_REQUEST" };
+}
 
-const fetchThunk = () => async (dispatch) => {
-  dispatch(fetchRequest());
-  try {
-    const data = await api.fetch();
-    dispatch(fetchSuccess(data));
-  } catch (error) {
-    dispatch(fetchFailure(error));
-  }
-};
+function fetchSuccess(data) {
+  return { type: "FETCH_SUCCESS", payload: data };
+}
+
+function fetchFailure(error) {
+  return { type: "FETCH_FAILURE", payload: error };
+}
+
+function fetchThunk() {
+  return async function(dispatch) {
+    dispatch(fetchRequest());
+    try {
+      const data = await api.fetch();
+      dispatch(fetchSuccess(data));
+    } catch (error) {
+      dispatch(fetchFailure(error));
+    }
+  };
+}
 
 function reducer(state, action) {
   // Handle each action type
@@ -156,9 +182,11 @@ X-Robot: Single function:
 
 ```javascript
 // X-Robot: One pulse
-state("loading", entry(async (ctx) => {
+async function loadData(ctx) {
   ctx.data = await api.fetch();
-}, "success", "error"))
+}
+
+state("loading", entry(loadData, "success", "error"))
 ```
 
 ## Best Practices
@@ -172,4 +200,3 @@ state("loading", entry(async (ctx) => {
 
 - [Guards Guide](./guards.md) — Conditional transitions
 - [Concepts: Pulse](../concepts/pulse.md) — Core concept
-- [Recipes: API Fetch](../recipes/api-fetch.md) — Real-world example

@@ -1252,6 +1252,11 @@ var VISUALIZATION_LEVEL = {
   LOW: "low",
   HIGH: "high"
 };
+var MERMAID_THEME = {
+  DEFAULT: "default",
+  NEUTRAL: "neutral",
+  DARK: "dark"
+};
 var toCammelCase2 = (str) => str.replace(/(^\w)/g, ($1) => $1.toUpperCase()).replace(/\s(.)/g, ($1) => $1.toUpperCase()).replace(/\W/g, "");
 function getInnerPlantUmlCode(serializedMachine, options, parentName = "", childLevel = 0) {
   let plantUmlCode = "";
@@ -1592,6 +1597,119 @@ async function createImageFromPlantUmlCode(plantUmlCode, type, options = {}) {
   import_fs.default.unlinkSync(plantUmlCodeFilePath);
   return plantUmlImageFile;
 }
+function getInnerMermaidCode(serializedMachine, options, parentName = "", childLevel = 0) {
+  let mermaidCode = "";
+  let { level } = options;
+  const isChild = childLevel > 0;
+  const space = Array.from({ length: childLevel }).map(() => "  ").join("");
+  if (!isChild) {
+    mermaidCode += `classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+`;
+    mermaidCode += `classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+`;
+    mermaidCode += `classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+`;
+    mermaidCode += `classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+`;
+    mermaidCode += `classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+`;
+    mermaidCode += `classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+`;
+  }
+  const stateNames = {};
+  const stateTypes = {};
+  for (const stateName in serializedMachine.states) {
+    stateNames[stateName] = isChild ? `${parentName}${stateName}` : stateName;
+    stateTypes[stateName] = serializedMachine.states[stateName].type || "default";
+  }
+  for (const stateName in serializedMachine.states) {
+    const state = serializedMachine.states[stateName];
+    const stateId = stateNames[stateName];
+    const stateType = stateTypes[stateName];
+    mermaidCode += `state ${stateId}
+`;
+  }
+  if (!isChild) {
+    for (const stateName in serializedMachine.states) {
+      const stateId = stateNames[stateName];
+      const stateType = stateTypes[stateName];
+      if (stateType && stateType !== "default") {
+        mermaidCode += `class ${stateId} ${stateType}
+`;
+      }
+    }
+    mermaidCode += "\n";
+  }
+  if (level === "high") {
+    for (const stateName in serializedMachine.states) {
+      const state = serializedMachine.states[stateName];
+      const stateId = stateNames[stateName];
+      if (state.description) {
+        mermaidCode += `${stateId}: ${state.description}
+`;
+      }
+      if (state.run && state.run.length > 0) {
+        let asciiTree = getAsciiTree(state.run);
+        if (asciiTree.length > 0) {
+          asciiTree = asciiTree.replace(/\\n/g, "<br>").replace(/:/g, "-");
+          mermaidCode += `${stateId}: ${asciiTree}
+`;
+        }
+      }
+    }
+    mermaidCode += "\n";
+  }
+  if (serializedMachine.initial && !isChild) {
+    mermaidCode += `[*] --> ${stateNames[serializedMachine.initial] || serializedMachine.initial}
+`;
+  }
+  for (const stateName in serializedMachine.states) {
+    const state = serializedMachine.states[stateName];
+    const fromState = stateNames[stateName];
+    if (state.on) {
+      for (const event in state.on) {
+        const transition = state.on[event];
+        const toState = stateNames[transition.target] || transition.target;
+        let label = event;
+        if (level === "high" && transition.guards && transition.guards.length > 0) {
+          let guardsTree = getAsciiTree(transition.guards);
+          if (guardsTree.length > 0) {
+            guardsTree = guardsTree.replace(/\\n/g, "<br>").replace(/:/g, "-");
+            label += `<br>${guardsTree}`;
+          }
+        }
+        const isImmediate2 = state.immediate && state.immediate.find((immediate) => immediate.immediate === event);
+        const arrowStyle = isImmediate2 ? "dashed" : "";
+        mermaidCode += `${fromState} --> ${toState}: ${label}
+`;
+      }
+    }
+  }
+  return mermaidCode;
+}
+function getMermaidCode(serializedMachine, optionsOrLevel = MERMAID_THEME.DEFAULT) {
+  let opts = typeof optionsOrLevel === "string" ? { level: optionsOrLevel } : optionsOrLevel;
+  let { theme } = opts;
+  let mermaidCode = "";
+  if (serializedMachine.title) {
+    mermaidCode += `---
+title: ${serializedMachine.title}
+---
+
+`;
+  }
+  mermaidCode += `stateDiagram-v2
+
+`;
+  mermaidCode += getInnerMermaidCode(serializedMachine, opts);
+  if (theme && theme !== MERMAID_THEME.DEFAULT) {
+    mermaidCode += `
+%% Theme: ${theme}
+`;
+  }
+  return mermaidCode;
+}
 function getPlantUmlCodeFromMachine(machine, optionsOrLevel = VISUALIZATION_LEVEL.LOW) {
   return getPlantUmlCode(serialize(machine), optionsOrLevel);
 }
@@ -1723,6 +1841,9 @@ async function documentate(input, options) {
   }
   if (format === "all" || format === "plantuml") {
     result.plantuml = getPlantUmlCode(serialized, { level, skinparam });
+  }
+  if (format === "all" || format === "mermaid") {
+    result.mermaid = getMermaidCode(serialized, { level, skinparam });
   }
   if ((format === "all" || format === "svg") && serialized) {
     if (machine) {

@@ -8,7 +8,7 @@ import { isMachine } from "../utils";
 import { serialize } from "./serialize";
 import { generateFromSerializedMachine, Format } from "./generate";
 import { toSCXML, fromSCXML } from "./scxml";
-import { getPlantUmlCode, createSvgFromMachine, createPngFromMachine, createSvgFromPlantUmlCode, createPngFromPlantUmlCode, createSvgFromSerializedMachine, createPngFromSerializedMachine } from "./visualize";
+import { getPlantUmlCode, getMermaidCode, createSvgFromMachine, createPngFromMachine, createSvgFromPlantUmlCode, createPngFromPlantUmlCode, createSvgFromSerializedMachine, createPngFromSerializedMachine } from "./visualize";
 import type { DocumentateInput, DocumentateOptions, DocumentateResult } from "./types";
 import type { SerializedMachine } from "./types";
 
@@ -139,6 +139,10 @@ export async function documentate(
 
   if (format === 'all' || format === 'plantuml') {
     result.plantuml = getPlantUmlCode(serialized, { level, skinparam });
+  }
+
+  if (format === 'all' || format === 'mermaid') {
+    result.mermaid = getMermaidCode(serialized, { level, skinparam });
   }
 
   if ((format === 'all' || format === 'svg') && serialized) {

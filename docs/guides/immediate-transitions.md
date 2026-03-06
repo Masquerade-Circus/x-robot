@@ -23,6 +23,10 @@ When the machine enters "processing", it immediately transitions to "complete" w
 Immediate transitions can use guards to conditionally redirect:
 
 ```javascript
+function isAuthenticated(ctx) {
+  return ctx.user !== null;
+}
+
 const authMachine = machine(
   "Auth",
   init(initial("checking")),
@@ -30,10 +34,6 @@ const authMachine = machine(
   state("authenticated"),
   state("unauthenticated")
 );
-
-function isAuthenticated(ctx) {
-  return ctx.user !== null;
-}
 ```
 
 ## Use Cases
@@ -43,6 +43,10 @@ function isAuthenticated(ctx) {
 Redirect based on validation results:
 
 ```javascript
+function isValid(ctx) {
+  return Object.keys(ctx.errors).length === 0;
+}
+
 const formMachine = machine(
   "Form",
   init(initial("idle")),
@@ -55,10 +59,6 @@ const formMachine = machine(
   state("invalid"),
   state("submitting")
 );
-
-function isValid(ctx) {
-  return Object.keys(ctx.errors).length === 0;
-}
 ```
 
 ### Initial State Logic
@@ -66,6 +66,10 @@ function isValid(ctx) {
 Process and redirect on initialization:
 
 ```javascript
+function hasCache(ctx) {
+  return !!ctx.cachedData;
+}
+
 const initMachine = machine(
   "Init",
   init(initial("boot")),
@@ -81,6 +85,10 @@ const initMachine = machine(
 Create states that automatically compute and redirect:
 
 ```javascript
+function noResults(ctx) {
+  return ctx.items.length === 0;
+}
+
 const filterMachine = machine(
   "Filter",
   init(initial("all")),
@@ -89,10 +97,6 @@ const filterMachine = machine(
   state("empty"),
   state("results")
 );
-
-function noResults(ctx) {
-  return ctx.items.length === 0;
-}
 ```
 
 ## With Entry Pulses
@@ -100,14 +104,20 @@ function noResults(ctx) {
 Immediate transitions work with entry pulses:
 
 ```javascript
-const machine = machine(
+function computeResult(ctx) {
+  ctx.result = compute(ctx.input);
+}
+
+function isSuccess(ctx) {
+  return ctx.result !== null;
+}
+
+const processMachine = machine(
   "Process",
   init(initial("idle")),
   state("idle", transition("start", "processing")),
   state("processing", 
-    entry((ctx) => {
-      ctx.result = compute(ctx.input);
-    }),
+    entry(computeResult),
     immediate("success", guard(isSuccess)),
     immediate("failure")
   ),
@@ -118,40 +128,7 @@ const machine = machine(
 
 The entry pulse runs first, then the immediate transition evaluates guards.
 
-## Multiple Immediate Transitions
-
-A state can have multiple immediate transitions with guards:
-
-```javascript
-state("checking", 
-  immediate("admin", guard(isAdmin)),
-  immediate("user", guard(isUser)),
-  immediate("guest")
-)
-```
-
-The first guard that passes wins.
-
-## vs Regular Transitions
-
-| Feature | Regular Transition | Immediate Transition |
-|---------|------------------|---------------------|
-| Trigger | Event (invoke) | Automatic on entry |
-| Guards | Yes | Yes |
-| Entry pulse | After transition | Before immediate |
-| Use case | User actions | Computed/validation |
-
-## API Reference
-
-```typescript
-immediate(target: string, ...guards: GuardDirective[]): ImmediateDirective
-```
-
-- `target`: State to transition to
-- `guards`: Optional guards to evaluate
-
 ## Next Steps
 
-- [Guides: Guards](./guards.md) — Conditional transitions
-- [Guides: Async](./async.md) — Combining with async operations
-- [Concepts: Guards](../concepts/guards.md) — Deep dive into guards
+- [Guards Guide](./guards.md) — Conditional transitions
+- [Concepts: Guards](../concepts/guards.md) — Deep dive

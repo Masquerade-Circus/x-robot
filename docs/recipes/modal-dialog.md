@@ -11,6 +11,19 @@ Track modal states: closed, opening, open, closing.
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 
+function prepareContent(ctx) {
+  ctx.content = { title: "Confirm", message: "Are you sure?" };
+}
+
+async function handleConfirmation(ctx) {
+  // Handle confirmation
+  await handleConfirm(ctx.data);
+}
+
+function clearContent(ctx) {
+  ctx.content = null;
+}
+
 const modalMachine = machine(
   "Modal",
   init(
@@ -21,9 +34,7 @@ const modalMachine = machine(
     transition("open", "opening")
   ),
   state("opening", 
-    entry((ctx) => {
-      ctx.content = { title: "Confirm", message: "Are you sure?" };
-    }, "open", "closed")
+    entry(prepareContent, "open", "closed")
   ),
   state("open", 
     transition("close", "closing"),
@@ -31,15 +42,10 @@ const modalMachine = machine(
     transition("cancel", "closing")
   ),
   state("confirming", 
-    entry(async (ctx) => {
-      // Handle confirmation
-      await handleConfirm(ctx.data);
-    }, "closed", "error")
+    entry(handleConfirmation, "closed", "error")
   ),
   state("closing", 
-    entry((ctx) => {
-      ctx.content = null;
-    }, "closed")
+    entry(clearContent, "closed")
   ),
   state("error", 
     transition("close", "closing")
@@ -54,31 +60,73 @@ invoke(modalMachine, "confirm");
 // modalMachine.current === "closed"
 ```
 
+## Diagram
+
+```mermaid
+---
+title: Modal
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state closed
+state opening
+state open
+state confirming
+state closing
+state error
+
+[*] --> closed
+closed --> opening: open
+opening --> open: done
+opening --> closed: done
+open --> closing: close
+open --> confirming: confirm
+open --> closing: cancel
+confirming --> closed: done
+confirming --> error: done
+closing --> closed: done
+error --> closing: close
+```
+
 ## With Animation Support
 
 ```javascript
+function startOpenAnimation(ctx) {
+  // Start opening animation
+  animateOpen();
+}
+
+function onOpenComplete(ctx) {
+  // Animation complete
+}
+
+function startCloseAnimation(ctx) {
+  // Start closing animation
+  animateClose();
+}
+
 const modalMachine = machine(
   "Modal",
   init(initial("closed")),
   state("closed", transition("open", "opening")),
   state("opening", 
-    entry((ctx) => {
-      // Start opening animation
-      animateOpen();
-    }, "open", "closed"),
+    entry(startOpenAnimation, "open", "closed"),
     transition("cancel", "closing")
   ),
   state("open", 
-    entry((ctx) => {
-      // Animation complete
-    }),
+    entry(onOpenComplete),
     transition("close", "closing")
   ),
   state("closing", 
-    entry((ctx) => {
-      // Start closing animation
-      animateClose();
-    }, "closed")
+    entry(startCloseAnimation, "closed")
   )
 );
 ```
@@ -104,19 +152,31 @@ closed → opening → open → closing → closed
 ### Alert Only
 
 ```javascript
+function showAlert(ctx) {
+  // Show alert
+}
+
+function hideAlert(ctx) {
+  // Hide alert
+}
+
 const alertMachine = machine(
   "Alert",
   init(initial("hidden")),
   state("hidden", transition("show", "showing")),
-  state("showing", entry((ctx) => {}, "visible", "hidden")),
+  state("showing", entry(showAlert, "visible", "hidden")),
   state("visible", transition("dismiss", "hiding")),
-  state("hiding", entry((ctx) => {}, "hidden"))
+  state("hiding", entry(hideAlert, "hidden"))
 );
 ```
 
 ### With Form
 
 ```javascript
+async function submitFormData(ctx) {
+  await submitForm(ctx.formData);
+}
+
 const formModal = machine(
   "FormModal",
   init(initial("closed"), context({ formData: {} })),
@@ -127,9 +187,7 @@ const formModal = machine(
     transition("submit", "submitting")
   ),
   state("submitting", 
-    entry(async (ctx) => {
-      await submitForm(ctx.formData);
-    }, "closed", "error")
+    entry(submitFormData, "closed", "error")
   ),
   state("closing", transition("closed")),
   state("error", transition("retry", "open"))

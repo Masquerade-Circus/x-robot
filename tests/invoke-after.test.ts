@@ -106,4 +106,22 @@ describe("invokeAfter", () => {
       done();
     }, 200);
   });
+
+  it("should require manual cleanup of invokeAfter timeouts", (done) => {
+    const myMachine = machine(
+      "Test",
+      init(initial("idle")),
+      state("idle", transition("timeout", "done")),
+      state("done")
+    );
+    
+    const cancel = invokeAfter(myMachine, 50, "timeout");
+    
+    cancel();
+    
+    setTimeout(() => {
+      expect(getState(myMachine)).toBe("idle");
+      done();
+    }, 100);
+  });
 });

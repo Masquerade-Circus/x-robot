@@ -219,6 +219,7 @@ Generated: ${date}
 | Final states        | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
 | invoke()            | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
 | Delayed transitions | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
+| Immediate transitions | ✅                  | ✅                        | ❌                        | ❌                | ❌                 |
 | History tracking    | ✅                  | ✅                        | ❌                        | ❌                | ❌                 |
 | Machine validation  | ❌                  | ✅ validate()             | ❌                        | ❌                | ❌                 |
 | Code generation     | ❌                  | ✅ documentate()          | ❌                        | ❌                | ❌                 |

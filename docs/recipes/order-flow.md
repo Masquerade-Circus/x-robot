@@ -490,6 +490,97 @@ import { validate } from "x-robot";
 validate(orderMachine); // Throws if invalid
 ```
 
+## Diagram
+
+```mermaid
+---
+title: Order
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state fatal
+state authorizationFailure
+state voidOrRefundFailure
+state captureFailure
+state draft
+state expiredDraft
+state created
+state expired
+state waitingForStore
+state cancelledByStore
+state cancelledByClient
+state cancelledByCustomerSupport
+state changesRequestedByStore
+state changesRejectedByClient
+state changesAcceptedByClient
+state processing
+state processingCancelledByStore
+state processed
+state ready
+state readyCancelledByStore
+state waitingForDelivery
+state waitingForDeliveryCancelledByStore
+state completed
+state completedCancelledByStore
+class fatal danger
+class authorizationFailure danger
+class voidOrRefundFailure danger
+class captureFailure danger
+class expiredDraft warning
+class created primary
+class expired warning
+class waitingForStore primary
+class cancelledByStore warning
+class cancelledByClient warning
+class cancelledByCustomerSupport warning
+class changesRejectedByClient warning
+class processing primary
+class processingCancelledByStore warning
+class ready primary
+class readyCancelledByStore warning
+class waitingForDeliveryCancelledByStore warning
+class completed success
+class completedCancelledByStore warning
+
+[*] --> draft
+draft --> expiredDraft: expiredDraft
+draft --> created: create
+created --> expired: expire
+created --> waitingForStore: waitingForStore
+waitingForStore --> expired: expire
+waitingForStore --> cancelledByStore: cancel
+waitingForStore --> cancelledByClient: cancelByClient
+waitingForStore --> cancelledByCustomerSupport: cancelByCustomerSupport
+waitingForStore --> changesRequestedByStore: requestChanges
+waitingForStore --> processing: process
+changesRequestedByStore --> changesRejectedByClient: rejectChanges
+changesRequestedByStore --> changesAcceptedByClient: acceptChanges
+changesRequestedByStore --> cancelledByCustomerSupport: cancelByCustomerSupport
+changesAcceptedByClient --> processing: process
+changesAcceptedByClient --> cancelledByStore: cancel
+processing --> processingCancelledByStore: cancelProcessing
+processing --> processed: finishProcessing
+processing --> cancelledByCustomerSupport: cancelByCustomerSupport
+processed --> ready: ready
+ready --> completed: complete
+ready --> readyCancelledByStore: cancelReady
+ready --> cancelledByCustomerSupport: cancelByCustomerSupport
+ready --> waitingForDelivery: deliver
+waitingForDelivery --> completed: complete
+waitingForDelivery --> waitingForDeliveryCancelledByStore: cancelWaitingForDelivery
+waitingForDelivery --> cancelledByCustomerSupport: cancelByCustomerSupport
+completed --> completedCancelledByStore: cancelCompleted
+completed --> cancelledByCustomerSupport: cancelByCustomerSupport
+```
+
 ## Flow Diagram
 
 To visualize this machine, use the visualization guide:

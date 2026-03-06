@@ -1,0 +1,135 @@
+---
+title: Order
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state fatal
+state authorizationFailure
+state voidOrRefundFailure
+state captureFailure
+state draft
+state expiredDraft
+state created
+state expired
+state waitingForStore
+state cancelledByStore
+state cancelledByClient
+state cancelledByCustomerSupport
+state changesRequestedByStore
+state changesRejectedByClient
+state changesAcceptedByClient
+state processing
+state processingCancelledByStore
+state processed
+state ready
+state readyCancelledByStore
+state waitingForDelivery
+state waitingForDeliveryCancelledByStore
+state completed
+state completedCancelledByStore
+class fatal danger
+class authorizationFailure danger
+class voidOrRefundFailure danger
+class captureFailure danger
+class expiredDraft warning
+class created primary
+class expired warning
+class waitingForStore primary
+class cancelledByStore warning
+class cancelledByClient warning
+class cancelledByCustomerSupport warning
+class changesRejectedByClient warning
+class processing primary
+class processingCancelledByStore warning
+class ready primary
+class readyCancelledByStore warning
+class waitingForDeliveryCancelledByStore warning
+class completed success
+class completedCancelledByStore warning
+
+fatal: Fatal error
+fatal: ├ AP-setError<br>├ AP-createTransaction<br>├ AP-update<br>├ AP-sendNotificationToClient<br>└ AP-throwError
+authorizationFailure: Payment authorization failed
+authorizationFailure: ├ AP-setError<br>├ AP-createTransaction<br>├ AP-update<br>├ AP-sendNotificationToClient<br>└ AP-throwError
+voidOrRefundFailure: Void or refund failed
+voidOrRefundFailure: ├ AP-setError<br>├ AP-updateTransaction<br>├ AP-update<br>└ AP-throwError
+captureFailure: Payment capture failed
+captureFailure: ├ AP-setError<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>├ AP-sendNotificationToClient<br>├ AP-sendNotificationToStore<br>└ AP-throwError
+draft: Draft order
+draft: ├ AP-getClient<br>├ AP-getItemsAndTaxes<br>├ AP-getAmounts<br>└ AP-draft
+expiredDraft: Draft expired
+expiredDraft: ├ AP-getClient<br>└ AP-expireDraft
+created: Order created
+created: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-validatePickupTime<br>├ AP-getItemsAndTaxes<br>├ AP-getAmounts<br>├ AP-getCard<br>├ AP-create<br>├ AP-authorize<br>├ AP-createTransaction<br>└ AP-update
+expired: Order expired
+expired: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-expire<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+waitingForStore: Waiting for store confirmation
+waitingForStore: ├ AP-sendNotificationToClient<br>├ AP-setTimeoutTasks<br>└ AP-update
+cancelledByStore: Cancelled by store
+cancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-update<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+cancelledByClient: Cancelled by client
+cancelledByClient: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-sendNotificationToStore<br>└ AP-sendNotificationToClient
+cancelledByCustomerSupport: Cancelled by customer support
+cancelledByCustomerSupport: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-setCancelledById<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+changesRequestedByStore: Changes requested by store
+changesRequestedByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getAmounts<br>├ AP-update<br>└ AP-sendNotificationToClient
+changesRejectedByClient: Changes rejected by client
+changesRejectedByClient: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>├ AP-sendNotificationToClient<br>└ AP-sendNotificationToStore
+changesAcceptedByClient: Changes accepted by client
+changesAcceptedByClient: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-update<br>└ AP-sendNotificationToStore
+processing: Processing order
+processing: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-update<br>└ AP-sendNotificationToClient
+processingCancelledByStore: Processing cancelled by store
+processingCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+processed: Order processed
+processed: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-update<br>├ AP-capture<br>└ AP-updateTransaction
+ready: Ready for delivery
+ready: ├ AP-increaseSuccessfulStoreOrderCount<br>├ AP-update<br>└ AP-sendNotificationToClient
+readyCancelledByStore: Ready cancelled by store
+readyCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+waitingForDelivery: Waiting for delivery
+waitingForDelivery: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>└ AP-update
+waitingForDeliveryCancelledByStore: Waiting for delivery cancelled by store
+waitingForDeliveryCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+completed: Order completed
+completed: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>└ AP-update
+completedCancelledByStore: Completed cancelled by store
+completedCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+
+[*] --> draft
+draft --> expiredDraft: expiredDraft
+draft --> created: create
+created --> expired: expire
+created --> waitingForStore: waitingForStore
+waitingForStore --> expired: expire
+waitingForStore --> cancelledByStore: cancel
+waitingForStore --> cancelledByClient: cancelByClient
+waitingForStore --> cancelledByCustomerSupport: cancelByCustomerSupport
+waitingForStore --> changesRequestedByStore: requestChanges
+waitingForStore --> processing: process
+changesRequestedByStore --> changesRejectedByClient: rejectChanges
+changesRequestedByStore --> changesAcceptedByClient: acceptChanges
+changesRequestedByStore --> cancelledByCustomerSupport: cancelByCustomerSupport
+changesAcceptedByClient --> processing: process
+changesAcceptedByClient --> cancelledByStore: cancel
+processing --> processingCancelledByStore: cancelProcessing
+processing --> processed: finishProcessing
+processing --> cancelledByCustomerSupport: cancelByCustomerSupport
+processed --> ready: ready
+ready --> completed: complete
+ready --> readyCancelledByStore: cancelReady
+ready --> cancelledByCustomerSupport: cancelByCustomerSupport
+ready --> waitingForDelivery: deliver
+waitingForDelivery --> completed: complete
+waitingForDelivery --> waitingForDeliveryCancelledByStore: cancelWaitingForDelivery
+waitingForDelivery --> cancelledByCustomerSupport: cancelByCustomerSupport
+completed --> completedCancelledByStore: cancelCompleted
+completed --> cancelledByCustomerSupport: cancelByCustomerSupport

@@ -15,6 +15,7 @@ export type OutputFormat =
   | 'json' 
   | 'scxml' 
   | 'plantuml' 
+  | 'mermaid'
   | 'svg' 
   | 'png' 
   | 'serialized'
@@ -34,6 +35,8 @@ export interface DocumentateOptions {
   fileName?: string;
   /** PlantUML skinparam customization */
   skinparam?: string;
+  /** Mermaid diagram theme */
+  mermaidTheme?: 'default' | 'neutral' | 'dark';
 }
 
 /**
@@ -52,6 +55,8 @@ export interface DocumentateResult {
   scxml?: string;
   /** PlantUML code */
   plantuml?: string;
+  /** Mermaid code */
+  mermaid?: string;
   /** SVG image path */
   svg?: string;
   /** PNG image path */

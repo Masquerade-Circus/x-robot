@@ -122,6 +122,73 @@ const { svg } = await documentate(myMachine, {
   format: "svg",
   skinparam: "skinparam stateFontSize 14"
 });
+## Mermaid Generation
+
+X-Robot also supports generating [Mermaid](https://mermaid.js.org/) diagrams, which can be embedded directly in Markdown documentation:
+
+```javascript
+// Generate Mermaid code
+const { mermaid } = await documentate(myMachine, { format: "mermaid" });
+
+// With high detail level
+const { mermaid } = await documentate(myMachine, { 
+  format: "mermaid", 
+  level: "high" 
+});
+
+// Save to file
+fs.writeFileSync("diagram.mmd", mermaid);
+```
+
+### Mermaid Options
+
+The Mermaid output includes:
+- Color-coded state types (danger, warning, success, primary, info)
+- Left-aligned text in states
+- Transitions with proper styling
+
+### Example Output
+
+````markdown
+```mermaid
+---
+title: My Machine
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+
+state idle
+state loading
+state success
+
+[*] --> idle
+idle --> loading: fetch
+loading --> success: done
+```
+````
+
+This generates:
+
+```mermaid
+---
+title: My Machine
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+
+state idle
+state loading
+state success
+
+[*] --> idle
+idle --> loading: fetch
+loading --> success: done
 ```
 
 ## Next Steps

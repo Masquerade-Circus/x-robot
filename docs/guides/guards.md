@@ -7,7 +7,9 @@ Guards determine whether a transition can occur. They receive context and option
 ```javascript
 import { guard, machine, state, transition, initial, init, invoke, entry } from "x-robot";
 
-const canProceed = (ctx, payload) => payload?.value > 0;
+function canProceed(ctx, payload) {
+  return payload?.value > 0;
+}
 
 state("step1", transition("next", "step2", guard(canProceed)));
 ```
@@ -28,24 +30,33 @@ state("input", transition("submit", "valid", guard(isValid, "invalid")));
 ### Form Validation
 
 ```javascript
-const validateEmail = (ctx, email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const validatePassword = (ctx, pw) => pw.length >= 8;
+function validateEmail(ctx, email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validatePassword(ctx, pw) {
+  return pw.length >= 8;
+}
+
+function checkFormErrors(ctx) {
+  return !ctx.errors?.email && !ctx.errors?.password;
+}
+
+function validateForm(ctx) {
+  ctx.errors = {
+    email: validateEmail(ctx, ctx.email) ? null : "Invalid email",
+    password: validatePassword(ctx, ctx.password) ? null : "Too short"
+  };
+}
 
 const formMachine = machine(
   "Form",
   init(initial("idle")),
   state("idle", 
     transition("submit", "checking"),
-    transition("submit", "submitting", guard((ctx) => 
-      !ctx.errors?.email && !ctx.errors?.password
-    ))
+    transition("submit", "submitting", guard(checkFormErrors))
   ),
-  state("checking", entry((ctx) => {
-    ctx.errors = {
-      email: validateEmail(ctx, ctx.email) ? null : "Invalid email",
-      password: validatePassword(ctx, ctx.password) ? null : "Too short"
-    };
-  }, "valid", "invalid")),
+  state("checking", entry(validateForm, "valid", "invalid")),
   state("valid", transition("submit", "submitting")),
   state("invalid", transition("retry", "idle")),
   state("submitting")
@@ -55,8 +66,13 @@ const formMachine = machine(
 ### Role-Based Access
 
 ```javascript
-const isAdmin = (ctx) => ctx.user?.role === "admin";
-const isLoggedIn = (ctx) => !!ctx.user;
+function isAdmin(ctx) {
+  return ctx.user?.role === "admin";
+}
+
+function isLoggedIn(ctx) {
+  return !!ctx.user;
+}
 
 const adminSection = machine(
   "Admin",
@@ -71,7 +87,9 @@ const adminSection = machine(
 ### Conditional History
 
 ```javascript
-const shouldSave = (ctx) => ctx.preferences.autoSave;
+function shouldSave(ctx) {
+  return ctx.preferences.autoSave;
+}
 
 state("editing", transition("save", "saved", guard(shouldSave), "discarded"));
 ```
@@ -81,11 +99,13 @@ state("editing", transition("save", "saved", guard(shouldSave), "discarded"));
 X-Robot supports native async guards:
 
 ```javascript
-state("idle", transition("check", "granted", guard(async (ctx) => {
+async function checkPermission(ctx) {
   const res = await fetch("/api/permission");
   const data = await res.json();
   return data.allowed;
-}))))
+}
+
+state("idle", transition("check", "granted", guard(checkPermission)));
 ```
 
 ## Multiple Guards
@@ -93,8 +113,13 @@ state("idle", transition("check", "granted", guard(async (ctx) => {
 Chain guards directly - they run in order:
 
 ```javascript
-const guard1 = (ctx) => ctx.value > 0;
-const guard2 = (ctx) => ctx.isValid;
+function guard1(ctx) {
+  return ctx.value > 0;
+}
+
+function guard2(ctx) {
+  return ctx.isValid;
+}
 
 // All guards must pass for transition
 state("step1", transition("next", "step2", guard(guard1), guard(guard2)));
@@ -103,8 +128,13 @@ state("step1", transition("next", "step2", guard(guard1), guard(guard2)));
 With async guards:
 
 ```javascript
-const asyncGuard1 = async (ctx) => { /* ... */ };
-const asyncGuard2 = async (ctx) => { /* ... */ };
+async function asyncGuard1(ctx) {
+  // ... async logic
+}
+
+async function asyncGuard2(ctx) {
+  // ... async logic
+}
 
 state("idle", transition("start", "loading", guard(asyncGuard1), guard(asyncGuard2)));
 ```
@@ -115,9 +145,13 @@ state("idle", transition("start", "loading", guard(asyncGuard1), guard(asyncGuar
 - **Pulse** runs after entering the new state
 
 ```javascript
-const notify = (ctx) => {
+function canApprove(ctx) {
+  return ctx.user?.canApprove;
+}
+
+function notify(ctx) {
   console.log("Notifying:", ctx.message);
-};
+}
 
 state("review", 
   transition("approve", "approved", guard(canApprove)),  // Runs first

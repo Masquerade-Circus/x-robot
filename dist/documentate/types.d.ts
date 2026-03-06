@@ -1,11 +1,12 @@
 import { Machine } from "../machine/interfaces";
-export declare type OutputFormat = 'ts' | 'mjs' | 'cjs' | 'json' | 'scxml' | 'plantuml' | 'svg' | 'png' | 'serialized' | 'all';
+export declare type OutputFormat = 'ts' | 'mjs' | 'cjs' | 'json' | 'scxml' | 'plantuml' | 'mermaid' | 'svg' | 'png' | 'serialized' | 'all';
 export interface DocumentateOptions {
     format: OutputFormat;
     level?: 'low' | 'high';
     output?: string;
     fileName?: string;
     skinparam?: string;
+    mermaidTheme?: 'default' | 'neutral' | 'dark';
 }
 export interface DocumentateResult {
     ts?: string;
@@ -14,6 +15,7 @@ export interface DocumentateResult {
     json?: string;
     scxml?: string;
     plantuml?: string;
+    mermaid?: string;
     svg?: string;
     png?: string;
     serialized?: SerializedMachine;

@@ -35,18 +35,22 @@ async function fetchData(ctx) {
 Entry pulses run when entering a state:
 
 ```javascript
-state("active", entry((ctx) => {
+function markStarted(ctx) {
   ctx.startedAt = Date.now();
-}))
+}
+
+state("active", entry(markStarted))
 ```
 
 With transitions (success/failure):
 
 ```javascript
-state("loading", entry(async (ctx) => {
+async function fetchData(ctx) {
   const res = await fetch("/api/data");
   ctx.data = await res.json();
-}, "success", "error"))
+}
+
+state("loading", entry(fetchData, "success", "error"))
 ```
 
 ## Exit Pulse
@@ -54,9 +58,11 @@ state("loading", entry(async (ctx) => {
 Exit pulses run when leaving a state:
 
 ```javascript
-state("active", exit((ctx) => {
+function markEnded(ctx) {
   ctx.endedAt = Date.now();
-}))
+}
+
+state("active", exit(markEnded))
 ```
 
 ## Why Not Reducers?
@@ -82,12 +88,14 @@ function reducer(state, action) {
 X-Robot entry pulse approach — single function handles everything:
 
 ```javascript
-// X-Robot entry pulse
-state("idle", transition("fetch", "loading"));
-state("loading", entry(async (ctx) => {
+async function fetchData(ctx) {
   const res = await fetch("/api/data");
   ctx.data = await res.json();
-}, "success", "error"));
+}
+
+// X-Robot entry pulse
+state("idle", transition("fetch", "loading"));
+state("loading", entry(fetchData, "success", "error"));
 ```
 
 ## Basic Usage
@@ -115,12 +123,14 @@ The pulse runs but no transition occurs.
 You can throw to trigger the failure transition:
 
 ```javascript
-state("saving", entry((ctx) => {
+function validateAndSave(ctx) {
   ctx.timestamp = Date.now();
   if (!ctx.data) {
     throw new Error("No data to save");
   }
-}, "saved", "error"));
+}
+
+state("saving", entry(validateAndSave, "saved", "error"));
 ```
 
 ## Frozen Mode
@@ -128,13 +138,15 @@ state("saving", entry((ctx) => {
 By default, X-Robot runs in frozen mode. Each pulse receives a clone of the context:
 
 ```javascript
+function tryUpdate(ctx) {
+  ctx.value = 42;
+  throw new Error("Oops");
+}
+
 const myMachine = machine(
   "Test",
   init(initial("idle"), context({ value: 0 })),
-  state("idle", entry((ctx) => {
-    ctx.value = 42;
-    throw new Error("Oops");
-  }), transition("continue", "done")),
+  state("idle", entry(tryUpdate), transition("continue", "done")),
   state("done")
 );
 
@@ -148,12 +160,14 @@ This prevents accidental mutations and makes error handling safer.
 ## Disabling Frozen Mode
 
 ```javascript
+function updateValue(ctx) {
+  ctx.value = 42; // modifies original
+}
+
 const myMachine = machine(
   "Test",
   init(initial("idle"), context({ value: 0 }), shouldFreeze(false)),
-  state("idle", entry((ctx) => {
-    ctx.value = 42; // modifies original
-  }))
+  state("idle", entry(updateValue))
 );
 ```
 
@@ -272,11 +286,13 @@ Problems:
 X-Robot's Pulse unifies all these concepts into one:
 
 ```javascript
-// Single function handles everything
-state("loading", entry(async (ctx) => {
+async function fetchData(ctx) {
   const res = await fetch("/api/data");
   ctx.data = await res.json();
-}, "success", "error"));
+}
+
+// Single function handles everything
+state("loading", entry(fetchData, "success", "error"));
 ```
 
 | Concept | Async Support | Manual Clone | Returns New State | Functions Needed |

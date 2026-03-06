@@ -1,6 +1,6 @@
-# X-Robot
+# X-Robot FSM
 
-A lightweight, developer-friendly finite state machine library for JavaScript and TypeScript.
+X-Robot FSM: A lightweight, developer-friendly finite state machine library for JavaScript and TypeScript.
 
 ## Why X-Robot?
 
@@ -17,14 +17,16 @@ A lightweight, developer-friendly finite state machine library for JavaScript an
 import { machine, state, initial, init, context, transition, invoke, entry } from "x-robot";
 
 // Define a fetch machine with async handling
+async function fetchData(ctx) {
+  const res = await fetch("/api/data");
+  ctx.data = await res.json();
+}
+
 const fetchMachine = machine(
   "Fetch",
   init(initial("idle"), context({ data: null, error: null })),
   state("idle", transition("fetch", "loading")),
-  state("loading", entry(async (ctx) => {
-    const res = await fetch("/api/data");
-    ctx.data = await res.json();
-  }, "success", "error")),
+  state("loading", entry(fetchData, "success", "error")),
   state("success", transition("reset", "idle")),
   state("error", transition("reset", "idle"))
 );
@@ -53,7 +55,7 @@ bun add x-robot
 - History tracking
 - Machine validation with validate()
 - Code generation (TypeScript, ESM, CJS)
-- Diagram generation (SVG, PNG, PlantUML)
+- Diagram generation (SVG, PNG, PlantUML, Mermaid)
 - SCXML import/export
 
 ## API Overview

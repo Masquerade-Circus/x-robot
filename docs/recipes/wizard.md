@@ -27,6 +27,10 @@ const step3 = machine("Step3", init(initial("pending")),
   state("completed")
 );
 
+function onComplete(ctx) {
+  console.log("Form submitted:", ctx.data);
+}
+
 // Main wizard
 const wizardMachine = machine(
   "Wizard",
@@ -35,9 +39,7 @@ const wizardMachine = machine(
   state("step2", nested(step2, "next"), transition("back", "step1")),
   state("step3", nested(step3, "next"), transition("back", "step2")),
   state("complete", 
-    entry((ctx) => {
-      console.log("Form submitted:", ctx.data);
-    })
+    entry(onComplete)
   )
 );
 
@@ -47,25 +49,50 @@ invoke(wizardMachine, "step2.next"); // Step 2 complete
 invoke(wizardMachine, "step3.next"); // Wizard complete
 ```
 
-## State Diagram
+## Diagram
 
-```
-step1.pending → step1.completed → step2.pending → step2.completed → step3.pending → step3.completed → complete
-       ↑                                                                      |
-       └────────────────────────────────── back ─────────────────────────────┘
+```mermaid
+---
+title: Wizard
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state step1
+state step2
+state step3
+state complete
+
+complete: └ P-log
+
+[*] --> step1
+step1 --> step1: back
+step2 --> step1: back
+step3 --> step2: back
 ```
 
 ## With Validation
 
 ```javascript
-const validateStep = (step, data) => {
+function validateStep(step, data) {
   switch (step) {
     case 1: return data.name && data.email;
     case 2: return data.address && data.city;
     case 3: return data.payment;
     default: return true;
   }
-};
+}
+
+function validateStep2(ctx) {
+  ctx.errors.step2 = validateStep(2, ctx.data) ? null : "Invalid";
+}
 
 const wizardMachine = machine(
   "Wizard",
@@ -80,9 +107,7 @@ const wizardMachine = machine(
     transition("back", "step1")
   ),
   state("validating",
-    entry((ctx) => {
-      ctx.errors.step2 = validateStep(2, ctx.data) ? null : "Invalid";
-    }, "step2", "step2")
+    entry(validateStep2, "step2", "step2")
   ),
   // ... continue
 );
@@ -91,10 +116,10 @@ const wizardMachine = machine(
 ## With Progress
 
 ```javascript
-const getProgress = () => {
+function getProgress() {
   const step = parseInt(wizardMachine.current.replace("step", ""));
   return (step / 3) * 100;
-};
+}
 
 console.log(getProgress()); // 33.33, 66.67, 100
 ```

@@ -94,14 +94,16 @@ The Pulse concept handles async operations:
 ```javascript
 import { entry } from "x-robot";
 
+async function fetchData(ctx) {
+  const res = await fetch("/api/data");
+  ctx.data = await res.json();
+}
+
 const fetcher = machine(
   "Fetcher",
   init(initial("idle"), context({ data: null })),
   state("idle", transition("fetch", "loading")),
-  state("loading", entry(async (ctx) => {
-    const res = await fetch("/api/data");
-    ctx.data = await res.json();
-  }, "success", "error")),
+  state("loading", entry(fetchData, "success", "error")),
   state("success"),
   state("error")
 );
@@ -117,6 +119,18 @@ Here's a form submission machine with validation:
 ```javascript
 import { machine, state, transition, invoke, initial, init, context, entry, guard } from "x-robot";
 
+function validateFormValues(ctx) {
+  ctx.errors = validateForm(ctx.values);
+}
+
+async function submitFormData(ctx) {
+  await submitForm(ctx.values);
+}
+
+function canSubmit(ctx) {
+  return Object.keys(ctx.errors).length === 0;
+}
+
 const formMachine = machine(
   "Form",
   init(
@@ -126,14 +140,10 @@ const formMachine = machine(
   state("pristine", transition("change", "dirty")),
   state("dirty", 
     transition("validate", "validating"),
-    transition("submit", "submitting", guard((ctx) => Object.keys(ctx.errors).length === 0))
+    transition("submit", "submitting", guard(canSubmit))
   ),
-  state("validating", entry((ctx) => {
-    ctx.errors = validateForm(ctx.values);
-  }, "dirty", "error")),
-  state("submitting", entry(async (ctx) => {
-    await submitForm(ctx.values);
-  }, "success", "failure")),
+  state("validating", entry(validateFormValues, "dirty", "error")),
+  state("submitting", entry(submitFormData, "success", "failure")),
   state("success", transition("reset", "pristine")),
   state("failure", transition("retry", "dirty")),
   state("error")

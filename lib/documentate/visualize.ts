@@ -39,6 +39,18 @@ export const VISUALIZATION_LEVEL = {
   HIGH: "high"
 };
 
+export const MERMAID_THEME = {
+  DEFAULT: 'default',
+  NEUTRAL: 'neutral',
+  DARK: 'dark'
+};
+
+export interface mermaidOptions {
+  level?: string;
+  theme?: string;
+  skinparam?: string;
+}
+
 export interface options {
   level?: string;
   skinparam?: string;
@@ -546,6 +558,142 @@ async function createImageFromPlantUmlCode(
  * @returns The plant uml code
  * @category Visualization
  */
+// MERMAID EXPORT
+
+function getInnerMermaidCode(
+  serializedMachine: SerializedMachine,
+  options: mermaidOptions,
+  parentName = "",
+  childLevel = 0
+): string {
+  let mermaidCode = "";
+  let { level } = options;
+  const isChild = childLevel > 0;
+  const space = Array.from({ length: childLevel })
+    .map(() => "  ")
+    .join("");
+
+  // Title is now handled in getMermaidCode
+
+  if (!isChild) {
+    mermaidCode += `classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24\n`;
+    mermaidCode += `classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404\n`;
+    mermaidCode += `classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724\n`;
+    mermaidCode += `classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085\n`;
+    mermaidCode += `classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460\n`;
+    mermaidCode += `classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d\n\n`;
+  }
+
+  const stateNames: Record<string, string> = {};
+  const stateTypes: Record<string, string> = {};
+  for (const stateName in serializedMachine.states) {
+    stateNames[stateName] = isChild ? `${parentName}${stateName}` : stateName;
+    stateTypes[stateName] = serializedMachine.states[stateName].type || "default";
+  }
+
+  for (const stateName in serializedMachine.states) {
+    const state = serializedMachine.states[stateName];
+    const stateId = stateNames[stateName];
+    const stateType = stateTypes[stateName];
+    mermaidCode += `state ${stateId}\n`;
+  }
+
+  if (!isChild) {
+    for (const stateName in serializedMachine.states) {
+      const stateId = stateNames[stateName];
+      const stateType = stateTypes[stateName];
+      if (stateType && stateType !== "default") {
+        mermaidCode += `class ${stateId} ${stateType}\n`;
+      }
+    }
+    mermaidCode += '\n';
+  }
+
+  if (level === 'high') {
+    for (const stateName in serializedMachine.states) {
+      const state = serializedMachine.states[stateName];
+      const stateId = stateNames[stateName];
+      if (state.description) {
+        mermaidCode += `${stateId}: ${state.description}\n`;
+      }
+      if (state.run && state.run.length > 0) {
+        let asciiTree = getAsciiTree(state.run);
+        if (asciiTree.length > 0) {
+          asciiTree = asciiTree.replace(/\\n/g, '<br>').replace(/:/g, '-');
+          mermaidCode += `${stateId}: ${asciiTree}\n`;
+        }
+      }
+    }
+    mermaidCode += '\n';
+  }
+
+  if (serializedMachine.initial && !isChild) {
+    mermaidCode += `[*] --> ${stateNames[serializedMachine.initial] || serializedMachine.initial}\n`;
+  }
+
+  for (const stateName in serializedMachine.states) {
+    const state = serializedMachine.states[stateName];
+    const fromState = stateNames[stateName];
+
+    if (state.on) {
+      for (const event in state.on) {
+        const transition = state.on[event];
+        const toState = stateNames[transition.target] || transition.target;
+        
+        let label = event;
+        
+        if (level === 'high' && transition.guards && transition.guards.length > 0) {
+          let guardsTree = getAsciiTree(transition.guards);
+          if (guardsTree.length > 0) {
+            guardsTree = guardsTree.replace(/\\n/g, '<br>').replace(/:/g, '-');
+            label += `<br>${guardsTree}`;
+          }
+        }
+        
+        const isImmediate = state.immediate && state.immediate.find(
+          (immediate) => immediate.immediate === event
+        );
+        const arrowStyle = isImmediate ? "dashed" : "";
+        
+        mermaidCode += `${fromState} --> ${toState}: ${label}\n`;
+      }
+    }
+  }
+
+  return mermaidCode;
+}
+
+export function getMermaidCode(
+  serializedMachine: SerializedMachine,
+  optionsOrLevel: string | mermaidOptions = MERMAID_THEME.DEFAULT
+): string {
+  let opts: mermaidOptions =
+    typeof optionsOrLevel === "string"
+      ? { level: optionsOrLevel }
+      : optionsOrLevel;
+  let { theme } = opts;
+
+  let mermaidCode = "";
+  if (serializedMachine.title) {
+    mermaidCode += `---\ntitle: ${serializedMachine.title}\n---\n\n`;
+  }
+  mermaidCode += `stateDiagram-v2\n\n`;
+  mermaidCode += getInnerMermaidCode(serializedMachine, opts);
+
+  if (theme && theme !== MERMAID_THEME.DEFAULT) {
+    mermaidCode += `\n%% Theme: ${theme}\n`;
+  }
+
+  return mermaidCode;
+}
+
+export function getMermaidCodeFromMachine(
+  machine: Machine,
+  optionsOrLevel: string | mermaidOptions = MERMAID_THEME.DEFAULT
+): string {
+  return getMermaidCode(serialize(machine), optionsOrLevel);
+}
+
 export function getPlantUmlCodeFromMachine(
   machine: Machine,
   optionsOrLevel: string | options = VISUALIZATION_LEVEL.LOW
