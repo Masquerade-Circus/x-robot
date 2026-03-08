@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedPulse
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedPulse
 
 # Interface: SerializedPulse
 
@@ -10,10 +10,10 @@ Serialized pulse (entry/exit pulse)
 
 ### Properties
 
-*   [pulse](x_robot_documentate.SerializedPulse.md#pulse)
-*   [success](x_robot_documentate.SerializedPulse.md#success)
-*   [failure](x_robot_documentate.SerializedPulse.md#failure)
-*   [isAsync](x_robot_documentate.SerializedPulse.md#isasync)
+- [pulse](x_robot_documentate.SerializedPulse.md#pulse)
+- [success](x_robot_documentate.SerializedPulse.md#success)
+- [failure](x_robot_documentate.SerializedPulse.md#failure)
+- [isAsync](x_robot_documentate.SerializedPulse.md#isasync)
 
 ## Properties
 
@@ -23,9 +23,9 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:129](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L129)
+[lib/documentate/types.ts:129](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L129)
 
-***
+___
 
 ### success
 
@@ -33,9 +33,9 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:130](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L130)
+[lib/documentate/types.ts:130](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L130)
 
-***
+___
 
 ### failure
 
@@ -43,9 +43,9 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:131](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L131)
+[lib/documentate/types.ts:131](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L131)
 
-***
+___
 
 ### isAsync
 
@@ -53,4 +53,4 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L132)
+[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L132)

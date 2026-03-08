@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / StateDirective
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / StateDirective
 
 # Interface: StateDirective
 
@@ -6,30 +6,30 @@
 
 ## Hierarchy
 
-*   **`StateDirective`**
+- **`StateDirective`**
 
-    ↳ [`InfoStateDirective`](x_robot.InfoStateDirective.md)
+  ↳ [`InfoStateDirective`](x_robot.InfoStateDirective.md)
 
-    ↳ [`WarningStateDirective`](x_robot.WarningStateDirective.md)
+  ↳ [`WarningStateDirective`](x_robot.WarningStateDirective.md)
 
-    ↳ [`DangerStateDirective`](x_robot.DangerStateDirective.md)
+  ↳ [`DangerStateDirective`](x_robot.DangerStateDirective.md)
 
-    ↳ [`PrimaryStateDirective`](x_robot.PrimaryStateDirective.md)
+  ↳ [`PrimaryStateDirective`](x_robot.PrimaryStateDirective.md)
 
-    ↳ [`SuccessStateDirective`](x_robot.SuccessStateDirective.md)
+  ↳ [`SuccessStateDirective`](x_robot.SuccessStateDirective.md)
 
 ## Table of contents
 
 ### Properties
 
-*   [name](x_robot.StateDirective.md#name)
-*   [run](x_robot.StateDirective.md#run)
-*   [on](x_robot.StateDirective.md#on)
-*   [immediate](x_robot.StateDirective.md#immediate)
-*   [args](x_robot.StateDirective.md#args)
-*   [type](x_robot.StateDirective.md#type)
-*   [nested](x_robot.StateDirective.md#nested)
-*   [description](x_robot.StateDirective.md#description)
+- [name](x_robot.StateDirective.md#name)
+- [run](x_robot.StateDirective.md#run)
+- [on](x_robot.StateDirective.md#on)
+- [immediate](x_robot.StateDirective.md#immediate)
+- [args](x_robot.StateDirective.md#args)
+- [type](x_robot.StateDirective.md#type)
+- [nested](x_robot.StateDirective.md#nested)
+- [description](x_robot.StateDirective.md#description)
 
 ## Properties
 
@@ -39,19 +39,19 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L93)
 
-***
+___
 
 ### run
 
-• **run**: [`PulseDirective`](x_robot.PulseDirective.md)\[]
+• **run**: [`PulseDirective`](x_robot.PulseDirective.md)[]
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L94)
 
-***
+___
 
 ### on
 
@@ -59,29 +59,29 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L95)
 
-***
+___
 
 ### immediate
 
-• **immediate**: [`ImmediateDirective`](x_robot.ImmediateDirective.md)\[]
+• **immediate**: [`ImmediateDirective`](x_robot.ImmediateDirective.md)[]
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L96)
 
-***
+___
 
 ### args
 
-• **args**: ([`TransitionDirective`](x_robot.TransitionDirective.md) | [`ImmediateDirective`](x_robot.ImmediateDirective.md) | [`PulseDirective`](x_robot.PulseDirective.md) | [`DescriptionDirective`](x_robot.DescriptionDirective.md) | [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))\[]
+• **args**: ([`TransitionDirective`](x_robot.TransitionDirective.md) \| [`ImmediateDirective`](x_robot.ImmediateDirective.md) \| [`PulseDirective`](x_robot.PulseDirective.md) \| [`DescriptionDirective`](x_robot.DescriptionDirective.md) \| [`NestedMachineDirective`](x_robot.NestedMachineDirective.md))[]
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L97)
 
-***
+___
 
 ### type
 
@@ -89,19 +89,19 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L104)
+[lib/machine/interfaces.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L104)
 
-***
+___
 
 ### nested
 
-• **nested**: [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)\[]
+• **nested**: [`NestedMachineDirective`](x_robot.NestedMachineDirective.md)[]
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L105)
 
-***
+___
 
 ### description
 
@@ -109,4 +109,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L106)

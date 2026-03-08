@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedImmediateDirective
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedImmediateDirective
 
 # Interface: NestedImmediateDirective
 
@@ -6,16 +6,16 @@
 
 ## Hierarchy
 
-*   [`ImmediateDirective`](x_robot.ImmediateDirective.md)
+- [`ImmediateDirective`](x_robot.ImmediateDirective.md)
 
-    ↳ **`NestedImmediateDirective`**
+  ↳ **`NestedImmediateDirective`**
 
 ## Table of contents
 
 ### Properties
 
-*   [immediate](x_robot.NestedImmediateDirective.md#immediate)
-*   [guards](x_robot.NestedImmediateDirective.md#guards)
+- [immediate](x_robot.NestedImmediateDirective.md#immediate)
+- [guards](x_robot.NestedImmediateDirective.md#guards)
 
 ## Properties
 
@@ -29,9 +29,9 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L37)
+[lib/machine/interfaces.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L37)
 
-***
+___
 
 ### guards
 
@@ -43,4 +43,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:38](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L38)
+[lib/machine/interfaces.ts:38](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L38)

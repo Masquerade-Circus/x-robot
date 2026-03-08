@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedMachineDirective
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedMachineDirective
 
 # Interface: NestedMachineDirective
 
@@ -6,16 +6,16 @@
 
 ## Hierarchy
 
-*   **`NestedMachineDirective`**
+- **`NestedMachineDirective`**
 
-    ↳ [`NestedMachineWithTransitionDirective`](x_robot.NestedMachineWithTransitionDirective.md)
+  ↳ [`NestedMachineWithTransitionDirective`](x_robot.NestedMachineWithTransitionDirective.md)
 
 ## Table of contents
 
 ### Properties
 
-*   [machine](x_robot.NestedMachineDirective.md#machine)
-*   [transition](x_robot.NestedMachineDirective.md#transition)
+- [machine](x_robot.NestedMachineDirective.md#machine)
+- [transition](x_robot.NestedMachineDirective.md#transition)
 
 ## Properties
 
@@ -25,9 +25,9 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:153](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L153)
+[lib/machine/interfaces.ts:153](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L153)
 
-***
+___
 
 ### transition
 
@@ -35,4 +35,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:154](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L154)
+[lib/machine/interfaces.ts:154](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L154)

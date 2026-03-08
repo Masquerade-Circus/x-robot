@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / HistoryDirective
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / HistoryDirective
 
 # Interface: HistoryDirective
 
@@ -8,7 +8,7 @@
 
 ### Properties
 
-*   [history](x_robot.HistoryDirective.md#history)
+- [history](x_robot.HistoryDirective.md#history)
 
 ## Properties
 
@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:175](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L175)
+[lib/machine/interfaces.ts:175](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L175)

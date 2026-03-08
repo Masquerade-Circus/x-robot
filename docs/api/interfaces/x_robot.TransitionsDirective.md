@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / TransitionsDirective
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / TransitionsDirective
 
 # Interface: TransitionsDirective
 
@@ -6,4 +6,4 @@
 
 ## Indexable
 
-▪ \[key: `string`]: [`TransitionDirective`](x_robot.TransitionDirective.md)
+▪ [key: `string`]: [`TransitionDirective`](x_robot.TransitionDirective.md)

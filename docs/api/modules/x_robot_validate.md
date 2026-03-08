@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/validate
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / x-robot/validate
 
 # Module: x-robot/validate
 
@@ -10,23 +10,23 @@ Validates the machine prior to its use.
 
 ### Validation Functions
 
-*   [validate](x_robot_validate.md#validate)
+- [validate](x_robot_validate.md#validate)
 
 ### Other Functions
 
-*   [ok](x_robot_validate.md#ok)
-*   [err](x_robot_validate.md#err)
-*   [combine](x_robot_validate.md#combine)
+- [ok](x_robot_validate.md#ok)
+- [err](x_robot_validate.md#err)
+- [combine](x_robot_validate.md#combine)
 
 ### Type Aliases
 
-*   [Result](x_robot_validate.md#result)
-*   [Results](x_robot_validate.md#results)
+- [Result](x_robot_validate.md#result)
+- [Results](x_robot_validate.md#results)
 
 ### Classes
 
-*   [Ok](../classes/x_robot_validate.Ok.md)
-*   [Err](../classes/x_robot_validate.Err.md)
+- [Ok](../classes/x_robot_validate.Ok.md)
+- [Err](../classes/x_robot_validate.Err.md)
 
 ## Validation Functions
 
@@ -48,13 +48,13 @@ This function validates a machine and all its nested and parallel machines if an
 
 Void if the machine is valid, throws an error otherwise
 
-***
+___
 
 ## Other Functions
 
 ### ok
 
-▸ **ok**<`T`>(`value`): [`Ok`](../classes/x_robot_validate.Ok.md)<`T`, `never`>
+▸ **ok**<`T`\>(`value`): [`Ok`](../classes/x_robot_validate.Ok.md)<`T`, `never`\>
 
 #### Type parameters
 
@@ -70,13 +70,13 @@ Void if the machine is valid, throws an error otherwise
 
 #### Returns
 
-[`Ok`](../classes/x_robot_validate.Ok.md)<`T`, `never`>
+[`Ok`](../classes/x_robot_validate.Ok.md)<`T`, `never`\>
 
-***
+___
 
 ### err
 
-▸ **err**<`E`>(`err`): [`Err`](../classes/x_robot_validate.Err.md)<`never`, `E`>
+▸ **err**<`E`\>(`err`): [`Err`](../classes/x_robot_validate.Err.md)<`never`, `E`\>
 
 #### Type parameters
 
@@ -92,13 +92,13 @@ Void if the machine is valid, throws an error otherwise
 
 #### Returns
 
-[`Err`](../classes/x_robot_validate.Err.md)<`never`, `E`>
+[`Err`](../classes/x_robot_validate.Err.md)<`never`, `E`\>
 
-***
+___
 
 ### combine
 
-▸ **combine**<`T`, `E`>(`results`): [`Result`](x_robot_validate.md#result)<`T`, `E`> | [`Results`](x_robot_validate.md#results)<`T`, `E`>
+▸ **combine**<`T`, `E`\>(`results`): [`Result`](x_robot_validate.md#result)<`T`, `E`\> \| [`Results`](x_robot_validate.md#results)<`T`, `E`\>
 
 #### Type parameters
 
@@ -111,17 +111,17 @@ Void if the machine is valid, throws an error otherwise
 
 | Name | Type |
 | :------ | :------ |
-| `results` | [`Results`](x_robot_validate.md#results)<`T`, `E`> |
+| `results` | [`Results`](x_robot_validate.md#results)<`T`, `E`\> |
 
 #### Returns
 
-[`Result`](x_robot_validate.md#result)<`T`, `E`> | [`Results`](x_robot_validate.md#results)<`T`, `E`>
+[`Result`](x_robot_validate.md#result)<`T`, `E`\> \| [`Results`](x_robot_validate.md#results)<`T`, `E`\>
 
 ## Type Aliases
 
 ### Result
 
-Ƭ **Result**<`T`, `E`>: [`Ok`](../classes/x_robot_validate.Ok.md)<`T`, `never`> | [`Err`](../classes/x_robot_validate.Err.md)<`never`, `E`>
+Ƭ **Result**<`T`, `E`\>: [`Ok`](../classes/x_robot_validate.Ok.md)<`T`, `never`\> \| [`Err`](../classes/x_robot_validate.Err.md)<`never`, `E`\>
 
 #### Type parameters
 
@@ -132,13 +132,13 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/validate/result.ts#L5)
+[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/validate/result.ts#L5)
 
-***
+___
 
 ### Results
 
-Ƭ **Results**<`T`, `E`>: [`Result`](x_robot_validate.md#result)<`T`, `E`>\[]
+Ƭ **Results**<`T`, `E`\>: [`Result`](x_robot_validate.md#result)<`T`, `E`\>[]
 
 #### Type parameters
 
@@ -149,4 +149,4 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/validate/result.ts#L7)
+[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/validate/result.ts#L7)

@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / mermaidOptions
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / mermaidOptions
 
 # Interface: mermaidOptions
 
@@ -8,9 +8,9 @@
 
 ### Properties
 
-*   [level](x_robot_documentate_visualize.mermaidOptions.md#level)
-*   [theme](x_robot_documentate_visualize.mermaidOptions.md#theme)
-*   [skinparam](x_robot_documentate_visualize.mermaidOptions.md#skinparam)
+- [level](x_robot_documentate_visualize.mermaidOptions.md#level)
+- [theme](x_robot_documentate_visualize.mermaidOptions.md#theme)
+- [skinparam](x_robot_documentate_visualize.mermaidOptions.md#skinparam)
 
 ## Properties
 
@@ -20,9 +20,9 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L56)
+[lib/documentate/visualize.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L56)
 
-***
+___
 
 ### theme
 
@@ -30,9 +30,9 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L57)
+[lib/documentate/visualize.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L57)
 
-***
+___
 
 ### skinparam
 
@@ -40,4 +40,4 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L58)
+[lib/documentate/visualize.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L58)

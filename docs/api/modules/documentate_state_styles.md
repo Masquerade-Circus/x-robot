@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / documentate/state-styles
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / documentate/state-styles
 
 # Module: documentate/state-styles
 
@@ -6,19 +6,19 @@
 
 ### Functions
 
-*   [resolveStateStyleRole](documentate_state_styles.md#resolvestatestylerole)
-*   [getMermaidStateClassName](documentate_state_styles.md#getmermaidstateclassname)
-*   [getPlantUmlStateStereotype](documentate_state_styles.md#getplantumlstatestereotype)
-*   [getMermaidClassDefinitions](documentate_state_styles.md#getmermaidclassdefinitions)
-*   [getPlantUmlStateSkinparamLines](documentate_state_styles.md#getplantumlstateskinparamlines)
+- [resolveStateStyleRole](documentate_state_styles.md#resolvestatestylerole)
+- [getMermaidStateClassName](documentate_state_styles.md#getmermaidstateclassname)
+- [getPlantUmlStateStereotype](documentate_state_styles.md#getplantumlstatestereotype)
+- [getMermaidClassDefinitions](documentate_state_styles.md#getmermaidclassdefinitions)
+- [getPlantUmlStateSkinparamLines](documentate_state_styles.md#getplantumlstateskinparamlines)
 
 ### Variables
 
-*   [BUILT\_IN\_STATE\_STYLE\_ORDER](documentate_state_styles.md#built_in_state_style_order)
+- [BUILT\_IN\_STATE\_STYLE\_ORDER](documentate_state_styles.md#built_in_state_style_order)
 
 ### Type Aliases
 
-*   [BuiltInStateStyleRole](documentate_state_styles.md#builtinstatestylerole)
+- [BuiltInStateStyleRole](documentate_state_styles.md#builtinstatestylerole)
 
 ## Functions
 
@@ -36,7 +36,7 @@
 
 `string`
 
-***
+___
 
 ### getMermaidStateClassName
 
@@ -52,7 +52,7 @@
 
 `string`
 
-***
+___
 
 ### getPlantUmlStateStereotype
 
@@ -68,42 +68,42 @@
 
 `string`
 
-***
+___
 
 ### getMermaidClassDefinitions
 
-▸ **getMermaidClassDefinitions**(): `string`\[]
+▸ **getMermaidClassDefinitions**(): `string`[]
 
 #### Returns
 
-`string`\[]
+`string`[]
 
-***
+___
 
 ### getPlantUmlStateSkinparamLines
 
-▸ **getPlantUmlStateSkinparamLines**(): `string`\[]
+▸ **getPlantUmlStateSkinparamLines**(): `string`[]
 
 #### Returns
 
-`string`\[]
+`string`[]
 
 ## Variables
 
 ### BUILT\_IN\_STATE\_STYLE\_ORDER
 
-• `Const` **BUILT\_IN\_STATE\_STYLE\_ORDER**: readonly \[`"danger"`, `"info"`, `"warning"`, `"success"`, `"primary"`, `"default"`]
+• `Const` **BUILT\_IN\_STATE\_STYLE\_ORDER**: readonly [``"danger"``, ``"info"``, ``"warning"``, ``"success"``, ``"primary"``, ``"default"``]
 
 #### Defined in
 
-lib/documentate/state-styles.ts:1
+[lib/documentate/state-styles.ts:1](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/state-styles.ts#L1)
 
 ## Type Aliases
 
 ### BuiltInStateStyleRole
 
-Ƭ **BuiltInStateStyleRole**: typeof [`BUILT_IN_STATE_STYLE_ORDER`](documentate_state_styles.md#built_in_state_style_order)\[`number`]
+Ƭ **BuiltInStateStyleRole**: typeof [`BUILT_IN_STATE_STYLE_ORDER`](documentate_state_styles.md#built_in_state_style_order)[`number`]
 
 #### Defined in
 
-lib/documentate/state-styles.ts:10
+[lib/documentate/state-styles.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/state-styles.ts#L10)

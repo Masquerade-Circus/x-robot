@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/serialize
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/serialize
 
 # Module: x-robot/documentate/serialize
 
@@ -10,7 +10,7 @@ Serializes a machine to a JSON object
 
 ### Serialization Functions
 
-*   [serialize](x_robot_documentate_serialize.md#serialize)
+- [serialize](x_robot_documentate_serialize.md#serialize)
 
 ## Serialization Functions
 

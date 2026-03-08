@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / DocumentateOptions
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / DocumentateOptions
 
 # Interface: DocumentateOptions
 
@@ -10,12 +10,12 @@ Options for the documentate function
 
 ### Properties
 
-*   [format](x_robot_documentate.DocumentateOptions.md#format)
-*   [level](x_robot_documentate.DocumentateOptions.md#level)
-*   [output](x_robot_documentate.DocumentateOptions.md#output)
-*   [fileName](x_robot_documentate.DocumentateOptions.md#filename)
-*   [skinparam](x_robot_documentate.DocumentateOptions.md#skinparam)
-*   [mermaidTheme](x_robot_documentate.DocumentateOptions.md#mermaidtheme)
+- [format](x_robot_documentate.DocumentateOptions.md#format)
+- [level](x_robot_documentate.DocumentateOptions.md#level)
+- [output](x_robot_documentate.DocumentateOptions.md#output)
+- [fileName](x_robot_documentate.DocumentateOptions.md#filename)
+- [skinparam](x_robot_documentate.DocumentateOptions.md#skinparam)
+- [mermaidTheme](x_robot_documentate.DocumentateOptions.md#mermaidtheme)
 
 ## Properties
 
@@ -27,21 +27,21 @@ Output format (required)
 
 #### Defined in
 
-[lib/documentate/types.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L29)
+[lib/documentate/types.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L29)
 
-***
+___
 
 ### level
 
-• `Optional` **level**: `"low"` | `"high"`
+• `Optional` **level**: ``"low"`` \| ``"high"``
 
 Detail level for diagrams
 
 #### Defined in
 
-[lib/documentate/types.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L31)
+[lib/documentate/types.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L31)
 
-***
+___
 
 ### output
 
@@ -51,9 +51,9 @@ Output file path
 
 #### Defined in
 
-[lib/documentate/types.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L33)
+[lib/documentate/types.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L33)
 
-***
+___
 
 ### fileName
 
@@ -63,9 +63,9 @@ Output file name
 
 #### Defined in
 
-[lib/documentate/types.ts:35](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L35)
+[lib/documentate/types.ts:35](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L35)
 
-***
+___
 
 ### skinparam
 
@@ -75,16 +75,16 @@ PlantUML skinparam customization
 
 #### Defined in
 
-[lib/documentate/types.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L37)
+[lib/documentate/types.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L37)
 
-***
+___
 
 ### mermaidTheme
 
-• `Optional` **mermaidTheme**: `"default"` | `"neutral"` | `"dark"`
+• `Optional` **mermaidTheme**: ``"default"`` \| ``"neutral"`` \| ``"dark"``
 
 Mermaid diagram theme
 
 #### Defined in
 
-[lib/documentate/types.ts:39](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L39)
+[lib/documentate/types.ts:39](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L39)

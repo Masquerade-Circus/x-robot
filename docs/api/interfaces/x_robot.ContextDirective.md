@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ContextDirective
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ContextDirective
 
 # Interface: ContextDirective
 
@@ -8,7 +8,7 @@
 
 ### Properties
 
-*   [context](x_robot.ContextDirective.md#context)
+- [context](x_robot.ContextDirective.md#context)
 
 ## Properties
 
@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L163)
+[lib/machine/interfaces.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L163)

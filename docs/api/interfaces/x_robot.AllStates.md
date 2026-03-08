@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / AllStates
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / AllStates
 
 # Interface: AllStates
 
@@ -6,4 +6,4 @@
 
 ## Indexable
 
-▪ \[key: `string`]: [`CurrentState`](../modules/x_robot.md#currentstate) | [`AllStates`](x_robot.AllStates.md)
+▪ [key: `string`]: [`CurrentState`](../modules/x_robot.md#currentstate) \| [`AllStates`](x_robot.AllStates.md)

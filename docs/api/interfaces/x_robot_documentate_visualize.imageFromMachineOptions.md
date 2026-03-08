@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / imageFromMachineOptions
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / imageFromMachineOptions
 
 # Interface: imageFromMachineOptions
 
@@ -6,20 +6,20 @@
 
 ## Hierarchy
 
-*   [`options`](x_robot_documentate_visualize.options.md)
+- [`options`](x_robot_documentate_visualize.options.md)
 
-*   [`imageFromPlantUmlCodeOptions`](x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md)
+- [`imageFromPlantUmlCodeOptions`](x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md)
 
-    ↳ **`imageFromMachineOptions`**
+  ↳ **`imageFromMachineOptions`**
 
 ## Table of contents
 
 ### Properties
 
-*   [level](x_robot_documentate_visualize.imageFromMachineOptions.md#level)
-*   [skinparam](x_robot_documentate_visualize.imageFromMachineOptions.md#skinparam)
-*   [outDir](x_robot_documentate_visualize.imageFromMachineOptions.md#outdir)
-*   [fileName](x_robot_documentate_visualize.imageFromMachineOptions.md#filename)
+- [level](x_robot_documentate_visualize.imageFromMachineOptions.md#level)
+- [skinparam](x_robot_documentate_visualize.imageFromMachineOptions.md#skinparam)
+- [outDir](x_robot_documentate_visualize.imageFromMachineOptions.md#outdir)
+- [fileName](x_robot_documentate_visualize.imageFromMachineOptions.md#filename)
 
 ## Properties
 
@@ -33,9 +33,9 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:62](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L62)
+[lib/documentate/visualize.ts:62](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L62)
 
-***
+___
 
 ### skinparam
 
@@ -47,9 +47,9 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L63)
+[lib/documentate/visualize.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L63)
 
-***
+___
 
 ### outDir
 
@@ -61,9 +61,9 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L67)
+[lib/documentate/visualize.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L67)
 
-***
+___
 
 ### fileName
 
@@ -75,4 +75,4 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L68)
+[lib/documentate/visualize.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L68)

@@ -1,4 +1,4 @@
-[x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/generate
+[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/generate
 
 # Module: x-robot/documentate/generate
 
@@ -10,11 +10,11 @@ Generate code from a serialized machine
 
 ### Functions
 
-*   [generateFromSerializedMachine](x_robot_documentate_generate.md#generatefromserializedmachine)
+- [generateFromSerializedMachine](x_robot_documentate_generate.md#generatefromserializedmachine)
 
 ### Enumerations
 
-*   [Format](../enums/x_robot_documentate_generate.Format.md)
+- [Format](../enums/x_robot_documentate_generate.Format.md)
 
 ## Functions
 
