@@ -1,5 +1,13 @@
 
 
+### [1.0.1](https://github.com/Masquerade-Circus/x-robot/compare/1.0.0...1.0.1) (2026-03-08)
+
+
+### Documentation
+
+* remove context7.json ([d0f3f1b](https://github.com/Masquerade-Circus/x-robot/commit/d0f3f1b92408c8428fd8275475c642d353afcfe6))
+* update docs ([732203d](https://github.com/Masquerade-Circus/x-robot/commit/732203df2c81878a031fc3421dffcd8352fdaa92))
+
 ## [1.0.0](https://github.com/Masquerade-Circus/x-robot/compare/0.3.0...1.0.0) (2026-03-08)
 
 
