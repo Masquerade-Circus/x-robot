@@ -181,7 +181,8 @@ skinparam state {
     const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
 
     expect(result.plantuml).toContain("title My machine");
-    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
+    expect(result.plantuml).toContain("save: └┬ AEn:saveTitle");
+    expect(result.plantuml).toContain("error: └ En:updateError");
     expect(result.plantuml).toContain("save -[#indianred]-> error: error");
     expect(result.plantuml).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
   });
@@ -192,8 +193,8 @@ skinparam state {
     const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
 
     expect(result.plantuml).toContain("title My Awesome PlantUML Machine Diagram");
-    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
-    expect(result.plantuml).toContain("error: └ P:updateError");
+    expect(result.plantuml).toContain("save: └┬ AEn:saveTitle");
+    expect(result.plantuml).toContain("error: └ En:updateError");
   });
 
   it("should allow to pass descriptions for the states of the plantuml diagram", async () => {
@@ -204,6 +205,20 @@ skinparam state {
     expect(result.plantuml).toContain("preview: Initial state");
     expect(result.plantuml).toContain("save: The user saves the title");
     expect(result.plantuml).toContain("error: We failed to save the title to the db");
+  });
+
+  it("should keep semantic state styles when generating plantuml stereotypes", async () => {
+    const semanticMachine = machine(
+      "Semantic styles",
+      init(initial("idle")),
+      state("idle", transition("finish", "done")),
+      successState("done")
+    );
+
+    const result = await documentate(semanticMachine, { format: 'plantuml' });
+
+    expect(result.plantuml).toContain("state idle<<default>>");
+    expect(result.plantuml).toContain("state done<<success>>");
   });
 
   it("should allow to pass a custom skinparams string to generate a custom style", async () => {
@@ -277,7 +292,7 @@ skinparam backgroundColor red
 
     expect(result.plantuml).toContain("title My Awesome PlantUML Machine Diagram");
     expect(result.plantuml).toContain("skinparam backgroundColor red");
-    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
+    expect(result.plantuml).toContain("save: └┬ AEn:saveTitle");
   });
 
   it("should generate a diagram from a serialized machine in png format", async () => {
@@ -287,9 +302,9 @@ skinparam backgroundColor red
 
     expect(result.png).toBeDefined();
 
-    expect(fs.existsSync(result.png)).toBeTruthy();
+    expect(fs.existsSync(result.png!)).toBeTruthy();
 
-    fs.unlinkSync(result.png);
+    fs.unlinkSync(result.png!);
   });
 
   it("should generate a diagram from a serialized machine in svg format", async () => {
@@ -299,9 +314,9 @@ skinparam backgroundColor red
 
     expect(result.svg).toBeDefined();
 
-    expect(fs.existsSync(result.svg)).toBeTruthy();
+    expect(fs.existsSync(result.svg!)).toBeTruthy();
 
-    fs.unlinkSync(result.svg);
+    fs.unlinkSync(result.svg!);
   });
 
   it("should generate a diagram from a machine in plantuml string format", async () => {
@@ -373,7 +388,7 @@ skinparam state {
     const result = await documentate(myMachine, { format: 'plantuml', level: 'high' });
 
     expect(result.plantuml).toContain("title My Awesome PlantUML Machine Diagram");
-    expect(result.plantuml).toContain("save: └┬ AP:saveTitle");
+    expect(result.plantuml).toContain("save: └┬ AEn:saveTitle");
     expect(result.plantuml).toContain("editMode -[#lightsteelblue]-> save: save\\n└ G:titleIsValid");
   });
 
@@ -384,9 +399,9 @@ skinparam state {
 
     expect(result.png).toBeDefined();
 
-    expect(fs.existsSync(result.png)).toBeTruthy();
+    expect(fs.existsSync(result.png!)).toBeTruthy();
 
-    fs.unlinkSync(result.png);
+    fs.unlinkSync(result.png!);
   });
 
   it("should generate a diagram from a machine in svg format", async () => {
@@ -396,9 +411,9 @@ skinparam state {
 
     expect(result.svg).toBeDefined();
 
-    expect(fs.existsSync(result.svg)).toBeTruthy();
+    expect(fs.existsSync(result.svg!)).toBeTruthy();
 
-    fs.unlinkSync(result.svg);
+    fs.unlinkSync(result.svg!);
   });
 
   it("should generate a diagram for a serialized machine with nested machines", async () => {
@@ -508,7 +523,7 @@ describe("Readme examples", () => {
     if (result.svg) fs.unlinkSync(result.svg);
 
     const plantUmlResult = await documentate(fetchMachine, { format: 'plantuml', level: 'high' });
-    expect(plantUmlResult.plantuml).toContain("AP:fetchDog");
+    expect(plantUmlResult.plantuml).toContain("AEn:fetchDog");
   });
 
   it("Nested example", async () => {

@@ -8,7 +8,7 @@
 
 ### Properties
 
-- [freeze](x_robot.ShouldFreezeDirective.md#freeze)
+*   [freeze](x_robot.ShouldFreezeDirective.md#freeze)
 
 ## Properties
 
@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:198](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L198)
+[lib/machine/interfaces.ts:171](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L171)

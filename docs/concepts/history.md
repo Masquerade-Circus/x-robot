@@ -1,16 +1,39 @@
 # History Tracking
 
-X-Robot provides built-in history tracking, storing a log of all state transitions.
+X-Robot provides built-in history tracking, storing states, transitions, guards, pulses, and async pulses.
 
 ## Enabling History
 
-By default, history is enabled with a limit of 10 entries. You can customize this:
+```mermaid
+---
+title: History
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state active
+class idle def
+class active def
+
+
+[*] --> idle
+idle --> active: next
+active --> idle: next
+```
 
 ```javascript
-import { machine, state, transition, initial, init, history, guard, invoke } from "x-robot";
+import { history, init, initial, machine, state, transition } from "x-robot";
 
-const myMachine = machine(
-  "MyMachine",
+const historyMachine = machine(
+  "History",
   init(initial("idle"), history(10)),
   state("idle", transition("next", "active")),
   state("active", transition("next", "idle"))
@@ -46,6 +69,7 @@ History entries are strings with the following formats:
 
 // With specific types (from pulses, guards, etc.)
 "Pulse: fetchData"
+"Async Pulse: fetchData"
 "Guard: canSubmit"
 ```
 
@@ -146,5 +170,5 @@ init(initial("idle"), history(10))
 
 ## Next Steps
 
-- [Guides: Getting Started](../guides/getting-started.md) — Combine with other features
-- [Recipes: Form Validation](../recipes/form-validation.md) — Real-world usage
+*   [Guides: Getting Started](../guides/getting-started.md) — Combine with other features
+*   [Recipes: Form Validation](../recipes/form-validation.md) — Real-world usage

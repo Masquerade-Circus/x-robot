@@ -4,22 +4,56 @@ Parallel states allow multiple independent states to be active simultaneously.
 
 ## Basic Parallel Machine
 
+```mermaid
+---
+title: Word Machine
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+```
+
 ```javascript
-import { machine, state, transition, initial, init, parallel, getState, context, invoke } from "x-robot";
+import { getState, init, initial, invoke, machine, parallel, state, transition } from "x-robot";
 
-const bold = machine("Bold", init(initial("off")),
-  state("off", transition("toggle", "on")),
-  state("on", transition("toggle", "off"))
+const boldMachine = machine(
+  "Bold",
+  init(initial("off")),
+  state("off", transition("on", "on")),
+  state("on", transition("off", "off"))
 );
 
-const italic = machine("Italic", init(initial("off")),
-  state("off", transition("toggle", "on")),
-  state("on", transition("toggle", "off"))
+const underlineMachine = machine(
+  "Underline",
+  init(initial("off")),
+  state("off", transition("on", "on")),
+  state("on", transition("off", "off"))
 );
 
-const textEditor = machine(
-  "TextEditor",
-  parallel(bold, italic)
+const italicsMachine = machine(
+  "Italics",
+  init(initial("off")),
+  state("off", transition("on", "on")),
+  state("on", transition("off", "off"))
+);
+
+const listMachine = machine(
+  "List",
+  init(initial("none")),
+  state("none", transition("bullets", "bullets"), transition("numbers", "numbers")),
+  state("bullets", transition("none", "none")),
+  state("numbers", transition("none", "none"))
+);
+
+const wordMachine = machine(
+  "Word Machine",
+  parallel(boldMachine, underlineMachine, italicsMachine, listMachine)
 );
 ```
 
@@ -28,27 +62,42 @@ const textEditor = machine(
 ### getState()
 
 ```javascript
-const state = getState(textEditor);
-// { bold: "off", italic: "off" }
+const state = getState(wordMachine);
+// { bold: "off", underline: "off", italics: "off", list: "none" }
 ```
 
 ### Direct Access
 
 ```javascript
-console.log(bold.current);   // "off"
-console.log(italic.current); // "off"
+console.log(boldMachine.current);    // "off"
+console.log(italicsMachine.current); // "off"
 ```
 
 ## Invoking Transitions
 
-Target specific regions with dot notation:
+Target specific regions with slash notation:
 
 ```javascript
-invoke(textEditor, "bold.toggle");    // bold: off -> on
-invoke(textEditor, "italic.toggle");  // italic: off -> on
+invoke(wordMachine, "bold/on");      // bold: off -> on
+invoke(wordMachine, "italics/on");   // italics: off -> on
 ```
 
 ## Complete Example: Text Editor
+
+```mermaid
+---
+title: Editor
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+```
 
 ```javascript
 const bold = machine("Bold", init(initial("off")),
@@ -80,6 +129,25 @@ const editor = machine(
 
 ## Parallel with Context
 
+```mermaid
+---
+title: Search
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+
+
+[*] --> ready
+```
+
 ```javascript
 const search = machine(
   "Search",
@@ -100,6 +168,21 @@ const search = machine(
 ## Use Cases
 
 ### Multi-Filter Panel
+
+```mermaid
+---
+title: Filters
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+```
 
 ```javascript
 const category = machine("Category", init(initial("all")),
@@ -122,6 +205,21 @@ const filters = machine("Filters", parallel(category, priceRange, sortBy));
 
 ### Dashboard Panels
 
+```mermaid
+---
+title: Dashboard
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+```
+
 ```javascript
 const sidebar = machine("Sidebar", init(initial("expanded")),
   state("expanded", transition("toggle", "collapsed")),
@@ -143,12 +241,12 @@ const dashboard = machine("Dashboard", parallel(sidebar, header, content));
 
 ## Best Practices
 
-1. **Keep regions independent** — No cross-region dependencies
-2. **Use meaningful names** — Easy to identify regions
-3. **Consider performance** — Many parallel regions may slow transitions
+1.  **Keep regions independent** — No cross-region dependencies
+2.  **Use meaningful names** — Easy to identify regions
+3.  **Consider performance** — Many parallel regions may slow transitions
 
 ## Next Steps
 
-- [Nested Machines](./nested-machines.md) — Hierarchical states
-- [Concepts: Parallel](../concepts/parallel.md) — Deep dive
-- [Recipes: Modal Dialog](../recipes/modal-dialog.md) — UI state
+*   [Nested Machines](./nested-machines.md) — Hierarchical states
+*   [Concepts: Parallel](../concepts/parallel.md) — Deep dive
+*   [Recipes: Modal Dialog](../recipes/modal-dialog.md) — UI state

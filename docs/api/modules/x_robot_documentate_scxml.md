@@ -10,8 +10,8 @@ SCXML import/export functionality
 
 ### Functions
 
-- [toSCXML](x_robot_documentate_scxml.md#toscxml)
-- [fromSCXML](x_robot_documentate_scxml.md#fromscxml)
+*   [toSCXML](x_robot_documentate_scxml.md#toscxml)
+*   [fromSCXML](x_robot_documentate_scxml.md#fromscxml)
 
 ## Functions
 
@@ -29,7 +29,7 @@ SCXML import/export functionality
 
 `string`
 
-___
+***
 
 ### fromSCXML
 

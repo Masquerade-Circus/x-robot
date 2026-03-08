@@ -8,8 +8,8 @@
 
 ### Properties
 
-- [pulse](x_robot.ExitDirective.md#pulse)
-- [failure](x_robot.ExitDirective.md#failure)
+*   [pulse](x_robot.ExitDirective.md#pulse)
+*   [failure](x_robot.ExitDirective.md#failure)
 
 ## Properties
 
@@ -19,9 +19,9 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:75](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L75)
+[lib/machine/interfaces.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L58)
 
-___
+***
 
 ### failure
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:76](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L76)
+[lib/machine/interfaces.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L59)

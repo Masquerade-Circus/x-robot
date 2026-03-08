@@ -8,4 +8,4 @@ Serialized transitions map
 
 ## Indexable
 
-▪ [key: `string`]: [`SerializedTransition`](x_robot_documentate.SerializedTransition.md)
+▪ \[key: `string`]: [`SerializedTransition`](x_robot_documentate.SerializedTransition.md)

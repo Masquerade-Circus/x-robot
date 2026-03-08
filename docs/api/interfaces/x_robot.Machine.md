@@ -8,18 +8,18 @@
 
 ### Properties
 
-- [id](x_robot.Machine.md#id)
-- [title](x_robot.Machine.md#title)
-- [context](x_robot.Machine.md#context)
-- [isAsync](x_robot.Machine.md#isasync)
-- [states](x_robot.Machine.md#states)
-- [initial](x_robot.Machine.md#initial)
-- [current](x_robot.Machine.md#current)
-- [frozen](x_robot.Machine.md#frozen)
-- [fatal](x_robot.Machine.md#fatal)
-- [history](x_robot.Machine.md#history)
-- [historyLimit](x_robot.Machine.md#historylimit)
-- [parallel](x_robot.Machine.md#parallel)
+*   [id](x_robot.Machine.md#id)
+*   [title](x_robot.Machine.md#title)
+*   [context](x_robot.Machine.md#context)
+*   [isAsync](x_robot.Machine.md#isasync)
+*   [states](x_robot.Machine.md#states)
+*   [initial](x_robot.Machine.md#initial)
+*   [current](x_robot.Machine.md#current)
+*   [frozen](x_robot.Machine.md#frozen)
+*   [fatal](x_robot.Machine.md#fatal)
+*   [history](x_robot.Machine.md#history)
+*   [historyLimit](x_robot.Machine.md#historylimit)
+*   [parallel](x_robot.Machine.md#parallel)
 
 ## Properties
 
@@ -29,19 +29,19 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:165](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L165)
+[lib/machine/interfaces.ts:138](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L138)
 
-___
+***
 
 ### title
 
-• **title**: ``null`` \| `string`
+• **title**: `null` | `string`
 
 #### Defined in
 
-[lib/machine/interfaces.ts:166](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L166)
+[lib/machine/interfaces.ts:139](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L139)
 
-___
+***
 
 ### context
 
@@ -49,9 +49,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:167](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L167)
+[lib/machine/interfaces.ts:140](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L140)
 
-___
+***
 
 ### isAsync
 
@@ -59,9 +59,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:168](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L168)
+[lib/machine/interfaces.ts:141](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L141)
 
-___
+***
 
 ### states
 
@@ -69,9 +69,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:169](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L169)
+[lib/machine/interfaces.ts:142](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L142)
 
-___
+***
 
 ### initial
 
@@ -79,9 +79,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:170](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L170)
+[lib/machine/interfaces.ts:143](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L143)
 
-___
+***
 
 ### current
 
@@ -89,9 +89,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:171](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L171)
+[lib/machine/interfaces.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L144)
 
-___
+***
 
 ### frozen
 
@@ -99,29 +99,29 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:172](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L172)
+[lib/machine/interfaces.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L145)
 
-___
+***
 
 ### fatal
 
-• `Optional` **fatal**: [`Error`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error )
+• `Optional` **fatal**: [`Error`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
 
 #### Defined in
 
-[lib/machine/interfaces.ts:173](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L173)
+[lib/machine/interfaces.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L146)
 
-___
+***
 
 ### history
 
-• **history**: `string`[]
+• **history**: `string`\[]
 
 #### Defined in
 
-[lib/machine/interfaces.ts:174](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L174)
+[lib/machine/interfaces.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L147)
 
-___
+***
 
 ### historyLimit
 
@@ -129,14 +129,14 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:175](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L175)
+[lib/machine/interfaces.ts:148](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L148)
 
-___
+***
 
 ### parallel
 
-• **parallel**: `Record`<`string`, [`Machine`](x_robot.Machine.md)\>
+• **parallel**: `Record`<`string`, [`Machine`](x_robot.Machine.md)>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:176](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L176)
+[lib/machine/interfaces.ts:149](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L149)

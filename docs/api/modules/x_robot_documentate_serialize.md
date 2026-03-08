@@ -10,7 +10,7 @@ Serializes a machine to a JSON object
 
 ### Serialization Functions
 
-- [serialize](x_robot_documentate_serialize.md#serialize)
+*   [serialize](x_robot_documentate_serialize.md#serialize)
 
 ## Serialization Functions
 

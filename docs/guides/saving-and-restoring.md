@@ -35,13 +35,44 @@ console.log(myMachine.context.data); // [...]
 
 ## Complete Example
 
+```mermaid
+---
+title: Counter
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state counting
+class idle def
+class counting def
+
+counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
+
+[*] --> idle
+idle --> counting: increment
+counting --> idle: idle
+```
+
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, snapshot, start } from "x-robot";
+
+function incrementCount(ctx) {
+  ctx.count += 1;
+}
 
 const counter = machine(
   "Counter",
   init(initial("idle"), context({ count: 0 })),
-  state("idle", transition("increment", "idle"))
+  state("idle", transition("increment", "counting")),
+  state("counting", entry(incrementCount, "idle"))
 );
 
 // Simulate state changes
@@ -56,7 +87,8 @@ console.log(savedSnapshot.context.count); // 2
 const restoredMachine = machine(
   "Counter",
   init(initial("idle"), context({ count: 0 })),
-  state("idle", transition("increment", "idle"))
+  state("idle", transition("increment", "counting")),
+  state("counting", entry(incrementCount, "idle"))
 );
 start(restoredMachine, savedSnapshot);
 
@@ -88,7 +120,7 @@ function loadState() {
 ```javascript
 // Express route: Save state
 app.post("/api/machine/save", (req, res) => {
-  const state = snapshot(req.body.machine);
+  const state = snapshot(machineInstance);
   db.machines.update(req.session.id, { state });
   res.json({ success: true });
 });
@@ -133,14 +165,14 @@ app.use(session({
 
 ## Important Notes
 
-1. **You need the machine definition** - To restore, you must have the original machine definition. The snapshot only contains the runtime state (current state, context, history), not the machine structure.
+1.  **You need the machine definition** - To restore, you must have the original machine definition. The snapshot only contains the runtime state (current state, context, history), not the machine structure.
 
-2. **Parallel and nested machines** - `snapshot()` automatically includes state from parallel and nested machines. `start()` restores them automatically.
+2.  **Parallel and nested machines** - `snapshot()` automatically includes state from parallel and nested machines. `start()` restores them automatically.
 
-3. **Frozen context** - The snapshot contains a deep clone of the context, so it's safe to modify after snapshotting.
+3.  **Frozen context** - The snapshot contains a deep clone of the context, so it's safe to modify after snapshotting.
 
 ## Next Steps
 
-- [Serialization](./serialization.md) — Generate machine definitions for code/diagrams
-- [API: snapshot()](../api/interfaces/x_robot.MachineSnapshot.md) — Full reference
-- [API: start()](../api/modules/x_robot.md#start) — Full reference
+*   [Serialization](./serialization.md) — Generate machine definitions for code/diagrams
+*   [API: snapshot()](../api/interfaces/x_robot.MachineSnapshot.md) — Full reference
+*   [API: start()](../api/modules/x_robot.md#start) — Full reference

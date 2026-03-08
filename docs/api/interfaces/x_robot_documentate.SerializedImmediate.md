@@ -10,8 +10,8 @@ Serialized immediate transition definition
 
 ### Properties
 
-- [immediate](x_robot_documentate.SerializedImmediate.md#immediate)
-- [guards](x_robot_documentate.SerializedImmediate.md#guards)
+*   [immediate](x_robot_documentate.SerializedImmediate.md#immediate)
+*   [guards](x_robot_documentate.SerializedImmediate.md#guards)
 
 ## Properties
 
@@ -21,14 +21,14 @@ Serialized immediate transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:148](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L148)
+[lib/documentate/types.ts:154](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L154)
 
-___
+***
 
 ### guards
 
-• `Optional` **guards**: [`SerializedGuard`](x_robot_documentate.SerializedGuard.md)[]
+• `Optional` **guards**: [`SerializedGuard`](x_robot_documentate.SerializedGuard.md)\[]
 
 #### Defined in
 
-[lib/documentate/types.ts:149](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L149)
+[lib/documentate/types.ts:155](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L155)

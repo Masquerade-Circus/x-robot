@@ -4,12 +4,12 @@ X-Robot FSM: A lightweight, developer-friendly finite state machine library for 
 
 ## Why X-Robot?
 
-- **Entry pulses** — Async state management without boilerplate
-- **Frozen state by default** — No manual cloning required
-- **Native async guards** — No workarounds needed
-- **Small bundle** — 15.06KB core, 54.83KB with full features
-- **Fast** — 1-30x faster than XState in benchmarks
-- **TypeScript** — Full type safety out of the box
+*   **Entry pulses** — Async state management without boilerplate
+*   **Frozen state by default** — No manual cloning required
+*   **Native async guards** — No workarounds needed
+*   **Small bundle** — 15.06KB core, 57.84KB with `documentate` + `validate`
+*   **Fast** — 1.1-26.6x faster than XState in benchmarks
+*   **TypeScript** — Includes TypeScript types for machine definitions and generated code
 
 ## Quick Start
 
@@ -46,17 +46,17 @@ bun add x-robot
 
 ## Key Features
 
-- Nested and parallel states
-- Guards (synchronous and asynchronous)
-- Immediate transitions
-- Entry and exit pulses
-- Context management with frozen state
-- Delayed transitions with invokeAfter()
-- History tracking
-- Machine validation with validate()
-- Code generation (TypeScript, ESM, CJS)
-- Diagram generation (SVG, PNG, PlantUML, Mermaid)
-- SCXML import/export
+*   Nested and parallel states
+*   Guards (synchronous and asynchronous)
+*   Immediate transitions
+*   Entry and exit pulses
+*   Context management with frozen state
+*   Delayed transitions with invokeAfter()
+*   History tracking
+*   Machine validation with validate()
+*   Code generation (TypeScript, ESM, CJS)
+*   Diagram generation (Mermaid, PlantUML, SVG, PNG)
+*   SCXML import/export
 
 ## API Overview
 
@@ -70,8 +70,8 @@ bun add x-robot
 | `exit()` | Exit pulse - runs when leaving a state |
 | `guard()` | Conditional transitions |
 | `invokeAfter()` | Delayed transitions |
-| `documentate()` | Generate code, diagrams, serialization |
-| `validate()` | Validate machine structure |
+| `documentate()` | Generate code, diagrams, serialization via `x-robot/documentate` |
+| `validate()` | Validate machine structure via `x-robot/validate` |
 
 ## Documentation
 

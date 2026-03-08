@@ -4,8 +4,33 @@ Generate TypeScript, ESM, or CJS code from your machines using `documentate()`.
 
 ## Generate TypeScript
 
+```mermaid
+---
+title: MyMachine
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state active
+class idle def
+class active def
+
+
+[*] --> idle
+idle --> active: start
+```
+
 ```javascript
-import { machine, state, transition, initial, init, context, documentate } from "x-robot";
+import { machine, state, transition, initial, init, context } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
 const myMachine = machine(
   "MyMachine",
@@ -47,14 +72,48 @@ console.log(cjs);
 ## Generate All Formats
 
 ```javascript
-const { ts, mjs, cjs, json, scxml, plantuml, svg, png } = 
+const { ts, mjs, cjs, json, scxml, plantuml, mermaid, svg, png } = 
   await documentate(myMachine, { format: "all" });
 ```
 
 ## Full Example
 
+```mermaid
+---
+title: Fetch
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state loading
+state success
+state error
+class idle def
+class loading def
+class success def
+class error def
+
+loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+
+[*] --> idle
+idle --> loading: fetch
+loading --> success: success
+loading --> error: error
+success --> idle: reset
+error --> idle: reset
+```
+
 ```javascript
-import { machine, state, transition, initial, init, context, entry, documentate } from "x-robot";
+import { machine, state, transition, initial, init, context, entry } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
 const fetchMachine = machine(
   "Fetch",
@@ -147,8 +206,8 @@ const { ts } = await documentate(exampleMachine, { format: "ts" });
 
 ## Next Steps
 
-- [SCXML Import/Export](./scxml.md) — XML format
-- [Serialization](./serialization.md) — Machine definition format
-- [Saving and Restoring](./saving-and-restoring.md) — Persist runtime state
-- [Visualization](./visualization.md) — Generate SVG/PNG diagrams
-- [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference
+*   [SCXML Import/Export](./scxml.md) — XML format
+*   [Serialization](./serialization.md) — Machine definition format
+*   [Saving and Restoring](./saving-and-restoring.md) — Persist runtime state
+*   [Visualization](./visualization.md) — Generate SVG/PNG diagrams
+*   [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference

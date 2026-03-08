@@ -10,11 +10,11 @@ Generate code from a serialized machine
 
 ### Functions
 
-- [generateFromSerializedMachine](x_robot_documentate_generate.md#generatefromserializedmachine)
+*   [generateFromSerializedMachine](x_robot_documentate_generate.md#generatefromserializedmachine)
 
 ### Enumerations
 
-- [Format](../enums/x_robot_documentate_generate.Format.md)
+*   [Format](../enums/x_robot_documentate_generate.Format.md)
 
 ## Functions
 

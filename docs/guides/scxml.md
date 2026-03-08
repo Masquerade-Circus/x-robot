@@ -5,7 +5,7 @@ SCXML (State Chart XML) is a W3C standard for state machines. X-Robot supports i
 ## Export to SCXML
 
 ```javascript
-import { documentate } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
 const { scxml } = await documentate(myMachine, { format: "scxml" });
 
@@ -39,8 +39,36 @@ const { serialized } = await documentate(scxmlString, { format: "serialized" });
 
 ## Complete Import/Export Cycle
 
+```mermaid
+---
+title: MyMachine
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state loading
+state done
+class idle def
+class loading def
+class done def
+
+
+[*] --> idle
+idle --> loading: start
+loading --> done: success
+```
+
 ```javascript
-import { machine, state, transition, initial, init, documentate } from "x-robot";
+import { machine, state, transition, initial, init } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
 // Create machine
 const myMachine = machine(
@@ -120,9 +148,9 @@ console.log(serialized.initial); // "idle" (same as original)
 
 Export to SCXML for tools that understand the standard:
 
-- SCXML validators
-- Visualization tools
-- Model checkers
+*   SCXML validators
+*   Visualization tools
+*   Model checkers
 
 ### Migration
 
@@ -140,12 +168,12 @@ SCXML export demonstrates X-Robot follows industry standards.
 
 ## Limitations
 
-- Some SCXML features not supported (invoke, send, cancel)
-- History tracking is an X-Robot feature and not part of SCXML standard
+*   Some SCXML features not supported (invoke, send, cancel)
+*   History tracking is an X-Robot feature and not part of SCXML standard
 
 ## Next Steps
 
-- [Code Generation](./code-generation.md) — Generate TypeScript/JS
-- [Serialization](./serialization.md) — Machine definition format
-- [Saving and Restoring](./saving-and-restoring.md) — Persist runtime state
-- [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference
+*   [Code Generation](./code-generation.md) — Generate TypeScript/JS
+*   [Serialization](./serialization.md) — Machine definition format
+*   [Saving and Restoring](./saving-and-restoring.md) — Persist runtime state
+*   [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference

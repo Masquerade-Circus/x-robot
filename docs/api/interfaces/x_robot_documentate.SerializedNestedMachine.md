@@ -10,8 +10,8 @@ Serialized nested machine definition
 
 ### Properties
 
-- [machine](x_robot_documentate.SerializedNestedMachine.md#machine)
-- [transition](x_robot_documentate.SerializedNestedMachine.md#transition)
+*   [machine](x_robot_documentate.SerializedNestedMachine.md#machine)
+*   [transition](x_robot_documentate.SerializedNestedMachine.md#transition)
 
 ## Properties
 
@@ -21,9 +21,9 @@ Serialized nested machine definition
 
 #### Defined in
 
-[lib/documentate/types.ts:156](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L156)
+[lib/documentate/types.ts:162](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L162)
 
-___
+***
 
 ### transition
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:157](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L157)
+[lib/documentate/types.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L163)

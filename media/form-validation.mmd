@@ -19,9 +19,17 @@ state invalid
 state submitting
 state success
 state error
+class pristine def
+class dirty def
+class validating def
+class valid def
+class invalid def
+class submitting def
+class success def
+class error def
 
-validating: └┬ P-validateFormInContext<br> ├┬ success<br> │└ T-valid<br> └┬ failure<br>  └ T-invalid
-submitting: └┬ AP-submitForm<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+validating: └┬ En-validateFormInContext<br> ├┬ success<br> │└ T-valid<br> └┬ failure<br>  └ T-invalid
+submitting: └┬ AEn-submitForm<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> pristine
 pristine --> dirty: change

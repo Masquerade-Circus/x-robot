@@ -4,16 +4,16 @@
 
 [x-robot/documentate](../modules/x_robot_documentate.md).SerializedPulse
 
-Serialized pulse (entry/exit action)
+Serialized pulse (entry/exit pulse)
 
 ## Table of contents
 
 ### Properties
 
-- [pulse](x_robot_documentate.SerializedPulse.md#pulse)
-- [success](x_robot_documentate.SerializedPulse.md#success)
-- [failure](x_robot_documentate.SerializedPulse.md#failure)
-- [isAsync](x_robot_documentate.SerializedPulse.md#isasync)
+*   [pulse](x_robot_documentate.SerializedPulse.md#pulse)
+*   [success](x_robot_documentate.SerializedPulse.md#success)
+*   [failure](x_robot_documentate.SerializedPulse.md#failure)
+*   [isAsync](x_robot_documentate.SerializedPulse.md#isasync)
 
 ## Properties
 
@@ -23,9 +23,9 @@ Serialized pulse (entry/exit action)
 
 #### Defined in
 
-[lib/documentate/types.ts:124](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L124)
+[lib/documentate/types.ts:129](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L129)
 
-___
+***
 
 ### success
 
@@ -33,9 +33,9 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:125](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L125)
+[lib/documentate/types.ts:130](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L130)
 
-___
+***
 
 ### failure
 
@@ -43,9 +43,9 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:126](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L126)
+[lib/documentate/types.ts:131](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L131)
 
-___
+***
 
 ### isAsync
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:127](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L127)
+[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L132)

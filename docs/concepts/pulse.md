@@ -10,10 +10,10 @@ import { machine, state, transition, entry, exit, initial, init, context, should
 
 A pulse is a function that:
 
-1. Receives the machine's context
-2. Can be synchronous or asynchronous
-3. Can mutate the context directly
-4. Can trigger state transitions on success or failure
+1.  Receives the machine's context
+2.  Can be synchronous or asynchronous
+3.  Can mutate the context directly
+4.  Can trigger state transitions on success or failure
 
 Entry pulses are defined with `entry()`, exit pulses with `exit()`:
 
@@ -55,14 +55,43 @@ state("loading", entry(fetchData, "success", "error"))
 
 ## Exit Pulse
 
-Exit pulses run when leaving a state:
+```mermaid
+---
+title: ExitTest
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state done
+class idle def
+class done def
+
+
+[*] --> idle
+idle --> done: next
+```
 
 ```javascript
-function markEnded(ctx) {
-  ctx.endedAt = Date.now();
+import { exit, init, initial, machine, state, transition } from "x-robot";
+
+function logExit() {
+  return "exited";
 }
 
-state("active", exit(markEnded))
+const exitMachine = machine(
+  "ExitTest",
+  init(initial("idle")),
+  state("idle", transition("next", "done", exit(logExit))),
+  state("done")
+);
 ```
 
 ## Why Not Reducers?
@@ -106,9 +135,9 @@ state("loading", entry(fetchData, "success", "error"));
 state("loading", entry(asyncAction, "success", "failure"));
 ```
 
-- First argument: The pulse function
-- Second argument: State to transition on success (resolve)
-- Third argument: State to transition on failure (reject)
+*   First argument: The pulse function
+*   Second argument: State to transition on success (resolve)
+*   Third argument: State to transition on failure (reject)
 
 ### Entry Pulse Without Transitions
 
@@ -135,7 +164,32 @@ state("saving", entry(validateAndSave, "saved", "error"));
 
 ## Frozen Mode
 
-By default, X-Robot runs in frozen mode. Each pulse receives a clone of the context:
+By default, X-Robot runs in frozen mode. Each pulse receives a deep-cloned copy of the context:
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state done
+class idle def
+class done def
+
+done: └ En-tryUpdate
+
+[*] --> idle
+idle --> done: continue
+```
 
 ```javascript
 function tryUpdate(ctx) {
@@ -146,18 +200,42 @@ function tryUpdate(ctx) {
 const myMachine = machine(
   "Test",
   init(initial("idle"), context({ value: 0 })),
-  state("idle", entry(tryUpdate), transition("continue", "done")),
-  state("done")
+  state("idle", transition("continue", "done")),
+  state("done", entry(tryUpdate))
 );
 
-invoke(myMachine, "continue");
-// Original context.value is still 0
-// Pulse modified a clone
+try {
+  invoke(myMachine, "continue");
+} catch (error) {
+  // Original context.value is still 0 because the pulse failed
+}
 ```
 
 This prevents accidental mutations and makes error handling safer.
 
 ## Disabling Frozen Mode
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+class idle def
+
+idle: └ En-updateValue
+
+[*] --> idle
+```
 
 ```javascript
 function updateValue(ctx) {
@@ -177,11 +255,11 @@ const myMachine = machine(
 
 Traditional state management separates concerns into multiple functions:
 
-- **Reducers**: Handle sync state updates
-- **Mutations**: Handle sync updates without action type discrimination
-- **Producers**: Handle updates with cloned state
-- **Actions**: Handle async operations
-- **Signals**: Handle reactive updates
+*   **Reducers**: Handle sync state updates
+*   **Mutations**: Handle sync updates without action type discrimination
+*   **Producers**: Handle updates with cloned state
+*   **Actions**: Handle async operations
+*   **Signals**: Handle reactive updates
 
 Each concept requires different patterns, increasing cognitive load.
 
@@ -206,10 +284,11 @@ function reducer(state, action) {
 ```
 
 Problems:
-- Must discriminate by action type
-- Must clone state manually
-- Must return new state
-- Async requires additional functions
+
+*   Must discriminate by action type
+*   Must clone state manually
+*   Must return new state
+*   Async requires additional functions
 
 ### Mutations
 
@@ -241,9 +320,10 @@ function fetchDataMutation(state, payload) {
 ```
 
 Problems:
-- Two functions per operation
-- Must handle data flow between action and mutation
-- Still need action types for discrimination
+
+*   Two functions per operation
+*   Must handle data flow between action and mutation
+*   Still need action types for discrimination
 
 ### Producers
 
@@ -257,8 +337,9 @@ function updateProducer(state) {
 ```
 
 Problems:
-- Only sync operations
-- No async support
+
+*   Only sync operations
+*   No async support
 
 ### Actions + Producers
 
@@ -277,9 +358,10 @@ function updateProducer(context, data) {
 ```
 
 Problems:
-- Two functions per operation
-- Complex data flow
-- Verbose
+
+*   Two functions per operation
+*   Complex data flow
+*   Verbose
 
 ### Pulse: The Unified Solution
 
@@ -306,14 +388,14 @@ state("loading", entry(fetchData, "success", "error"));
 
 ### When to Use Each
 
-- **Reducer**: When you need time-travel debugging or Immutable.js
-- **Mutation**: Rarely — similar limitations to reducer
-- **Producer**: Simple sync updates only
-- **Action + Mutation/Producer**: When migrating from Redux
-- **Pulse**: For new X-Robot code — simpler and more powerful
+*   **Reducer**: When you need time-travel debugging or Immutable.js
+*   **Mutation**: Rarely — similar limitations to reducer
+*   **Producer**: Simple sync updates only
+*   **Action + Mutation/Producer**: When migrating from Redux
+*   **Pulse**: For new X-Robot code — simpler and more powerful
 
 ## Next Steps
 
-- [Guards](./guards.md) — Conditional transitions
-- [Context](./context.md) — State management
-- [Getting Started](../guides/getting-started.md) — Practical examples
+*   [Guards](./guards.md) — Conditional transitions
+*   [Context](./context.md) — State management
+*   [Getting Started](../guides/getting-started.md) — Practical examples

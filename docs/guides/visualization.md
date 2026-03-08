@@ -1,22 +1,24 @@
 # Visualization
 
-Generate visual diagrams from your machines using the `documentate()` function. X-Robot supports generating SVG and PNG images from machine definitions.
+Generate visual diagrams from your machines using `documentate()`. X-Robot can generate Mermaid and PlantUML code, plus SVG and PNG files.
+
+`svg` and `png` generation run through PlantUML, so they require a Node.js environment with Java available.
 
 ## Basic Usage
 
 ```javascript
-import { documentate } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
-// Generate SVG
+// Generate SVG file path
 const { svg } = await documentate(myMachine, { format: "svg" });
 
-// Generate PNG
+// Generate PNG file path
 const { png } = await documentate(myMachine, { format: "png" });
 ```
 
 ## With Options
 
-Customize the output with level and skinparam:
+Customize the output with `level` and, for PlantUML-based output, `skinparam`:
 
 ```javascript
 // High detail diagram
@@ -25,9 +27,9 @@ const { svg } = await documentate(myMachine, {
   level: "high" 
 });
 
-// With custom styling
-const { png } = await documentate(myMachine, { 
-  format: "png", 
+// With custom PlantUML styling
+const { svg } = await documentate(myMachine, { 
+  format: "svg", 
   level: "high",
   skinparam: "skinparam backgroundColor white\nskinparam arrowColor #333"
 });
@@ -37,12 +39,12 @@ const { png } = await documentate(myMachine, {
 
 ### level
 
-- `"low"` (default): Basic state diagram
-- `"high"`: Detailed diagram with all transitions, guards, and actions
+*   `"low"`: Basic state diagram
+*   `"high"` (default): Detailed diagram with all transitions, guards, and actions
 
 ### skinparam
 
-Customize PlantUML styling. Common options:
+Customize PlantUML styling for `plantuml` and `svg` output. Common options:
 
 ```javascript
 skinparam: `
@@ -85,7 +87,7 @@ Generate diagrams automatically for documentation:
 ```javascript
 // In your build process
 const { svg } = await documentate(myMachine, { format: "svg" });
-fs.writeFileSync("docs/diagram.svg", svg);
+console.log(svg); // absolute/relative path to generated SVG file
 ```
 
 ### Debugging
@@ -93,8 +95,8 @@ fs.writeFileSync("docs/diagram.svg", svg);
 Visualize machine state during development:
 
 ```javascript
-function debugDiagram(machine) {
-  const { svg } = documentate(machine, { format: "svg" });
+async function debugDiagram(machine) {
+  const { svg } = await documentate(machine, { format: "svg" });
   // Open in browser or save to file
   console.log(svg);
 }
@@ -107,7 +109,7 @@ Save diagrams for external use:
 ```javascript
 // Export as PNG
 const { png } = await documentate(myMachine, { format: "png" });
-fs.writeFileSync("machine.png", Buffer.from(png, "base64"));
+console.log(png); // generated PNG file path
 ```
 
 ## PlantUML Generation
@@ -115,6 +117,8 @@ fs.writeFileSync("machine.png", Buffer.from(png, "base64"));
 For more control, generate PlantUML code first:
 
 ```javascript
+import { documentate } from "x-robot/documentate";
+
 const { plantuml } = await documentate(myMachine, { format: "plantuml" });
 
 // Customize
@@ -122,6 +126,8 @@ const { svg } = await documentate(myMachine, {
   format: "svg",
   skinparam: "skinparam stateFontSize 14"
 });
+```
+
 ## Mermaid Generation
 
 X-Robot also supports generating [Mermaid](https://mermaid.js.org/) diagrams, which can be embedded directly in Markdown documentation:
@@ -143,9 +149,11 @@ fs.writeFileSync("diagram.mmd", mermaid);
 ### Mermaid Options
 
 The Mermaid output includes:
-- Color-coded state types (danger, warning, success, primary, info)
-- Left-aligned text in states
-- Transitions with proper styling
+
+*   Color-coded state types (danger, warning, success, primary, info)
+*   Base styling for default states through the `def` class
+*   Left-aligned text in states
+*   Transitions with proper styling
 
 ### Example Output
 
@@ -193,7 +201,7 @@ loading --> success: done
 
 ## Next Steps
 
-- [Serialization](./serialization.md) — Machine definition format
-- [Code Generation](./code-generation.md) — Generate code
-- [SCXML Import/Export](./scxml.md) — Standard format
-- [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference
+*   [Serialization](./serialization.md) — Machine definition format
+*   [Code Generation](./code-generation.md) — Generate code
+*   [SCXML Import/Export](./scxml.md) — Standard format
+*   [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference

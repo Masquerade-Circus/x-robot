@@ -4,50 +4,94 @@ Nested machines allow hierarchical state organization. A machine can contain oth
 
 ## Basic Nesting
 
-```javascript
-import { machine, state, transition, initial, init, nested, guard, invoke, entry } from "x-robot";
+```mermaid
+---
+title: Parent
+---
 
-// Child machine
-const stopwatch = machine(
-  "Stopwatch",
-  init(initial("stopped")),
-  state("stopped", transition("start", "running")),
-  state("running", transition("stop", "stopped"))
-);
+stateDiagram-v2
 
-// Parent machine
-const timer = machine(
-  "Timer",
-  init(initial("idle")),
-  state("idle", transition("begin", "timing")),
-  state("timing", nested(stopwatch, "pause"), transition("cancel", "idle")),
-  state("paused")
-);
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state step1
+state step2
+class step1 def
+class step2 def
+
+
+[*] --> step1
+step1 --> step2: skip
 ```
 
-The nested machine runs within the parent state. Transitions in the child can trigger parent transitions using dot notation.
+```javascript
+import { init, initial, machine, nested, state, transition } from "x-robot";
+
+const orderMachine = machine(
+  "Order",
+  init(initial("pending")),
+  state("pending", transition("confirm", "confirmed")),
+  state("confirmed")
+);
+
+const parent = machine(
+  "Parent",
+  init(initial("step1")),
+  state("step1", nested(orderMachine, "confirm"), transition("skip", "step2")),
+  state("step2")
+);
+```
 
 ## Invoking Nested Transitions
 
 ```javascript
-// Start stopwatch from parent
-invoke(timer, "begin");      // timer.current = "timing", stopwatch.current = "stopped"
-invoke(timer, "timing.start"); // stopwatch.current = "running"
+// Trigger a nested transition from the parent
+invoke(parent, "step1.confirm");
 
 // Access nested state
-console.log(timer.current);        // "timing"
-console.log(stopwatch.current);   // "running"
+console.log(parent.current);        // "step1"
+console.log(orderMachine.current);  // "confirmed"
 ```
 
 ## Nested with Initial State
+
+```mermaid
+---
+title: App
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state public
+state private
+state loggingOut
+class public def
+class private def
+class loggingOut def
+
+
+[*] --> public
+public --> private: login
+```
 
 ```javascript
 const auth = machine(
   "Auth",
   init(initial("unauthenticated")),
   state("unauthenticated", transition("login", "authenticating")),
-  state("authenticating", entry(async (ctx) => {
-    ctx.user = await authenticate(ctx.credentials);
+  state("authenticating", entry(async (ctx, credentials) => {
+    ctx.user = await authenticate(credentials);
   }, "authenticated", "failed")),
   state("authenticated", transition("logout", "unauthenticated")),
   state("failed", transition("retry", "authenticating"))
@@ -77,65 +121,58 @@ state("private",
 
 ## Exit from Nested Machine
 
-The parent can listen to child transitions:
+The parent can invoke child transitions using dot notation:
 
 ```javascript
-state("private", 
-  nested(auth),
-  transition("private.logout", "loggingOut")  // listens to auth.logout
-);
+state("private", nested(auth));
+
+invoke(app, "private.logout");
 ```
 
 ## Use Cases
 
 ### Authentication Flow
 
-```
-App
-├── public
-│   └── Auth (nested)
-│       ├── unauthenticated
-│       ├── authenticating
-│       ├── authenticated
-│       └── failed
-└── private
-```
+    App
+    ├── public
+    │   └── Auth (nested)
+    │       ├── unauthenticated
+    │       ├── authenticating
+    │       ├── authenticated
+    │       └── failed
+    └── private
 
 ### Form Wizard
 
-```
-Wizard
-├── step1
-│   └── Validation (nested)
-├── step2
-│   └── Validation (nested)
-└── step3
-    └── Validation (nested)
-```
+    Wizard
+    ├── step1
+    │   └── Validation (nested)
+    ├── step2
+    │   └── Validation (nested)
+    └── step3
+        └── Validation (nested)
 
 ### Game States
 
-```
-Game
-├── menu
-├── playing
-│   └── Player (nested)
-│       ├── idle
-│       ├── walking
-│       ├── running
-│       └── jumping
-├── paused
-└── gameOver
-```
+    Game
+    ├── menu
+    ├── playing
+    │   └── Player (nested)
+    │       ├── idle
+    │       ├── walking
+    │       ├── running
+    │       └── jumping
+    ├── paused
+    └── gameOver
 
 ## Limitations
 
-- Child machines cannot directly transition to parent states
-- Context sharing requires explicit parent-child relationship
-- Deep nesting (3+ levels) can become complex to visualize
+*   Child machines cannot directly transition to parent states
+*   Context sharing requires explicit parent-child relationship
+*   Deep nesting (3+ levels) can become complex to visualize
 
 ## Next Steps
 
-- [Parallel States](./parallel.md) — Multiple independent states
-- [Guides: Nested Machines](../guides/nested-machines.md) — Practical examples
-- [Recipes: Wizard](../recipes/wizard.md) — Multi-step forms
+*   [Parallel States](./parallel.md) — Multiple independent states
+*   [Guides: Nested Machines](../guides/nested-machines.md) — Practical examples
+*   [Recipes: Wizard](../recipes/wizard.md) — Multi-step forms

@@ -39,6 +39,7 @@ class fatal danger
 class authorizationFailure danger
 class voidOrRefundFailure danger
 class captureFailure danger
+class draft def
 class expiredDraft warning
 class created primary
 class expired warning
@@ -46,63 +47,67 @@ class waitingForStore primary
 class cancelledByStore warning
 class cancelledByClient warning
 class cancelledByCustomerSupport warning
+class changesRequestedByStore def
 class changesRejectedByClient warning
+class changesAcceptedByClient def
 class processing primary
 class processingCancelledByStore warning
+class processed def
 class ready primary
 class readyCancelledByStore warning
+class waitingForDelivery def
 class waitingForDeliveryCancelledByStore warning
 class completed success
 class completedCancelledByStore warning
 
 fatal: Fatal error
-fatal: ├ AP-setError<br>├ AP-createTransaction<br>├ AP-update<br>├ AP-sendNotificationToClient<br>└ AP-throwError
+fatal: ├ AEn-setError<br>├ AEn-createTransaction<br>├ AEn-update<br>├ AEn-sendNotificationToClient<br>└ AEn-throwError
 authorizationFailure: Payment authorization failed
-authorizationFailure: ├ AP-setError<br>├ AP-createTransaction<br>├ AP-update<br>├ AP-sendNotificationToClient<br>└ AP-throwError
+authorizationFailure: ├ AEn-setError<br>├ AEn-createTransaction<br>├ AEn-update<br>├ AEn-sendNotificationToClient<br>└ AEn-throwError
 voidOrRefundFailure: Void or refund failed
-voidOrRefundFailure: ├ AP-setError<br>├ AP-updateTransaction<br>├ AP-update<br>└ AP-throwError
+voidOrRefundFailure: ├ AEn-setError<br>├ AEn-updateTransaction<br>├ AEn-update<br>└ AEn-throwError
 captureFailure: Payment capture failed
-captureFailure: ├ AP-setError<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>├ AP-sendNotificationToClient<br>├ AP-sendNotificationToStore<br>└ AP-throwError
+captureFailure: ├ AEn-setError<br>├ AEn-voidOrRefundOrder<br>├ AEn-update<br>├ AEn-updateTransaction<br>├ AEn-sendNotificationToClient<br>├ AEn-sendNotificationToStore<br>└ AEn-throwError
 draft: Draft order
-draft: ├ AP-getClient<br>├ AP-getItemsAndTaxes<br>├ AP-getAmounts<br>└ AP-draft
+draft: ├ AEn-getClient<br>├ AEn-getItemsAndTaxes<br>├ AEn-getAmounts<br>└ AEn-draft
 expiredDraft: Draft expired
-expiredDraft: ├ AP-getClient<br>└ AP-expireDraft
+expiredDraft: ├ AEn-getClient<br>└ AEn-expireDraft
 created: Order created
-created: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-validatePickupTime<br>├ AP-getItemsAndTaxes<br>├ AP-getAmounts<br>├ AP-getCard<br>├ AP-create<br>├ AP-authorize<br>├ AP-createTransaction<br>└ AP-update
+created: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-validatePickupTime<br>├ AEn-getItemsAndTaxes<br>├ AEn-getAmounts<br>├ AEn-getCard<br>├ AEn-create<br>├ AEn-authorize<br>├ AEn-createTransaction<br>└ AEn-update
 expired: Order expired
-expired: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-expire<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+expired: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-expire<br>├ AEn-getTransaction<br>├ AEn-voidOrRefundOrder<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
 waitingForStore: Waiting for store confirmation
-waitingForStore: ├ AP-sendNotificationToClient<br>├ AP-setTimeoutTasks<br>└ AP-update
+waitingForStore: ├ AEn-sendNotificationToClient<br>├ AEn-setTimeoutTasks<br>└ AEn-update
 cancelledByStore: Cancelled by store
-cancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-update<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+cancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-update<br>├ AEn-voidOrRefundOrder<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
 cancelledByClient: Cancelled by client
-cancelledByClient: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-sendNotificationToStore<br>└ AP-sendNotificationToClient
+cancelledByClient: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-voidOrRefundOrder<br>├ AEn-update<br>├ AEn-sendNotificationToStore<br>└ AEn-sendNotificationToClient
 cancelledByCustomerSupport: Cancelled by customer support
-cancelledByCustomerSupport: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-setCancelledById<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+cancelledByCustomerSupport: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-setCancelledById<br>├ AEn-voidOrRefundOrder<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
 changesRequestedByStore: Changes requested by store
-changesRequestedByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getAmounts<br>├ AP-update<br>└ AP-sendNotificationToClient
+changesRequestedByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getAmounts<br>├ AEn-update<br>└ AEn-sendNotificationToClient
 changesRejectedByClient: Changes rejected by client
-changesRejectedByClient: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>├ AP-sendNotificationToClient<br>└ AP-sendNotificationToStore
+changesRejectedByClient: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-voidOrRefundOrder<br>├ AEn-update<br>├ AEn-updateTransaction<br>├ AEn-sendNotificationToClient<br>└ AEn-sendNotificationToStore
 changesAcceptedByClient: Changes accepted by client
-changesAcceptedByClient: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-update<br>└ AP-sendNotificationToStore
+changesAcceptedByClient: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-update<br>└ AEn-sendNotificationToStore
 processing: Processing order
-processing: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-update<br>└ AP-sendNotificationToClient
+processing: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-update<br>└ AEn-sendNotificationToClient
 processingCancelledByStore: Processing cancelled by store
-processingCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+processingCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-voidOrRefundOrder<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
 processed: Order processed
-processed: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-update<br>├ AP-capture<br>└ AP-updateTransaction
+processed: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-update<br>├ AEn-capture<br>└ AEn-updateTransaction
 ready: Ready for delivery
-ready: ├ AP-increaseSuccessfulStoreOrderCount<br>├ AP-update<br>└ AP-sendNotificationToClient
+ready: ├ AEn-increaseSuccessfulStoreOrderCount<br>├ AEn-update<br>└ AEn-sendNotificationToClient
 readyCancelledByStore: Ready cancelled by store
-readyCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+readyCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-voidOrRefundOrder<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
 waitingForDelivery: Waiting for delivery
-waitingForDelivery: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>└ AP-update
+waitingForDelivery: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>└ AEn-update
 waitingForDeliveryCancelledByStore: Waiting for delivery cancelled by store
-waitingForDeliveryCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+waitingForDeliveryCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-voidOrRefundOrder<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
 completed: Order completed
-completed: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>└ AP-update
+completed: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>└ AEn-update
 completedCancelledByStore: Completed cancelled by store
-completedCancelledByStore: ├ AP-getClient<br>├ AP-getStore<br>├ AP-getRetailer<br>├ AP-setI18N<br>├ AP-getCard<br>├ AP-getItemsAndTaxes<br>├ AP-getTransaction<br>├ AP-voidOrRefundOrder<br>├ AP-decreaseSuccessfulStoreOrderCount<br>├ AP-update<br>├ AP-updateTransaction<br>└ AP-sendNotificationToClient
+completedCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-voidOrRefundOrder<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
 
 [*] --> draft
 draft --> expiredDraft: expiredDraft

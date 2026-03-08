@@ -17,10 +17,16 @@ state open
 state confirming
 state closing
 state error
+class closed def
+class opening def
+class open def
+class confirming def
+class closing def
+class error def
 
-opening: └┬ P-prepareContent<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
-confirming: └┬ AP-handleConfirmation<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
-closing: └┬ P-clearContent<br> └┬ success<br>  └ T-closed
+opening: └┬ En-prepareContent<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
+confirming: └┬ AEn-handleConfirmation<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
+closing: └┬ En-clearContent<br> └┬ success<br>  └ T-closed
 
 [*] --> closed
 closed --> opening: open

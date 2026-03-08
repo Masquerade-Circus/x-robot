@@ -15,8 +15,12 @@ state idle
 state authenticating
 state authenticated
 state error
+class idle def
+class authenticating def
+class authenticated def
+class error def
 
-authenticating: └┬ AP-authenticateUser<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-error
+authenticating: └┬ AEn-authenticateUser<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> authenticating: login

@@ -1,23 +1,46 @@
 # Guards
 
-Guards determine whether a transition should occur. They receive context and optional payload, returning a boolean.
+Guards determine whether a transition should occur. They receive context and optional payload, and must return `true` to allow the transition.
 
 ## Synchronous Guards
 
+```mermaid
+---
+title: Guard
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state step1
+state step2
+class step1 def
+class step2 def
+
+
+[*] --> step1
+step1 --> step2: next<br>└ G-canProceed
+```
+
 ```javascript
-import { machine, state, transition, initial, init, invoke, guard, entry } from "x-robot";
+import { guard, init, initial, machine, state, transition } from "x-robot";
 
-const canProceed = (ctx, payload) => payload.length > 0;
+function canProceed(ctx, payload) {
+  return payload?.value > 0;
+}
 
-const formMachine = machine(
-  "Form",
-  init(initial("idle")),
-  state("idle", transition("submit", "validating", guard(canProceed))),
-  state("validating")
+const guardedFlow = machine(
+  "Guard",
+  init(initial("step1")),
+  state("step1", transition("next", "step2", guard(canProceed))),
+  state("step2")
 );
-
-invoke(formMachine, "submit", "hi"); // transitions to "validating"
-invoke(formMachine, "submit", "");    // stays in "idle"
 ```
 
 ## Async Guards
@@ -44,12 +67,12 @@ await invoke(machine, "proceed");
 
 ## Guard with Failure Transition
 
-You can specify a failure state for when the guard returns false:
+You can specify a failure transition for when the guard does not return `true`:
 
 ```javascript
 state("idle", transition("submit", "success", guard(validateInput, "error")));
 // success: if guard returns true
-// error: if guard returns false
+// error: if guard returns anything other than true
 ```
 
 ## Multiple Guards
@@ -64,7 +87,7 @@ state("idle", transition("next", "step2", guard(allPass)));
 
 ## Guards vs Entry Pulses
 
-Guards run before the transition. Entry pulses run after entering the new state:
+Guards run before the transition. Entry pulses run after entering the state where they are defined:
 
 ```javascript
 const notify = (ctx) => {
@@ -73,7 +96,7 @@ const notify = (ctx) => {
 
 state("review", 
   transition("approve", "approved", guard(canApprove)),
-  entry(notify),  // runs after entering "approved"
+  entry(notify),  // runs after entering "review"
   transition("reject", "rejected")
 );
 ```
@@ -136,7 +159,7 @@ state("idle", transition("check", "active", guard(asyncCheckPermission)));
 
 ## Next Steps
 
-- [Pulse](./pulse.md) — Combined with guards
-- [Context](./context.md) — Accessing state in guards
-- [Guides: Using Guards](../guides/guards.md) — Practical examples
-- [Guides: Immediate Transitions](../guides/immediate-transitions.md) — Guards with auto-transition
+*   [Pulse](./pulse.md) — Combined with guards
+*   [Context](./context.md) — Accessing state in guards
+*   [Guides: Using Guards](../guides/guards.md) — Practical examples
+*   [Guides: Immediate Transitions](../guides/immediate-transitions.md) — Guards with auto-transition

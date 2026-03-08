@@ -61,6 +61,7 @@ export interface SerializedGuard {
     guard: string;
     failure?: string;
     machine?: SerializedMachine;
+    isAsync?: boolean;
 }
 export interface SerializedImmediate {
     immediate: string;

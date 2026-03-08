@@ -1,17 +1,17 @@
 x-robot - v0.3.0 / [Modules](modules.md)
 
-# X-Robot
+# X-Robot FSM
 
-A lightweight, developer-friendly finite state machine library for JavaScript and TypeScript.
+X-Robot FSM: A lightweight, developer-friendly finite state machine library for JavaScript and TypeScript.
 
 ## Why X-Robot?
 
-- **Entry pulses** — Async state management without boilerplate
-- **Frozen state by default** — No manual cloning required
-- **Native async guards** — No workarounds needed
-- **Small bundle** — 15.57KB core, 110KB with full features
-- **Fast** — 4-23x faster than XState in benchmarks
-- **TypeScript** — Full type safety out of the box
+*   **Entry pulses** — Async state management without boilerplate
+*   **Frozen state by default** — No manual cloning required
+*   **Native async guards** — No workarounds needed
+*   **Small bundle** — 15.06KB core, 57.84KB with `documentate` + `validate`
+*   **Fast** — 1.1-26.6x faster than XState in benchmarks
+*   **TypeScript** — Includes TypeScript types for machine definitions and generated code
 
 ## Quick Start
 
@@ -19,14 +19,16 @@ A lightweight, developer-friendly finite state machine library for JavaScript an
 import { machine, state, initial, init, context, transition, invoke, entry } from "x-robot";
 
 // Define a fetch machine with async handling
+async function fetchData(ctx) {
+  const res = await fetch("/api/data");
+  ctx.data = await res.json();
+}
+
 const fetchMachine = machine(
   "Fetch",
   init(initial("idle"), context({ data: null, error: null })),
   state("idle", transition("fetch", "loading")),
-  state("loading", entry(async (ctx) => {
-    const res = await fetch("/api/data");
-    ctx.data = await res.json();
-  }, "success", "error")),
+  state("loading", entry(fetchData, "success", "error")),
   state("success", transition("reset", "idle")),
   state("error", transition("reset", "idle"))
 );
@@ -46,16 +48,17 @@ bun add x-robot
 
 ## Key Features
 
-- Nested and parallel states
-- Guards (synchronous and asynchronous)
-- Entry and exit pulses
-- Context management with frozen state
-- Delayed transitions with invokeAfter()
-- History tracking
-- Machine validation with validate()
-- Code generation (TypeScript, ESM, CJS)
-- Diagram generation (SVG, PNG, PlantUML)
-- SCXML import/export
+*   Nested and parallel states
+*   Guards (synchronous and asynchronous)
+*   Immediate transitions
+*   Entry and exit pulses
+*   Context management with frozen state
+*   Delayed transitions with invokeAfter()
+*   History tracking
+*   Machine validation with validate()
+*   Code generation (TypeScript, ESM, CJS)
+*   Diagram generation (Mermaid, PlantUML, SVG, PNG)
+*   SCXML import/export
 
 ## API Overview
 
@@ -69,8 +72,8 @@ bun add x-robot
 | `exit()` | Exit pulse - runs when leaving a state |
 | `guard()` | Conditional transitions |
 | `invokeAfter()` | Delayed transitions |
-| `documentate()` | Generate code, diagrams, serialization |
-| `validate()` | Validate machine structure |
+| `documentate()` | Generate code, diagrams, serialization via `x-robot/documentate` |
+| `validate()` | Validate machine structure via `x-robot/validate` |
 
 ## Documentation
 

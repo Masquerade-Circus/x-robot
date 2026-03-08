@@ -6,4 +6,4 @@
 
 ## Indexable
 
-▪ [key: `string`]: [`StateDirective`](x_robot.StateDirective.md)
+▪ \[key: `string`]: [`StateDirective`](x_robot.StateDirective.md)

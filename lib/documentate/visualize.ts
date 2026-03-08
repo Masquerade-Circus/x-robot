@@ -19,6 +19,13 @@ import {
   isValidString,
   titleToId
 } from "../utils";
+import {
+  getMermaidClassDefinitions,
+  getMermaidStateClassName,
+  getPlantUmlStateSkinparamLines,
+  getPlantUmlStateStereotype,
+  resolveStateStyleRole
+} from "./state-styles";
 
 import { Machine } from "../machine/interfaces";
 import { exec } from "child_process";
@@ -114,7 +121,7 @@ function getInnerPlantUmlCode(
     } else {
       states += `${space}state ${stateName}`;
     }
-    states += `<<${state.type}>>\n`;
+    states += `<<${getPlantUmlStateStereotype(state.type)}>>\n`;
   }
 
   if (states.trim().length > 0) {
@@ -217,7 +224,7 @@ function getInnerPlantUmlCode(
         }
       }
 
-      let asciiTree = getAsciiTree(run);
+      let asciiTree = getAsciiTree(run, 'entry');
       if (asciiTree.length) {
         highData += `${space}${stateNames[stateName]}: ${asciiTree}\n`;
       }
@@ -282,7 +289,7 @@ function getInnerPlantUmlCode(
         // If visualization level is high, add the guards
         if (level === VISUALIZATION_LEVEL.HIGH) {
           if (state.on[transitionName].guards) {
-            let asciiTree = getAsciiTree(state.on[transitionName].guards || []);
+            let asciiTree = getAsciiTree(state.on[transitionName].guards || [], 'guard');
             if (asciiTree.length) {
               transitions += `\\n${asciiTree}`;
             }
@@ -324,6 +331,9 @@ export function getPlantUmlCode(
       ? { level: optionsOrLevel }
       : optionsOrLevel;
   let { skinparam } = opts;
+  const plantUmlStateSkinparamLines = getPlantUmlStateSkinparamLines()
+    .map((line) => `  ${line}`)
+    .join("\n");
 
   let plantUmlCode = `\n@startuml\n\n`;
 
@@ -347,16 +357,7 @@ skinparam state {
   ArrowColor slategray
   ArrowThickness 2
   MessageAlignment left
-  BackgroundColor<<danger>> Implementation
-  BorderColor<<danger>> indianred
-  BackgroundColor<<info>> Application
-  BorderColor<<info>> skyblue
-  BackgroundColor<<warning>> Strategy
-  BorderColor<<warning>> tan
-  BackgroundColor<<success>> Technology
-  BorderColor<<success>> mediumseagreen
-  BackgroundColor<<primary>> Motivation
-  BorderColor<<primary>> lightsteelblue
+${plantUmlStateSkinparamLines}
 }`;
 
   if (isValidString(skinparam)) {
@@ -371,7 +372,8 @@ ${skinparam}`;
 }
 
 function getTree(
-  collection: SerializedCollectionWithGuards
+  collection: SerializedCollectionWithGuards,
+  context: 'entry' | 'exit' | 'guard' | 'transition' = 'entry'
 ): { name: string; children: any[] } | null {
   if (collection.length === 0) {
     return null;
@@ -383,8 +385,11 @@ function getTree(
   };
 
   let name = (type: string) => (value: string) => `${type}:${value}`;
-  let guard = name("G");
-  let pulse = (isAsync?: boolean) => name(isAsync ? "AP" : "P");
+  let guard = (isAsync?: boolean) => name(isAsync ? "AG" : "G");
+  let pulse = (isEntry: boolean, isAsync?: boolean) => {
+    const prefix = isEntry ? (isAsync ? "AEn" : "En") : (isAsync ? "AEx" : "Ex");
+    return name(prefix);
+  };
   let transition = name("T");
 
   for (let i = 0, l = collection.length; i < l; i++) {
@@ -397,10 +402,11 @@ function getTree(
     } as any;
 
     if ("guard" in item) {
-      obj.name = guard(item.guard);
+      obj.name = guard(item.isAsync)(item.guard);
     }
     if ("pulse" in item) {
-      obj.name = pulse(item.isAsync)(item.pulse);
+      const isEntry = context === 'entry';
+      obj.name = pulse(isEntry, item.isAsync)(item.pulse);
     }
     if ("immediate" in item) {
       obj.name = transition(item.immediate);
@@ -436,7 +442,7 @@ function getTree(
 
     if ("guards" in item) {
       if (Array.isArray(item.guards) && item.guards.length > 0) {
-        let guards = getTree(item.guards);
+        let guards = getTree(item.guards, 'guard');
         if (guards) {
           obj.children.push(...guards.children);
         }
@@ -472,8 +478,8 @@ let collection = [
 let result = "G:'titleIsValid'\n│ └failure\n│   └M:'updateError'\n└P:'saveTitle'\n  ├success\n  │ └T:'preview'\n  └failure\n    ├M:'updateError'\n    └T:'error"
 
 ***/
-function getAsciiTree(collection: SerializedCollectionWithGuards): string {
-  let tree = getTree(collection);
+function getAsciiTree(collection: SerializedCollectionWithGuards, context?: 'entry' | 'exit' | 'guard' | 'transition'): string {
+  let tree = getTree(collection, context || 'entry');
   if (!tree) {
     return "";
   }
@@ -483,6 +489,16 @@ function getAsciiTree(collection: SerializedCollectionWithGuards): string {
     (t) => t.name,
     (t) => t.children
   ).replace(/\n/g, "\\n");
+}
+
+function getMermaidTreeLabel(
+  collection: SerializedCollectionWithGuards,
+  context?: 'entry' | 'exit' | 'guard' | 'transition'
+): string {
+  return getAsciiTree(collection, context).replace(
+    /\b(AEn|En|AEx|Ex|AG|G|T):/g,
+    "$1-"
+  );
 }
 
 /* 
@@ -576,25 +592,21 @@ function getInnerMermaidCode(
   // Title is now handled in getMermaidCode
 
   if (!isChild) {
-    mermaidCode += `classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24\n`;
-    mermaidCode += `classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404\n`;
-    mermaidCode += `classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724\n`;
-    mermaidCode += `classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085\n`;
-    mermaidCode += `classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460\n`;
-    mermaidCode += `classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d\n\n`;
+    mermaidCode += `${getMermaidClassDefinitions().join("\n")}\n\n`;
   }
 
   const stateNames: Record<string, string> = {};
   const stateTypes: Record<string, string> = {};
   for (const stateName in serializedMachine.states) {
     stateNames[stateName] = isChild ? `${parentName}${stateName}` : stateName;
-    stateTypes[stateName] = serializedMachine.states[stateName].type || "default";
+    stateTypes[stateName] = resolveStateStyleRole(
+      serializedMachine.states[stateName].type
+    );
   }
 
   for (const stateName in serializedMachine.states) {
     const state = serializedMachine.states[stateName];
     const stateId = stateNames[stateName];
-    const stateType = stateTypes[stateName];
     mermaidCode += `state ${stateId}\n`;
   }
 
@@ -602,9 +614,7 @@ function getInnerMermaidCode(
     for (const stateName in serializedMachine.states) {
       const stateId = stateNames[stateName];
       const stateType = stateTypes[stateName];
-      if (stateType && stateType !== "default") {
-        mermaidCode += `class ${stateId} ${stateType}\n`;
-      }
+      mermaidCode += `class ${stateId} ${getMermaidStateClassName(stateType)}\n`;
     }
     mermaidCode += '\n';
   }
@@ -617,9 +627,9 @@ function getInnerMermaidCode(
         mermaidCode += `${stateId}: ${state.description}\n`;
       }
       if (state.run && state.run.length > 0) {
-        let asciiTree = getAsciiTree(state.run);
+        let asciiTree = getMermaidTreeLabel(state.run, 'entry');
         if (asciiTree.length > 0) {
-          asciiTree = asciiTree.replace(/\\n/g, '<br>').replace(/:/g, '-');
+          asciiTree = asciiTree.replace(/\\n/g, '<br>');
           mermaidCode += `${stateId}: ${asciiTree}\n`;
         }
       }
@@ -643,17 +653,12 @@ function getInnerMermaidCode(
         let label = event;
         
         if (level === 'high' && transition.guards && transition.guards.length > 0) {
-          let guardsTree = getAsciiTree(transition.guards);
+          let guardsTree = getMermaidTreeLabel(transition.guards, 'guard');
           if (guardsTree.length > 0) {
-            guardsTree = guardsTree.replace(/\\n/g, '<br>').replace(/:/g, '-');
+            guardsTree = guardsTree.replace(/\\n/g, '<br>');
             label += `<br>${guardsTree}`;
           }
         }
-        
-        const isImmediate = state.immediate && state.immediate.find(
-          (immediate) => immediate.immediate === event
-        );
-        const arrowStyle = isImmediate ? "dashed" : "";
         
         mermaidCode += `${fromState} --> ${toState}: ${label}\n`;
       }

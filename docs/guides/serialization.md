@@ -5,7 +5,7 @@ Generate a serialized representation of your machine using the `documentate()` f
 ## Getting Serialized Output
 
 ```javascript
-import { documentate } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
 const { serialized } = await documentate(myMachine, { format: "serialized" });
 
@@ -40,12 +40,12 @@ const { plantuml } = await documentate(serialized, { format: "plantuml" });
 
 ## Format Interoperability
 
-| Input \ Output | ts | mjs | cjs | json | scxml | plantuml | svg | png | serialized |
-|----------------|----|-----|-----|------|-------|----------|-----|-----|------------|
-| Machine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| SerializedMachine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| SCXML | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-| PlantUML | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ |
+| Input \ Output | ts | mjs | cjs | json | scxml | plantuml | mermaid | svg | png | serialized |
+|----------------|----|-----|-----|------|-------|----------|---------|-----|-----|------------|
+| Machine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SerializedMachine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SCXML | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| PlantUML | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
 
 ## Use Cases
 
@@ -80,7 +80,7 @@ const { ts } = await documentate(exampleMachine, { format: "ts" });
 
 ## Next Steps
 
-- [Code Generation](./code-generation.md) — Generate TypeScript, ESM, CJS
-- [SCXML Import/Export](./scxml.md) — W3C standard format
-- [Saving and Restoring](./saving-and-restoring.md) — Persist runtime state
-- [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference
+*   [Code Generation](./code-generation.md) — Generate TypeScript, ESM, CJS
+*   [SCXML Import/Export](./scxml.md) — W3C standard format
+*   [Saving and Restoring](./saving-and-restoring.md) — Persist runtime state
+*   [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference

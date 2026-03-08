@@ -1,33 +1,98 @@
 # Using Guards
 
-Guards determine whether a transition can occur. They receive context and optional payload, returning a boolean.
+Guards determine whether a transition can occur. They receive context and optional payload, and must return `true` to allow the transition.
 
 ## Basic Guard
 
+```mermaid
+---
+title: Guard
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state step1
+state step2
+class step1 def
+class step2 def
+
+
+[*] --> step1
+step1 --> step2: next<br>└ G-canProceed
+```
+
 ```javascript
-import { guard, machine, state, transition, initial, init, invoke, entry } from "x-robot";
+import { guard, init, initial, machine, state, transition } from "x-robot";
 
 function canProceed(ctx, payload) {
   return payload?.value > 0;
 }
 
-state("step1", transition("next", "step2", guard(canProceed)));
+const guardedFlow = machine(
+  "Guard",
+  init(initial("step1")),
+  state("step1", transition("next", "step2", guard(canProceed))),
+  state("step2")
+);
 ```
 
 ## Guard with Failure Transition
 
-Specify what happens when the guard returns false:
+Specify what happens when the guard does not return `true`:
 
 ```javascript
 state("input", transition("submit", "valid", guard(isValid, "invalid")));
 ```
 
-- First argument: The guard function
-- Second argument: State to transition to when guard returns false
+*   First argument: The guard function
+*   Second argument: Failure transition to invoke when the guard does not return `true`
 
 ## Common Use Cases
 
 ### Form Validation
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state checking
+state checked
+state invalid
+state submitting
+class idle def
+class checking def
+class checked def
+class invalid def
+class submitting def
+
+checking: └┬ En-validateForm<br> ├┬ success<br> │└ T-checked<br> └┬ failure<br>  └ T-invalid
+
+[*] --> idle
+idle --> checking: submit
+checking --> checked: checked
+checking --> invalid: invalid
+checked --> submitting: submitting<br>└ G-checkFormErrors
+checked --> invalid: invalid
+invalid --> idle: retry
+```
 
 ```javascript
 function validateEmail(ctx, email) {
@@ -52,18 +117,48 @@ function validateForm(ctx) {
 const formMachine = machine(
   "Form",
   init(initial("idle")),
-  state("idle", 
-    transition("submit", "checking"),
-    transition("submit", "submitting", guard(checkFormErrors))
+  state("idle", transition("submit", "checking")),
+  state("checking", entry(validateForm, "checked", "invalid")),
+  state(
+    "checked",
+    immediate("submitting", guard(checkFormErrors)),
+    immediate("invalid")
   ),
-  state("checking", entry(validateForm, "valid", "invalid")),
-  state("valid", transition("submit", "submitting")),
   state("invalid", transition("retry", "idle")),
   state("submitting")
 );
 ```
 
 ### Role-Based Access
+
+```mermaid
+---
+title: Admin
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state locked
+state dashboard
+state public
+state preview
+class locked def
+class dashboard def
+class public def
+class preview def
+
+
+[*] --> locked
+locked --> dashboard: enter<br>└ G-isAdmin
+public --> preview: enter<br>└ G-isLoggedIn
+```
 
 ```javascript
 function isAdmin(ctx) {
@@ -91,7 +186,7 @@ function shouldSave(ctx) {
   return ctx.preferences.autoSave;
 }
 
-state("editing", transition("save", "saved", guard(shouldSave), "discarded"));
+state("editing", transition("save", "saved", guard(shouldSave, "discarded")));
 ```
 
 ## Async Guards
@@ -141,8 +236,8 @@ state("idle", transition("start", "loading", guard(asyncGuard1), guard(asyncGuar
 
 ## Guards vs Entry Pulses
 
-- **Guards** run before the transition decision
-- **Pulse** runs after entering the new state
+*   **Guards** run before the transition decision
+*   **Pulse** runs after entering the state where it is defined
 
 ```javascript
 function canApprove(ctx) {
@@ -155,20 +250,20 @@ function notify(ctx) {
 
 state("review", 
   transition("approve", "approved", guard(canApprove)),  // Runs first
-  entry(notify),                                        // Runs after entering "approved"
+  entry(notify),                                        // Runs after entering "review"
   transition("reject", "rejected")
 )
 ```
 
 ## Best Practices
 
-1. **Keep guards pure** — Don't modify context in guards
-2. **Use meaningful names** — `canSubmit` better than `validate`
-3. **Handle async carefully** — Consider timeout scenarios
-4. **Provide feedback** — Use failure transitions to show why blocked
+1.  **Keep guards pure** — Don't modify context in guards
+2.  **Use meaningful names** — `canSubmit` better than `validate`
+3.  **Handle async carefully** — Consider timeout scenarios
+4.  **Provide feedback** — Use failure transitions to show why blocked
 
 ## Next Steps
 
-- [Async Guide](./async.md) — Guards with async operations
-- [Concepts: Guards](../concepts/guards.md) — Deep dive
-- [Recipes: Form Validation](../recipes/form-validation.md) — Complete example
+*   [Async Guide](./async.md) — Guards with async operations
+*   [Concepts: Guards](../concepts/guards.md) — Deep dive
+*   [Recipes: Form Validation](../recipes/form-validation.md) — Complete example

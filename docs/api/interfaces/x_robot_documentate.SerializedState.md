@@ -10,13 +10,13 @@ Serialized state definition
 
 ### Properties
 
-- [name](x_robot_documentate.SerializedState.md#name)
-- [nested](x_robot_documentate.SerializedState.md#nested)
-- [on](x_robot_documentate.SerializedState.md#on)
-- [run](x_robot_documentate.SerializedState.md#run)
-- [immediate](x_robot_documentate.SerializedState.md#immediate)
-- [type](x_robot_documentate.SerializedState.md#type)
-- [description](x_robot_documentate.SerializedState.md#description)
+*   [name](x_robot_documentate.SerializedState.md#name)
+*   [nested](x_robot_documentate.SerializedState.md#nested)
+*   [on](x_robot_documentate.SerializedState.md#on)
+*   [run](x_robot_documentate.SerializedState.md#run)
+*   [immediate](x_robot_documentate.SerializedState.md#immediate)
+*   [type](x_robot_documentate.SerializedState.md#type)
+*   [description](x_robot_documentate.SerializedState.md#description)
 
 ## Properties
 
@@ -26,19 +26,19 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L95)
+[lib/documentate/types.ts:100](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L100)
 
-___
+***
 
 ### nested
 
-• `Optional` **nested**: [`SerializedNestedMachine`](x_robot_documentate.SerializedNestedMachine.md)[]
+• `Optional` **nested**: [`SerializedNestedMachine`](x_robot_documentate.SerializedNestedMachine.md)\[]
 
 #### Defined in
 
-[lib/documentate/types.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L96)
+[lib/documentate/types.ts:101](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L101)
 
-___
+***
 
 ### on
 
@@ -46,9 +46,9 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L97)
+[lib/documentate/types.ts:102](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L102)
 
-___
+***
 
 ### run
 
@@ -56,19 +56,19 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:98](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L98)
+[lib/documentate/types.ts:103](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L103)
 
-___
+***
 
 ### immediate
 
-• `Optional` **immediate**: [`SerializedImmediate`](x_robot_documentate.SerializedImmediate.md)[]
+• `Optional` **immediate**: [`SerializedImmediate`](x_robot_documentate.SerializedImmediate.md)\[]
 
 #### Defined in
 
-[lib/documentate/types.ts:99](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L99)
+[lib/documentate/types.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L104)
 
-___
+***
 
 ### type
 
@@ -76,9 +76,9 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:100](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L100)
+[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L105)
 
-___
+***
 
 ### description
 
@@ -86,4 +86,4 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:101](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L101)
+[lib/documentate/types.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L106)

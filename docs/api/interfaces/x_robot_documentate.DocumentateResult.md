@@ -10,16 +10,17 @@ Result returned by the documentate function
 
 ### Properties
 
-- [ts](x_robot_documentate.DocumentateResult.md#ts)
-- [mjs](x_robot_documentate.DocumentateResult.md#mjs)
-- [cjs](x_robot_documentate.DocumentateResult.md#cjs)
-- [json](x_robot_documentate.DocumentateResult.md#json)
-- [scxml](x_robot_documentate.DocumentateResult.md#scxml)
-- [plantuml](x_robot_documentate.DocumentateResult.md#plantuml)
-- [svg](x_robot_documentate.DocumentateResult.md#svg)
-- [png](x_robot_documentate.DocumentateResult.md#png)
-- [serialized](x_robot_documentate.DocumentateResult.md#serialized)
-- [files](x_robot_documentate.DocumentateResult.md#files)
+*   [ts](x_robot_documentate.DocumentateResult.md#ts)
+*   [mjs](x_robot_documentate.DocumentateResult.md#mjs)
+*   [cjs](x_robot_documentate.DocumentateResult.md#cjs)
+*   [json](x_robot_documentate.DocumentateResult.md#json)
+*   [scxml](x_robot_documentate.DocumentateResult.md#scxml)
+*   [plantuml](x_robot_documentate.DocumentateResult.md#plantuml)
+*   [mermaid](x_robot_documentate.DocumentateResult.md#mermaid)
+*   [svg](x_robot_documentate.DocumentateResult.md#svg)
+*   [png](x_robot_documentate.DocumentateResult.md#png)
+*   [serialized](x_robot_documentate.DocumentateResult.md#serialized)
+*   [files](x_robot_documentate.DocumentateResult.md#files)
 
 ## Properties
 
@@ -31,9 +32,9 @@ Generated TypeScript code
 
 #### Defined in
 
-[lib/documentate/types.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L44)
+[lib/documentate/types.ts:47](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L47)
 
-___
+***
 
 ### mjs
 
@@ -43,9 +44,9 @@ Generated JavaScript ESM code
 
 #### Defined in
 
-[lib/documentate/types.ts:46](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L46)
+[lib/documentate/types.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L49)
 
-___
+***
 
 ### cjs
 
@@ -55,9 +56,9 @@ Generated JavaScript CommonJS code
 
 #### Defined in
 
-[lib/documentate/types.ts:48](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L48)
+[lib/documentate/types.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L51)
 
-___
+***
 
 ### json
 
@@ -67,9 +68,9 @@ JSON representation of the machine
 
 #### Defined in
 
-[lib/documentate/types.ts:50](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L50)
+[lib/documentate/types.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L53)
 
-___
+***
 
 ### scxml
 
@@ -79,9 +80,9 @@ SCXML document
 
 #### Defined in
 
-[lib/documentate/types.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L52)
+[lib/documentate/types.ts:55](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L55)
 
-___
+***
 
 ### plantuml
 
@@ -91,9 +92,21 @@ PlantUML code
 
 #### Defined in
 
-[lib/documentate/types.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L54)
+[lib/documentate/types.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L57)
 
-___
+***
+
+### mermaid
+
+• `Optional` **mermaid**: `string`
+
+Mermaid code
+
+#### Defined in
+
+[lib/documentate/types.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L59)
+
+***
 
 ### svg
 
@@ -103,9 +116,9 @@ SVG image path
 
 #### Defined in
 
-[lib/documentate/types.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L56)
+[lib/documentate/types.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L61)
 
-___
+***
 
 ### png
 
@@ -115,9 +128,9 @@ PNG image path
 
 #### Defined in
 
-[lib/documentate/types.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L58)
+[lib/documentate/types.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L63)
 
-___
+***
 
 ### serialized
 
@@ -127,16 +140,16 @@ SerializedMachine object
 
 #### Defined in
 
-[lib/documentate/types.ts:60](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L60)
+[lib/documentate/types.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L65)
 
-___
+***
 
 ### files
 
-• `Optional` **files**: `string`[]
+• `Optional` **files**: `string`\[]
 
 Generated file paths
 
 #### Defined in
 
-[lib/documentate/types.ts:62](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L62)
+[lib/documentate/types.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L67)

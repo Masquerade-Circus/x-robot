@@ -49,8 +49,9 @@ describe("Mermaid Export", () => {
     const result = await documentate(getMachine(), { format: 'mermaid', level: 'high' });
     expect(result.mermaid).toContain("title: My machine");
     expect(result.mermaid).toContain("preview: Initial state");
-    expect(result.mermaid).toContain("preview: └ P-cacheTitle");
+    expect(result.mermaid).toContain("preview: └ En-cacheTitle");
     expect(result.mermaid).toContain("editMode --> save: save<br>└ G-titleIsValid");
+    expect(result.mermaid).toContain("save: └┬ AEn-saveTitle");
   });
 
   it("should allow custom title", async () => {
@@ -69,5 +70,23 @@ describe("Mermaid Export", () => {
     const result = await documentate(getMachine(), { format: 'mermaid' });
     expect(result.mermaid).toContain("class preview success");
     expect(result.mermaid).toContain("class editMode info");
+  });
+
+  it("should assign the def class to states created without an alias", async () => {
+    const defaultMachine = machine(
+      "Default styles",
+      init(initial("idle")),
+      state("idle", transition("load", "loading")),
+      state("loading", transition("resolve", "loaded"), transition("reject", "error")),
+      successState("loaded"),
+      warningState("error")
+    );
+
+    const result = await documentate(defaultMachine, { format: 'mermaid' });
+
+    expect(result.mermaid).toContain("class idle def");
+    expect(result.mermaid).toContain("class loading def");
+    expect(result.mermaid).toContain("class loaded success");
+    expect(result.mermaid).toContain("class error warning");
   });
 });

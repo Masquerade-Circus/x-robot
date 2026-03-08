@@ -10,9 +10,10 @@ Serialized guard definition
 
 ### Properties
 
-- [guard](x_robot_documentate.SerializedGuard.md#guard)
-- [failure](x_robot_documentate.SerializedGuard.md#failure)
-- [machine](x_robot_documentate.SerializedGuard.md#machine)
+*   [guard](x_robot_documentate.SerializedGuard.md#guard)
+*   [failure](x_robot_documentate.SerializedGuard.md#failure)
+*   [machine](x_robot_documentate.SerializedGuard.md#machine)
+*   [isAsync](x_robot_documentate.SerializedGuard.md#isasync)
 
 ## Properties
 
@@ -22,9 +23,9 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:139](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L139)
+[lib/documentate/types.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L144)
 
-___
+***
 
 ### failure
 
@@ -32,9 +33,9 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:140](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L140)
+[lib/documentate/types.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L145)
 
-___
+***
 
 ### machine
 
@@ -42,4 +43,14 @@ ___
 
 #### Defined in
 
-[lib/documentate/types.ts:141](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L141)
+[lib/documentate/types.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L146)
+
+***
+
+### isAsync
+
+• `Optional` **isAsync**: `boolean`
+
+#### Defined in
+
+[lib/documentate/types.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L147)

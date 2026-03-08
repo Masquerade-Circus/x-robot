@@ -8,7 +8,7 @@
 
 ### Properties
 
-- [history](x_robot.HistoryDirective.md#history)
+*   [history](x_robot.HistoryDirective.md#history)
 
 ## Properties
 
@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:202](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L202)
+[lib/machine/interfaces.ts:175](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L175)

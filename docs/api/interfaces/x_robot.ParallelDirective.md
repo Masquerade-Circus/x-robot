@@ -8,14 +8,14 @@
 
 ### Properties
 
-- [parallel](x_robot.ParallelDirective.md#parallel)
+*   [parallel](x_robot.ParallelDirective.md#parallel)
 
 ## Properties
 
 ### parallel
 
-• **parallel**: `Record`<`string`, [`Machine`](x_robot.Machine.md)\>
+• **parallel**: `Record`<`string`, [`Machine`](x_robot.Machine.md)>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:161](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L161)
+[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L134)

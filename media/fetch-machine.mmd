@@ -15,8 +15,12 @@ state idle
 state loading
 state resolved
 state rejected
+class idle def
+class loading def
+class resolved def
+class rejected def
 
-loading: └┬ AP-fetchDog<br> ├┬ success<br> │└ T-resolved<br> └┬ failure<br>  └ T-rejected
+loading: └┬ AEn-fetchDog<br> ├┬ success<br> │└ T-resolved<br> └┬ failure<br>  └ T-rejected
 
 [*] --> idle
 idle --> loading: fetch

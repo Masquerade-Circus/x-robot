@@ -6,4 +6,4 @@
 
 ## Indexable
 
-▪ [key: `string`]: [`TransitionDirective`](x_robot.TransitionDirective.md)
+▪ \[key: `string`]: [`TransitionDirective`](x_robot.TransitionDirective.md)

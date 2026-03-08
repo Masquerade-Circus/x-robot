@@ -4,34 +4,42 @@ Parallel states allow multiple independent states to be active simultaneously. E
 
 ## Basic Parallel Machine
 
+```mermaid
+---
+title: Text Editor
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+```
+
 ```javascript
-import { machine, state, transition, initial, init, parallel, getState, context, guard, invoke } from "x-robot";
+import { init, initial, machine, parallel, state, transition } from "x-robot";
 
-// Independent machines
-const bold = machine("Bold", init(initial("off")),
+const bold = machine(
+  "Bold",
+  init(initial("off")),
   state("off", transition("toggle", "on")),
   state("on", transition("toggle", "off"))
 );
 
-const italic = machine("Italic", init(initial("off")),
+const italic = machine(
+  "Italic",
+  init(initial("off")),
   state("off", transition("toggle", "on")),
   state("on", transition("toggle", "off"))
 );
 
-// Combined with parallel
 const textEditor = machine(
-  "TextEditor",
+  "Text Editor",
   parallel(bold, italic)
 );
-
-// Both start in "off"
-console.log(getState(textEditor)); // { bold: "off", italic: "off" }
-
-invoke(textEditor, "bold.toggle");
-console.log(getState(textEditor)); // { bold: "on", italic: "off" }
-
-invoke(textEditor, "italic.toggle");
-console.log(getState(textEditor)); // { bold: "on", italic: "on" }
 ```
 
 ## Accessing Parallel State
@@ -52,14 +60,33 @@ console.log(italic.current); // "on"
 
 ## Invoking Transitions
 
-Use dot notation to target specific regions:
+Use slash notation to target specific regions:
 
 ```javascript
-invoke(textEditor, "bold.toggle");  // Only bold changes
-invoke(textEditor, "italic.toggle"); // Only italic changes
+invoke(textEditor, "bold/toggle");   // Only bold changes
+invoke(textEditor, "italic/toggle"); // Only italic changes
 ```
 
 ## Parallel with Context
+
+```mermaid
+---
+title: Search
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+
+
+[*] --> idle
+```
 
 ```javascript
 const searchMachine = machine(
@@ -82,40 +109,32 @@ const searchMachine = machine(
 
 ### Text Formatting
 
-```
-TextFormat (parallel)
-├── bold: on/off
-├── italic: on/off
-├── underline: on/off
-└── alignment: left/center/right
-```
+    TextFormat (parallel)
+    ├── bold: on/off
+    ├── italic: on/off
+    ├── underline: on/off
+    └── alignment: left/center/right
 
 ### Multi-Panel Layout
 
-```
-Dashboard (parallel)
-├── sidebar: collapsed/expanded
-├── header: visible/hidden
-└── content: list/grid
-```
+    Dashboard (parallel)
+    ├── sidebar: collapsed/expanded
+    ├── header: visible/hidden
+    └── content: list/grid
 
 ### Search/Filter
 
-```
-FilterPanel (parallel)
-├── category: all/electronics/books/clothing
-├── priceRange: any/under25/25to100/over100
-└── sortBy: relevance/price/name
-```
+    FilterPanel (parallel)
+    ├── category: all/electronics/books/clothing
+    ├── priceRange: any/under25/25to100/over100
+    └── sortBy: relevance/price/name
 
 ### Connection Status
 
-```
-NetworkMonitor (parallel)
-├── server1: connected/disconnected/error
-├── server2: connected/disconnected/error
-└── server3: connected/disconnected/error
-```
+    NetworkMonitor (parallel)
+    ├── server1: connected/disconnected/error
+    ├── server2: connected/disconnected/error
+    └── server3: connected/disconnected/error
 
 ## Guards with Parallel States
 
@@ -129,12 +148,12 @@ state("editing", transition("save", "saving", guard(canSave)));
 
 ## Limitations
 
-- All parallel regions must complete their transitions
-- No cross-region guards (guard only sees its region's context)
-- Visual representation can be complex
+*   All parallel regions must complete their transitions
+*   No cross-region guards (guard only sees its region's context)
+*   Visual representation can be complex
 
 ## Next Steps
 
-- [Nested Machines](./nested.md) — Hierarchical states
-- [Guides: Parallel States](../guides/parallel-states.md) — Practical examples
-- [Recipes: Modal Dialog](../recipes/modal-dialog.md) — UI state
+*   [Nested Machines](./nested.md) — Hierarchical states
+*   [Guides: Parallel States](../guides/parallel-states.md) — Practical examples
+*   [Recipes: Modal Dialog](../recipes/modal-dialog.md) — UI state

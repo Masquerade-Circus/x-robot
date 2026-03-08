@@ -6,4 +6,4 @@
 
 ## Indexable
 
-▪ [key: `string`]: [`CurrentState`](../modules/x_robot.md#currentstate) \| [`AllStates`](x_robot.AllStates.md)
+▪ \[key: `string`]: [`CurrentState`](../modules/x_robot.md#currentstate) | [`AllStates`](x_robot.AllStates.md)

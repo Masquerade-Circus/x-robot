@@ -8,10 +8,10 @@
 
 ### Properties
 
-- [pulse](x_robot.PulseDirective.md#pulse)
-- [success](x_robot.PulseDirective.md#success)
-- [failure](x_robot.PulseDirective.md#failure)
-- [transition](x_robot.PulseDirective.md#transition)
+*   [pulse](x_robot.PulseDirective.md#pulse)
+*   [success](x_robot.PulseDirective.md#success)
+*   [failure](x_robot.PulseDirective.md#failure)
+*   [transition](x_robot.PulseDirective.md#transition)
 
 ## Properties
 
@@ -21,29 +21,29 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L68)
+[lib/machine/interfaces.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L51)
 
-___
+***
 
 ### success
 
-• `Optional` **success**: `string` \| [`PulseDirective`](x_robot.PulseDirective.md)
+• `Optional` **success**: `string` | [`PulseDirective`](x_robot.PulseDirective.md)
 
 #### Defined in
 
-[lib/machine/interfaces.ts:69](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L69)
+[lib/machine/interfaces.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L52)
 
-___
+***
 
 ### failure
 
-• `Optional` **failure**: `string` \| [`PulseDirective`](x_robot.PulseDirective.md)
+• `Optional` **failure**: `string` | [`PulseDirective`](x_robot.PulseDirective.md)
 
 #### Defined in
 
-[lib/machine/interfaces.ts:70](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L70)
+[lib/machine/interfaces.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L53)
 
-___
+***
 
 ### transition
 
@@ -51,4 +51,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L71)
+[lib/machine/interfaces.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L54)

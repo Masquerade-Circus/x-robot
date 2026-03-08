@@ -6,7 +6,7 @@ A comparison of two state machine libraries.
 
 | Feature | X-Robot Core | X-Robot + Modules | XState Interpreter | XState Web | XState Full |
 |---------|--------------|-------------------|-------------------|------------|-------------|
-| Bundle Size | 15.57KB | 110KB | 30KB | 47KB | 59KB |
+| Bundle Size | 15.06KB | 57.84KB | 30KB | 47KB | 59KB |
 | Nested States | ✅ | ✅ | ❌ | ✅ | ✅ |
 | Parallel States | ✅ | ✅ | ❌ | ✅ | ✅ |
 | Guards | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -67,6 +67,31 @@ const toggleMachine = createMachine(
 
 ### X-Robot
 
+```mermaid
+---
+title: Toggle
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state off
+state on
+class off def
+class on def
+
+
+[*] --> off
+off --> on: toggle
+on --> off: toggle
+```
+
 ```javascript
 // X-Robot: simpler
 const toggle = machine(
@@ -106,19 +131,19 @@ state("loading", entry(async (ctx) => {
 
 ## When to Choose X-Robot
 
-- Bundle size is critical (15.57KB vs 30KB+)
-- Native async guards needed
-- Simpler API preferred
-- Code generation required
-- Machine validation needed
+*   Bundle size is critical (15.06KB vs 30KB+)
+*   Native async guards needed
+*   Simpler API preferred
+*   Code generation required
+*   Machine validation needed
 
 ## When to Choose XState
 
-- Actor model required
-- Larger ecosystem needed
-- Enterprise support required
-- Visual editor required
-- More community resources
+*   Actor model required
+*   Larger ecosystem needed
+*   Enterprise support required
+*   Visual editor required
+*   More community resources
 
 ## Performance
 
@@ -129,7 +154,7 @@ See [Performance](../performance.md) for benchmarks.
 X-Robot can import SCXML from XState:
 
 ```javascript
-import { documentate } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
 // Convert XState machine to SCXML
 const xstateScxml = convertToScxml(xstateMachine);

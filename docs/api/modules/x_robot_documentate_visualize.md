@@ -10,25 +10,32 @@ Generate a visual representation of a machine in plant uml format or get a png/s
 
 ### Visualization Functions
 
-- [getPlantUmlCode](x_robot_documentate_visualize.md#getplantumlcode)
-- [getPlantUmlCodeFromMachine](x_robot_documentate_visualize.md#getplantumlcodefrommachine)
-- [createPngFromPlantUmlCode](x_robot_documentate_visualize.md#createpngfromplantumlcode)
-- [createSvgFromPlantUmlCode](x_robot_documentate_visualize.md#createsvgfromplantumlcode)
-- [createPngFromMachine](x_robot_documentate_visualize.md#createpngfrommachine)
-- [createSvgFromSerializedMachine](x_robot_documentate_visualize.md#createsvgfromserializedmachine)
-- [createPngFromSerializedMachine](x_robot_documentate_visualize.md#createpngfromserializedmachine)
-- [createSvgFromMachine](x_robot_documentate_visualize.md#createsvgfrommachine)
+*   [getPlantUmlCode](x_robot_documentate_visualize.md#getplantumlcode)
+*   [createPngFromPlantUmlCode](x_robot_documentate_visualize.md#createpngfromplantumlcode)
+*   [createSvgFromPlantUmlCode](x_robot_documentate_visualize.md#createsvgfromplantumlcode)
+*   [createPngFromMachine](x_robot_documentate_visualize.md#createpngfrommachine)
+*   [createSvgFromSerializedMachine](x_robot_documentate_visualize.md#createsvgfromserializedmachine)
+*   [createPngFromSerializedMachine](x_robot_documentate_visualize.md#createpngfromserializedmachine)
+*   [createSvgFromMachine](x_robot_documentate_visualize.md#createsvgfrommachine)
+
+### Other Functions
+
+*   [getMermaidCode](x_robot_documentate_visualize.md#getmermaidcode)
+*   [getMermaidCodeFromMachine](x_robot_documentate_visualize.md#getmermaidcodefrommachine)
+*   [getPlantUmlCodeFromMachine](x_robot_documentate_visualize.md#getplantumlcodefrommachine)
 
 ### Interfaces
 
-- [SerializedCollectionWithGuards](../interfaces/x_robot_documentate_visualize.SerializedCollectionWithGuards.md)
-- [options](../interfaces/x_robot_documentate_visualize.options.md)
-- [imageFromPlantUmlCodeOptions](../interfaces/x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md)
-- [imageFromMachineOptions](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md)
+*   [SerializedCollectionWithGuards](../interfaces/x_robot_documentate_visualize.SerializedCollectionWithGuards.md)
+*   [mermaidOptions](../interfaces/x_robot_documentate_visualize.mermaidOptions.md)
+*   [options](../interfaces/x_robot_documentate_visualize.options.md)
+*   [imageFromPlantUmlCodeOptions](../interfaces/x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md)
+*   [imageFromMachineOptions](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md)
 
 ### Variables
 
-- [VISUALIZATION\_LEVEL](x_robot_documentate_visualize.md#visualization_level)
+*   [VISUALIZATION\_LEVEL](x_robot_documentate_visualize.md#visualization_level)
+*   [MERMAID\_THEME](x_robot_documentate_visualize.md#mermaid_theme)
 
 ## Visualization Functions
 
@@ -43,7 +50,7 @@ This function will get a serialized machine and will return plantuml code repres
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` | The serialized machine to be visualized. |
-| `optionsOrLevel` | `string` \| [`options`](../interfaces/x_robot_documentate_visualize.options.md) | `VISUALIZATION_LEVEL.LOW` | - |
+| `optionsOrLevel` | `string` | [`options`](../interfaces/x_robot_documentate_visualize.options.md) | `VISUALIZATION_LEVEL.LOW` | - |
 
 #### Returns
 
@@ -51,32 +58,11 @@ This function will get a serialized machine and will return plantuml code repres
 
 The plantuml code for the visualization.
 
-___
-
-### getPlantUmlCodeFromMachine
-
-▸ **getPlantUmlCodeFromMachine**(`machine`, `optionsOrLevel?`): `string`
-
-This function will get a machine and will return a plant uml code representation of it.
-
-#### Parameters
-
-| Name | Type | Default value | Description |
-| :------ | :------ | :------ | :------ |
-| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` | The machine to get the plant uml code from |
-| `optionsOrLevel` | `string` \| [`options`](../interfaces/x_robot_documentate_visualize.options.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
-
-#### Returns
-
-`string`
-
-The plant uml code
-
-___
+***
 
 ### createPngFromPlantUmlCode
 
-▸ **createPngFromPlantUmlCode**(`plantUmlCode`, `options?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+▸ **createPngFromPlantUmlCode**(`plantUmlCode`, `options?`): [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 Create a png file from a plant uml code
 
@@ -89,15 +75,15 @@ Create a png file from a plant uml code
 
 #### Returns
 
-[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 The path to the png file
 
-___
+***
 
 ### createSvgFromPlantUmlCode
 
-▸ **createSvgFromPlantUmlCode**(`plantUmlCode`, `options?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+▸ **createSvgFromPlantUmlCode**(`plantUmlCode`, `options?`): [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 Create a svg file from a plant uml code
 
@@ -110,15 +96,15 @@ Create a svg file from a plant uml code
 
 #### Returns
 
-[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 The path to the svg file
 
-___
+***
 
 ### createPngFromMachine
 
-▸ **createPngFromMachine**(`machine`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+▸ **createPngFromMachine**(`machine`, `optionsOrLevel?`): [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 Create a png file from a machine
 
@@ -127,19 +113,19 @@ Create a png file from a machine
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` | The machine to get the plant uml code from |
-| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+| `optionsOrLevel` | `string` | [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
 
 #### Returns
 
-[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 The path to the png file
 
-___
+***
 
 ### createSvgFromSerializedMachine
 
-▸ **createSvgFromSerializedMachine**(`serialized`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+▸ **createSvgFromSerializedMachine**(`serialized`, `optionsOrLevel?`): [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 Create a svg file from a SerializedMachine
 
@@ -148,19 +134,19 @@ Create a svg file from a SerializedMachine
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `serialized` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` | The serialized machine to get the plant uml code from |
-| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+| `optionsOrLevel` | `string` | [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
 
 #### Returns
 
-[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 The path to the svg file
 
-___
+***
 
 ### createPngFromSerializedMachine
 
-▸ **createPngFromSerializedMachine**(`serialized`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+▸ **createPngFromSerializedMachine**(`serialized`, `optionsOrLevel?`): [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 Create a png file from a SerializedMachine
 
@@ -169,19 +155,19 @@ Create a png file from a SerializedMachine
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `serialized` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` | The serialized machine to get the plant uml code from |
-| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+| `optionsOrLevel` | `string` | [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
 
 #### Returns
 
-[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 The path to the png file
 
-___
+***
 
 ### createSvgFromMachine
 
-▸ **createSvgFromMachine**(`machine`, `optionsOrLevel?`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+▸ **createSvgFromMachine**(`machine`, `optionsOrLevel?`): [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 Create a svg file from a machine
 
@@ -190,13 +176,66 @@ Create a svg file from a machine
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` | The machine to get the plant uml code from |
-| `optionsOrLevel` | `string` \| [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
+| `optionsOrLevel` | `string` | [`imageFromMachineOptions`](../interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md) | `VISUALIZATION_LEVEL.LOW` | The level of the machine to get the plant uml code from or options for the image |
 
 #### Returns
 
-[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`string`\>
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`string`>
 
 The path to the svg file
+
+***
+
+## Other Functions
+
+### getMermaidCode
+
+▸ **getMermaidCode**(`serializedMachine`, `optionsOrLevel?`): `string`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` |
+| `optionsOrLevel` | `string` | [`mermaidOptions`](../interfaces/x_robot_documentate_visualize.mermaidOptions.md) | `MERMAID_THEME.DEFAULT` |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidCodeFromMachine
+
+▸ **getMermaidCodeFromMachine**(`machine`, `optionsOrLevel?`): `string`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` |
+| `optionsOrLevel` | `string` | [`mermaidOptions`](../interfaces/x_robot_documentate_visualize.mermaidOptions.md) | `MERMAID_THEME.DEFAULT` |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlCodeFromMachine
+
+▸ **getPlantUmlCodeFromMachine**(`machine`, `optionsOrLevel?`): `string`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | `undefined` |
+| `optionsOrLevel` | `string` | [`options`](../interfaces/x_robot_documentate_visualize.options.md) | `VISUALIZATION_LEVEL.LOW` |
+
+#### Returns
+
+`string`
 
 ## Variables
 
@@ -213,4 +252,22 @@ The path to the svg file
 
 #### Defined in
 
-[lib/documentate/visualize.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/visualize.ts#L37)
+[lib/documentate/visualize.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L44)
+
+***
+
+### MERMAID\_THEME
+
+• `Const` **MERMAID\_THEME**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `DEFAULT` | `string` |
+| `NEUTRAL` | `string` |
+| `DARK` | `string` |
+
+#### Defined in
+
+[lib/documentate/visualize.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/visualize.ts#L49)

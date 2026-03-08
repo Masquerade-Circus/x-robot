@@ -8,10 +8,10 @@
 
 ### Properties
 
-- [initial](x_robot.InitDirective.md#initial)
-- [context](x_robot.InitDirective.md#context)
-- [freeze](x_robot.InitDirective.md#freeze)
-- [history](x_robot.InitDirective.md#history)
+*   [initial](x_robot.InitDirective.md#initial)
+*   [context](x_robot.InitDirective.md#context)
+*   [freeze](x_robot.InitDirective.md#freeze)
+*   [history](x_robot.InitDirective.md#history)
 
 ## Properties
 
@@ -21,9 +21,9 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L10)
+[lib/machine/interfaces.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L10)
 
-___
+***
 
 ### context
 
@@ -31,9 +31,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L11)
+[lib/machine/interfaces.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L11)
 
-___
+***
 
 ### freeze
 
@@ -41,9 +41,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:12](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L12)
+[lib/machine/interfaces.ts:12](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L12)
 
-___
+***
 
 ### history
 
@@ -51,4 +51,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:13](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L13)
+[lib/machine/interfaces.ts:13](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L13)

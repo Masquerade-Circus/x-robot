@@ -8,7 +8,7 @@
 
 ### Pulse
 
-▸ **Pulse**(`context`, `payload?`): `void` \| [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`any`\>
+▸ **Pulse**(`context`, `payload?`): `void` | [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`any`>
 
 #### Parameters
 
@@ -19,4 +19,4 @@
 
 #### Returns
 
-`void` \| [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<`any`\>
+`void` | [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<`any`>

@@ -1,6 +1,6 @@
 [x-robot - v0.3.0](../README.md) / [Modules](../modules.md) / [x-robot/validate](../modules/x_robot_validate.md) / Err
 
-# Class: Err<T, E\>
+# Class: Err\<T, E>
 
 [x-robot/validate](../modules/x_robot_validate.md).Err
 
@@ -15,24 +15,24 @@
 
 ### Constructors
 
-- [constructor](x_robot_validate.Err.md#constructor)
+*   [constructor](x_robot_validate.Err.md#constructor)
 
 ### Properties
 
-- [error](x_robot_validate.Err.md#error)
+*   [error](x_robot_validate.Err.md#error)
 
 ### Methods
 
-- [isOk](x_robot_validate.Err.md#isok)
-- [isErr](x_robot_validate.Err.md#iserr)
-- [unwrap](x_robot_validate.Err.md#unwrap)
-- [unwrapErr](x_robot_validate.Err.md#unwraperr)
+*   [isOk](x_robot_validate.Err.md#isok)
+*   [isErr](x_robot_validate.Err.md#iserr)
+*   [unwrap](x_robot_validate.Err.md#unwrap)
+*   [unwrapErr](x_robot_validate.Err.md#unwraperr)
 
 ## Constructors
 
 ### constructor
 
-• **new Err**<`T`, `E`\>(`error`)
+• **new Err**<`T`, `E`>(`error`)
 
 #### Type parameters
 
@@ -55,29 +55,29 @@
 
 #### Defined in
 
-[lib/validate/result.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/validate/result.ts#L29)
+[lib/validate/result.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/validate/result.ts#L29)
 
 ## Methods
 
 ### isOk
 
-▸ **isOk**(): this is Ok<T, never\>
+▸ **isOk**(): this is Ok\<T, never>
 
 #### Returns
 
-this is Ok<T, never\>
+this is Ok\<T, never>
 
-___
+***
 
 ### isErr
 
-▸ **isErr**(): this is Err<never, E\>
+▸ **isErr**(): this is Err\<never, E>
 
 #### Returns
 
-this is Err<never, E\>
+this is Err\<never, E>
 
-___
+***
 
 ### unwrap
 
@@ -87,7 +87,7 @@ ___
 
 `never`
 
-___
+***
 
 ### unwrapErr
 

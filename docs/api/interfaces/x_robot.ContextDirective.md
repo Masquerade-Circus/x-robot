@@ -8,7 +8,7 @@
 
 ### Properties
 
-- [context](x_robot.ContextDirective.md#context)
+*   [context](x_robot.ContextDirective.md#context)
 
 ## Properties
 
@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:190](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/machine/interfaces.ts#L190)
+[lib/machine/interfaces.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/machine/interfaces.ts#L163)

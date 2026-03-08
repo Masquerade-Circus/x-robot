@@ -4,10 +4,12 @@ import {
   dangerState,
   description,
   entry,
+  exit,
   guard,
   immediate,
   init,
   initial,
+  invoke,
   machine,
   nested,
   parallel,
@@ -306,5 +308,100 @@ describe("Documentation examples", () => {
     expect(result.mermaid).toBeDefined();
     expect(result.mermaid).toContain("Order");
     fs.writeFileSync(path.join(MEDIA_DIR, "order-flow.mmd"), result.mermaid!);
+  });
+
+  it("Getting Started - Toggle", async () => {
+    const toggle = machine(
+      "Toggle",
+      state("off", transition("toggle", "on")),
+      state("on", transition("toggle", "off"))
+    );
+    const result = await documentate(toggle, { format: "mermaid", level: "high" });
+    expect(result.mermaid).toBeDefined();
+    expect(result.mermaid).toContain("Toggle");
+    fs.writeFileSync(path.join(MEDIA_DIR, "getting-started-toggle.mmd"), result.mermaid!);
+  });
+
+  it("Guards - Basic", async () => {
+    function canProceed(ctx: any, payload: any) { return payload?.value > 0; }
+    const machine1 = machine(
+      "Guard",
+      init(initial("step1")),
+      state("step1", transition("next", "step2", guard(canProceed))),
+      state("step2")
+    );
+    const result = await documentate(machine1, { format: "mermaid", level: "high" });
+    expect(result.mermaid).toBeDefined();
+    expect(result.mermaid).toContain("Guard");
+    fs.writeFileSync(path.join(MEDIA_DIR, "guards-basic.mmd"), result.mermaid!);
+  });
+
+  it("Immediate Transitions", async () => {
+    const myMachine = machine(
+      "MyMachine",
+      init(initial("idle")),
+      state("idle", transition("start", "processing")),
+      state("processing", immediate("complete")),
+      state("complete")
+    );
+    const result = await documentate(myMachine, { format: "mermaid", level: "high" });
+    expect(result.mermaid).toBeDefined();
+    expect(result.mermaid).toContain("MyMachine");
+    fs.writeFileSync(path.join(MEDIA_DIR, "immediate-transitions.mmd"), result.mermaid!);
+  });
+
+  it("Nested Machines", async () => {
+    const orderMachine = machine("Order", init(initial("pending")),
+      state("pending", transition("confirm", "confirmed")),
+      state("confirmed")
+    );
+    const parent = machine("Parent", init(initial("step1")),
+      state("step1", nested(orderMachine, "confirm"), transition("skip", "step2")),
+      state("step2")
+    );
+    const result = await documentate(parent, { format: "mermaid", level: "high" });
+    expect(result.mermaid).toBeDefined();
+    expect(result.mermaid).toContain("Parent");
+    fs.writeFileSync(path.join(MEDIA_DIR, "nested-machines.mmd"), result.mermaid!);
+  });
+
+  it("Context", async () => {
+    const counter = machine(
+      "Counter",
+      init(initial("idle"), context({ count: 0 })),
+      state("idle", transition("start", "running")),
+      state("running", transition("stop", "idle"))
+    );
+    const result = await documentate(counter, { format: "mermaid", level: "high" });
+    expect(result.mermaid).toBeDefined();
+    expect(result.mermaid).toContain("Counter");
+    fs.writeFileSync(path.join(MEDIA_DIR, "context.mmd"), result.mermaid!);
+  });
+
+  it("Exit Pulse", async () => {
+    const logExit = (ctx: any) => { console.log("exiting"); };
+    const m = machine(
+      "ExitTest",
+      init(initial("idle")),
+      state("idle", transition("next", "done", exit(logExit))),
+      state("done")
+    );
+    const result = await documentate(m, { format: "mermaid", level: "high" });
+    expect(result.mermaid).toBeDefined();
+    expect(result.mermaid).toContain("ExitTest");
+    fs.writeFileSync(path.join(MEDIA_DIR, "exit-pulse.mmd"), result.mermaid!);
+  });
+
+  it("History", async () => {
+    const historyMachine = machine(
+      "History",
+      init(initial("idle"), context({ history: [] })),
+      state("idle", transition("next", "active")),
+      state("active", transition("next", "idle"))
+    );
+    const result = await documentate(historyMachine, { format: "mermaid", level: "high" });
+    expect(result.mermaid).toBeDefined();
+    expect(result.mermaid).toContain("History");
+    fs.writeFileSync(path.join(MEDIA_DIR, "history.mmd"), result.mermaid!);
   });
 });

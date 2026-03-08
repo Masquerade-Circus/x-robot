@@ -10,9 +10,9 @@ Serialized transition definition
 
 ### Properties
 
-- [target](x_robot_documentate.SerializedTransition.md#target)
-- [guards](x_robot_documentate.SerializedTransition.md#guards)
-- [exit](x_robot_documentate.SerializedTransition.md#exit)
+*   [target](x_robot_documentate.SerializedTransition.md#target)
+*   [guards](x_robot_documentate.SerializedTransition.md#guards)
+*   [exit](x_robot_documentate.SerializedTransition.md#exit)
 
 ## Properties
 
@@ -22,24 +22,24 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:115](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L115)
+[lib/documentate/types.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L120)
 
-___
+***
 
 ### guards
 
-• `Optional` **guards**: [`SerializedGuard`](x_robot_documentate.SerializedGuard.md)[]
+• `Optional` **guards**: [`SerializedGuard`](x_robot_documentate.SerializedGuard.md)\[]
 
 #### Defined in
 
-[lib/documentate/types.ts:116](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L116)
+[lib/documentate/types.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L121)
 
-___
+***
 
 ### exit
 
-• `Optional` **exit**: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+• `Optional` **exit**: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 #### Defined in
 
-[lib/documentate/types.ts:117](https://github.com/Masquerade-Circus/x-robot/blob/59af0ee/lib/documentate/types.ts#L117)
+[lib/documentate/types.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/b81c3c2/lib/documentate/types.ts#L122)

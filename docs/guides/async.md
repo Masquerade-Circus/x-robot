@@ -4,29 +4,55 @@ X-Robot's Pulse concept makes async state management simple. One function handle
 
 ## Basic Async with Pulse
 
-```javascript
-import { machine, state, transition, invoke, entry, initial, init, context } from "x-robot";
+```mermaid
+---
+title: Dog API
+---
 
-async function fetchData(ctx) {
-  const res = await fetch("/api/data");
-  ctx.data = await res.json();
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state loading
+state resolved
+state rejected
+class idle def
+class loading def
+class resolved def
+class rejected def
+
+loading: └┬ AEn-fetchDog<br> ├┬ success<br> │└ T-resolved<br> └┬ failure<br>  └ T-rejected
+
+[*] --> idle
+idle --> loading: fetch
+loading --> resolved: resolved
+loading --> rejected: rejected
+loading --> idle: cancel
+resolved --> idle: idle
+```
+
+```javascript
+import { context, entry, immediate, init, initial, invoke, machine, state, transition } from "x-robot";
+
+async function fetchDog(ctx) {
+  ctx.dog = "https://images.example/dog.jpg";
 }
 
 const fetchMachine = machine(
-  "Fetch",
-  init(initial("idle"), context({ data: null, error: null })),
+  "Dog API",
+  init(initial("idle"), context({ dog: null, error: null })),
   state("idle", transition("fetch", "loading")),
-  state("loading", entry(fetchData, "success", "error")),
-  state("success"),
-  state("error")
+  state("loading", entry(fetchDog, "resolved", "rejected"), transition("cancel", "idle")),
+  state("resolved", immediate("idle")),
+  state("rejected")
 );
 ```
-
-The pulse function:
-1. Receives the context
-2. Performs async work
-3. Modifies context directly
-4. Transitions to "success" on resolve or "error" on reject
 
 ## Using invoke()
 
@@ -34,14 +60,14 @@ The pulse function:
 invoke(fetchMachine, "fetch");
 
 // Machine is now in "loading"
-// When resolved: transitions to "success" or "error"
+// When resolved: transitions to "resolved" or "rejected"
 ```
 
 For async operations, use await:
 
 ```javascript
 await invoke(fetchMachine, "fetch");
-console.log(fetchMachine.current); // "success" or "error"
+console.log(fetchMachine.current); // "resolved" or "rejected"
 ```
 
 ## Error Handling
@@ -78,6 +104,47 @@ state("loading", entry(fetchWithTryCatch, "success", "error"))
 
 ## Multiple Async Operations
 
+```mermaid
+---
+title: Workflow
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state step1
+state step2
+state step3
+state complete
+state error
+class idle def
+class step1 def
+class step2 def
+class step3 def
+class complete def
+class error def
+
+step1: └┬ AEn-runStep1<br> ├┬ success<br> │└ T-step2<br> └┬ failure<br>  └ T-error
+step2: └┬ AEn-runStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-error
+step3: └┬ AEn-runStep3<br> ├┬ success<br> │└ T-complete<br> └┬ failure<br>  └ T-error
+
+[*] --> idle
+idle --> step1: start
+step1 --> step2: step2
+step1 --> error: error
+step2 --> step3: step3
+step2 --> error: error
+step3 --> complete: complete
+step3 --> error: error
+```
+
 ```javascript
 async function runStep1(ctx) {
   await step1(ctx);
@@ -104,6 +171,38 @@ const workflow = machine(
 ```
 
 ## Retrying Failed Operations
+
+```mermaid
+---
+title: Retry
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state running
+state success
+state failed
+class idle def
+class running def
+class success def
+class failed def
+
+running: └┬ AEn-runWithRetry<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failed
+
+[*] --> idle
+idle --> running: start
+running --> success: success
+running --> failed: failed
+failed --> running: retry
+```
 
 ```javascript
 async function runWithRetry(ctx) {
@@ -191,12 +290,12 @@ state("loading", entry(loadData, "success", "error"))
 
 ## Best Practices
 
-1. **Keep pulses focused** — One async operation per pulse
-2. **Handle errors explicitly** — Use try/catch with throw
-3. **Update context in pulse** — Don't rely on external state
-4. **Use guards for validation** — Before transitioning to async states
+1.  **Keep pulses focused** — One async operation per pulse
+2.  **Handle errors explicitly** — Use try/catch with throw
+3.  **Update context in pulse** — Don't rely on external state
+4.  **Use guards for validation** — Before transitioning to async states
 
 ## Next Steps
 
-- [Guards Guide](./guards.md) — Conditional transitions
-- [Concepts: Pulse](../concepts/pulse.md) — Core concept
+*   [Guards Guide](./guards.md) — Conditional transitions
+*   [Concepts: Pulse](../concepts/pulse.md) — Core concept

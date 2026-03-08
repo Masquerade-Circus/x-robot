@@ -35,14 +35,48 @@ const formState = {
 
 This approach has fundamental problems:
 
-1. **Invalid states are possible** — You can have `isLoading = true` and `isSuccess = true` simultaneously
-2. **Transitions are unclear** — How do you go from "submitting" to "error"?
-3. **Testing is difficult** — Every boolean combination is a potential state
-4. **Logic spreads** — Validation, submission, and error handling get mixed across components
+1.  **Invalid states are possible** — You can have `isLoading = true` and `isSuccess = true` simultaneously
+2.  **Transitions are unclear** — How do you go from "submitting" to "error"?
+3.  **Testing is difficult** — Every boolean combination is a potential state
+4.  **Logic spreads** — Validation, submission, and error handling get mixed across components
 
 ## The Solution: State Machines
 
 A finite state machine (FSM) defines all valid states and the transitions between them:
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state submitting
+state success
+state error
+class idle def
+class submitting def
+class success def
+class error def
+
+submitting: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+
+[*] --> idle
+idle --> submitting: submit
+submitting --> success: success
+submitting --> error: error
+success --> idle: reset
+error --> submitting: retry
+error --> idle: reset
+```
 
 ```javascript
 const formMachine = machine(
@@ -58,10 +92,10 @@ const formMachine = machine(
 
 Benefits:
 
-- **Only valid states exist** — The machine enforces valid transitions
-- **Transitions are explicit** — Every path is defined
-- **Self-documenting** — The machine definition shows all possible states
-- **Testable** — Each state and transition can be tested independently
+*   **Only valid states exist** — The machine enforces valid transitions
+*   **Transitions are explicit** — Every path is defined
+*   **Self-documenting** — The machine definition shows all possible states
+*   **Testable** — Each state and transition can be tested independently
 
 ## Why X-Robot?
 
@@ -118,37 +152,37 @@ transition("submit", "validating", guard(async (ctx) => {
 
 ### 4. Small Bundle, High Performance
 
-- Core: 15.06KB minified
-- With modules: 54.83KB (documentate, validate)
-- Performance: 1-24x faster than XState
+*   Core: 15.06KB minified
+*   With modules: 57.84KB (`documentate`, `validate`)
+*   Performance: 1.1-26.6x faster than XState
 
 ### 5. Built-in Tools
 
-- `documentate()` — Code generation, diagrams, SCXML
-- `validate()` — Machine structure validation
-- History tracking — Built-in state history
+*   `documentate()` — Code generation, Mermaid/PlantUML diagrams, and SCXML via `x-robot/documentate`
+*   `validate()` — Machine structure validation via `x-robot/validate`
+*   History tracking — Built-in state history
 
 ## When to Use State Machines
 
 State machines are ideal for:
 
-- **Form workflows** — Validation, submission, success/error states
-- **API calls** — Loading, success, error handling
-- **UI interactions** — Modals, wizards, animations
-- **Game state** — Player states, level transitions
-- **Business logic** — Order processing, approval flows
-- **Communication protocols** — Connection states, message handling
+*   **Form workflows** — Validation, submission, success/error states
+*   **API calls** — Loading, success, error handling
+*   **UI interactions** — Modals, wizards, animations
+*   **Game state** — Player states, level transitions
+*   **Business logic** — Order processing, approval flows
+*   **Communication protocols** — Connection states, message handling
 
 ## When Not to Use
 
 State machines add structure. They're overkill for:
 
-- Simple toggle states (on/off)
-- Unrelated pieces of UI state
-- Very small applications with minimal state
+*   Simple toggle states (on/off)
+*   Unrelated pieces of UI state
+*   Very small applications with minimal state
 
 ## Next Steps
 
-- [Getting Started](./guides/getting-started.md) — Create your first machine
-- [Concepts](./concepts/pulse.md) — Understand the Pulse concept
-- [API Reference](./api/) — Explore all functions
+*   [Getting Started](./guides/getting-started.md) — Create your first machine
+*   [Concepts](./concepts/pulse.md) — Understand the Pulse concept
+*   [API Reference](./api/) — Explore all functions

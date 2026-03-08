@@ -15,8 +15,12 @@ state idle
 state loading
 state success
 state error
+class idle def
+class loading def
+class success def
+class error def
 
-loading: └┬ AP-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch

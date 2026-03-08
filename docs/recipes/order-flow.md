@@ -6,14 +6,146 @@ A complete finite state machine for an e-commerce order processing system. This 
 
 This machine manages the complete lifecycle of an order from creation to delivery, including:
 
-- Draft and creation states
-- Payment authorization and capture
-- Store confirmation
-- Processing and fulfillment
-- Multiple cancellation paths
-- Error handling and recovery
+*   Draft and creation states
+*   Payment authorization and capture
+*   Store confirmation
+*   Processing and fulfillment
+*   Multiple cancellation paths
+*   Error handling and recovery
 
 ## The Machine
+
+```mermaid
+---
+title: Order
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state fatal
+state authorizationFailure
+state voidOrRefundFailure
+state captureFailure
+state draft
+state expiredDraft
+state created
+state expired
+state waitingForStore
+state cancelledByStore
+state cancelledByClient
+state cancelledByCustomerSupport
+state changesRequestedByStore
+state changesRejectedByClient
+state changesAcceptedByClient
+state processing
+state processingCancelledByStore
+state processed
+state ready
+state readyCancelledByStore
+state waitingForDelivery
+state waitingForDeliveryCancelledByStore
+state completed
+state completedCancelledByStore
+class fatal danger
+class authorizationFailure danger
+class voidOrRefundFailure danger
+class captureFailure danger
+class draft def
+class expiredDraft warning
+class created primary
+class expired warning
+class waitingForStore primary
+class cancelledByStore warning
+class cancelledByClient warning
+class cancelledByCustomerSupport warning
+class changesRequestedByStore def
+class changesRejectedByClient warning
+class changesAcceptedByClient def
+class processing primary
+class processingCancelledByStore warning
+class processed def
+class ready primary
+class readyCancelledByStore warning
+class waitingForDelivery def
+class waitingForDeliveryCancelledByStore warning
+class completed success
+class completedCancelledByStore warning
+
+fatal: ├ AEn-update<br>└ AEn-updateTransaction
+authorizationFailure: ├ AEn-setError<br>├ AEn-createTransaction<br>├ AEn-update<br>├ AEn-sendNotificationToClient<br>└ AEn-throwError
+voidOrRefundFailure: ├ AEn-setError<br>├ AEn-updateTransaction<br>├ AEn-update<br>└ AEn-throwError
+captureFailure: ├ AEn-setError<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-update<br>├ AEn-updateTransaction<br>├ AEn-sendNotificationToClient<br>├ AEn-sendNotificationToStore<br>└ AEn-throwError
+draft: ├ AEn-getClient<br>├ AEn-getItemsAndTaxes<br>├ AEn-getAmounts<br>└ AEn-draft
+expiredDraft: ├ AEn-getClient<br>└ AEn-expireDraft
+created: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-validatePickupTime<br>├ AEn-getItemsAndTaxes<br>├ AEn-getAmounts<br>├ AEn-getCard<br>├ AEn-create<br>├┬ AEn-authorize<br>│└┬ failure<br>│ └ T-authorizationFailure<br>├ AEn-createTransaction<br>└ AEn-update
+expired: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-expire<br>├ AEn-getTransaction<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
+waitingForStore: ├ AEn-sendNotificationToClient<br>├ AEn-setTimeoutTasks<br>└ AEn-update
+cancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-update<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
+cancelledByClient: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-update<br>├ AEn-sendNotificationToStore<br>└ AEn-sendNotificationToClient
+cancelledByCustomerSupport: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-setCancelledById<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
+changesRequestedByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getAmounts<br>├ AEn-update<br>└ AEn-sendNotificationToClient
+changesRejectedByClient: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-update<br>├ AEn-updateTransaction<br>├ AEn-sendNotificationToClient<br>└ AEn-sendNotificationToStore
+changesAcceptedByClient: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-update<br>└ AEn-sendNotificationToStore
+processing: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-update<br>└ AEn-sendNotificationToClient
+processingCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
+processed: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├ AEn-update<br>├┬ AEn-capture<br>│└┬ failure<br>│ └ T-captureFailure<br>└ AEn-updateTransaction
+ready: ├ AEn-increaseSuccessfulStoreOrderCount<br>├ AEn-update<br>└ AEn-sendNotificationToClient
+readyCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
+waitingForDelivery: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>└ AEn-update
+waitingForDeliveryCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
+completed: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>└ AEn-update
+completedCancelledByStore: ├ AEn-getClient<br>├ AEn-getStore<br>├ AEn-getRetailer<br>├ AEn-setI18N<br>├ AEn-getCard<br>├ AEn-getItemsAndTaxes<br>├ AEn-getTransaction<br>├┬ AEn-voidOrRefundOrder<br>│└┬ failure<br>│ └ T-voidOrRefundFailure<br>├ AEn-decreaseSuccessfulStoreOrderCount<br>├ AEn-update<br>├ AEn-updateTransaction<br>└ AEn-sendNotificationToClient
+
+[*] --> draft
+captureFailure --> voidOrRefundFailure: voidOrRefundFailure
+draft --> expiredDraft: expiredDraft
+draft --> created: create
+created --> authorizationFailure: authorizationFailure
+created --> waitingForStore: waitingForStore
+created --> expired: expire
+expired --> voidOrRefundFailure: voidOrRefundFailure
+waitingForStore --> expired: expire
+waitingForStore --> cancelledByStore: cancel
+waitingForStore --> cancelledByClient: cancelByClient
+waitingForStore --> cancelledByCustomerSupport: cancelByCustomerSupport
+waitingForStore --> changesRequestedByStore: requestChanges
+waitingForStore --> processing: process
+cancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
+cancelledByClient --> voidOrRefundFailure: voidOrRefundFailure
+cancelledByCustomerSupport --> voidOrRefundFailure: voidOrRefundFailure
+changesRequestedByStore --> changesRejectedByClient: rejectChanges
+changesRequestedByStore --> changesAcceptedByClient: acceptChanges
+changesRequestedByStore --> cancelledByCustomerSupport: cancelByCustomerSupport
+changesRejectedByClient --> voidOrRefundFailure: voidOrRefundFailure
+changesAcceptedByClient --> cancelledByCustomerSupport: cancelByCustomerSupport
+changesAcceptedByClient --> processing: process
+changesAcceptedByClient --> cancelledByStore: cancel
+processing --> processingCancelledByStore: cancelProcessing
+processing --> processed: finishProcessing
+processing --> cancelledByCustomerSupport: cancelByCustomerSupport
+processingCancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
+processed --> captureFailure: captureFailure
+processed --> ready: ready
+ready --> completed: complete
+ready --> readyCancelledByStore: cancelReady
+ready --> cancelledByCustomerSupport: cancelByCustomerSupport
+ready --> waitingForDelivery: deliver
+readyCancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
+waitingForDelivery --> completed: complete
+waitingForDelivery --> waitingForDeliveryCancelledByStore: cancelWaitingForDelivery
+waitingForDelivery --> cancelledByCustomerSupport: cancelByCustomerSupport
+waitingForDeliveryCancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
+completed --> completedCancelledByStore: cancelCompleted
+completed --> cancelledByCustomerSupport: cancelByCustomerSupport
+completedCancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
+```
 
 ```javascript
 import {
@@ -30,7 +162,7 @@ import {
   transition,
   warningState,
 } from "x-robot";
-import { validate } from "x-robot";
+import { validate } from "x-robot/validate";
 
 // Helper: updates context with payload data
 function updateState(context, payload) {
@@ -485,7 +617,7 @@ state(
 Validate the machine structure before use:
 
 ```javascript
-import { validate } from "x-robot";
+import { validate } from "x-robot/validate";
 
 validate(orderMachine); // Throws if invalid
 ```
@@ -550,6 +682,55 @@ class waitingForDeliveryCancelledByStore warning
 class completed success
 class completedCancelledByStore warning
 
+fatal: Fatal error
+fatal: ├ AEn:setError<br>├ AEn:createTransaction<br>├ AEn:update<br>├ AEn:sendNotificationToClient<br>└ AEn:throwError
+authorizationFailure: Payment authorization failed
+authorizationFailure: ├ AEn:setError<br>├ AEn:createTransaction<br>├ AEn:update<br>├ AEn:sendNotificationToClient<br>└ AEn:throwError
+voidOrRefundFailure: Void or refund failed
+voidOrRefundFailure: ├ AEn:setError<br>├ AEn:updateTransaction<br>├ AEn:update<br>└ AEn:throwError
+captureFailure: Payment capture failed
+captureFailure: ├ AEn:setError<br>├ AEn:voidOrRefundOrder<br>├ AEn:update<br>├ AEn:updateTransaction<br>├ AEn:sendNotificationToClient<br>├ AEn:sendNotificationToStore<br>└ AEn:throwError
+draft: Draft order
+draft: ├ AEn:getClient<br>├ AEn:getItemsAndTaxes<br>├ AEn:getAmounts<br>└ AEn:draft
+expiredDraft: Draft expired
+expiredDraft: ├ AEn:getClient<br>└ AEn:expireDraft
+created: Order created
+created: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:validatePickupTime<br>├ AEn:getItemsAndTaxes<br>├ AEn:getAmounts<br>├ AEn:getCard<br>├ AEn:create<br>├ AEn:authorize<br>├ AEn:createTransaction<br>└ AEn:update
+expired: Order expired
+expired: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:expire<br>├ AEn:getTransaction<br>├ AEn:voidOrRefundOrder<br>├ AEn:update<br>├ AEn:updateTransaction<br>└ AEn:sendNotificationToClient
+waitingForStore: Waiting for store confirmation
+waitingForStore: ├ AEn:sendNotificationToClient<br>├ AEn:setTimeoutTasks<br>└ AEn:update
+cancelledByStore: Cancelled by store
+cancelledByStore: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:update<br>├ AEn:voidOrRefundOrder<br>├ AEn:update<br>├ AEn:updateTransaction<br>└ AEn:sendNotificationToClient
+cancelledByClient: Cancelled by client
+cancelledByClient: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:voidOrRefundOrder<br>├ AEn:update<br>├ AEn:sendNotificationToStore<br>└ AEn:sendNotificationToClient
+cancelledByCustomerSupport: Cancelled by customer support
+cancelledByCustomerSupport: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:setCancelledById<br>├ AEn:voidOrRefundOrder<br>├ AEn:decreaseSuccessfulStoreOrderCount<br>├ AEn:update<br>├ AEn:updateTransaction<br>└ AEn:sendNotificationToClient
+changesRequestedByStore: Changes requested by store
+changesRequestedByStore: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getAmounts<br>├ AEn:update<br>└ AEn:sendNotificationToClient
+changesRejectedByClient: Changes rejected by client
+changesRejectedByClient: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:voidOrRefundOrder<br>├ AEn:update<br>├ AEn:updateTransaction<br>├ AEn:sendNotificationToClient<br>└ AEn:sendNotificationToStore
+changesAcceptedByClient: Changes accepted by client
+changesAcceptedByClient: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:update<br>└ AEn:sendNotificationToStore
+processing: Processing order
+processing: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:update<br>└ AEn:sendNotificationToClient
+processingCancelledByStore: Processing cancelled by store
+processingCancelledByStore: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:voidOrRefundOrder<br>├ AEn:update<br>├ AEn:updateTransaction<br>└ AEn:sendNotificationToClient
+processed: Order processed
+processed: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:update<br>├ AEn:capture<br>└ AEn:updateTransaction
+ready: Ready for delivery
+ready: ├ AEn:increaseSuccessfulStoreOrderCount<br>├ AEn:update<br>└ AEn:sendNotificationToClient
+readyCancelledByStore: Ready cancelled by store
+readyCancelledByStore: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:voidOrRefundOrder<br>├ AEn:decreaseSuccessfulStoreOrderCount<br>├ AEn:update<br>├ AEn:updateTransaction<br>└ AEn:sendNotificationToClient
+waitingForDelivery: Waiting for delivery
+waitingForDelivery: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>└ AEn:update
+waitingForDeliveryCancelledByStore: Waiting for delivery cancelled by store
+waitingForDeliveryCancelledByStore: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:voidOrRefundOrder<br>├ AEn:decreaseSuccessfulStoreOrderCount<br>├ AEn:update<br>├ AEn:updateTransaction<br>└ AEn:sendNotificationToClient
+completed: Order completed
+completed: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>└ AEn:update
+completedCancelledByStore: Completed cancelled by store
+completedCancelledByStore: ├ AEn:getClient<br>├ AEn:getStore<br>├ AEn:getRetailer<br>├ AEn:setI18N<br>├ AEn:getCard<br>├ AEn:getItemsAndTaxes<br>├ AEn:getTransaction<br>├ AEn:voidOrRefundOrder<br>├ AEn:decreaseSuccessfulStoreOrderCount<br>├ AEn:update<br>├ AEn:updateTransaction<br>└ AEn:sendNotificationToClient
+
 [*] --> draft
 draft --> expiredDraft: expiredDraft
 draft --> created: create
@@ -586,7 +767,7 @@ completed --> cancelledByCustomerSupport: cancelByCustomerSupport
 To visualize this machine, use the visualization guide:
 
 ```javascript
-import { documentate } from "x-robot";
+import { documentate } from "x-robot/documentate";
 
 const { svg } = await documentate(orderMachine, { 
   format: "svg", 
@@ -598,7 +779,7 @@ This generates a comprehensive state diagram showing all 23 states, their transi
 
 ## Next Steps
 
-- [Visualization](../guides/visualization.md) — Generate diagrams
-- [Guides: Guards](../guides/guards.md) — Add conditional logic
-- [Guides: Immediate Transitions](../guides/immediate-transitions.md) — Auto-transitions
-- [Recipes: Wizard](../recipes/wizard.md) — Another complex pattern
+*   [Visualization](../guides/visualization.md) — Generate diagrams
+*   [Guides: Guards](../guides/guards.md) — Add conditional logic
+*   [Guides: Immediate Transitions](../guides/immediate-transitions.md) — Auto-transitions
+*   [Recipes: Wizard](../recipes/wizard.md) — Another complex pattern

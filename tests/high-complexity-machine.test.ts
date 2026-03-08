@@ -514,7 +514,7 @@ skinparam state {
     expect(plantUmlCode).toContain("@startuml");
     expect(plantUmlCode).toContain("title My machine");
     expect(plantUmlCode).toContain("created: ");
-    expect(plantUmlCode).toContain("P:authorize");
+    expect(plantUmlCode).toContain("AEn:authorize");
     expect(plantUmlCode).toContain("T:authorizationFailure");
     expect(plantUmlCode).not.toContain("A:authorize");
 

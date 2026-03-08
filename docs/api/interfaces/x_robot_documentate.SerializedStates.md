@@ -8,4 +8,4 @@ Collection of serialized states
 
 ## Indexable
 
-▪ [key: `string`]: [`SerializedState`](x_robot_documentate.SerializedState.md)
+▪ \[key: `string`]: [`SerializedState`](x_robot_documentate.SerializedState.md)

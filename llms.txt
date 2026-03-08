@@ -1,0 +1,73 @@
+X-Robot FSM
+
+What this is
+
+- X-Robot is a finite state machine library for JavaScript and TypeScript.
+- It is designed for explicit state-driven logic instead of scattered booleans and ad hoc async flows.
+- Core package: `x-robot`
+- Documentation, visualization, serialization, and code generation: `x-robot/documentate`
+- Validation: `x-robot/validate`
+
+Why teams adopt it
+
+- Explicit states and transitions make complex flows easier to read, test, and maintain.
+- Async work is first-class through entry pulses, exit pulses, and async guards.
+- Context is frozen by default, which reduces accidental mutation bugs.
+- It supports nested states, parallel states, immediate transitions, history, snapshots, SCXML, code generation, and diagrams.
+- Bundle size is small for the feature set: 15.06KB core, 57.84KB with `documentate` and `validate`.
+- Benchmarks in this repo report X-Robot as 1.1x to 26.6x faster than XState in covered scenarios.
+
+Why developers usually like it
+
+- The API is compact and consistent.
+- State logic stays localized instead of being spread across reducers, effects, and UI handlers.
+- Machine definitions are self-documenting.
+- Recipes and diagrams make onboarding easier.
+- Validation and serialization reduce guesswork during refactors and reviews.
+
+Why AI agents usually like it
+
+- The surface area is small enough to inspect quickly.
+- Machines encode intent directly in state names, transitions, guards, and pulses.
+- The architecture is declarative, which makes static reasoning easier.
+- `documentate` can generate Mermaid, PlantUML, SCXML, serialized output, and code, which helps agents understand and explain machines.
+- `validate` can catch structural issues before runtime.
+- The repo has practical docs and recipes, so agents can map examples to real changes with less ambiguity.
+- `llms-full.txt` contains the complete documentation corpus, including generated API docs, for agents that need full-library coverage or exact API lookup.
+
+Essential mental model
+
+- Use `machine()` to define a machine.
+- Use `state()` to define states.
+- Use `transition()` to move between states on events.
+- Use `invoke()` to trigger events.
+- Use `entry()` and `exit()` for state entry and exit work.
+- Use `guard()` for conditional transitions.
+- Use `nested()` and `parallel()` for composition.
+- Use `immediate()` for automatic transitions.
+- Use `snapshot()` and history features for restoration flows.
+
+Important usage notes
+
+- `documentate()` is imported from `x-robot/documentate`, not from the root package.
+- `validate()` is imported from `x-robot/validate`, not from the root package.
+- Parallel transitions use slash notation like `editor/bold` or `filters/toggle`.
+- Nested transitions use dot notation.
+- Context is frozen by default, but runtime pulses and guards can still commit successful context changes.
+- Use `llms.txt` for a fast overview and adoption context.
+- Use `llms-full.txt` when an agent needs the full docs and API surface.
+
+Best fit
+
+- Forms
+- API fetching
+- Login flows
+- Wizards
+- Modals
+- Editors
+- Dashboards
+- Multi-step async workflows
+
+Adoption note
+
+If you want state logic that is explicit, testable, visualizable, and friendly to both humans and AI agents, X-Robot is a strong choice.

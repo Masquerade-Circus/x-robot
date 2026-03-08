@@ -6,20 +6,22 @@
 machine(title, init?, state*, parallel*)
 ```
 
----
+***
 
 ## 1. `machine(title, ...args)`
 
 Crea la máquina de estados. Los argumentos pueden ser:
-- `init(...)` - configuración inicial (opcional, solo uno)
-- `state(...)` - estados (al menos uno)
-- `parallel(...)` - máquinas paralelas
+
+*   `init(...)` - configuración inicial (opcional, solo uno)
+*   `state(...)` - estados (al menos uno)
+*   `parallel(...)` - máquinas paralelas
 
 **Comportamiento:**
-- Si no hay `init()` con `initial()`, el primer estado definido se convierte en initial
-- Por defecto `frozen: true` (el context es inmutable)
 
----
+*   Si no hay `init()` con `initial()`, el primer estado definido se convierte en initial
+*   Por defecto `frozen: true` (el context es inmutable)
+
+***
 
 ## 2. `init(initial?, context?, shouldFreeze?, history?)`
 
@@ -41,7 +43,7 @@ init(context({ count: 0 }))
 | `context` | `ContextDirective` | Estado inicial del context |
 | `shouldFreeze` | `ShouldFreezeDirective` | Si el context es inmutable |
 
----
+***
 
 ## 3. `initial(name)`
 
@@ -52,7 +54,7 @@ initial("idle")
 initial("loading")
 ```
 
----
+***
 
 ## 4. `context(value)`
 
@@ -66,7 +68,7 @@ context({ count: 0, name: "test" })
 context(() => ({ count: 0, name: "test" }))
 ```
 
----
+***
 
 ## 5. `shouldFreeze(boolean)`
 
@@ -77,7 +79,7 @@ shouldFreeze(true)   // default - context inmutable
 shouldFreeze(false)  // context mutable
 ```
 
----
+***
 
 ## 6. `history(limit)`
 
@@ -91,7 +93,7 @@ history(0)    // desactivar historial
 
 **Esta es una característica que XState NO tiene.**
 
----
+***
 
 ## 7. `state(name, ...args)`
 
@@ -104,13 +106,14 @@ state("error", entry(handleError), transition("retry", "loading"))
 ```
 
 **Argumentos posibles:**
-- `entry(...)` - ejecuta lógica
-- `transition(...)` - define transiciones
-- `immediate(...)` - transiciones inmediatas
-- `nested(...)` - máquina anidada
-- `description(...)` - documentación
 
----
+*   `entry(...)` - ejecuta lógica
+*   `transition(...)` - define transiciones
+*   `immediate(...)` - transiciones inmediatas
+*   `nested(...)` - máquina anidada
+*   `description(...)` - documentación
+
+***
 
 ## 8. `entry(fn, [success], [failure])`
 
@@ -140,6 +143,7 @@ entry(fn, ,"error")
 | `entry(fn, "done", "error")` | Transiciona a "done" | Transiciona a "error" |
 
 **NO válido (usar múltiples entry):**
+
 ```typescript
 // INVÁLIDO:
 entry(fn, entry(handler)) 
@@ -150,7 +154,7 @@ entry(fn)
 entry(handler)
 ```
 
----
+***
 
 ## 9. `transition(name, target, ...guards)`
 
@@ -180,7 +184,7 @@ successState("done", ...)
 primaryState("active", ...)
 ```
 
----
+***
 
 ## Resumen de combinaciones válidas
 
@@ -214,27 +218,30 @@ state("success",
 )
 ```
 
----
+***
 
 ## Reglas de comportamiento
 
 ### Estados finales
+
 Un estado sin transiciones se considera estado final.
 
 ### Manejo de errores en entry actions
-1. Si el entry tiene `failure` definido → usa esa transición
-2. Si no tiene `failure` pero existe estado "error" → transiciona automáticamente
-3. Si no tiene "error" → lanza el error
+
+1.  Si el entry tiene `failure` definido → usa esa transición
+2.  Si no tiene `failure` pero existe estado "error" → transiciona automáticamente
+3.  Si no tiene "error" → lanza el error
 
 ### Manejo de errores en guards
-1. Si el guard retorna `true` → permite la transición
-2. Si retorna otro valor:
-   - Tiene `failure` → ejecuta/transiciona según failure
-   - No tiene `failure` → almacena el valor en `context.error`
 
----
+1.  Si el guard retorna `true` → permite la transición
+2.  Si retorna otro valor:
+    *   Tiene `failure` → ejecuta/transiciona según failure
+    *   No tiene `failure` → almacena el valor en `context.error`
 
-## invokeAfter(machine, timeInMilliseconds, event, [payload])
+***
+
+## invokeAfter(machine, timeInMilliseconds, event, \[payload])
 
 Programa una invocación de evento después de un tiempo específico.
 
@@ -247,15 +254,17 @@ cancelTimeout();
 ```
 
 **Parámetros:**
-- `machine`: La máquina a invocar
-- `timeInMilliseconds`: Tiempo de espera en milisegundos
-- `event`: El nombre del evento a invocar
-- `payload` (opcional): Datos a pasar al evento
+
+*   `machine`: La máquina a invocar
+*   `timeInMilliseconds`: Tiempo de espera en milisegundos
+*   `event`: El nombre del evento a invocar
+*   `payload` (opcional): Datos a pasar al evento
 
 **Retorna:**
-- Función `() => void` para cancelar la invocación programada
 
----
+*   Función `() => void` para cancelar la invocación programada
+
+***
 
 ## snapshot(machine)
 
@@ -271,30 +280,33 @@ start(newMachine, savedSnapshot);
 ```
 
 **Parámetros:**
-- `machine`: La máquina de la cual obtener el snapshot
+
+*   `machine`: La máquina de la cual obtener el snapshot
 
 **Retorna:**
-- Objeto con: `current`, `context`, `history`, `parallel`, `nested`
+
+*   Objeto con: `current`, `context`, `history`, `parallel`, `nested`
 
 **Nota:** El snapshot incluye el estado de todas las máquinas paralelas y anidadas.
 
----
+***
 
 ## documentate(input, options)
 
 Función unificada para generar documentación y convertir entre formatos para máquinas X-Robot.
 
 ```typescript
-import { documentate } from "x-robot";
+import { documentate } from "x-robot/documentate";
 ```
 
 ### Input
 
 Acepta diferentes tipos de entrada:
-- **Machine**: Instancia de máquina creada con `machine()`
-- **SerializedMachine**: Objeto JSON con la estructura de la máquina
-- **SCXML string**: Documento SCXML válido
-- **PlantUML string**: Código PlantUML válido
+
+*   **Machine**: Instancia de máquina creada con `machine()`
+*   **SerializedMachine**: Objeto JSON con la estructura de la máquina
+*   **SCXML string**: Documento SCXML válido
+*   **PlantUML string**: Código PlantUML válido
 
 ### Opciones
 
@@ -311,9 +323,10 @@ Acepta diferentes tipos de entrada:
 | `ts` | Código TypeScript |
 | `mjs` | Código JavaScript ESM |
 | `cjs` | Código JavaScript CommonJS |
-| `json` | Objeto JSON de la máquina |
+| `json` | String JSON de la máquina |
 | `scxml` | Documento SCXML |
 | `plantuml` | Código PlantUML |
+| `mermaid` | Código Mermaid |
 | `svg` | Imagen SVG del diagrama |
 | `png` | Imagen PNG del diagrama |
 | `serialized` | Objeto SerializedMachine |
@@ -321,12 +334,12 @@ Acepta diferentes tipos de entrada:
 
 ### Tabla de Interoperabilidad
 
-| Input \\ Output | ts | mjs | cjs | json | scxml | plantuml | svg | png | serialized |
-|----------------|----|-----|-----|------|-------|----------|-----|-----|------------|
-| Machine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| SerializedMachine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| SCXML | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-| PlantUML | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ |
+| Input \ Output | ts | mjs | cjs | json | scxml | plantuml | mermaid | svg | png | serialized |
+|----------------|----|-----|-----|------|-------|----------|---------|-----|-----|------------|
+| Machine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SerializedMachine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SCXML | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| PlantUML | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
 
 ### Ejemplos
 

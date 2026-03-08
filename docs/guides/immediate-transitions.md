@@ -4,8 +4,35 @@ Immediate transitions allow a state to automatically transition to another state
 
 ## Basic Usage
 
+```mermaid
+---
+title: MyMachine
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state processing
+state complete
+class idle def
+class processing def
+class complete def
+
+
+[*] --> idle
+idle --> processing: start
+processing --> complete: complete
+```
+
 ```javascript
-import { machine, state, transition, immediate, initial, init } from "x-robot";
+import { immediate, init, initial, machine, state, transition } from "x-robot";
 
 const myMachine = machine(
   "MyMachine",
@@ -16,11 +43,36 @@ const myMachine = machine(
 );
 ```
 
-When the machine enters "processing", it immediately transitions to "complete" without any additional event.
-
 ## With Guards
 
 Immediate transitions can use guards to conditionally redirect:
+
+```mermaid
+---
+title: Auth
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state checking
+state authenticated
+state unauthenticated
+class checking def
+class authenticated def
+class unauthenticated def
+
+
+[*] --> checking
+checking --> authenticated: authenticated<br>└ G-isAuthenticated
+checking --> unauthenticated: unauthenticated
+```
 
 ```javascript
 function isAuthenticated(ctx) {
@@ -30,7 +82,11 @@ function isAuthenticated(ctx) {
 const authMachine = machine(
   "Auth",
   init(initial("checking")),
-  state("checking", immediate("authenticated", guard(isAuthenticated))),
+  state(
+    "checking",
+    immediate("authenticated", guard(isAuthenticated)),
+    immediate("unauthenticated")
+  ),
   state("authenticated"),
   state("unauthenticated")
 );
@@ -41,6 +97,39 @@ const authMachine = machine(
 ### Validation Redirect
 
 Redirect based on validation results:
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state validating
+state valid
+state invalid
+state submitting
+class idle def
+class validating def
+class valid def
+class invalid def
+class submitting def
+
+
+[*] --> idle
+idle --> validating: submit
+validating --> valid: valid<br>└ G-isValid
+validating --> invalid: invalid
+valid --> submitting: submit
+```
 
 ```javascript
 function isValid(ctx) {
@@ -65,6 +154,37 @@ const formMachine = machine(
 
 Process and redirect on initialization:
 
+```mermaid
+---
+title: Init
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state boot
+state loading
+state hasCache
+state ready
+class boot def
+class loading def
+class hasCache def
+class ready def
+
+
+[*] --> boot
+boot --> hasCache: hasCache<br>└ G-hasCache
+boot --> loading: loading
+loading --> ready: ready
+hasCache --> ready: ready
+```
+
 ```javascript
 function hasCache(ctx) {
   return !!ctx.cachedData;
@@ -73,9 +193,13 @@ function hasCache(ctx) {
 const initMachine = machine(
   "Init",
   init(initial("boot")),
-  state("boot", immediate("loading", guard(hasCache))),
+  state(
+    "boot",
+    immediate("hasCache", guard(hasCache)),
+    immediate("loading")
+  ),
   state("loading", immediate("ready")),
-  state("hasCache"),
+  state("hasCache", immediate("ready")),
   state("ready")
 );
 ```
@@ -83,6 +207,36 @@ const initMachine = machine(
 ### Computed States
 
 Create states that automatically compute and redirect:
+
+```mermaid
+---
+title: Filter
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state all
+state filtering
+state empty
+state results
+class all def
+class filtering def
+class empty def
+class results def
+
+
+[*] --> all
+all --> filtering: filter
+filtering --> empty: empty<br>└ G-noResults
+filtering --> results: results
+```
 
 ```javascript
 function noResults(ctx) {
@@ -102,6 +256,37 @@ const filterMachine = machine(
 ## With Entry Pulses
 
 Immediate transitions work with entry pulses:
+
+```mermaid
+---
+title: Process
+---
+
+stateDiagram-v2
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state idle
+state processing
+state success
+state failure
+class idle def
+class processing def
+class success def
+class failure def
+
+processing: └ En-computeResult
+
+[*] --> idle
+idle --> processing: start
+processing --> success: success<br>└ G-isSuccess
+processing --> failure: failure
+```
 
 ```javascript
 function computeResult(ctx) {
@@ -130,5 +315,5 @@ The entry pulse runs first, then the immediate transition evaluates guards.
 
 ## Next Steps
 
-- [Guards Guide](./guards.md) — Conditional transitions
-- [Concepts: Guards](../concepts/guards.md) — Deep dive
+*   [Guards Guide](./guards.md) — Conditional transitions
+*   [Concepts: Guards](../concepts/guards.md) — Deep dive
