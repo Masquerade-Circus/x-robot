@@ -23,7 +23,7 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L144)
+[lib/documentate/types.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L144)
 
 ***
 
@@ -33,7 +33,7 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L145)
+[lib/documentate/types.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L145)
 
 ***
 
@@ -43,7 +43,7 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L146)
+[lib/documentate/types.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L146)
 
 ***
 
@@ -53,4 +53,4 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L147)
+[lib/documentate/types.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L147)

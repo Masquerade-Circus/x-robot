@@ -1,0 +1,10 @@
+{
+  "name": "@x-robot/react-smoke",
+  "private": true,
+  "dependencies": {
+    "@x-robot/react": "file:..",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "x-robot": "file:../../.."
+  }
+}

@@ -28,6 +28,8 @@ import {
   warningState
 } from "./machine/create";
 import { invoke, invokeAfter, snapshot, start } from "./machine/invoke";
+export type { MachineSnapshot } from "./machine/invoke";
+export type { Machine } from "./machine/interfaces";
 
 export {
   machine,

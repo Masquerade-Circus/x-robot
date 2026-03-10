@@ -1,0 +1,21 @@
+{
+  "name": "@x-robot/shared",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Internal shared adapter contract for x-robot integrations.",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "src/index.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node -e \"const fs=require('fs'); const esbuild=require('esbuild'); fs.rmSync('dist',{recursive:true,force:true}); esbuild.buildSync({entryPoints:['src/index.ts'],bundle:true,platform:'node',format:'cjs',outfile:'dist/index.js'});\"",
+    "test": "mocha --no-timeouts --exit --require ts-node/register --enable-source-maps tests/**/*.test.ts"
+  },
+  "peerDependencies": {
+    "x-robot": "*"
+  }
+}

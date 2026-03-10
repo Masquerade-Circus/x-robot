@@ -3,6 +3,7 @@
     "target": "esNext",
     "module": "CommonJS",
     "strict": true,
+    "baseUrl": ".",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "inlineSourceMap": true,
@@ -12,7 +13,13 @@
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "x-robot": ["lib/index.ts"],
+      "x-robot/devtools": ["lib/devtools/index.ts"],
+      "@x-robot/shared": ["packages/shared/src"],
+      "@x-robot/react": ["packages/react/src"]
+    }
   },
   "include": ["lib/**/*"],
   "exclude": [

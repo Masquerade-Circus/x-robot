@@ -4841,12 +4841,12 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 6.42ms  | 124.46ms | **19.4x faster** |
-| 3k with guards         | 4.54ms  | 36.13ms  | **8.0x faster**  |
-| 10k transitions        | 8.25ms  | 158.44ms | **19.2x faster** |
-| 10k context updates    | 26.05ms | 130.20ms  | **5.0x faster**  |
-| invokeAfter scheduling | 4.81ms  | 14.34ms  | **3.0x faster**  |
-| Delayed transitions    | 56.33ms | 61.48ms  | **1.1x faster**  |
+| 5k transitions         | 5.81ms  | 101.71ms | **17.5x faster** |
+| 3k with guards         | 5.76ms  | 38.21ms  | **6.6x faster**  |
+| 10k transitions        | 6.28ms  | 134.68ms | **21.4x faster** |
+| 10k context updates    | 18.52ms | 129.57ms  | **7.0x faster**  |
+| invokeAfter scheduling | 6.26ms  | 19.85ms  | **3.2x faster**  |
+| Delayed transitions    | 55.80ms | 63.91ms  | **1.1x faster**  |
 
 ***
 
@@ -4864,7 +4864,7 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 ## Why X-Robot?
 
 1.  **2.0-3.9x smaller** bundle size (core only)
-2.  **1.1-19.4x faster** performance
+2.  **1.1-21.4x faster** performance
 3.  **1.2-1.8x less code** to write
 4.  **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
 5.  **Simpler API** - Declarative, functional approach
@@ -7290,6 +7290,14 @@ npm install x-robot
 bun add x-robot
 ```
 
+## Framework Adapters
+
+The first workspace adapter lives at `packages/react/README.md` as `@x-robot/react`.
+
+*   React hook: `useMachine(machine, options?)`
+*   v1 contract: rerenders are guaranteed only for the wrapper methods returned by the hook
+*   Important caveat: direct external `invoke(machine, ...)` calls are not tracked for React rerenders in v1
+
 ## Key Features
 
 *   Nested and parallel states
@@ -7322,7 +7330,7 @@ if (import.meta.env.DEV) {
 }
 ```
 
-See the [Devtools Guide](./docs/guides/devtools.md) for setup, supported monitor actions, production exclusion, and cleanup patterns.
+See `docs/guides/devtools.md` for setup, supported monitor actions, production exclusion, and cleanup patterns.
 
 ## API Overview
 
@@ -7342,7 +7350,7 @@ See the [Devtools Guide](./docs/guides/devtools.md) for setup, supported monitor
 
 ## Documentation
 
-[Getting Started](./docs/guides/getting-started.md) · [Devtools](./docs/guides/devtools.md) · [Concepts](./docs/concepts/) · [API](./docs/api/) · [Recipes](./docs/recipes/) · [Performance](./docs/performance.md)
+`docs/guides/getting-started.md` · `docs/guides/devtools.md` · `packages/react/README.md` · `docs/concepts/` · `docs/api/` · `docs/recipes/` · `docs/performance.md`
 
 ## License
 
@@ -7409,7 +7417,7 @@ Apache-2.0
 
 #### Defined in
 
-[lib/validate/result.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/validate/result.ts#L29)
+[lib/validate/result.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/validate/result.ts#L29)
 
 ## Methods
 
@@ -7512,7 +7520,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/validate/result.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/validate/result.ts#L10)
+[lib/validate/result.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/validate/result.ts#L10)
 
 ## Methods
 
@@ -7582,7 +7590,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:179](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L179)
+[lib/machine/interfaces.ts:179](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L179)
 
 ***
 
@@ -7592,7 +7600,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:180](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L180)
+[lib/machine/interfaces.ts:180](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L180)
 
 ***
 
@@ -7602,7 +7610,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:181](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L181)
+[lib/machine/interfaces.ts:181](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L181)
 
 ***
 
@@ -7612,7 +7620,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:182](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L182)
+[lib/machine/interfaces.ts:182](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L182)
 
 ***
 
@@ -7622,7 +7630,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:183](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L183)
+[lib/machine/interfaces.ts:183](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L183)
 
 ===== END DOC: docs/api/enums/x_robot.HistoryType.md =====
 
@@ -7650,7 +7658,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/documentate/generate.ts:9](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/generate.ts#L9)
+[lib/documentate/generate.ts:9](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/generate.ts#L9)
 
 ***
 
@@ -7660,7 +7668,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/documentate/generate.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/generate.ts#L10)
+[lib/documentate/generate.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/generate.ts#L10)
 
 ***
 
@@ -7670,7 +7678,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/documentate/generate.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/generate.ts#L11)
+[lib/documentate/generate.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/generate.ts#L11)
 
 ===== END DOC: docs/api/enums/x_robot_documentate_generate.Format.md =====
 
@@ -7724,7 +7732,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L163)
+[lib/machine/interfaces.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L163)
 
 ===== END DOC: docs/api/interfaces/x_robot.ContextDirective.md =====
 
@@ -7767,7 +7775,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:118](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L118)
+[lib/machine/interfaces.ts:118](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L118)
 
 ***
 
@@ -7781,7 +7789,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L93)
 
 ***
 
@@ -7795,7 +7803,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L94)
 
 ***
 
@@ -7809,7 +7817,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L95)
 
 ***
 
@@ -7823,7 +7831,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L96)
 
 ***
 
@@ -7837,7 +7845,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L97)
 
 ***
 
@@ -7851,7 +7859,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L105)
 
 ***
 
@@ -7865,7 +7873,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L106)
 
 ===== END DOC: docs/api/interfaces/x_robot.DangerStateDirective.md =====
 
@@ -7891,7 +7899,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:80](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L80)
+[lib/machine/interfaces.ts:80](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L80)
 
 ===== END DOC: docs/api/interfaces/x_robot.DescriptionDirective.md =====
 
@@ -7918,7 +7926,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L58)
+[lib/machine/interfaces.ts:58](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L58)
 
 ***
 
@@ -7928,7 +7936,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L59)
+[lib/machine/interfaces.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L59)
 
 ===== END DOC: docs/api/interfaces/x_robot.ExitDirective.md =====
 
@@ -7988,7 +7996,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L67)
+[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L67)
 
 ***
 
@@ -7998,7 +8006,7 @@ this is Err\<never, E>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L68)
+[lib/machine/interfaces.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L68)
 
 ===== END DOC: docs/api/interfaces/x_robot.GuardDirective.md =====
 
@@ -9049,7 +9057,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:175](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L175)
+[lib/machine/interfaces.ts:175](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L175)
 
 ===== END DOC: docs/api/interfaces/x_robot.HistoryDirective.md =====
 
@@ -9084,7 +9092,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:32](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L32)
+[lib/machine/interfaces.ts:32](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L32)
 
 ***
 
@@ -9094,7 +9102,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L33)
+[lib/machine/interfaces.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L33)
 
 ===== END DOC: docs/api/interfaces/x_robot.ImmediateDirective.md =====
 
@@ -9137,7 +9145,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:110](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L110)
+[lib/machine/interfaces.ts:110](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L110)
 
 ***
 
@@ -9151,7 +9159,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L93)
 
 ***
 
@@ -9165,7 +9173,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L94)
 
 ***
 
@@ -9179,7 +9187,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L95)
 
 ***
 
@@ -9193,7 +9201,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L96)
 
 ***
 
@@ -9207,7 +9215,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L97)
 
 ***
 
@@ -9221,7 +9229,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L105)
 
 ***
 
@@ -9235,7 +9243,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L106)
 
 ===== END DOC: docs/api/interfaces/x_robot.InfoStateDirective.md =====
 
@@ -9264,7 +9272,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L10)
+[lib/machine/interfaces.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L10)
 
 ***
 
@@ -9274,7 +9282,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L11)
+[lib/machine/interfaces.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L11)
 
 ***
 
@@ -9284,7 +9292,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:12](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L12)
+[lib/machine/interfaces.ts:12](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L12)
 
 ***
 
@@ -9294,7 +9302,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:13](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L13)
+[lib/machine/interfaces.ts:13](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L13)
 
 ===== END DOC: docs/api/interfaces/x_robot.InitDirective.md =====
 
@@ -9320,7 +9328,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:167](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L167)
+[lib/machine/interfaces.ts:167](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L167)
 
 ===== END DOC: docs/api/interfaces/x_robot.InitialDirective.md =====
 
@@ -9357,7 +9365,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:138](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L138)
+[lib/machine/interfaces.ts:138](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L138)
 
 ***
 
@@ -9367,7 +9375,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:139](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L139)
+[lib/machine/interfaces.ts:139](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L139)
 
 ***
 
@@ -9377,7 +9385,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:140](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L140)
+[lib/machine/interfaces.ts:140](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L140)
 
 ***
 
@@ -9387,7 +9395,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:141](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L141)
+[lib/machine/interfaces.ts:141](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L141)
 
 ***
 
@@ -9397,7 +9405,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:142](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L142)
+[lib/machine/interfaces.ts:142](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L142)
 
 ***
 
@@ -9407,7 +9415,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:143](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L143)
+[lib/machine/interfaces.ts:143](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L143)
 
 ***
 
@@ -9417,7 +9425,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L144)
+[lib/machine/interfaces.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L144)
 
 ***
 
@@ -9427,7 +9435,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L145)
+[lib/machine/interfaces.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L145)
 
 ***
 
@@ -9437,7 +9445,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L146)
+[lib/machine/interfaces.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L146)
 
 ***
 
@@ -9447,7 +9455,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L147)
+[lib/machine/interfaces.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L147)
 
 ***
 
@@ -9457,7 +9465,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:148](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L148)
+[lib/machine/interfaces.ts:148](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L148)
 
 ***
 
@@ -9467,7 +9475,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:149](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L149)
+[lib/machine/interfaces.ts:149](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L149)
 
 ===== END DOC: docs/api/interfaces/x_robot.Machine.md =====
 
@@ -10528,7 +10536,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/invoke.ts:888](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L888)
+[lib/machine/invoke.ts:888](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L888)
 
 ***
 
@@ -10538,7 +10546,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/invoke.ts:889](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L889)
+[lib/machine/invoke.ts:889](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L889)
 
 ***
 
@@ -10548,7 +10556,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/invoke.ts:890](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L890)
+[lib/machine/invoke.ts:890](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L890)
 
 ***
 
@@ -10558,7 +10566,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/invoke.ts:891](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L891)
+[lib/machine/invoke.ts:891](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L891)
 
 ***
 
@@ -10568,7 +10576,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/invoke.ts:892](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L892)
+[lib/machine/invoke.ts:892](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L892)
 
 ===== END DOC: docs/api/interfaces/x_robot.MachineSnapshot.md =====
 
@@ -10602,7 +10610,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:72](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L72)
+[lib/machine/interfaces.ts:72](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L72)
 
 ***
 
@@ -10616,7 +10624,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L73)
+[lib/machine/interfaces.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L73)
 
 ***
 
@@ -10630,7 +10638,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L67)
+[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L67)
 
 ===== END DOC: docs/api/interfaces/x_robot.NestedGuardDirective.md =====
 
@@ -10667,7 +10675,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L37)
+[lib/machine/interfaces.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L37)
 
 ***
 
@@ -10681,7 +10689,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:38](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L38)
+[lib/machine/interfaces.ts:38](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L38)
 
 ===== END DOC: docs/api/interfaces/x_robot.NestedImmediateDirective.md =====
 
@@ -10714,7 +10722,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:153](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L153)
+[lib/machine/interfaces.ts:153](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L153)
 
 ***
 
@@ -10724,7 +10732,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:154](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L154)
+[lib/machine/interfaces.ts:154](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L154)
 
 ===== END DOC: docs/api/interfaces/x_robot.NestedMachineDirective.md =====
 
@@ -10761,7 +10769,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:159](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L159)
+[lib/machine/interfaces.ts:159](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L159)
 
 ***
 
@@ -10775,7 +10783,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:153](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L153)
+[lib/machine/interfaces.ts:153](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L153)
 
 ===== END DOC: docs/api/interfaces/x_robot.NestedMachineWithTransitionDirective.md =====
 
@@ -10801,7 +10809,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L134)
+[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L134)
 
 ===== END DOC: docs/api/interfaces/x_robot.ParallelDirective.md =====
 
@@ -10838,7 +10846,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L42)
+[lib/machine/interfaces.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L42)
 
 ***
 
@@ -10852,7 +10860,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L43)
+[lib/machine/interfaces.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L43)
 
 ===== END DOC: docs/api/interfaces/x_robot.ParallelImmediateDirective.md =====
 
@@ -10895,7 +10903,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L122)
+[lib/machine/interfaces.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L122)
 
 ***
 
@@ -10909,7 +10917,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L93)
 
 ***
 
@@ -10923,7 +10931,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L94)
 
 ***
 
@@ -10937,7 +10945,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L95)
 
 ***
 
@@ -10951,7 +10959,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L96)
 
 ***
 
@@ -10965,7 +10973,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L97)
 
 ***
 
@@ -10979,7 +10987,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L105)
 
 ***
 
@@ -10993,7 +11001,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L106)
 
 ===== END DOC: docs/api/interfaces/x_robot.PrimaryStateDirective.md =====
 
@@ -11049,7 +11057,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L51)
+[lib/machine/interfaces.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L51)
 
 ***
 
@@ -11059,7 +11067,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L52)
+[lib/machine/interfaces.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L52)
 
 ***
 
@@ -11069,7 +11077,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L53)
+[lib/machine/interfaces.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L53)
 
 ***
 
@@ -11079,7 +11087,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L54)
+[lib/machine/interfaces.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L54)
 
 ===== END DOC: docs/api/interfaces/x_robot.PulseDirective.md =====
 
@@ -12130,7 +12138,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:171](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L171)
+[lib/machine/interfaces.ts:171](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L171)
 
 ===== END DOC: docs/api/interfaces/x_robot.ShouldFreezeDirective.md =====
 
@@ -12177,7 +12185,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L93)
 
 ***
 
@@ -12187,7 +12195,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L94)
 
 ***
 
@@ -12197,7 +12205,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L95)
 
 ***
 
@@ -12207,7 +12215,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L96)
 
 ***
 
@@ -12217,7 +12225,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L97)
 
 ***
 
@@ -12227,7 +12235,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L104)
+[lib/machine/interfaces.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L104)
 
 ***
 
@@ -12237,7 +12245,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L105)
 
 ***
 
@@ -12247,7 +12255,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L106)
 
 ===== END DOC: docs/api/interfaces/x_robot.StateDirective.md =====
 
@@ -12304,7 +12312,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:126](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L126)
+[lib/machine/interfaces.ts:126](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L126)
 
 ***
 
@@ -12318,7 +12326,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L93)
 
 ***
 
@@ -12332,7 +12340,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L94)
 
 ***
 
@@ -12346,7 +12354,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L95)
 
 ***
 
@@ -12360,7 +12368,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L96)
 
 ***
 
@@ -12374,7 +12382,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L97)
 
 ***
 
@@ -12388,7 +12396,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L105)
 
 ***
 
@@ -12402,7 +12410,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L106)
 
 ===== END DOC: docs/api/interfaces/x_robot.SuccessStateDirective.md =====
 
@@ -12431,7 +12439,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:21](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L21)
+[lib/machine/interfaces.ts:21](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L21)
 
 ***
 
@@ -12441,7 +12449,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:22](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L22)
+[lib/machine/interfaces.ts:22](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L22)
 
 ***
 
@@ -12451,7 +12459,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:23](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L23)
+[lib/machine/interfaces.ts:23](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L23)
 
 ***
 
@@ -12461,7 +12469,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:24](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L24)
+[lib/machine/interfaces.ts:24](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L24)
 
 ===== END DOC: docs/api/interfaces/x_robot.TransitionDirective.md =====
 
@@ -12518,7 +12526,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:114](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L114)
+[lib/machine/interfaces.ts:114](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L114)
 
 ***
 
@@ -12532,7 +12540,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L93)
 
 ***
 
@@ -12546,7 +12554,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L94)
 
 ***
 
@@ -12560,7 +12568,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L95)
 
 ***
 
@@ -12574,7 +12582,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L96)
 
 ***
 
@@ -12588,7 +12596,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L97)
 
 ***
 
@@ -12602,7 +12610,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L105)
 
 ***
 
@@ -12616,7 +12624,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L106)
 
 ===== END DOC: docs/api/interfaces/x_robot.WarningStateDirective.md =====
 
@@ -12655,7 +12663,7 @@ The original machine instance bound to this devtools connection.
 
 #### Defined in
 
-[lib/devtools/index.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L33)
+[lib/devtools/index.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L33)
 
 ## Methods
 
@@ -12785,7 +12793,7 @@ Serializable fatal error metadata exposed in the devtools snapshot.
 
 #### Defined in
 
-[lib/devtools/index.ts:14](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L14)
+[lib/devtools/index.ts:14](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L14)
 
 ***
 
@@ -12795,7 +12803,7 @@ Serializable fatal error metadata exposed in the devtools snapshot.
 
 #### Defined in
 
-[lib/devtools/index.ts:15](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L15)
+[lib/devtools/index.ts:15](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L15)
 
 ===== END DOC: docs/api/interfaces/x_robot_devtools.XRobotDevtoolsFatalState.md =====
 
@@ -12829,7 +12837,7 @@ Name shown for this machine connection in the Redux DevTools monitor.
 
 #### Defined in
 
-[lib/devtools/index.ts:8](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L8)
+[lib/devtools/index.ts:8](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L8)
 
 ===== END DOC: docs/api/interfaces/x_robot_devtools.XRobotDevtoolsOptions.md =====
 
@@ -12873,7 +12881,7 @@ Stable machine id used by X-Robot internally.
 
 #### Defined in
 
-[lib/devtools/index.ts:21](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L21)
+[lib/devtools/index.ts:21](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L21)
 
 ***
 
@@ -12885,7 +12893,7 @@ Optional machine title shown in docs and visual tooling.
 
 #### Defined in
 
-[lib/devtools/index.ts:23](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L23)
+[lib/devtools/index.ts:23](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L23)
 
 ***
 
@@ -12897,7 +12905,7 @@ Whether the machine currently runs async transitions or pulses.
 
 #### Defined in
 
-[lib/devtools/index.ts:25](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L25)
+[lib/devtools/index.ts:25](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L25)
 
 ***
 
@@ -12909,7 +12917,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/devtools/index.ts:27](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L27)
+[lib/devtools/index.ts:27](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/devtools/index.ts#L27)
 
 ***
 
@@ -12923,7 +12931,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:888](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L888)
+[lib/machine/invoke.ts:888](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L888)
 
 ***
 
@@ -12937,7 +12945,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:889](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L889)
+[lib/machine/invoke.ts:889](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L889)
 
 ***
 
@@ -12951,7 +12959,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:890](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L890)
+[lib/machine/invoke.ts:890](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L890)
 
 ***
 
@@ -12965,7 +12973,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:891](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L891)
+[lib/machine/invoke.ts:891](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L891)
 
 ***
 
@@ -12979,7 +12987,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:892](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/invoke.ts#L892)
+[lib/machine/invoke.ts:892](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/invoke.ts#L892)
 
 ===== END DOC: docs/api/interfaces/x_robot_devtools.XRobotDevtoolsState.md =====
 
@@ -13014,7 +13022,7 @@ Output format (required)
 
 #### Defined in
 
-[lib/documentate/types.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L29)
+[lib/documentate/types.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L29)
 
 ***
 
@@ -13026,7 +13034,7 @@ Detail level for diagrams
 
 #### Defined in
 
-[lib/documentate/types.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L31)
+[lib/documentate/types.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L31)
 
 ***
 
@@ -13038,7 +13046,7 @@ Output file path
 
 #### Defined in
 
-[lib/documentate/types.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L33)
+[lib/documentate/types.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L33)
 
 ***
 
@@ -13050,7 +13058,7 @@ Output file name
 
 #### Defined in
 
-[lib/documentate/types.ts:35](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L35)
+[lib/documentate/types.ts:35](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L35)
 
 ***
 
@@ -13062,7 +13070,7 @@ PlantUML skinparam customization
 
 #### Defined in
 
-[lib/documentate/types.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L37)
+[lib/documentate/types.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L37)
 
 ***
 
@@ -13074,7 +13082,7 @@ Mermaid diagram theme
 
 #### Defined in
 
-[lib/documentate/types.ts:39](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L39)
+[lib/documentate/types.ts:39](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L39)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.DocumentateOptions.md =====
 
@@ -13114,7 +13122,7 @@ Generated TypeScript code
 
 #### Defined in
 
-[lib/documentate/types.ts:47](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L47)
+[lib/documentate/types.ts:47](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L47)
 
 ***
 
@@ -13126,7 +13134,7 @@ Generated JavaScript ESM code
 
 #### Defined in
 
-[lib/documentate/types.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L49)
+[lib/documentate/types.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L49)
 
 ***
 
@@ -13138,7 +13146,7 @@ Generated JavaScript CommonJS code
 
 #### Defined in
 
-[lib/documentate/types.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L51)
+[lib/documentate/types.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L51)
 
 ***
 
@@ -13150,7 +13158,7 @@ JSON representation of the machine
 
 #### Defined in
 
-[lib/documentate/types.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L53)
+[lib/documentate/types.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L53)
 
 ***
 
@@ -13162,7 +13170,7 @@ SCXML document
 
 #### Defined in
 
-[lib/documentate/types.ts:55](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L55)
+[lib/documentate/types.ts:55](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L55)
 
 ***
 
@@ -13174,7 +13182,7 @@ PlantUML code
 
 #### Defined in
 
-[lib/documentate/types.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L57)
+[lib/documentate/types.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L57)
 
 ***
 
@@ -13186,7 +13194,7 @@ Mermaid code
 
 #### Defined in
 
-[lib/documentate/types.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L59)
+[lib/documentate/types.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L59)
 
 ***
 
@@ -13198,7 +13206,7 @@ SVG image path
 
 #### Defined in
 
-[lib/documentate/types.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L61)
+[lib/documentate/types.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L61)
 
 ***
 
@@ -13210,7 +13218,7 @@ PNG image path
 
 #### Defined in
 
-[lib/documentate/types.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L63)
+[lib/documentate/types.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L63)
 
 ***
 
@@ -13222,7 +13230,7 @@ SerializedMachine object
 
 #### Defined in
 
-[lib/documentate/types.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L65)
+[lib/documentate/types.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L65)
 
 ***
 
@@ -13234,7 +13242,7 @@ Generated file paths
 
 #### Defined in
 
-[lib/documentate/types.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L67)
+[lib/documentate/types.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L67)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.DocumentateResult.md =====
 
@@ -14292,7 +14300,7 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L144)
+[lib/documentate/types.ts:144](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L144)
 
 ***
 
@@ -14302,7 +14310,7 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L145)
+[lib/documentate/types.ts:145](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L145)
 
 ***
 
@@ -14312,7 +14320,7 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L146)
+[lib/documentate/types.ts:146](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L146)
 
 ***
 
@@ -14322,7 +14330,7 @@ Serialized guard definition
 
 #### Defined in
 
-[lib/documentate/types.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L147)
+[lib/documentate/types.ts:147](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L147)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.SerializedGuard.md =====
 
@@ -14351,7 +14359,7 @@ Serialized immediate transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:154](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L154)
+[lib/documentate/types.ts:154](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L154)
 
 ***
 
@@ -14361,7 +14369,7 @@ Serialized immediate transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:155](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L155)
+[lib/documentate/types.ts:155](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L155)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.SerializedImmediate.md =====
 
@@ -14393,7 +14401,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:82](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L82)
+[lib/documentate/types.ts:82](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L82)
 
 ***
 
@@ -14403,7 +14411,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:83](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L83)
+[lib/documentate/types.ts:83](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L83)
 
 ***
 
@@ -14413,7 +14421,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:84](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L84)
+[lib/documentate/types.ts:84](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L84)
 
 ***
 
@@ -14423,7 +14431,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:85](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L85)
+[lib/documentate/types.ts:85](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L85)
 
 ***
 
@@ -14433,7 +14441,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:86](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L86)
+[lib/documentate/types.ts:86](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L86)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.SerializedMachine.md =====
 
@@ -14462,7 +14470,7 @@ Serialized nested machine definition
 
 #### Defined in
 
-[lib/documentate/types.ts:162](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L162)
+[lib/documentate/types.ts:162](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L162)
 
 ***
 
@@ -14472,7 +14480,7 @@ Serialized nested machine definition
 
 #### Defined in
 
-[lib/documentate/types.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L163)
+[lib/documentate/types.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L163)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.SerializedNestedMachine.md =====
 
@@ -14503,7 +14511,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:129](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L129)
+[lib/documentate/types.ts:129](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L129)
 
 ***
 
@@ -14513,7 +14521,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:130](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L130)
+[lib/documentate/types.ts:130](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L130)
 
 ***
 
@@ -14523,7 +14531,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:131](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L131)
+[lib/documentate/types.ts:131](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L131)
 
 ***
 
@@ -14533,7 +14541,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L132)
+[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L132)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.SerializedPulse.md =====
 
@@ -14567,7 +14575,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:100](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L100)
+[lib/documentate/types.ts:100](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L100)
 
 ***
 
@@ -14577,7 +14585,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:101](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L101)
+[lib/documentate/types.ts:101](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L101)
 
 ***
 
@@ -14587,7 +14595,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:102](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L102)
+[lib/documentate/types.ts:102](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L102)
 
 ***
 
@@ -14597,7 +14605,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:103](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L103)
+[lib/documentate/types.ts:103](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L103)
 
 ***
 
@@ -14607,7 +14615,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L104)
+[lib/documentate/types.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L104)
 
 ***
 
@@ -14617,7 +14625,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L105)
+[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L105)
 
 ***
 
@@ -14627,7 +14635,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L106)
+[lib/documentate/types.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L106)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.SerializedState.md =====
 
@@ -14673,7 +14681,7 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L120)
+[lib/documentate/types.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L120)
 
 ***
 
@@ -14683,7 +14691,7 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L121)
+[lib/documentate/types.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L121)
 
 ***
 
@@ -14693,7 +14701,7 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L122)
+[lib/documentate/types.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L122)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate.SerializedTransition.md =====
 
@@ -15775,7 +15783,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L65)
+[lib/documentate/visualize.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L65)
 
 ***
 
@@ -15789,7 +15797,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L66)
+[lib/documentate/visualize.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L66)
 
 ***
 
@@ -15803,7 +15811,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:70](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L70)
+[lib/documentate/visualize.ts:70](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L70)
 
 ***
 
@@ -15817,7 +15825,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L71)
+[lib/documentate/visualize.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L71)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate_visualize.imageFromMachineOptions.md =====
 
@@ -15850,7 +15858,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:70](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L70)
+[lib/documentate/visualize.ts:70](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L70)
 
 ***
 
@@ -15860,7 +15868,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L71)
+[lib/documentate/visualize.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L71)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md =====
 
@@ -15888,7 +15896,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L59)
+[lib/documentate/visualize.ts:59](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L59)
 
 ***
 
@@ -15898,7 +15906,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:60](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L60)
+[lib/documentate/visualize.ts:60](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L60)
 
 ***
 
@@ -15908,7 +15916,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L61)
+[lib/documentate/visualize.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L61)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate_visualize.mermaidOptions.md =====
 
@@ -15941,7 +15949,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L65)
+[lib/documentate/visualize.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L65)
 
 ***
 
@@ -15951,7 +15959,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/visualize.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L66)
+[lib/documentate/visualize.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L66)
 
 ===== END DOC: docs/api/interfaces/x_robot_documentate_visualize.options.md =====
 
@@ -16077,7 +16085,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/state-styles.ts:1](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/state-styles.ts#L1)
+[lib/documentate/state-styles.ts:1](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/state-styles.ts#L1)
 
 ## Type Aliases
 
@@ -16087,7 +16095,7 @@ Array.\_\_@unscopables@15
 
 #### Defined in
 
-[lib/documentate/state-styles.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/state-styles.ts#L10)
+[lib/documentate/state-styles.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/state-styles.ts#L10)
 
 ===== END DOC: docs/api/modules/documentate_state_styles.md =====
 
@@ -16796,7 +16804,7 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/create.ts#L772)
+[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/create.ts#L772)
 
 ## Variables
 
@@ -16806,7 +16814,7 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L186)
+[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L186)
 
 ===== END DOC: docs/api/modules/x_robot.md =====
 
@@ -16974,7 +16982,7 @@ Output format options for documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L11)
+[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L11)
 
 ***
 
@@ -16986,7 +16994,7 @@ Input types accepted by the documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L73)
+[lib/documentate/types.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L73)
 
 ===== END DOC: docs/api/modules/x_robot_documentate.md =====
 
@@ -17374,7 +17382,7 @@ The path to the svg file
 
 #### Defined in
 
-[lib/documentate/visualize.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L44)
+[lib/documentate/visualize.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L44)
 
 ***
 
@@ -17392,7 +17400,7 @@ The path to the svg file
 
 #### Defined in
 
-[lib/documentate/visualize.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/visualize.ts#L49)
+[lib/documentate/visualize.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L49)
 
 ===== END DOC: docs/api/modules/x_robot_documentate_visualize.md =====
 
@@ -17532,7 +17540,7 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/validate/result.ts#L5)
+[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/validate/result.ts#L5)
 
 ***
 
@@ -17549,6 +17557,6 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/validate/result.ts#L7)
+[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/validate/result.ts#L7)
 
 ===== END DOC: docs/api/modules/x_robot_validate.md =====

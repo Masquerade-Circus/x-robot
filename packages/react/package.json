@@ -1,0 +1,59 @@
+{
+  "name": "@x-robot/react",
+  "version": "1.1.0",
+  "description": "Official React adapter for x-robot.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Masquerade-Circus/x-robot.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://github.com/Masquerade-Circus/x-robot/tree/main/packages/react",
+  "bugs": {
+    "url": "https://github.com/Masquerade-Circus/x-robot/issues"
+  },
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "mocha --no-timeouts --exit --require ts-node/register --enable-source-maps tests/**/*.test.tsx",
+    "test:smoke": "node scripts/smoke.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "x-robot": "*"
+  },
+  "keywords": [
+    "react",
+    "state machine",
+    "fsm",
+    "x-robot"
+  ],
+  "devDependencies": {
+    "@types/mocha": "^9.1.1",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@types/react-test-renderer": "^18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-test-renderer": "^18.3.1"
+  }
+}

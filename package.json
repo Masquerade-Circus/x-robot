@@ -7,7 +7,7 @@
   "module": "dist/index.mjs",
   "unpkg": "dist/index.min.js",
   "browser": "dist/index.min.js",
-  "types": "dist/**/*.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
@@ -37,14 +37,28 @@
   "author": "Masquerade-Circus <christian@masquerade-circus.net>",
   "license": "Apache-2.0",
   "private": false,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "test": "mocha --recursive --no-timeouts --exit --require ts-node/register --enable-source-maps tests/**/*.test.ts",
+    "test:core": "mocha --recursive --no-timeouts --exit --require ts-node/register --enable-source-maps tests/**/*.test.ts",
+    "test:shared": "npm test --workspace @x-robot/shared",
+    "test:react": "npm test --workspace @x-robot/react",
+    "test:react:smoke": "npm run test:smoke --workspace @x-robot/react",
+    "test:packages": "npm run test:shared && npm run test:react",
     "test-cjs": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.js",
     "test-mjs": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.mjs",
     "test-min": "mocha --recursive --no-timeouts --exit --enable-source-maps tests/**/*.test.min.js",
     "test-all": "bun run test && bun run test-cjs && bun run test-mjs && bun run test-min",
     "dev:test": "nodemon -e ts,js -w ./tests -w ./lib --exec 'bun run test'",
     "build": "node build.js",
+    "build:core": "node build.js",
+    "build:shared": "npm run build --workspace @x-robot/shared",
+    "build:react": "npm run build --workspace @x-robot/react",
+    "build:react:publish": "npm run build --workspace @x-robot/react",
+    "build:packages": "npm run build:shared && npm run build:react",
+    "verify:react:publish": "npm run build:core && npm run build:react:publish && npm run test:react && npm run test:react:smoke && mocha --no-timeouts --exit --require ts-node/register --enable-source-maps tests/react-publishability.test.ts",
     "commit": "git add . && git-cz && git push",
     "release": "release-it --verbose",
     "release-test": "release-it --dry-run --verbose",

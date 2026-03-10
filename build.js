@@ -64,7 +64,7 @@ async function build({
       let tscProgOptions2 = {
         basePath: __dirname, // always required, used for relative paths
         configFilePath: "tsconfig.json", // config to inherit from (optional)
-        files: [entryPoint],
+        files: [entryPoint.replace(/^\.\//, "")],
         pretty: true,
         copyOtherToOutDir: false,
         clean: [],

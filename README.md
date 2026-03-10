@@ -54,6 +54,14 @@ npm install x-robot
 bun add x-robot
 ```
 
+## Framework Adapters
+
+The first official framework adapter is `@x-robot/react`.
+
+*   React hook: `useMachine(machine, options?)`
+*   v1 contract: rerenders are guaranteed only for the wrapper methods returned by the hook
+*   Important caveat: direct external `invoke(machine, ...)` calls are not tracked for React rerenders in v1
+
 ## Key Features
 
 *   Nested and parallel states
@@ -86,7 +94,7 @@ if (import.meta.env.DEV) {
 }
 ```
 
-See the [Devtools Guide](./docs/guides/devtools.md) for setup, supported monitor actions, production exclusion, and cleanup patterns.
+See `docs/guides/devtools.md` for setup, supported monitor actions, production exclusion, and cleanup patterns.
 
 ## API Overview
 
@@ -106,7 +114,7 @@ See the [Devtools Guide](./docs/guides/devtools.md) for setup, supported monitor
 
 ## Documentation
 
-[Getting Started](./docs/guides/getting-started.md) · [Devtools](./docs/guides/devtools.md) · [Concepts](./docs/concepts/) · [API](./docs/api/) · [Recipes](./docs/recipes/) · [Performance](./docs/performance.md)
+`docs/guides/getting-started.md` · `docs/guides/devtools.md` · `docs/guides/publishing-adapters.md` · `packages/react/README.md` · `docs/concepts/` · `docs/api/` · `docs/recipes/` · `docs/performance.md`
 
 ## License
 

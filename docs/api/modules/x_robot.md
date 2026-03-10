@@ -701,7 +701,7 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/create.ts#L772)
+[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/create.ts#L772)
 
 ## Variables
 
@@ -711,4 +711,4 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/machine/interfaces.ts#L186)
+[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L186)
