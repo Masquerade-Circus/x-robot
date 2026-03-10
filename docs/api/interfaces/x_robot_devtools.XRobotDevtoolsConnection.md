@@ -31,7 +31,7 @@ The original machine instance bound to this devtools connection.
 
 #### Defined in
 
-[lib/devtools/index.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/devtools/index.ts#L33)
+[lib/devtools/index.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/devtools/index.ts#L33)
 
 ## Methods
 

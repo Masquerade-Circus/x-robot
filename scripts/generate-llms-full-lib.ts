@@ -3,7 +3,8 @@ import { join, relative } from "path";
 
 const ROOT_DIR = process.cwd();
 const DOCS_DIR_NAME = "docs";
-const EXCLUDE_DOCS_PATHS = new Set(["api", "plans"]);
+const API_DOCS_DIR_NAME = "api";
+const EXCLUDE_DOCS_PATHS = new Set(["plans"]);
 const OUTPUT_FILE_NAME = "llms-full.txt";
 
 export interface DocumentationFile {
@@ -26,9 +27,25 @@ function compareRelativePaths(rootDir: string, left: string, right: string): num
   return 0;
 }
 
+function isApiDocumentationPath(rootDir: string, filePath: string): boolean {
+  return relative(rootDir, filePath).startsWith(`docs/${API_DOCS_DIR_NAME}/`);
+}
+
+function compareDocumentationPaths(rootDir: string, left: string, right: string): number {
+  const leftIsApi = isApiDocumentationPath(rootDir, left);
+  const rightIsApi = isApiDocumentationPath(rootDir, right);
+
+  if (leftIsApi !== rightIsApi) {
+    return leftIsApi ? 1 : -1;
+  }
+
+  return compareRelativePaths(rootDir, left, right);
+}
+
 export async function getDocumentationMarkdownFiles(rootDir = ROOT_DIR): Promise<string[]> {
   const docsDir = join(rootDir, DOCS_DIR_NAME);
-  const files: string[] = [];
+  const regularFiles: string[] = [];
+  const apiFiles: string[] = [];
 
   function shouldExcludeDirectory(directoryPath: string): boolean {
     const relativePath = relative(docsDir, directoryPath);
@@ -51,20 +68,27 @@ export async function getDocumentationMarkdownFiles(rootDir = ROOT_DIR): Promise
       }
 
       if (entry.isFile() && entry.name.endsWith(".md")) {
-        files.push(fullPath);
+        if (isApiDocumentationPath(rootDir, fullPath)) {
+          apiFiles.push(fullPath);
+        } else {
+          regularFiles.push(fullPath);
+        }
       }
     }
   }
 
   await walk(docsDir);
 
-  return files.sort((left, right) => compareRelativePaths(rootDir, left, right));
+  return [
+    ...regularFiles.sort((left, right) => compareRelativePaths(rootDir, left, right)),
+    ...apiFiles.sort((left, right) => compareRelativePaths(rootDir, left, right)),
+  ];
 }
 
 export function buildLlmsFullContent(rootDir: string, files: DocumentationFile[]): string {
   const sections = files
     .slice()
-    .sort((left, right) => compareRelativePaths(rootDir, left.path, right.path))
+    .sort((left, right) => compareDocumentationPaths(rootDir, left.path, right.path))
     .map((file) => {
       const relPath = relative(rootDir, file.path);
       const normalizedContent = file.content.endsWith("\n") ? file.content : `${file.content}\n`;

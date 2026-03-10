@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[lib/validate/result.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/validate/result.ts#L10)
+[lib/validate/result.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/validate/result.ts#L10)
 
 ## Methods
 

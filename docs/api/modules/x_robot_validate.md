@@ -132,7 +132,7 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/validate/result.ts#L5)
+[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/validate/result.ts#L5)
 
 ***
 
@@ -149,4 +149,4 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/validate/result.ts#L7)
+[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/validate/result.ts#L7)

@@ -79,12 +79,12 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 5.21ms  | 104.90ms | **20.1x faster** |
-| 3k with guards         | 4.08ms  | 41.26ms  | **10.1x faster**  |
-| 10k transitions        | 4.00ms  | 143.22ms | **35.8x faster** |
-| 10k context updates    | 19.61ms | 116.77ms  | **6.0x faster**  |
-| invokeAfter scheduling | 4.57ms  | 15.40ms  | **3.4x faster**  |
-| Delayed transitions    | 56.48ms | 59.06ms  | **1.0x faster**  |
+| 5k transitions         | 6.42ms  | 124.46ms | **19.4x faster** |
+| 3k with guards         | 4.54ms  | 36.13ms  | **8.0x faster**  |
+| 10k transitions        | 8.25ms  | 158.44ms | **19.2x faster** |
+| 10k context updates    | 26.05ms | 130.20ms  | **5.0x faster**  |
+| invokeAfter scheduling | 4.81ms  | 14.34ms  | **3.0x faster**  |
+| Delayed transitions    | 56.33ms | 61.48ms  | **1.1x faster**  |
 
 ***
 
@@ -102,7 +102,7 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 ## Why X-Robot?
 
 1.  **2.0-3.9x smaller** bundle size (core only)
-2.  **1.0-35.8x faster** performance
+2.  **1.1-19.4x faster** performance
 3.  **1.2-1.8x less code** to write
 4.  **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
 5.  **Simpler API** - Declarative, functional approach

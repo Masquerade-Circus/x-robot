@@ -23,7 +23,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:129](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L129)
+[lib/documentate/types.ts:129](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L129)
 
 ***
 
@@ -33,7 +33,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:130](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L130)
+[lib/documentate/types.ts:130](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L130)
 
 ***
 
@@ -43,7 +43,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:131](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L131)
+[lib/documentate/types.ts:131](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L131)
 
 ***
 
@@ -53,4 +53,4 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L132)
+[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L132)

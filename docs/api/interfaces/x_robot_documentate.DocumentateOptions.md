@@ -27,7 +27,7 @@ Output format (required)
 
 #### Defined in
 
-[lib/documentate/types.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L29)
+[lib/documentate/types.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L29)
 
 ***
 
@@ -39,7 +39,7 @@ Detail level for diagrams
 
 #### Defined in
 
-[lib/documentate/types.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L31)
+[lib/documentate/types.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L31)
 
 ***
 
@@ -51,7 +51,7 @@ Output file path
 
 #### Defined in
 
-[lib/documentate/types.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L33)
+[lib/documentate/types.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L33)
 
 ***
 
@@ -63,7 +63,7 @@ Output file name
 
 #### Defined in
 
-[lib/documentate/types.ts:35](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L35)
+[lib/documentate/types.ts:35](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L35)
 
 ***
 
@@ -75,7 +75,7 @@ PlantUML skinparam customization
 
 #### Defined in
 
-[lib/documentate/types.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L37)
+[lib/documentate/types.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L37)
 
 ***
 
@@ -87,4 +87,4 @@ Mermaid diagram theme
 
 #### Defined in
 
-[lib/documentate/types.ts:39](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L39)
+[lib/documentate/types.ts:39](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L39)

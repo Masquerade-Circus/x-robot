@@ -11,7 +11,7 @@ import {
 } from "../scripts/generate-llms-full-lib";
 
 describe("generate-llms-full", () => {
-  it("includes all markdown files under docs except docs/plans and docs/api", async () => {
+  it("includes all markdown files under docs except docs/plans and places docs/api at the end", async () => {
     const tempDir = await mkdtemp(join(tmpdir(), "x-robot-llms-full-"));
 
     try {
@@ -28,13 +28,15 @@ describe("generate-llms-full", () => {
 
       expect(files).toEqual([
         join(tempDir, "docs", "guides", "intro.md"),
+        join(tempDir, "docs", "api", "README.md"),
+        join(tempDir, "docs", "api", "modules", "foo.md"),
       ]);
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }
   });
 
-  it("renders each document with its relative path and preserves markdown content", () => {
+  it("renders docs/api sections after the rest of the documentation", () => {
     const content = buildLlmsFullContent("/repo", [
       {
         path: "/repo/docs/api/README.md",
@@ -47,12 +49,12 @@ describe("generate-llms-full", () => {
     ]);
 
     expect(content).toBe(`# X-Robot LLMs Full Documentation\n\n` +
-      `===== BEGIN DOC: docs/api/README.md =====\n\n` +
-      `# API\n\nGenerated docs\n\n` +
-      `===== END DOC: docs/api/README.md =====\n\n` +
       `===== BEGIN DOC: docs/guides/getting-started.md =====\n\n` +
       `# Getting Started\n\nUse it\n\n` +
-      `===== END DOC: docs/guides/getting-started.md =====\n`);
+      `===== END DOC: docs/guides/getting-started.md =====\n\n` +
+      `===== BEGIN DOC: docs/api/README.md =====\n\n` +
+      `# API\n\nGenerated docs\n\n` +
+      `===== END DOC: docs/api/README.md =====\n`);
   });
 
   it("writes llms-full.txt at the repository root", async () => {
@@ -60,9 +62,11 @@ describe("generate-llms-full", () => {
 
     try {
       await mkdir(join(tempDir, "docs", "concepts"), { recursive: true });
+      await mkdir(join(tempDir, "docs", "api"), { recursive: true });
       await mkdir(join(tempDir, "docs", "plans"), { recursive: true });
 
       await writeFile(join(tempDir, "docs", "concepts", "context.md"), "# Context\n\nFrozen\n", "utf-8");
+      await writeFile(join(tempDir, "docs", "api", "README.md"), "# API\n\nReference\n", "utf-8");
       await writeFile(join(tempDir, "docs", "plans", "ignored.md"), "# Ignored\n", "utf-8");
 
       await generateLlmsFullFile(tempDir);
@@ -72,7 +76,11 @@ describe("generate-llms-full", () => {
       expect(output).toContain("===== BEGIN DOC: docs/concepts/context.md =====");
       expect(output).toContain("# Context\n\nFrozen");
       expect(output).not.toContain("docs/plans/ignored.md");
-      expect(output).not.toContain("docs/api/");
+
+      const conceptsIndex = output.indexOf("===== BEGIN DOC: docs/concepts/context.md =====");
+      const apiIndex = output.indexOf("===== BEGIN DOC: docs/api/README.md =====");
+
+      expect(apiIndex).toBeGreaterThan(conceptsIndex);
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }

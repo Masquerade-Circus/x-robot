@@ -22,7 +22,7 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L120)
+[lib/documentate/types.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L120)
 
 ***
 
@@ -32,7 +32,7 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L121)
+[lib/documentate/types.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L121)
 
 ***
 
@@ -42,4 +42,4 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L122)
+[lib/documentate/types.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/fa0ba1b/lib/documentate/types.ts#L122)
