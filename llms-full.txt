@@ -68,6 +68,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -76,16 +77,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
@@ -142,6 +143,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -150,16 +152,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
@@ -251,6 +253,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -259,16 +262,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
@@ -343,6 +346,7 @@ title: Machine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -351,9 +355,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
+state "idle" as idle
+state "loading" as loading
+state "success" as success
 class idle def
 class loading def
 class success def
@@ -455,6 +459,7 @@ title: Toggle
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -463,8 +468,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state off
-state on
+state "off" as off
+state "on" as on
 class off def
 class on def
 
@@ -561,6 +566,7 @@ title: Counter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -569,8 +575,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state running
+state "idle" as idle
+state "running" as running
 class idle def
 class running def
 
@@ -633,6 +639,7 @@ title: Test
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -641,8 +648,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state updated
+state "idle" as idle
+state "updated" as updated
 class idle def
 class updated def
 
@@ -678,6 +685,7 @@ title: Test
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -686,8 +694,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state updated
+state "idle" as idle
+state "updated" as updated
 class idle def
 class updated def
 
@@ -725,6 +733,7 @@ title: Parent
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -733,7 +742,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state start
+state "start" as start
 class start def
 
 
@@ -764,6 +773,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -772,8 +782,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state active
+state "idle" as idle
+state "active" as active
 class idle def
 class active def
 
@@ -842,6 +852,7 @@ title: Guard
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -850,8 +861,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state step1
-state step2
+state "step1" as step1
+state "step2" as step2
 class step1 def
 class step2 def
 
@@ -1012,6 +1023,7 @@ title: History
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1020,8 +1032,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state active
+state "idle" as idle
+state "active" as active
 class idle def
 class active def
 
@@ -1191,6 +1203,7 @@ title: Parent
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1199,8 +1212,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state step1
-state step2
+state "step1" as step1
+state "step2" as step2
 class step1 def
 class step2 def
 
@@ -1246,6 +1259,7 @@ title: App
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1254,9 +1268,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state public
-state private
-state loggingOut
+state "public" as public
+state "private" as private
+state "loggingOut" as loggingOut
 class public def
 class private def
 class loggingOut def
@@ -1374,6 +1388,7 @@ title: Text Editor
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1439,6 +1454,7 @@ title: Search
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1589,6 +1605,7 @@ title: ExitTest
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1597,8 +1614,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state done
+state "idle" as idle
+state "done" as done
 class idle def
 class done def
 
@@ -1700,6 +1717,7 @@ title: Test
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1708,8 +1726,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state done
+state "idle" as idle
+state "done" as done
 class idle def
 class done def
 
@@ -1749,6 +1767,7 @@ title: Test
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1757,7 +1776,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
+state "idle" as idle
 class idle def
 
 idle: └ En-updateValue
@@ -1944,6 +1963,7 @@ title: Dog API
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -1952,16 +1972,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state resolved
-state rejected
+state "idle" as idle
+state "loading" as loading
+state "resolved" as resolved
+state "rejected" as rejected
 class idle def
 class loading def
 class resolved def
 class rejected def
 
-loading: └┬ AEn-fetchDog<br> ├┬ success<br> │└ T-resolved<br> └┬ failure<br>  └ T-rejected
+loading: └┬ AEn-fetchDog<br> ├┬ success<br> │└ T-resolved<br> └┬ failure<br>  └ T-rejected
 
 [*] --> idle
 idle --> loading: fetch
@@ -2044,6 +2064,7 @@ title: Workflow
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2052,12 +2073,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state step1
-state step2
-state step3
-state complete
-state error
+state "idle" as idle
+state "step1" as step1
+state "step2" as step2
+state "step3" as step3
+state "complete" as complete
+state "error" as error
 class idle def
 class step1 def
 class step2 def
@@ -2065,9 +2086,9 @@ class step3 def
 class complete def
 class error def
 
-step1: └┬ AEn-runStep1<br> ├┬ success<br> │└ T-step2<br> └┬ failure<br>  └ T-error
-step2: └┬ AEn-runStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-error
-step3: └┬ AEn-runStep3<br> ├┬ success<br> │└ T-complete<br> └┬ failure<br>  └ T-error
+step1: └┬ AEn-runStep1<br> ├┬ success<br> │└ T-step2<br> └┬ failure<br>  └ T-error
+step2: └┬ AEn-runStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-error
+step3: └┬ AEn-runStep3<br> ├┬ success<br> │└ T-complete<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> step1: start
@@ -2112,6 +2133,7 @@ title: Retry
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2120,16 +2142,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state running
-state success
-state failed
+state "idle" as idle
+state "running" as running
+state "success" as success
+state "failed" as failed
 class idle def
 class running def
 class success def
 class failed def
 
-running: └┬ AEn-runWithRetry<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failed
+running: └┬ AEn-runWithRetry<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failed
 
 [*] --> idle
 idle --> running: start
@@ -2250,6 +2272,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2258,8 +2281,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state active
+state "idle" as idle
+state "active" as active
 class idle def
 class active def
 
@@ -2324,6 +2347,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2332,16 +2356,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
@@ -2454,6 +2478,150 @@ const { ts } = await documentate(exampleMachine, { format: "ts" });
 
 ===== END DOC: docs/guides/code-generation.md =====
 
+===== BEGIN DOC: docs/guides/devtools.md =====
+
+# Devtools
+
+`x-robot/devtools` connects a machine to the Redux DevTools Extension.
+
+It is optional, development-focused, and works by wrapping machine operations. If the extension is not installed, the wrapper still works and simply skips monitor integration.
+
+## Import
+
+Install the main package as usual:
+
+```bash
+npm install x-robot
+```
+
+Import the devtools entrypoint when you want it:
+
+```javascript
+import { connectXRobot } from "x-robot/devtools";
+```
+
+## Basic Usage
+
+```javascript
+import { connectXRobot } from "x-robot/devtools";
+
+const devtools = connectXRobot(machine, {
+  name: "Checkout"
+});
+
+await devtools.start();
+await devtools.invoke("submit", { orderId: 1 });
+```
+
+`connectXRobot(machine, options)` returns wrapped controls for one machine connection.
+
+## Options
+
+### `name`
+
+Use `options.name` to label the connection in Redux DevTools.
+
+```javascript
+const devtools = connectXRobot(machine, {
+  name: "Checkout"
+});
+```
+
+If you do not pass a name, the module falls back to the machine title, machine id, or `x-robot`.
+
+## Returned API
+
+`connectXRobot()` returns these properties:
+
+| Property | What it does |
+| --- | --- |
+| `machine` | The same machine instance you connected |
+| `start(snapshotOrPayload?)` | Starts the machine or restores from a snapshot |
+| `invoke(transition, payload?)` | Triggers a transition and sends it to Redux DevTools |
+| `invokeAfter(timeInMilliseconds, transition, payload?)` | Schedules a tracked delayed transition and returns a cancel function |
+| `snapshot()` | Returns the current devtools snapshot |
+| `disconnect()` | Unsubscribes from the Redux DevTools monitor |
+| `cleanup()` | Alias of `disconnect()` |
+
+The wrappers preserve sync and async behavior. If the underlying `start()` or `invoke()` call is synchronous, the wrapper is synchronous. If it returns a promise, the wrapper returns that promise and sends the update after it resolves.
+
+```javascript
+const devtools = connectXRobot(machine, { name: "Checkout" });
+
+const result = devtools.invoke("submit");
+
+if (result instanceof Promise) {
+  await result;
+}
+```
+
+## Redux DevTools Actions
+
+Incoming monitor actions map to machine behavior like this:
+
+| DevTools action | Behavior |
+| --- | --- |
+| `JUMP_TO_STATE` | Restores the selected snapshot |
+| `JUMP_TO_ACTION` | Restores the selected snapshot |
+| `IMPORT_STATE` | Restores the selected imported state and updates the lifted timeline |
+| `COMMIT` | Re-initializes Redux DevTools with the current machine snapshot |
+| `RESET` | Restores the snapshot captured when you connected and re-initializes the monitor |
+| `ROLLBACK` | Restores the rollback snapshot and re-initializes the monitor |
+| `PAUSE_RECORDING` | Stops outgoing monitor updates until recording is resumed |
+| `LOCK_CHANGES` | Blocks wrapped `start()`, `invoke()`, and `invokeAfter()` mutations |
+
+In practice, this means time-travel and import actions can move the machine to earlier snapshots, while pause and lock only affect the wrapped devtools connection.
+
+## Exclude Devtools from Production
+
+`x-robot/devtools` is opt-in. The safest pattern is to import it only in development.
+
+Recommended with a dynamic import when your environment exposes `import.meta.env.DEV`:
+
+```javascript
+if (import.meta.env.DEV) {
+  const { connectXRobot } = await import("x-robot/devtools");
+  const devtools = connectXRobot(machine, { name: "Checkout" });
+  devtools.start();
+}
+```
+
+If your bundler replaces a compile-time constant such as `__DEV__`, the same pattern works there too:
+
+```javascript
+if (__DEV__) {
+  const { connectXRobot } = await import("x-robot/devtools");
+  connectXRobot(machine, { name: "Checkout" });
+}
+```
+
+Other setups may use a bundler alias or a no-op module replacement, but the important part is the same: avoid assuming a static top-level import will always be removed from production bundles.
+
+## Limitations
+
+*   Only wrapped calls are tracked.
+*   Direct `invoke(machine, ...)` calls outside the returned wrappers are not observed.
+*   Monitor features depend on the Redux DevTools Extension being available.
+*   Teardown is manual unless your host app calls `disconnect()` or `cleanup()`.
+
+## Cleanup
+
+Disconnect when the host lifecycle ends:
+
+```javascript
+const devtools = connectXRobot(machine, { name: "Checkout" });
+
+devtools.start();
+
+return () => {
+  devtools.cleanup();
+};
+```
+
+See the [Devtools Checkout recipe](../recipes/devtools-checkout.md) for a compact end-to-end example.
+
+===== END DOC: docs/guides/devtools.md =====
+
 ===== BEGIN DOC: docs/guides/getting-started.md =====
 
 # Getting Started
@@ -2468,6 +2636,16 @@ npm install x-robot
 bun add x-robot
 ```
 
+## Optional Modules
+
+The core package is enough to define and run machines. As your project grows, you can opt into these modules:
+
+*   `x-robot/devtools` - connect wrapped machine operations to Redux DevTools during development
+*   `x-robot/documentate` - generate diagrams, serialization, and code output from machines
+*   `x-robot/validate` - validate machine structure before shipping or generating artifacts
+
+You do not need all of them on day one. A common path is: start with the core runtime, add `validate` when your machines become more complex, add `documentate` when you want generated diagrams or exports, and use `devtools` only in development.
+
 ## Your First Machine
 
 ```mermaid
@@ -2476,6 +2654,7 @@ title: Toggle
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2484,8 +2663,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state off
-state on
+state "off" as off
+state "on" as on
 class off def
 class on def
 
@@ -2517,6 +2696,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2525,7 +2705,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
+state "idle" as idle
 class idle def
 
 
@@ -2571,6 +2751,7 @@ title: Counter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2579,12 +2760,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state counting
+state "idle" as idle
+state "counting" as counting
 class idle def
 class counting def
 
-counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
+counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 
 [*] --> idle
 idle --> counting: increment
@@ -2622,6 +2803,7 @@ title: Fetcher
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2630,16 +2812,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
@@ -2678,6 +2860,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2686,13 +2869,13 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state pristine
-state dirty
-state validating
-state submitting
-state success
-state failure
-state error
+state "pristine" as pristine
+state "dirty" as dirty
+state "validating" as validating
+state "submitting" as submitting
+state "success" as success
+state "failure" as failure
+state "error" as error
 class pristine def
 class dirty def
 class validating def
@@ -2701,8 +2884,8 @@ class success def
 class failure def
 class error def
 
-validating: └┬ En-validateFormValues<br> ├┬ success<br> │└ T-dirty<br> └┬ failure<br>  └ T-error
-submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failure
+validating: └┬ En-validateFormValues<br> ├┬ success<br> │└ T-dirty<br> └┬ failure<br>  └ T-error
+submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failure
 
 [*] --> pristine
 pristine --> dirty: change
@@ -2755,6 +2938,7 @@ const formMachine = machine(
 *   [Async Guide](./async.md) — Deep dive into Pulse
 *   [Guards Guide](./guards.md) — Conditional transitions
 *   [Immediate Transitions](./immediate-transitions.md) — Auto-transitioning states
+*   [Devtools Guide](./devtools.md) — Inspect wrapped transitions in Redux DevTools
 *   [Visualization](./visualization.md) — Generate diagrams
 *   [Concepts: Pulse](../concepts/pulse.md) — Understand the core concept
 *   [Recipes](../recipes/) — Common patterns
@@ -2775,6 +2959,7 @@ title: Guard
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2783,8 +2968,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state step1
-state step2
+state "step1" as step1
+state "step2" as step2
 class step1 def
 class step2 def
 
@@ -2829,6 +3014,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2837,18 +3023,18 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state checking
-state checked
-state invalid
-state submitting
+state "idle" as idle
+state "checking" as checking
+state "checked" as checked
+state "invalid" as invalid
+state "submitting" as submitting
 class idle def
 class checking def
 class checked def
 class invalid def
 class submitting def
 
-checking: └┬ En-validateForm<br> ├┬ success<br> │└ T-checked<br> └┬ failure<br>  └ T-invalid
+checking: └┬ En-validateForm<br> ├┬ success<br> │└ T-checked<br> └┬ failure<br>  └ T-invalid
 
 [*] --> idle
 idle --> checking: submit
@@ -2902,6 +3088,7 @@ title: Admin
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -2910,10 +3097,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state locked
-state dashboard
-state public
-state preview
+state "locked" as locked
+state "dashboard" as dashboard
+state "public" as public
+state "preview" as preview
 class locked def
 class dashboard def
 class public def
@@ -3049,6 +3236,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3057,9 +3245,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state processing
-state complete
+state "idle" as idle
+state "processing" as processing
+state "complete" as complete
 class idle def
 class processing def
 class complete def
@@ -3092,6 +3280,7 @@ title: Auth
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3100,9 +3289,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state checking
-state authenticated
-state unauthenticated
+state "checking" as checking
+state "authenticated" as authenticated
+state "unauthenticated" as unauthenticated
 class checking def
 class authenticated def
 class unauthenticated def
@@ -3143,6 +3332,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3151,11 +3341,11 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state validating
-state valid
-state invalid
-state submitting
+state "idle" as idle
+state "validating" as validating
+state "valid" as valid
+state "invalid" as invalid
+state "submitting" as submitting
 class idle def
 class validating def
 class valid def
@@ -3199,6 +3389,7 @@ title: Init
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3207,10 +3398,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state boot
-state loading
-state hasCache
-state ready
+state "boot" as boot
+state "loading" as loading
+state "hasCache" as hasCache
+state "ready" as ready
 class boot def
 class loading def
 class hasCache def
@@ -3253,6 +3444,7 @@ title: Filter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3261,10 +3453,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state all
-state filtering
-state empty
-state results
+state "all" as all
+state "filtering" as filtering
+state "empty" as empty
+state "results" as results
 class all def
 class filtering def
 class empty def
@@ -3302,6 +3494,7 @@ title: Process
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3310,10 +3503,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state processing
-state success
-state failure
+state "idle" as idle
+state "processing" as processing
+state "success" as success
+state "failure" as failure
 class idle def
 class processing def
 class success def
@@ -3373,6 +3566,7 @@ title: Stoplight
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3381,9 +3575,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state green
-state yellow
-state red
+state "green" as green
+state "yellow" as yellow
+state "red" as red
 class green def
 class yellow def
 class red def
@@ -3444,6 +3638,7 @@ title: App
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3452,9 +3647,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state public
-state private
-state loggingOut
+state "public" as public
+state "private" as private
+state "loggingOut" as loggingOut
 class public def
 class private def
 class loggingOut def
@@ -3513,6 +3708,7 @@ title: App
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3521,17 +3717,17 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state guest
-state loggingIn
-state authenticated
-state loggingOut
+state "guest" as guest
+state "loggingIn" as loggingIn
+state "authenticated" as authenticated
+state "loggingOut" as loggingOut
 class guest def
 class loggingIn def
 class authenticated def
 class loggingOut def
 
-loggingIn: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-guest
-loggingOut: └┬ AEn-anonymous<br> └┬ success<br>  └ T-guest
+loggingIn: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-guest
+loggingOut: └┬ AEn-anonymous<br> └┬ success<br>  └ T-guest
 
 [*] --> guest
 guest --> loggingIn: login
@@ -3571,6 +3767,7 @@ title: Wizard
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3579,9 +3776,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state step1
-state step2
-state complete
+state "step1" as step1
+state "step2" as step2
+state "complete" as complete
 class step1 def
 class step2 def
 class complete def
@@ -3641,6 +3838,7 @@ title: Word Machine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3721,6 +3919,7 @@ title: Editor
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3766,6 +3965,7 @@ title: Search
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3806,6 +4006,7 @@ title: Filters
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3842,6 +4043,7 @@ title: Dashboard
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3929,6 +4131,7 @@ title: Counter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -3937,12 +4140,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state counting
+state "idle" as idle
+state "counting" as counting
 class idle def
 class counting def
 
-counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
+counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 
 [*] --> idle
 idle --> counting: increment
@@ -4116,6 +4319,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -4124,9 +4328,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state done
+state "idle" as idle
+state "loading" as loading
+state "done" as done
 class idle def
 class loading def
 class done def
@@ -4603,15 +4807,15 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 | Module                                                   | Size      |
 | -------------------------------------------------------- | --------- |
 | X-Robot Core                                             | 15.06KB   |
-| + documentate (code gen, diagrams, serialization, SCXML) | +29.18KB     |
+| + documentate (code gen, diagrams, serialization, SCXML) | +29.25KB     |
 | + validate (machine validation)                          | +13.67KB     |
-| **Total**                                                | **57.90KB** |
+| **Total**                                                | **57.97KB** |
 
 ***
 
 ## Features Comparison
 
-| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (57.90KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
+| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (57.97KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
 | ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ |
 | Nested states       | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
 | Parallel states     | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
@@ -4637,12 +4841,12 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 5.34ms  | 93.35ms | **17.5x faster** |
-| 3k with guards         | 5.49ms  | 35.86ms  | **6.5x faster**  |
-| 10k transitions        | 3.59ms  | 117.77ms | **32.8x faster** |
-| 10k context updates    | 21.23ms | 127.38ms  | **6.0x faster**  |
-| invokeAfter scheduling | 4.25ms  | 18.43ms  | **4.3x faster**  |
-| Delayed transitions    | 56.16ms | 60.69ms  | **1.1x faster**  |
+| 5k transitions         | 5.35ms  | 116.70ms | **21.8x faster** |
+| 3k with guards         | 5.44ms  | 45.70ms  | **8.4x faster**  |
+| 10k transitions        | 5.75ms  | 182.44ms | **31.7x faster** |
+| 10k context updates    | 20.54ms | 161.07ms  | **7.8x faster**  |
+| invokeAfter scheduling | 4.83ms  | 18.72ms  | **3.9x faster**  |
+| Delayed transitions    | 57.74ms | 62.47ms  | **1.1x faster**  |
 
 ***
 
@@ -4660,7 +4864,7 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 ## Why X-Robot?
 
 1.  **2.0-3.9x smaller** bundle size (core only)
-2.  **1.1-32.8x faster** performance
+2.  **1.1-31.7x faster** performance
 3.  **1.2-1.8x less code** to write
 4.  **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
 5.  **Simpler API** - Declarative, functional approach
@@ -4690,6 +4894,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -4698,16 +4903,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
@@ -4720,7 +4925,16 @@ error --> idle: clear
 ```
 
 ```javascript
-import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
+import {
+  machine,
+  state,
+  transition,
+  initial,
+  init,
+  context,
+  invoke,
+  entry
+} from "x-robot";
 
 async function fetchData(ctx, params) {
   const url = params ? `/api/data?${new URLSearchParams(params)}` : "/api/data";
@@ -4734,24 +4948,15 @@ async function fetchData(ctx, params) {
 
 const fetchMachine = machine(
   "Fetch",
-  init(
-    initial("idle"),
-    context({ data: null, error: null, params: null })
-  ),
-  state("idle", 
-    transition("fetch", "loading")
-  ),
-  state("loading", 
-    entry(fetchData, "success", "error")
-  ),
-  state("success", 
+  init(initial("idle"), context({ data: null, error: null, params: null })),
+  state("idle", transition("fetch", "loading")),
+  state("loading", entry(fetchData, "success", "error")),
+  state(
+    "success",
     transition("refetch", "loading"),
     transition("clear", "idle")
   ),
-  state("error", 
-    transition("retry", "loading"),
-    transition("clear", "idle")
-  )
+  state("error", transition("retry", "loading"), transition("clear", "idle"))
 );
 
 // Usage
@@ -4789,7 +4994,7 @@ state loading
 state success
 state error
 
-loading:  
+loading:
 
 [*] --> idle
 idle --> loading: fetch
@@ -4810,6 +5015,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -4818,19 +5024,19 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state checkingCache
-state loading
-state success
-state error
+state "idle" as idle
+state "checkingCache" as checkingCache
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class checkingCache def
 class loading def
 class success def
 class error def
 
-checkingCache: └┬ En-checkCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-loading
-loading: └┬ AEn-fetchAndCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+checkingCache: └┬ En-checkCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-loading
+loading: └┬ AEn-fetchAndCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> checkingCache: fetch
@@ -4849,7 +5055,7 @@ function checkCache(ctx, params) {
   if (ctx.cache.has(key)) {
     ctx.params = nextParams;
     ctx.data = ctx.cache.get(key);
-    return; 
+    return;
   }
 }
 
@@ -4863,7 +5069,10 @@ async function fetchAndCache(ctx, params) {
 
 const fetchMachine = machine(
   "Fetch",
-  init(initial("idle"), context({ data: null, params: null, cache: new Map() })),
+  init(
+    initial("idle"),
+    context({ data: null, params: null, cache: new Map() })
+  ),
   state("idle", transition("fetch", "checkingCache")),
   state("checkingCache", entry(checkCache, "success", "loading")),
   state("loading", entry(fetchAndCache, "success", "error")),
@@ -4880,6 +5089,7 @@ title: List
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -4888,16 +5098,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-loadPage<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-loadPage<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: load
@@ -4920,9 +5130,7 @@ const listMachine = machine(
   "List",
   init(initial("idle"), context({ items: [], page: 1, hasMore: true })),
   state("idle", transition("load", "loading")),
-  state("loading", 
-    entry(loadPage, "success", "error")
-  ),
+  state("loading", entry(loadPage, "success", "error")),
   state("success", transition("loadMore", "loading")),
   state("error", transition("retry", "loading"))
 );
@@ -4934,6 +5142,114 @@ const listMachine = machine(
 *   [Modal Dialog](./modal-dialog.md) — UI states
 
 ===== END DOC: docs/recipes/api-fetch.md =====
+
+===== BEGIN DOC: docs/recipes/devtools-checkout.md =====
+
+# Devtools Checkout
+
+Compact checkout flow with Redux DevTools wired only in development.
+
+## Machine
+
+```mermaid
+---
+title: Checkout
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "review" as review
+state "submitting" as submitting
+state "success" as success
+state "error" as error
+class review def
+class submitting def
+class success def
+class error def
+
+submitting: └┬ AEn-submitOrder<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+
+[*] --> review
+review --> submitting: submit
+submitting --> success: success
+submitting --> error: error
+```
+
+```javascript
+import {
+  context,
+  entry,
+  init,
+  initial,
+  machine,
+  state,
+  transition
+} from "x-robot";
+
+async function submitOrder(ctx, payload) {
+  ctx.orderId = payload.orderId;
+}
+
+const checkoutMachine = machine(
+  "Checkout",
+  init(initial("review"), context({ orderId: null })),
+  state("review", transition("submit", "submitting")),
+  state("submitting", entry(submitOrder, "success", "error")),
+  state("success"),
+  state("error")
+);
+
+let disposeDevtools = () => undefined;
+
+if (import.meta.env.DEV) {
+  const { connectXRobot } = await import("x-robot/devtools");
+  const {
+    machine: checkout,
+    start,
+    invoke,
+    snapshot,
+    cleanup
+  } = connectXRobot(checkoutMachine, {
+    name: "Checkout"
+  });
+
+  await start();
+  await invoke("submit", { orderId: 42 });
+
+  console.log(checkout.current);
+  console.log(snapshot());
+
+  disposeDevtools = cleanup;
+}
+```
+
+## Lifecycle Integration
+
+Use `cleanup()` or `disconnect()` when the owning view, page, or component goes away.
+
+```javascript
+function dispose() {
+  disposeDevtools();
+}
+```
+
+## Host Patterns
+
+*   Vanilla JavaScript: create the devtools connection during setup and call the stored disposer when tearing down the page or widget.
+*   Effect-style lifecycle: create the connection inside the effect and return `cleanup` from the effect callback.
+*   Mount/unmount lifecycle: connect on mount, disconnect on unmount.
+
+Use the wrapped `start()` and `invoke()` methods for tracked transitions. Direct `invoke(checkoutMachine, ...)` calls bypass the connection and do not appear in Redux DevTools.
+
+===== END DOC: docs/recipes/devtools-checkout.md =====
 
 ===== BEGIN DOC: docs/recipes/form-validation.md =====
 
@@ -4953,6 +5269,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -4961,14 +5278,14 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state pristine
-state dirty
-state validating
-state valid
-state invalid
-state submitting
-state success
-state error
+state "pristine" as pristine
+state "dirty" as dirty
+state "validating" as validating
+state "valid" as valid
+state "invalid" as invalid
+state "submitting" as submitting
+state "success" as success
+state "error" as error
 class pristine def
 class dirty def
 class validating def
@@ -4979,8 +5296,8 @@ class success def
 class error def
 
 dirty: └ En-updateValues
-validating: └┬ En-validateFormInContext<br> ├┬ success<br> │└ T-valid<br> └┬ failure<br>  └ T-invalid
-submitting: └┬ AEn-submitForm<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+validating: └┬ En-validateFormInContext<br> ├┬ success<br> │└ T-valid<br> └┬ failure<br>  └ T-invalid
+submitting: └┬ AEn-submitForm<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> pristine
 pristine --> dirty: change
@@ -5165,6 +5482,7 @@ title: Login
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -5173,16 +5491,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state authenticating
-state authenticated
-state error
+state "idle" as idle
+state "authenticating" as authenticating
+state "authenticated" as authenticated
+state "error" as error
 class idle def
 class authenticating def
 class authenticated def
 class error def
 
-authenticating: └┬ AEn-authenticateUser<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-error
+authenticating: └┬ AEn-authenticateUser<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> authenticating: login
@@ -5335,6 +5653,7 @@ title: Modal
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -5343,12 +5662,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state closed
-state opening
-state open
-state confirming
-state closing
-state error
+state "closed" as closed
+state "opening" as opening
+state "open" as open
+state "confirming" as confirming
+state "closing" as closing
+state "error" as error
 class closed def
 class opening def
 class open def
@@ -5356,9 +5675,9 @@ class confirming def
 class closing def
 class error def
 
-opening: └┬ En-prepareContent<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
-confirming: └┬ AEn-handleConfirmation<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
-closing: └┬ En-clearContent<br> └┬ success<br>  └ T-closed
+opening: └┬ En-prepareContent<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
+confirming: └┬ AEn-handleConfirmation<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
+closing: └┬ En-clearContent<br> └┬ success<br>  └ T-closed
 
 [*] --> closed
 closed --> opening: open
@@ -5473,6 +5792,7 @@ title: Modal
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -5481,18 +5801,18 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state closed
-state opening
-state open
-state closing
+state "closed" as closed
+state "opening" as opening
+state "open" as open
+state "closing" as closing
 class closed def
 class opening def
 class open def
 class closing def
 
-opening: └┬ En-startOpenAnimation<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
+opening: └┬ En-startOpenAnimation<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
 open: └ En-onOpenComplete
-closing: └┬ En-startCloseAnimation<br> └┬ success<br>  └ T-closed
+closing: └┬ En-startCloseAnimation<br> └┬ success<br>  └ T-closed
 
 [*] --> closed
 closed --> opening: open
@@ -5560,6 +5880,7 @@ title: Alert
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -5568,17 +5889,17 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state hidden
-state showing
-state visible
-state hiding
+state "hidden" as hidden
+state "showing" as showing
+state "visible" as visible
+state "hiding" as hiding
 class hidden def
 class showing def
 class visible def
 class hiding def
 
-showing: └┬ En-showAlert<br> ├┬ success<br> │└ T-visible<br> └┬ failure<br>  └ T-hidden
-hiding: └┬ En-hideAlert<br> └┬ success<br>  └ T-hidden
+showing: └┬ En-showAlert<br> ├┬ success<br> │└ T-visible<br> └┬ failure<br>  └ T-hidden
+hiding: └┬ En-hideAlert<br> └┬ success<br>  └ T-hidden
 
 [*] --> hidden
 hidden --> showing: show
@@ -5615,6 +5936,7 @@ title: FormModal
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -5623,12 +5945,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state closed
-state opening
-state open
-state submitting
-state closing
-state error
+state "closed" as closed
+state "opening" as opening
+state "open" as open
+state "submitting" as submitting
+state "closing" as closing
+state "error" as error
 class closed def
 class opening def
 class open def
@@ -5636,7 +5958,7 @@ class submitting def
 class closing def
 class error def
 
-submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
+submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
 
 [*] --> closed
 closed --> opening: open
@@ -5703,6 +6025,7 @@ title: Order
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -5711,30 +6034,30 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state fatal
-state authorizationFailure
-state voidOrRefundFailure
-state captureFailure
-state draft
-state expiredDraft
-state created
-state expired
-state waitingForStore
-state cancelledByStore
-state cancelledByClient
-state cancelledByCustomerSupport
-state changesRequestedByStore
-state changesRejectedByClient
-state changesAcceptedByClient
-state processing
-state processingCancelledByStore
-state processed
-state ready
-state readyCancelledByStore
-state waitingForDelivery
-state waitingForDeliveryCancelledByStore
-state completed
-state completedCancelledByStore
+state "fatal" as fatal
+state "authorizationFailure" as authorizationFailure
+state "voidOrRefundFailure" as voidOrRefundFailure
+state "captureFailure" as captureFailure
+state "draft" as draft
+state "expiredDraft" as expiredDraft
+state "created" as created
+state "expired" as expired
+state "waitingForStore" as waitingForStore
+state "cancelledByStore" as cancelledByStore
+state "cancelledByClient" as cancelledByClient
+state "cancelledByCustomerSupport" as cancelledByCustomerSupport
+state "changesRequestedByStore" as changesRequestedByStore
+state "changesRejectedByClient" as changesRejectedByClient
+state "changesAcceptedByClient" as changesAcceptedByClient
+state "processing" as processing
+state "processingCancelledByStore" as processingCancelledByStore
+state "processed" as processed
+state "ready" as ready
+state "readyCancelledByStore" as readyCancelledByStore
+state "waitingForDelivery" as waitingForDelivery
+state "waitingForDeliveryCancelledByStore" as waitingForDeliveryCancelledByStore
+state "completed" as completed
+state "completedCancelledByStore" as completedCancelledByStore
 class fatal danger
 class authorizationFailure danger
 class voidOrRefundFailure danger
@@ -6486,6 +6809,7 @@ title: Wizard
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -6494,10 +6818,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state step1
-state step2
-state step3
-state complete
+state "step1" as step1
+state "step2" as step2
+state "step3" as step3
+state "complete" as complete
 class step1 def
 class step2 def
 class step3 def
@@ -6576,6 +6900,7 @@ title: Wizard
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -6584,18 +6909,18 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state step1
-state step2
-state validating
-state step3
-state complete
+state "step1" as step1
+state "step2" as step2
+state "validating" as validating
+state "step3" as step3
+state "complete" as complete
 class step1 def
 class step2 def
 class validating def
 class step3 def
 class complete def
 
-validating: └┬ En-validateStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-step2
+validating: └┬ En-validateStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-step2
 
 [*] --> step1
 step1 --> step2: next
@@ -6748,6 +7073,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -6756,16 +7082,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state submitting
-state success
-state error
+state "idle" as idle
+state "submitting" as submitting
+state "success" as success
+state "error" as error
 class idle def
 class submitting def
 class success def
 class error def
 
-submitting: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+submitting: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> submitting: submit
@@ -6780,9 +7106,16 @@ error --> idle: reset
 const formMachine = machine(
   "Form",
   state("idle", transition("submit", "submitting")),
-  state("submitting", entry(async (ctx) => {
-    ctx.data = await submitForm(ctx.values);
-  }, "success", "error")),
+  state(
+    "submitting",
+    entry(
+      async (ctx) => {
+        ctx.data = await submitForm(ctx.values);
+      },
+      "success",
+      "error"
+    )
+  ),
   state("success", transition("reset", "idle")),
   state("error", transition("retry", "submitting"), transition("reset", "idle"))
 );
@@ -6819,9 +7152,16 @@ X-Robot combines action and state update in one function:
 
 ```javascript
 // X-Robot: single pulse
-state("submitting", entry(async (ctx) => {
-  ctx.data = await submitForm(ctx.values);
-}, "success", "error"));
+state(
+  "submitting",
+  entry(
+    async (ctx) => {
+      ctx.data = await submitForm(ctx.values);
+    },
+    "success",
+    "error"
+  )
+);
 ```
 
 ### 2. Frozen State by Default
@@ -6830,10 +7170,13 @@ X-Robot clones context before each pulse, preventing accidental mutations:
 
 ```javascript
 // In frozen mode (default), this is safe:
-state("updating", entry((ctx) => {
-  ctx.counter++; // modifies cloned context
-  throw new Error("Oops");
-}));
+state(
+  "updating",
+  entry((ctx) => {
+    ctx.counter++; // modifies cloned context
+    throw new Error("Oops");
+  })
+);
 // Original state is unchanged
 ```
 

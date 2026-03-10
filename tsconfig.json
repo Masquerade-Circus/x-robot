@@ -27,6 +27,7 @@
   "typedocOptions": {
     "entryPoints": [
       "lib/index.ts",
+      "lib/devtools/index.ts",
       "lib/machine",
       "lib/validate",
       "lib/documentate",

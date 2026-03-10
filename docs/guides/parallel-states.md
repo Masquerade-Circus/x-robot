@@ -19,6 +19,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 ```
+
 ```javascript
 import { getState, init, initial, invoke, machine, parallel, state, transition } from "x-robot";
 
@@ -99,6 +100,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 ```
+
 ```javascript
 const bold = machine("Bold", init(initial("off")),
   state("off", transition("toggle", "on")),
@@ -148,6 +150,7 @@ classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:
 
 [*] --> ready
 ```
+
 ```javascript
 const search = machine(
   "Search",
@@ -184,6 +187,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 ```
+
 ```javascript
 const category = machine("Category", init(initial("all")),
   state("all", transition("select", "electronics")),
@@ -220,6 +224,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 ```
+
 ```javascript
 const sidebar = machine("Sidebar", init(initial("expanded")),
   state("expanded", transition("toggle", "collapsed")),

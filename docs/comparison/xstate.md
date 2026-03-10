@@ -92,6 +92,7 @@ class on def
 off --> on: toggle
 on --> off: toggle
 ```
+
 ```javascript
 // X-Robot: simpler
 const toggle = machine(

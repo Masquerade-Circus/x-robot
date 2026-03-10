@@ -10,6 +10,7 @@ X-Robot FSM: A lightweight, developer-friendly finite state machine library for 
 *   **Small bundle** — 15.06KB core, 57.84KB with `documentate` + `validate`
 *   **Fast** — 1.1-26.6x faster than XState in benchmarks
 *   **TypeScript** — Includes TypeScript types for machine definitions and generated code
+*   **Redux DevTools integration** — Inspect wrapped machine operations with `x-robot/devtools`
 
 ## Quick Start
 
@@ -62,10 +63,30 @@ bun add x-robot
 *   Context management with frozen state
 *   Delayed transitions with invokeAfter()
 *   History tracking
+*   Redux DevTools integration via `x-robot/devtools`
 *   Machine validation with validate()
 *   Code generation (TypeScript, ESM, CJS)
 *   Diagram generation (Mermaid, PlantUML, SVG, PNG)
 *   SCXML import/export
+
+## Redux DevTools
+
+Use `x-robot/devtools` to connect a machine to the Redux DevTools Extension during development.
+
+```javascript
+if (import.meta.env.DEV) {
+  const { connectXRobot } = await import("x-robot/devtools");
+  const connection = connectXRobot(fetchMachine, {
+    name: "Fetch"
+  });
+
+  await connection.start();
+  await connection.invoke("fetch");
+  connection.disconnect();
+}
+```
+
+See the [Devtools Guide](./docs/guides/devtools.md) for setup, supported monitor actions, production exclusion, and cleanup patterns.
 
 ## API Overview
 
@@ -79,12 +100,13 @@ bun add x-robot
 | `exit()`        | Exit pulse - runs when leaving a state                           |
 | `guard()`       | Conditional transitions                                          |
 | `invokeAfter()` | Delayed transitions                                              |
+| `connectXRobot()` | Connect Redux DevTools via `x-robot/devtools`                  |
 | `documentate()` | Generate code, diagrams, serialization via `x-robot/documentate` |
 | `validate()`    | Validate machine structure via `x-robot/validate`                |
 
 ## Documentation
 
-[Getting Started](./docs/guides/getting-started.md) · [Concepts](./docs/concepts/) · [API](./docs/api/) · [Recipes](./docs/recipes/) · [Performance](./docs/performance.md)
+[Getting Started](./docs/guides/getting-started.md) · [Devtools](./docs/guides/devtools.md) · [Concepts](./docs/concepts/) · [API](./docs/api/) · [Recipes](./docs/recipes/) · [Performance](./docs/performance.md)
 
 ## License
 

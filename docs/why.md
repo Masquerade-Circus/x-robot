@@ -78,6 +78,7 @@ success --> idle: reset
 error --> submitting: retry
 error --> idle: reset
 ```
+
 ```javascript
 const formMachine = machine(
   "Form",
@@ -99,10 +100,10 @@ const formMachine = machine(
 
 Benefits:
 
-- **Only valid states exist** — The machine enforces valid transitions
-- **Transitions are explicit** — Every path is defined
-- **Self-documenting** — The machine definition shows all possible states
-- **Testable** — Each state and transition can be tested independently
+*   **Only valid states exist** — The machine enforces valid transitions
+*   **Transitions are explicit** — Every path is defined
+*   **Self-documenting** — The machine definition shows all possible states
+*   **Testable** — Each state and transition can be tested independently
 
 ## Why X-Robot?
 
@@ -169,37 +170,37 @@ transition("submit", "validating", guard(async (ctx) => {
 
 ### 4. Small Bundle, High Performance
 
-- Core: 15.06KB minified
-- With modules: 57.84KB (`documentate`, `validate`)
-- Performance: 1.1-26.6x faster than XState
+*   Core: 15.06KB minified
+*   With modules: 57.84KB (`documentate`, `validate`)
+*   Performance: 1.1-26.6x faster than XState
 
 ### 5. Built-in Tools
 
-- `documentate()` — Code generation, Mermaid/PlantUML diagrams, and SCXML via `x-robot/documentate`
-- `validate()` — Machine structure validation via `x-robot/validate`
-- History tracking — Built-in state history
+*   `documentate()` — Code generation, Mermaid/PlantUML diagrams, and SCXML via `x-robot/documentate`
+*   `validate()` — Machine structure validation via `x-robot/validate`
+*   History tracking — Built-in state history
 
 ## When to Use State Machines
 
 State machines are ideal for:
 
-- **Form workflows** — Validation, submission, success/error states
-- **API calls** — Loading, success, error handling
-- **UI interactions** — Modals, wizards, animations
-- **Game state** — Player states, level transitions
-- **Business logic** — Order processing, approval flows
-- **Communication protocols** — Connection states, message handling
+*   **Form workflows** — Validation, submission, success/error states
+*   **API calls** — Loading, success, error handling
+*   **UI interactions** — Modals, wizards, animations
+*   **Game state** — Player states, level transitions
+*   **Business logic** — Order processing, approval flows
+*   **Communication protocols** — Connection states, message handling
 
 ## When Not to Use
 
 State machines add structure. They're overkill for:
 
-- Simple toggle states (on/off)
-- Unrelated pieces of UI state
-- Very small applications with minimal state
+*   Simple toggle states (on/off)
+*   Unrelated pieces of UI state
+*   Very small applications with minimal state
 
 ## Next Steps
 
-- [Getting Started](./guides/getting-started.md) — Create your first machine
-- [Concepts](./concepts/pulse.md) — Understand the Pulse concept
-- [API Reference](./api/) — Explore all functions
+*   [Getting Started](./guides/getting-started.md) — Create your first machine
+*   [Concepts](./concepts/pulse.md) — Understand the Pulse concept
+*   [API Reference](./api/) — Explore all functions

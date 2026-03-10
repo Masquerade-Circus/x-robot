@@ -19,6 +19,7 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 ```
+
 ```javascript
 import { init, initial, machine, parallel, state, transition } from "x-robot";
 
@@ -88,6 +89,7 @@ classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:
 
 [*] --> idle
 ```
+
 ```javascript
 const searchMachine = machine(
   "Search",

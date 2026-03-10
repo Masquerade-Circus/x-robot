@@ -45,15 +45,15 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 | Module                                                   | Size      |
 | -------------------------------------------------------- | --------- |
 | X-Robot Core                                             | 15.06KB   |
-| + documentate (code gen, diagrams, serialization, SCXML) | +29.18KB     |
+| + documentate (code gen, diagrams, serialization, SCXML) | +29.25KB     |
 | + validate (machine validation)                          | +13.67KB     |
-| **Total**                                                | **57.90KB** |
+| **Total**                                                | **57.97KB** |
 
 ***
 
 ## Features Comparison
 
-| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (57.90KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
+| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (57.97KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) |
 | ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ |
 | Nested states       | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
 | Parallel states     | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
@@ -79,12 +79,12 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 5.34ms  | 93.35ms | **17.5x faster** |
-| 3k with guards         | 5.49ms  | 35.86ms  | **6.5x faster**  |
-| 10k transitions        | 3.59ms  | 117.77ms | **32.8x faster** |
-| 10k context updates    | 21.23ms | 127.38ms  | **6.0x faster**  |
-| invokeAfter scheduling | 4.25ms  | 18.43ms  | **4.3x faster**  |
-| Delayed transitions    | 56.16ms | 60.69ms  | **1.1x faster**  |
+| 5k transitions         | 5.35ms  | 116.70ms | **21.8x faster** |
+| 3k with guards         | 5.44ms  | 45.70ms  | **8.4x faster**  |
+| 10k transitions        | 5.75ms  | 182.44ms | **31.7x faster** |
+| 10k context updates    | 20.54ms | 161.07ms  | **7.8x faster**  |
+| invokeAfter scheduling | 4.83ms  | 18.72ms  | **3.9x faster**  |
+| Delayed transitions    | 57.74ms | 62.47ms  | **1.1x faster**  |
 
 ***
 
@@ -102,7 +102,7 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 ## Why X-Robot?
 
 1.  **2.0-3.9x smaller** bundle size (core only)
-2.  **1.1-32.8x faster** performance
+2.  **1.1-31.7x faster** performance
 3.  **1.2-1.8x less code** to write
 4.  **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
 5.  **Simpler API** - Declarative, functional approach

@@ -28,6 +28,7 @@ class step2 def
 [*] --> step1
 step1 --> step2: skip
 ```
+
 ```javascript
 import { init, initial, machine, nested, state, transition } from "x-robot";
 
@@ -85,6 +86,7 @@ class loggingOut def
 [*] --> public
 public --> private: login
 ```
+
 ```javascript
 const auth = machine(
   "Auth",

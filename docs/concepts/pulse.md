@@ -79,6 +79,7 @@ class done def
 [*] --> idle
 idle --> done: next
 ```
+
 ```javascript
 import { exit, init, initial, machine, state, transition } from "x-robot";
 
@@ -191,6 +192,7 @@ done: └ En-tryUpdate
 [*] --> idle
 idle --> done: continue
 ```
+
 ```javascript
 function tryUpdate(ctx) {
   ctx.value = 42;
@@ -237,6 +239,7 @@ idle: └ En-updateValue
 
 [*] --> idle
 ```
+
 ```javascript
 function updateValue(ctx) {
   ctx.value = 42; // modifies original

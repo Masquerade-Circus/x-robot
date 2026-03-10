@@ -1333,6 +1333,8 @@ var MERMAID_THEME = {
   NEUTRAL: "neutral",
   DARK: "dark"
 };
+var MERMAID_INDENT_SPACE = "\u2007";
+var MERMAID_DIRECTION = "TB";
 var toCammelCase2 = (str) => str.replace(/(^\w)/g, ($1) => $1.toUpperCase()).replace(/\s(.)/g, ($1) => $1.toUpperCase()).replace(/\W/g, "");
 function getInnerPlantUmlCode(serializedMachine, options, parentName = "", childLevel = 0) {
   let plantUmlCode = "";
@@ -1643,7 +1645,10 @@ function getAsciiTree(collection, context) {
   return stringifyTree(tree, (t) => t.name, (t) => t.children).replace(/\n/g, "\\n");
 }
 function getMermaidTreeLabel(collection, context) {
-  return getAsciiTree(collection, context).replace(/\b(AEn|En|AEx|Ex|AG|G|T):/g, "$1-").replace(/(^|\\n)( +)/g, (_, prefix, spaces) => `${prefix}${"\xA0".repeat(spaces.length)}`);
+  return getAsciiTree(collection, context).replace(/\b(AEn|En|AEx|Ex|AG|G|T):/g, "$1-").replace(/(^|\\n)( +)/g, (_, prefix, spaces) => `${prefix}${MERMAID_INDENT_SPACE.repeat(spaces.length)}`);
+}
+function escapeMermaidLabel(value) {
+  return value.replace(/"/g, '\\"');
 }
 async function createImageFromPlantUmlCode(plantUmlCode, type, options = {}) {
   const plantUmlJarPath = path.resolve(__dirname, "../../vendor/plantuml.jar");
@@ -1691,7 +1696,7 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
   for (const stateName in serializedMachine.states) {
     const state = serializedMachine.states[stateName];
     const stateId = stateNames[stateName];
-    mermaidCode += `state ${stateId}
+    mermaidCode += `state "${escapeMermaidLabel(stateName)}" as ${stateId}
 `;
   }
   if (!isChild) {
@@ -1760,6 +1765,8 @@ title: ${serializedMachine.title}
 `;
   }
   mermaidCode += `stateDiagram-v2
+`;
+  mermaidCode += `direction ${MERMAID_DIRECTION}
 
 `;
   mermaidCode += getInnerMermaidCode(serializedMachine, opts);

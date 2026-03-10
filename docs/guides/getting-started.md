@@ -10,6 +10,16 @@ npm install x-robot
 bun add x-robot
 ```
 
+## Optional Modules
+
+The core package is enough to define and run machines. As your project grows, you can opt into these modules:
+
+*   `x-robot/devtools` - connect wrapped machine operations to Redux DevTools during development
+*   `x-robot/documentate` - generate diagrams, serialization, and code output from machines
+*   `x-robot/validate` - validate machine structure before shipping or generating artifacts
+
+You do not need all of them on day one. A common path is: start with the core runtime, add `validate` when your machines become more complex, add `documentate` when you want generated diagrams or exports, and use `devtools` only in development.
+
 ## Your First Machine
 
 ```mermaid
@@ -37,6 +47,7 @@ class on def
 off --> on: toggle
 on --> off: toggle
 ```
+
 ```javascript
 import { machine, state, transition } from "x-robot";
 
@@ -74,6 +85,7 @@ class idle def
 
 [*] --> idle
 ```
+
 ```javascript
 const myMachine = machine("MyMachine", state("idle"));
 ```
@@ -133,6 +145,7 @@ counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 idle --> counting: increment
 counting --> idle: idle
 ```
+
 ```javascript
 import { context, entry, initial, init } from "x-robot";
 
@@ -189,6 +202,7 @@ idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
+
 ```javascript
 import { entry } from "x-robot";
 
@@ -258,6 +272,7 @@ submitting --> failure: failure
 success --> pristine: reset
 failure --> dirty: retry
 ```
+
 ```javascript
 import { machine, state, transition, invoke, initial, init, context, entry, guard } from "x-robot";
 
@@ -297,6 +312,7 @@ const formMachine = machine(
 *   [Async Guide](./async.md) — Deep dive into Pulse
 *   [Guards Guide](./guards.md) — Conditional transitions
 *   [Immediate Transitions](./immediate-transitions.md) — Auto-transitioning states
+*   [Devtools Guide](./devtools.md) — Inspect wrapped transitions in Redux DevTools
 *   [Visualization](./visualization.md) — Generate diagrams
 *   [Concepts: Pulse](../concepts/pulse.md) — Understand the core concept
 *   [Recipes](../recipes/) — Common patterns

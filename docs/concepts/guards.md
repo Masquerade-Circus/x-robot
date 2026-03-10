@@ -28,6 +28,7 @@ class step2 def
 [*] --> step1
 step1 --> step2: next<br>└ G-canProceed
 ```
+
 ```javascript
 import { guard, init, initial, machine, state, transition } from "x-robot";
 

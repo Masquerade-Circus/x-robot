@@ -21,7 +21,7 @@ Serialized nested machine definition
 
 #### Defined in
 
-[lib/documentate/types.ts:162](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/types.ts#L162)
+[lib/documentate/types.ts:162](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L162)
 
 ***
 
@@ -31,4 +31,4 @@ Serialized nested machine definition
 
 #### Defined in
 
-[lib/documentate/types.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/types.ts#L163)
+[lib/documentate/types.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L163)

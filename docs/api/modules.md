@@ -7,6 +7,7 @@
 ### Modules
 
 *   [x-robot](modules/x_robot.md)
+*   [x-robot/devtools](modules/x_robot_devtools.md)
 *   [x-robot/validate](modules/x_robot_validate.md)
 *   [x-robot/documentate/generate](modules/x_robot_documentate_generate.md)
 *   [x-robot/documentate](modules/x_robot_documentate.md)

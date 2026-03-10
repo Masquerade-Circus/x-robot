@@ -42,6 +42,7 @@ step2 --> step1: back
 step3 --> complete: next
 step3 --> step2: back
 ```
+
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 
@@ -136,6 +137,7 @@ validating --> step2: step2
 step3 --> complete: next
 step3 --> step2: back
 ```
+
 ```javascript
 function validateStep(step, data) {
   switch (step) {

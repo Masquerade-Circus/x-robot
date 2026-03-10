@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[lib/documentate/generate.ts:9](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/generate.ts#L9)
+[lib/documentate/generate.ts:9](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/generate.ts#L9)
 
 ***
 
@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[lib/documentate/generate.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/generate.ts#L10)
+[lib/documentate/generate.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/generate.ts#L10)
 
 ***
 
@@ -40,4 +40,4 @@
 
 #### Defined in
 
-[lib/documentate/generate.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/generate.ts#L11)
+[lib/documentate/generate.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/generate.ts#L11)

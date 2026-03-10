@@ -32,6 +32,7 @@ green --> yellow: next
 yellow --> red: next
 red --> green: green<br>└ G-canGoToGreen
 ```
+
 ```javascript
 import { guard, immediate, init, initial, machine, nested, state, transition } from "x-robot";
 
@@ -101,6 +102,7 @@ class loggingOut def
 [*] --> public
 public --> private: login
 ```
+
 ```javascript
 const auth = machine(
   "Auth",
@@ -177,6 +179,7 @@ loggingIn --> authenticated: authenticated
 loggingIn --> guest: guest
 loggingOut --> guest: guest
 ```
+
 ```javascript
 const auth = machine(
   "Auth",
@@ -229,6 +232,7 @@ class complete def
 step1 --> step1: back
 step2 --> step1: back
 ```
+
 ```javascript
 const step1 = machine("Step1", init(initial("pending")),
   state("pending", transition("next", "completed")),

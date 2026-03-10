@@ -29,6 +29,7 @@ class running def
 idle --> running: start
 running --> idle: stop
 ```
+
 ```javascript
 import { context, init, initial, machine, state, transition } from "x-robot";
 
@@ -101,6 +102,7 @@ updated: └ En-anonymous
 [*] --> idle
 idle --> updated: update
 ```
+
 ```javascript
 const myMachine = machine(
   "Test",
@@ -146,6 +148,7 @@ updated: └ En-anonymous
 [*] --> idle
 idle --> updated: update
 ```
+
 ```javascript
 import { shouldFreeze } from "x-robot";
 
@@ -189,6 +192,7 @@ class start def
 
 [*] --> start
 ```
+
 ```javascript
 const childMachine = machine(
   "Child",
@@ -232,6 +236,7 @@ class active def
 idle --> active: increment
 active --> idle: reset
 ```
+
 ```javascript
 import { context, init, initial, machine, snapshot, start, state, transition } from "x-robot";
 

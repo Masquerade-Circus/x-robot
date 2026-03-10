@@ -21,6 +21,10 @@
       "import": "./dist/validate/index.mjs",
       "require": "./dist/validate/index.js"
     },
+    "./devtools": {
+      "import": "./dist/devtools/index.mjs",
+      "require": "./dist/devtools/index.js"
+    },
     "./utils": {
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.js"

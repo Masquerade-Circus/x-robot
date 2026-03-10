@@ -96,7 +96,7 @@
 
 #### Defined in
 
-[lib/documentate/state-styles.ts:1](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/state-styles.ts#L1)
+[lib/documentate/state-styles.ts:1](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/state-styles.ts#L1)
 
 ## Type Aliases
 
@@ -106,4 +106,4 @@
 
 #### Defined in
 
-[lib/documentate/state-styles.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/state-styles.ts#L10)
+[lib/documentate/state-styles.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/state-styles.ts#L10)
