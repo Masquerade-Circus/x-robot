@@ -10,6 +10,7 @@ title: Guard
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -18,8 +19,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state step1
-state step2
+state "step1" as step1
+state "step2" as step2
 class step1 def
 class step2 def
 
@@ -27,7 +28,6 @@ class step2 def
 [*] --> step1
 step1 --> step2: next<br>└ G-canProceed
 ```
-
 ```javascript
 import { guard, init, initial, machine, state, transition } from "x-robot";
 
@@ -64,6 +64,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -72,18 +73,18 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state checking
-state checked
-state invalid
-state submitting
+state "idle" as idle
+state "checking" as checking
+state "checked" as checked
+state "invalid" as invalid
+state "submitting" as submitting
 class idle def
 class checking def
 class checked def
 class invalid def
 class submitting def
 
-checking: └┬ En-validateForm<br> ├┬ success<br> │└ T-checked<br> └┬ failure<br>  └ T-invalid
+checking: └┬ En-validateForm<br> ├┬ success<br> │└ T-checked<br> └┬ failure<br>  └ T-invalid
 
 [*] --> idle
 idle --> checking: submit
@@ -93,7 +94,6 @@ checked --> submitting: submitting<br>└ G-checkFormErrors
 checked --> invalid: invalid
 invalid --> idle: retry
 ```
-
 ```javascript
 function validateEmail(ctx, email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -137,6 +137,7 @@ title: Admin
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -145,10 +146,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state locked
-state dashboard
-state public
-state preview
+state "locked" as locked
+state "dashboard" as dashboard
+state "public" as public
+state "preview" as preview
 class locked def
 class dashboard def
 class public def
@@ -159,7 +160,6 @@ class preview def
 locked --> dashboard: enter<br>└ G-isAdmin
 public --> preview: enter<br>└ G-isLoggedIn
 ```
-
 ```javascript
 function isAdmin(ctx) {
   return ctx.user?.role === "admin";

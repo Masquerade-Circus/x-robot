@@ -52,6 +52,9 @@ export const MERMAID_THEME = {
   DARK: 'dark'
 };
 
+const MERMAID_INDENT_SPACE = "\u2007";
+const MERMAID_DIRECTION = "TB";
+
 export interface mermaidOptions {
   level?: string;
   theme?: string;
@@ -498,7 +501,14 @@ function getMermaidTreeLabel(
   return getAsciiTree(collection, context).replace(
     /\b(AEn|En|AEx|Ex|AG|G|T):/g,
     "$1-"
+  ).replace(
+    /(^|\\n)( +)/g,
+    (_, prefix: string, spaces: string) => `${prefix}${MERMAID_INDENT_SPACE.repeat(spaces.length)}`
   );
+}
+
+function escapeMermaidLabel(value: string): string {
+  return value.replace(/"/g, '\\"');
 }
 
 /* 
@@ -607,7 +617,7 @@ function getInnerMermaidCode(
   for (const stateName in serializedMachine.states) {
     const state = serializedMachine.states[stateName];
     const stateId = stateNames[stateName];
-    mermaidCode += `state ${stateId}\n`;
+    mermaidCode += `state "${escapeMermaidLabel(stateName)}" as ${stateId}\n`;
   }
 
   if (!isChild) {
@@ -682,7 +692,8 @@ export function getMermaidCode(
   if (serializedMachine.title) {
     mermaidCode += `---\ntitle: ${serializedMachine.title}\n---\n\n`;
   }
-  mermaidCode += `stateDiagram-v2\n\n`;
+  mermaidCode += `stateDiagram-v2\n`;
+  mermaidCode += `direction ${MERMAID_DIRECTION}\n\n`;
   mermaidCode += getInnerMermaidCode(serializedMachine, opts);
 
   if (theme && theme !== MERMAID_THEME.DEFAULT) {

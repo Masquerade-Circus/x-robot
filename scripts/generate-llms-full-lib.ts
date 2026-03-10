@@ -3,7 +3,7 @@ import { join, relative } from "path";
 
 const ROOT_DIR = process.cwd();
 const DOCS_DIR_NAME = "docs";
-const EXCLUDE_DIRS = new Set(["plans"]);
+const EXCLUDE_DOCS_PATHS = new Set(["api", "plans"]);
 const OUTPUT_FILE_NAME = "llms-full.txt";
 
 export interface DocumentationFile {
@@ -30,6 +30,13 @@ export async function getDocumentationMarkdownFiles(rootDir = ROOT_DIR): Promise
   const docsDir = join(rootDir, DOCS_DIR_NAME);
   const files: string[] = [];
 
+  function shouldExcludeDirectory(directoryPath: string): boolean {
+    const relativePath = relative(docsDir, directoryPath);
+    const [topLevelDir] = relativePath.split("/");
+
+    return EXCLUDE_DOCS_PATHS.has(topLevelDir);
+  }
+
   async function walk(directory: string) {
     const entries = await readdir(directory, { withFileTypes: true });
 
@@ -37,7 +44,7 @@ export async function getDocumentationMarkdownFiles(rootDir = ROOT_DIR): Promise
       const fullPath = join(directory, entry.name);
 
       if (entry.isDirectory()) {
-        if (!entry.name.startsWith(".") && !EXCLUDE_DIRS.has(entry.name)) {
+        if (!entry.name.startsWith(".") && !shouldExcludeDirectory(fullPath)) {
           await walk(fullPath);
         }
         continue;

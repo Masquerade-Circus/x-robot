@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedGuardDirective
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedGuardDirective
 
 # Interface: NestedGuardDirective
 
@@ -6,17 +6,17 @@
 
 ## Hierarchy
 
-- [`GuardDirective`](x_robot.GuardDirective.md)
+*   [`GuardDirective`](x_robot.GuardDirective.md)
 
-  ↳ **`NestedGuardDirective`**
+    ↳ **`NestedGuardDirective`**
 
 ## Table of contents
 
 ### Properties
 
-- [machine](x_robot.NestedGuardDirective.md#machine)
-- [failure](x_robot.NestedGuardDirective.md#failure)
-- [guard](x_robot.NestedGuardDirective.md#guard)
+*   [machine](x_robot.NestedGuardDirective.md#machine)
+*   [failure](x_robot.NestedGuardDirective.md#failure)
+*   [guard](x_robot.NestedGuardDirective.md#guard)
 
 ## Properties
 
@@ -26,13 +26,13 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:72](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L72)
+[lib/machine/interfaces.ts:72](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L72)
 
-___
+***
 
 ### failure
 
-• `Optional` **failure**: `string` \| [`PulseDirective`](x_robot.PulseDirective.md)
+• `Optional` **failure**: `string` | [`PulseDirective`](x_robot.PulseDirective.md)
 
 #### Overrides
 
@@ -40,9 +40,9 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L73)
+[lib/machine/interfaces.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L73)
 
-___
+***
 
 ### guard
 
@@ -54,4 +54,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L67)
+[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L67)

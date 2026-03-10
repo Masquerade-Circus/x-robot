@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelDirective
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelDirective
 
 # Interface: ParallelDirective
 
@@ -8,14 +8,14 @@
 
 ### Properties
 
-- [parallel](x_robot.ParallelDirective.md#parallel)
+*   [parallel](x_robot.ParallelDirective.md#parallel)
 
 ## Properties
 
 ### parallel
 
-• **parallel**: `Record`<`string`, [`Machine`](x_robot.Machine.md)\>
+• **parallel**: `Record`<`string`, [`Machine`](x_robot.Machine.md)>
 
 #### Defined in
 
-[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L134)
+[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L134)

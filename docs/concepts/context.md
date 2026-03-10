@@ -10,6 +10,7 @@ title: Counter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -18,8 +19,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state running
+state "idle" as idle
+state "running" as running
 class idle def
 class running def
 
@@ -28,7 +29,6 @@ class running def
 idle --> running: start
 running --> idle: stop
 ```
-
 ```javascript
 import { context, init, initial, machine, state, transition } from "x-robot";
 
@@ -82,6 +82,7 @@ title: Test
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -90,8 +91,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state updated
+state "idle" as idle
+state "updated" as updated
 class idle def
 class updated def
 
@@ -100,7 +101,6 @@ updated: └ En-anonymous
 [*] --> idle
 idle --> updated: update
 ```
-
 ```javascript
 const myMachine = machine(
   "Test",
@@ -127,6 +127,7 @@ title: Test
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -135,8 +136,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state updated
+state "idle" as idle
+state "updated" as updated
 class idle def
 class updated def
 
@@ -145,7 +146,6 @@ updated: └ En-anonymous
 [*] --> idle
 idle --> updated: update
 ```
-
 ```javascript
 import { shouldFreeze } from "x-robot";
 
@@ -174,6 +174,7 @@ title: Parent
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -182,13 +183,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state start
+state "start" as start
 class start def
 
 
 [*] --> start
 ```
-
 ```javascript
 const childMachine = machine(
   "Child",
@@ -213,6 +213,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -221,8 +222,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state active
+state "idle" as idle
+state "active" as active
 class idle def
 class active def
 
@@ -231,7 +232,6 @@ class active def
 idle --> active: increment
 active --> idle: reset
 ```
-
 ```javascript
 import { context, init, initial, machine, snapshot, start, state, transition } from "x-robot";
 

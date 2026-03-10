@@ -10,6 +10,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -18,9 +19,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state processing
-state complete
+state "idle" as idle
+state "processing" as processing
+state "complete" as complete
 class idle def
 class processing def
 class complete def
@@ -30,7 +31,6 @@ class complete def
 idle --> processing: start
 processing --> complete: complete
 ```
-
 ```javascript
 import { immediate, init, initial, machine, state, transition } from "x-robot";
 
@@ -53,6 +53,7 @@ title: Auth
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -61,9 +62,9 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state checking
-state authenticated
-state unauthenticated
+state "checking" as checking
+state "authenticated" as authenticated
+state "unauthenticated" as unauthenticated
 class checking def
 class authenticated def
 class unauthenticated def
@@ -73,7 +74,6 @@ class unauthenticated def
 checking --> authenticated: authenticated<br>└ G-isAuthenticated
 checking --> unauthenticated: unauthenticated
 ```
-
 ```javascript
 function isAuthenticated(ctx) {
   return ctx.user !== null;
@@ -104,6 +104,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -112,11 +113,11 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state validating
-state valid
-state invalid
-state submitting
+state "idle" as idle
+state "validating" as validating
+state "valid" as valid
+state "invalid" as invalid
+state "submitting" as submitting
 class idle def
 class validating def
 class valid def
@@ -130,7 +131,6 @@ validating --> valid: valid<br>└ G-isValid
 validating --> invalid: invalid
 valid --> submitting: submit
 ```
-
 ```javascript
 function isValid(ctx) {
   return Object.keys(ctx.errors).length === 0;
@@ -160,6 +160,7 @@ title: Init
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -168,10 +169,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state boot
-state loading
-state hasCache
-state ready
+state "boot" as boot
+state "loading" as loading
+state "hasCache" as hasCache
+state "ready" as ready
 class boot def
 class loading def
 class hasCache def
@@ -184,7 +185,6 @@ boot --> loading: loading
 loading --> ready: ready
 hasCache --> ready: ready
 ```
-
 ```javascript
 function hasCache(ctx) {
   return !!ctx.cachedData;
@@ -214,6 +214,7 @@ title: Filter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -222,10 +223,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state all
-state filtering
-state empty
-state results
+state "all" as all
+state "filtering" as filtering
+state "empty" as empty
+state "results" as results
 class all def
 class filtering def
 class empty def
@@ -237,7 +238,6 @@ all --> filtering: filter
 filtering --> empty: empty<br>└ G-noResults
 filtering --> results: results
 ```
-
 ```javascript
 function noResults(ctx) {
   return ctx.items.length === 0;
@@ -263,6 +263,7 @@ title: Process
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -271,10 +272,10 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state processing
-state success
-state failure
+state "idle" as idle
+state "processing" as processing
+state "success" as success
+state "failure" as failure
 class idle def
 class processing def
 class success def
@@ -287,7 +288,6 @@ idle --> processing: start
 processing --> success: success<br>└ G-isSuccess
 processing --> failure: failure
 ```
-
 ```javascript
 function computeResult(ctx) {
   ctx.result = compute(ctx.input);

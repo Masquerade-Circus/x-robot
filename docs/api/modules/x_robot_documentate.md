@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / x-robot/documentate
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / x-robot/documentate
 
 # Module: x-robot/documentate
 
@@ -10,33 +10,33 @@ Generate documentation and convert between formats for X-Robot machines
 
 ### Functions
 
-- [documentate](x_robot_documentate.md#documentate)
+*   [documentate](x_robot_documentate.md#documentate)
 
 ### Type Aliases
 
-- [OutputFormat](x_robot_documentate.md#outputformat)
-- [DocumentateInput](x_robot_documentate.md#documentateinput)
+*   [OutputFormat](x_robot_documentate.md#outputformat)
+*   [DocumentateInput](x_robot_documentate.md#documentateinput)
 
 ### Interfaces
 
-- [DocumentateOptions](../interfaces/x_robot_documentate.DocumentateOptions.md)
-- [DocumentateResult](../interfaces/x_robot_documentate.DocumentateResult.md)
-- [SerializedMachine](../interfaces/x_robot_documentate.SerializedMachine.md)
-- [SerializedStates](../interfaces/x_robot_documentate.SerializedStates.md)
-- [SerializedState](../interfaces/x_robot_documentate.SerializedState.md)
-- [SerializedTransitions](../interfaces/x_robot_documentate.SerializedTransitions.md)
-- [SerializedTransition](../interfaces/x_robot_documentate.SerializedTransition.md)
-- [SerializedPulse](../interfaces/x_robot_documentate.SerializedPulse.md)
-- [SerializedCollection](../interfaces/x_robot_documentate.SerializedCollection.md)
-- [SerializedGuard](../interfaces/x_robot_documentate.SerializedGuard.md)
-- [SerializedImmediate](../interfaces/x_robot_documentate.SerializedImmediate.md)
-- [SerializedNestedMachine](../interfaces/x_robot_documentate.SerializedNestedMachine.md)
+*   [DocumentateOptions](../interfaces/x_robot_documentate.DocumentateOptions.md)
+*   [DocumentateResult](../interfaces/x_robot_documentate.DocumentateResult.md)
+*   [SerializedMachine](../interfaces/x_robot_documentate.SerializedMachine.md)
+*   [SerializedStates](../interfaces/x_robot_documentate.SerializedStates.md)
+*   [SerializedState](../interfaces/x_robot_documentate.SerializedState.md)
+*   [SerializedTransitions](../interfaces/x_robot_documentate.SerializedTransitions.md)
+*   [SerializedTransition](../interfaces/x_robot_documentate.SerializedTransition.md)
+*   [SerializedPulse](../interfaces/x_robot_documentate.SerializedPulse.md)
+*   [SerializedCollection](../interfaces/x_robot_documentate.SerializedCollection.md)
+*   [SerializedGuard](../interfaces/x_robot_documentate.SerializedGuard.md)
+*   [SerializedImmediate](../interfaces/x_robot_documentate.SerializedImmediate.md)
+*   [SerializedNestedMachine](../interfaces/x_robot_documentate.SerializedNestedMachine.md)
 
 ## Functions
 
 ### documentate
 
-▸ **documentate**(`input`, `options`): [`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<[`DocumentateResult`](../interfaces/x_robot_documentate.DocumentateResult.md)\>
+▸ **documentate**(`input`, `options`): [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[`DocumentateResult`](../interfaces/x_robot_documentate.DocumentateResult.md)>
 
 Generate documentation and convert between formats for X-Robot machines.
 
@@ -87,7 +87,7 @@ const result = await documentate(myMachine, { format: 'svg', level: 'high', skin
 
 #### Returns
 
-[`Promise`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise )<[`DocumentateResult`](../interfaces/x_robot_documentate.DocumentateResult.md)\>
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[`DocumentateResult`](../interfaces/x_robot_documentate.DocumentateResult.md)>
 
 Promise with the generated documentation/converted output
 
@@ -95,22 +95,22 @@ Promise with the generated documentation/converted output
 
 ### OutputFormat
 
-Ƭ **OutputFormat**: ``"ts"`` \| ``"mjs"`` \| ``"cjs"`` \| ``"json"`` \| ``"scxml"`` \| ``"plantuml"`` \| ``"mermaid"`` \| ``"svg"`` \| ``"png"`` \| ``"serialized"`` \| ``"all"``
+Ƭ **OutputFormat**: `"ts"` | `"mjs"` | `"cjs"` | `"json"` | `"scxml"` | `"plantuml"` | `"mermaid"` | `"svg"` | `"png"` | `"serialized"` | `"all"`
 
 Output format options for documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L11)
+[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/types.ts#L11)
 
-___
+***
 
 ### DocumentateInput
 
-Ƭ **DocumentateInput**: [`Machine`](../interfaces/x_robot.Machine.md) \| [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) \| `string`
+Ƭ **DocumentateInput**: [`Machine`](../interfaces/x_robot.Machine.md) | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `string`
 
 Input types accepted by the documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L73)
+[lib/documentate/types.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/types.ts#L73)

@@ -18,6 +18,7 @@ title: Toggle
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -26,8 +27,8 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state off
-state on
+state "off" as off
+state "on" as on
 class off def
 class on def
 
@@ -36,7 +37,6 @@ class on def
 off --> on: toggle
 on --> off: toggle
 ```
-
 ```javascript
 import { machine, state, transition } from "x-robot";
 
@@ -59,6 +59,7 @@ title: MyMachine
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -67,13 +68,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
+state "idle" as idle
 class idle def
 
 
 [*] --> idle
 ```
-
 ```javascript
 const myMachine = machine("MyMachine", state("idle"));
 ```
@@ -113,6 +113,7 @@ title: Counter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -121,18 +122,17 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state counting
+state "idle" as idle
+state "counting" as counting
 class idle def
 class counting def
 
-counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
+counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 
 [*] --> idle
 idle --> counting: increment
 counting --> idle: idle
 ```
-
 ```javascript
 import { context, entry, initial, init } from "x-robot";
 
@@ -164,6 +164,7 @@ title: Fetcher
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -172,23 +173,22 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
 import { entry } from "x-robot";
 
@@ -220,6 +220,7 @@ title: Form
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -228,13 +229,13 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state pristine
-state dirty
-state validating
-state submitting
-state success
-state failure
-state error
+state "pristine" as pristine
+state "dirty" as dirty
+state "validating" as validating
+state "submitting" as submitting
+state "success" as success
+state "failure" as failure
+state "error" as error
 class pristine def
 class dirty def
 class validating def
@@ -243,8 +244,8 @@ class success def
 class failure def
 class error def
 
-validating: └┬ En-validateFormValues<br> ├┬ success<br> │└ T-dirty<br> └┬ failure<br>  └ T-error
-submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failure
+validating: └┬ En-validateFormValues<br> ├┬ success<br> │└ T-dirty<br> └┬ failure<br>  └ T-error
+submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failure
 
 [*] --> pristine
 pristine --> dirty: change
@@ -257,7 +258,6 @@ submitting --> failure: failure
 success --> pristine: reset
 failure --> dirty: retry
 ```
-
 ```javascript
 import { machine, state, transition, invoke, initial, init, context, entry, guard } from "x-robot";
 

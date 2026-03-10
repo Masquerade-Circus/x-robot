@@ -1,46 +1,39 @@
-
-
 ### [1.0.1](https://github.com/Masquerade-Circus/x-robot/compare/1.0.0...1.0.1) (2026-03-08)
-
 
 ### Documentation
 
-* remove context7.json ([d0f3f1b](https://github.com/Masquerade-Circus/x-robot/commit/d0f3f1b92408c8428fd8275475c642d353afcfe6))
-* update docs ([732203d](https://github.com/Masquerade-Circus/x-robot/commit/732203df2c81878a031fc3421dffcd8352fdaa92))
+*   remove context7.json ([d0f3f1b](https://github.com/Masquerade-Circus/x-robot/commit/d0f3f1b92408c8428fd8275475c642d353afcfe6))
+*   update docs ([732203d](https://github.com/Masquerade-Circus/x-robot/commit/732203df2c81878a031fc3421dffcd8352fdaa92))
 
 ## [1.0.0](https://github.com/Masquerade-Circus/x-robot/compare/0.3.0...1.0.0) (2026-03-08)
 
-
 ### Features
 
-* add exitPulses directives ([5a7fcfa](https://github.com/Masquerade-Circus/x-robot/commit/5a7fcfae85eb8b5023f1ecadf79e303dc4039dce))
-* add scxml import/export support ([bcf33a0](https://github.com/Masquerade-Circus/x-robot/commit/bcf33a0b51dcbe2261765f4d85ed9f4cde767969))
-* implement get snapshot and resotre machine from snapshot ([637302d](https://github.com/Masquerade-Circus/x-robot/commit/637302d631216866ee1917b10ca73d57a38090ad))
-* implement invokeAfter ([c43f47f](https://github.com/Masquerade-Circus/x-robot/commit/c43f47f3be1b95761f30b1c7cb9a48fbbe3c0b80))
-* implement mermaid export ([b81c3c2](https://github.com/Masquerade-Circus/x-robot/commit/b81c3c263c6d899ef04d2470144afdd771239887))
-
+*   add exitPulses directives ([5a7fcfa](https://github.com/Masquerade-Circus/x-robot/commit/5a7fcfae85eb8b5023f1ecadf79e303dc4039dce))
+*   add scxml import/export support ([bcf33a0](https://github.com/Masquerade-Circus/x-robot/commit/bcf33a0b51dcbe2261765f4d85ed9f4cde767969))
+*   implement get snapshot and resotre machine from snapshot ([637302d](https://github.com/Masquerade-Circus/x-robot/commit/637302d631216866ee1917b10ca73d57a38090ad))
+*   implement invokeAfter ([c43f47f](https://github.com/Masquerade-Circus/x-robot/commit/c43f47f3be1b95761f30b1c7cb9a48fbbe3c0b80))
+*   implement mermaid export ([b81c3c2](https://github.com/Masquerade-Circus/x-robot/commit/b81c3c263c6d899ef04d2470144afdd771239887))
 
 ### Tests
 
-* update benchmark tests ([43ea191](https://github.com/Masquerade-Circus/x-robot/commit/43ea191d0c670c2bf91f3676d5a2153ff2db9d24))
-* update tests an documentation ([6561229](https://github.com/Masquerade-Circus/x-robot/commit/656122906b4cc852137dc5c59edf236f5da39a32))
-
+*   update benchmark tests ([43ea191](https://github.com/Masquerade-Circus/x-robot/commit/43ea191d0c670c2bf91f3676d5a2153ff2db9d24))
+*   update tests an documentation ([6561229](https://github.com/Masquerade-Circus/x-robot/commit/656122906b4cc852137dc5c59edf236f5da39a32))
 
 ### Documentation
 
-* update documentation ([3e91d80](https://github.com/Masquerade-Circus/x-robot/commit/3e91d80c5af0621165f8d26960d2483260daef11))
-
+*   update documentation ([3e91d80](https://github.com/Masquerade-Circus/x-robot/commit/3e91d80c5af0621165f8d26960d2483260daef11))
 
 ### Code Refactoring
 
-* change actions+producers to pulses ([c945143](https://github.com/Masquerade-Circus/x-robot/commit/c9451437ad14fe122ea88f06d5a3ad523220cf03))
-* create documentate module to handle all machine conversions ([59af0ee](https://github.com/Masquerade-Circus/x-robot/commit/59af0eecebbc49805b059ec5cc5e29f82cf20fd0))
-* refactor tests to use pulses ([3ab8fd4](https://github.com/Masquerade-Circus/x-robot/commit/3ab8fd47ea9508176231b3b0ea92f62408652afd))
-* refactor the api to use pulses ([5737eb3](https://github.com/Masquerade-Circus/x-robot/commit/5737eb361ee334e1ba3ec2fef97bba42103c6ae7))
-* regenerate docs and mermaid implementation ([b240488](https://github.com/Masquerade-Circus/x-robot/commit/b2404884cc30e7d452d6165fdc8d8df963da4904))
-* rename pulse to entry and exitPulse to exit ([dc79239](https://github.com/Masquerade-Circus/x-robot/commit/dc792398b66fe0a1f09f62c0779dbd0ccc3385e9))
-* update readme ([f00734e](https://github.com/Masquerade-Circus/x-robot/commit/f00734e1a7c2dfcfdca0b0a224d70e89f59da5f6))
-* use custom tree-adapter to import/export mcxml ([dcadc4e](https://github.com/Masquerade-Circus/x-robot/commit/dcadc4e69dae6a3e4985952bfb10755b328c6572))
+*   change actions+producers to pulses ([c945143](https://github.com/Masquerade-Circus/x-robot/commit/c9451437ad14fe122ea88f06d5a3ad523220cf03))
+*   create documentate module to handle all machine conversions ([59af0ee](https://github.com/Masquerade-Circus/x-robot/commit/59af0eecebbc49805b059ec5cc5e29f82cf20fd0))
+*   refactor tests to use pulses ([3ab8fd4](https://github.com/Masquerade-Circus/x-robot/commit/3ab8fd47ea9508176231b3b0ea92f62408652afd))
+*   refactor the api to use pulses ([5737eb3](https://github.com/Masquerade-Circus/x-robot/commit/5737eb361ee334e1ba3ec2fef97bba42103c6ae7))
+*   regenerate docs and mermaid implementation ([b240488](https://github.com/Masquerade-Circus/x-robot/commit/b2404884cc30e7d452d6165fdc8d8df963da4904))
+*   rename pulse to entry and exitPulse to exit ([dc79239](https://github.com/Masquerade-Circus/x-robot/commit/dc792398b66fe0a1f09f62c0779dbd0ccc3385e9))
+*   update readme ([f00734e](https://github.com/Masquerade-Circus/x-robot/commit/f00734e1a7c2dfcfdca0b0a224d70e89f59da5f6))
+*   use custom tree-adapter to import/export mcxml ([dcadc4e](https://github.com/Masquerade-Circus/x-robot/commit/dcadc4e69dae6a3e4985952bfb10755b328c6572))
 
 ## [0.3.0](https://github.com/Masquerade-Circus/x-robot/compare/0.2.0...0.3.0) (2022-07-08)
 

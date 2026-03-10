@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedTransition
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedTransition
 
 # Interface: SerializedTransition
 
@@ -10,9 +10,9 @@ Serialized transition definition
 
 ### Properties
 
-- [target](x_robot_documentate.SerializedTransition.md#target)
-- [guards](x_robot_documentate.SerializedTransition.md#guards)
-- [exit](x_robot_documentate.SerializedTransition.md#exit)
+*   [target](x_robot_documentate.SerializedTransition.md#target)
+*   [guards](x_robot_documentate.SerializedTransition.md#guards)
+*   [exit](x_robot_documentate.SerializedTransition.md#exit)
 
 ## Properties
 
@@ -22,24 +22,24 @@ Serialized transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L120)
+[lib/documentate/types.ts:120](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/types.ts#L120)
 
-___
+***
 
 ### guards
 
-• `Optional` **guards**: [`SerializedGuard`](x_robot_documentate.SerializedGuard.md)[]
+• `Optional` **guards**: [`SerializedGuard`](x_robot_documentate.SerializedGuard.md)\[]
 
 #### Defined in
 
-[lib/documentate/types.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L121)
+[lib/documentate/types.ts:121](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/types.ts#L121)
 
-___
+***
 
 ### exit
 
-• `Optional` **exit**: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+• `Optional` **exit**: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 #### Defined in
 
-[lib/documentate/types.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/types.ts#L122)
+[lib/documentate/types.ts:122](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/types.ts#L122)

@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelImmediateDirective
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelImmediateDirective
 
 # Interface: ParallelImmediateDirective
 
@@ -6,16 +6,16 @@
 
 ## Hierarchy
 
-- [`ImmediateDirective`](x_robot.ImmediateDirective.md)
+*   [`ImmediateDirective`](x_robot.ImmediateDirective.md)
 
-  ↳ **`ParallelImmediateDirective`**
+    ↳ **`ParallelImmediateDirective`**
 
 ## Table of contents
 
 ### Properties
 
-- [immediate](x_robot.ParallelImmediateDirective.md#immediate)
-- [guards](x_robot.ParallelImmediateDirective.md#guards)
+*   [immediate](x_robot.ParallelImmediateDirective.md#immediate)
+*   [guards](x_robot.ParallelImmediateDirective.md#guards)
 
 ## Properties
 
@@ -29,9 +29,9 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L42)
+[lib/machine/interfaces.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L42)
 
-___
+***
 
 ### guards
 
@@ -43,4 +43,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L43)
+[lib/machine/interfaces.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L43)

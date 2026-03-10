@@ -11,7 +11,7 @@ import {
 } from "../scripts/generate-llms-full-lib";
 
 describe("generate-llms-full", () => {
-  it("includes all markdown files under docs except docs/plans", async () => {
+  it("includes all markdown files under docs except docs/plans and docs/api", async () => {
     const tempDir = await mkdtemp(join(tmpdir(), "x-robot-llms-full-"));
 
     try {
@@ -27,8 +27,6 @@ describe("generate-llms-full", () => {
       const files = await getDocumentationMarkdownFiles(tempDir);
 
       expect(files).toEqual([
-        join(tempDir, "docs", "api", "README.md"),
-        join(tempDir, "docs", "api", "modules", "foo.md"),
         join(tempDir, "docs", "guides", "intro.md"),
       ]);
     } finally {
@@ -74,6 +72,7 @@ describe("generate-llms-full", () => {
       expect(output).toContain("===== BEGIN DOC: docs/concepts/context.md =====");
       expect(output).toContain("# Context\n\nFrozen");
       expect(output).not.toContain("docs/plans/ignored.md");
+      expect(output).not.toContain("docs/api/");
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }

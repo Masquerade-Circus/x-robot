@@ -21,6 +21,7 @@ title: Order
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -29,30 +30,30 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state fatal
-state authorizationFailure
-state voidOrRefundFailure
-state captureFailure
-state draft
-state expiredDraft
-state created
-state expired
-state waitingForStore
-state cancelledByStore
-state cancelledByClient
-state cancelledByCustomerSupport
-state changesRequestedByStore
-state changesRejectedByClient
-state changesAcceptedByClient
-state processing
-state processingCancelledByStore
-state processed
-state ready
-state readyCancelledByStore
-state waitingForDelivery
-state waitingForDeliveryCancelledByStore
-state completed
-state completedCancelledByStore
+state "fatal" as fatal
+state "authorizationFailure" as authorizationFailure
+state "voidOrRefundFailure" as voidOrRefundFailure
+state "captureFailure" as captureFailure
+state "draft" as draft
+state "expiredDraft" as expiredDraft
+state "created" as created
+state "expired" as expired
+state "waitingForStore" as waitingForStore
+state "cancelledByStore" as cancelledByStore
+state "cancelledByClient" as cancelledByClient
+state "cancelledByCustomerSupport" as cancelledByCustomerSupport
+state "changesRequestedByStore" as changesRequestedByStore
+state "changesRejectedByClient" as changesRejectedByClient
+state "changesAcceptedByClient" as changesAcceptedByClient
+state "processing" as processing
+state "processingCancelledByStore" as processingCancelledByStore
+state "processed" as processed
+state "ready" as ready
+state "readyCancelledByStore" as readyCancelledByStore
+state "waitingForDelivery" as waitingForDelivery
+state "waitingForDeliveryCancelledByStore" as waitingForDeliveryCancelledByStore
+state "completed" as completed
+state "completedCancelledByStore" as completedCancelledByStore
 class fatal danger
 class authorizationFailure danger
 class voidOrRefundFailure danger
@@ -146,7 +147,6 @@ completed --> completedCancelledByStore: cancelCompleted
 completed --> cancelledByCustomerSupport: cancelByCustomerSupport
 completedCancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
 ```
-
 ```javascript
 import {
   context,

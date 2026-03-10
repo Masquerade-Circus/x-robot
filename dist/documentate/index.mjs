@@ -1643,7 +1643,7 @@ function getAsciiTree(collection, context) {
   return stringifyTree(tree, (t) => t.name, (t) => t.children).replace(/\n/g, "\\n");
 }
 function getMermaidTreeLabel(collection, context) {
-  return getAsciiTree(collection, context).replace(/\b(AEn|En|AEx|Ex|AG|G|T):/g, "$1-");
+  return getAsciiTree(collection, context).replace(/\b(AEn|En|AEx|Ex|AG|G|T):/g, "$1-").replace(/(^|\\n)( +)/g, (_, prefix, spaces) => `${prefix}${"\xA0".repeat(spaces.length)}`);
 }
 async function createImageFromPlantUmlCode(plantUmlCode, type, options = {}) {
   const plantUmlJarPath = path.resolve(__dirname, "../../vendor/plantuml.jar");

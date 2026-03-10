@@ -64,6 +64,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -72,23 +73,22 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
 // X-Robot: Single function
 import { machine, state, transition, entry, context, init, initial } from "x-robot";
@@ -138,6 +138,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -146,23 +147,22 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
 import { machine, state, transition, entry, init, initial } from "x-robot";
 

@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedCollection
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedCollection
 
 # Interface: SerializedCollection
 
@@ -8,52 +8,52 @@ Collection of serialized pulses
 
 ## Hierarchy
 
-- [`Array`]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array )<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\>
+*   [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)>
 
-  ↳ **`SerializedCollection`**
+    ↳ **`SerializedCollection`**
 
 ## Table of contents
 
 ### Properties
 
-- [length](x_robot_documentate.SerializedCollection.md#length)
+*   [length](x_robot_documentate.SerializedCollection.md#length)
 
 ### Methods
 
-- [toString](x_robot_documentate.SerializedCollection.md#tostring)
-- [toLocaleString](x_robot_documentate.SerializedCollection.md#tolocalestring)
-- [pop](x_robot_documentate.SerializedCollection.md#pop)
-- [push](x_robot_documentate.SerializedCollection.md#push)
-- [concat](x_robot_documentate.SerializedCollection.md#concat)
-- [join](x_robot_documentate.SerializedCollection.md#join)
-- [reverse](x_robot_documentate.SerializedCollection.md#reverse)
-- [shift](x_robot_documentate.SerializedCollection.md#shift)
-- [slice](x_robot_documentate.SerializedCollection.md#slice)
-- [sort](x_robot_documentate.SerializedCollection.md#sort)
-- [splice](x_robot_documentate.SerializedCollection.md#splice)
-- [unshift](x_robot_documentate.SerializedCollection.md#unshift)
-- [indexOf](x_robot_documentate.SerializedCollection.md#indexof)
-- [lastIndexOf](x_robot_documentate.SerializedCollection.md#lastindexof)
-- [every](x_robot_documentate.SerializedCollection.md#every)
-- [some](x_robot_documentate.SerializedCollection.md#some)
-- [forEach](x_robot_documentate.SerializedCollection.md#foreach)
-- [map](x_robot_documentate.SerializedCollection.md#map)
-- [filter](x_robot_documentate.SerializedCollection.md#filter)
-- [reduce](x_robot_documentate.SerializedCollection.md#reduce)
-- [reduceRight](x_robot_documentate.SerializedCollection.md#reduceright)
-- [find](x_robot_documentate.SerializedCollection.md#find)
-- [findIndex](x_robot_documentate.SerializedCollection.md#findindex)
-- [fill](x_robot_documentate.SerializedCollection.md#fill)
-- [copyWithin](x_robot_documentate.SerializedCollection.md#copywithin)
-- [entries](x_robot_documentate.SerializedCollection.md#entries)
-- [keys](x_robot_documentate.SerializedCollection.md#keys)
-- [values](x_robot_documentate.SerializedCollection.md#values)
-- [includes](x_robot_documentate.SerializedCollection.md#includes)
-- [flatMap](x_robot_documentate.SerializedCollection.md#flatmap)
-- [flat](x_robot_documentate.SerializedCollection.md#flat)
-- [at](x_robot_documentate.SerializedCollection.md#at)
-- [[iterator]](x_robot_documentate.SerializedCollection.md#[iterator])
-- [[unscopables]](x_robot_documentate.SerializedCollection.md#[unscopables])
+*   [toString](x_robot_documentate.SerializedCollection.md#tostring)
+*   [toLocaleString](x_robot_documentate.SerializedCollection.md#tolocalestring)
+*   [pop](x_robot_documentate.SerializedCollection.md#pop)
+*   [push](x_robot_documentate.SerializedCollection.md#push)
+*   [concat](x_robot_documentate.SerializedCollection.md#concat)
+*   [join](x_robot_documentate.SerializedCollection.md#join)
+*   [reverse](x_robot_documentate.SerializedCollection.md#reverse)
+*   [shift](x_robot_documentate.SerializedCollection.md#shift)
+*   [slice](x_robot_documentate.SerializedCollection.md#slice)
+*   [sort](x_robot_documentate.SerializedCollection.md#sort)
+*   [splice](x_robot_documentate.SerializedCollection.md#splice)
+*   [unshift](x_robot_documentate.SerializedCollection.md#unshift)
+*   [indexOf](x_robot_documentate.SerializedCollection.md#indexof)
+*   [lastIndexOf](x_robot_documentate.SerializedCollection.md#lastindexof)
+*   [every](x_robot_documentate.SerializedCollection.md#every)
+*   [some](x_robot_documentate.SerializedCollection.md#some)
+*   [forEach](x_robot_documentate.SerializedCollection.md#foreach)
+*   [map](x_robot_documentate.SerializedCollection.md#map)
+*   [filter](x_robot_documentate.SerializedCollection.md#filter)
+*   [reduce](x_robot_documentate.SerializedCollection.md#reduce)
+*   [reduceRight](x_robot_documentate.SerializedCollection.md#reduceright)
+*   [find](x_robot_documentate.SerializedCollection.md#find)
+*   [findIndex](x_robot_documentate.SerializedCollection.md#findindex)
+*   [fill](x_robot_documentate.SerializedCollection.md#fill)
+*   [copyWithin](x_robot_documentate.SerializedCollection.md#copywithin)
+*   [entries](x_robot_documentate.SerializedCollection.md#entries)
+*   [keys](x_robot_documentate.SerializedCollection.md#keys)
+*   [values](x_robot_documentate.SerializedCollection.md#values)
+*   [includes](x_robot_documentate.SerializedCollection.md#includes)
+*   [flatMap](x_robot_documentate.SerializedCollection.md#flatmap)
+*   [flat](x_robot_documentate.SerializedCollection.md#flat)
+*   [at](x_robot_documentate.SerializedCollection.md#at)
+*   [\[iterator\]](x_robot_documentate.SerializedCollection.md#[iterator])
+*   [\[unscopables\]](x_robot_documentate.SerializedCollection.md#[unscopables])
 
 ## Properties
 
@@ -69,7 +69,7 @@ Array.length
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1279
+node\_modules/typescript/lib/lib.es5.d.ts:1279
 
 ## Methods
 
@@ -87,7 +87,7 @@ Returns a string representation of an array.
 
 Array.toString
 
-___
+***
 
 ### toLocaleString
 
@@ -103,24 +103,24 @@ Returns a string representation of an array. The elements are converted to strin
 
 Array.toLocaleString
 
-___
+***
 
 ### pop
 
-▸ **pop**(): `undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+▸ **pop**(): `undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 Removes the last element from an array and returns it.
 If the array is empty, undefined is returned and the array is not modified.
 
 #### Returns
 
-`undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+`undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 #### Inherited from
 
 Array.pop
 
-___
+***
 
 ### push
 
@@ -132,7 +132,7 @@ Appends new elements to the end of an array, and returns the new length of the a
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[] | New elements to add to the array. |
+| `...items` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[] | New elements to add to the array. |
 
 #### Returns
 
@@ -142,11 +142,11 @@ Appends new elements to the end of an array, and returns the new length of the a
 
 Array.push
 
-___
+***
 
 ### concat
 
-▸ **concat**(...`items`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+▸ **concat**(...`items`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 Combines two or more arrays.
 This method returns a new array without modifying any existing arrays.
@@ -155,17 +155,17 @@ This method returns a new array without modifying any existing arrays.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | `ConcatArray`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\>[] | Additional arrays and/or items to add to the end of the array. |
+| `...items` | `ConcatArray`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)>\[] | Additional arrays and/or items to add to the end of the array. |
 
 #### Returns
 
-[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 #### Inherited from
 
 Array.concat
 
-▸ **concat**(...`items`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+▸ **concat**(...`items`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 Combines two or more arrays.
 This method returns a new array without modifying any existing arrays.
@@ -174,17 +174,17 @@ This method returns a new array without modifying any existing arrays.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | ([`SerializedPulse`](x_robot_documentate.SerializedPulse.md) \| `ConcatArray`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\>)[] | Additional arrays and/or items to add to the end of the array. |
+| `...items` | ([`SerializedPulse`](x_robot_documentate.SerializedPulse.md) | `ConcatArray`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)>)\[] | Additional arrays and/or items to add to the end of the array. |
 
 #### Returns
 
-[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 #### Inherited from
 
 Array.concat
 
-___
+***
 
 ### join
 
@@ -206,45 +206,45 @@ Adds all the elements of an array into a string, separated by the specified sepa
 
 Array.join
 
-___
+***
 
 ### reverse
 
-▸ **reverse**(): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+▸ **reverse**(): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 Reverses the elements in an array in place.
 This method mutates the array and returns a reference to the same array.
 
 #### Returns
 
-[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 #### Inherited from
 
 Array.reverse
 
-___
+***
 
 ### shift
 
-▸ **shift**(): `undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+▸ **shift**(): `undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 Removes the first element from an array and returns it.
 If the array is empty, undefined is returned and the array is not modified.
 
 #### Returns
 
-`undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+`undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 #### Inherited from
 
 Array.shift
 
-___
+***
 
 ### slice
 
-▸ **slice**(`start?`, `end?`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+▸ **slice**(`start?`, `end?`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 Returns a copy of a section of an array.
 For both start and end, a negative index can be used to indicate an offset from the end of the array.
@@ -259,13 +259,13 @@ For example, -2 refers to the second to last element of the array.
 
 #### Returns
 
-[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 #### Inherited from
 
 Array.slice
 
-___
+***
 
 ### sort
 
@@ -278,7 +278,7 @@ This method mutates the array and returns a reference to the same array.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `compareFn?` | (`a`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `b`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)) => `number` | Function used to determine the order of the elements. It is expected to return  a negative value if the first argument is less than the second argument, zero if they're equal, and a positive  value otherwise. If omitted, the elements are sorted in ascending, ASCII character order.  ```ts  [11,2,22,1].sort((a, b) => a - b)  ``` |
+| `compareFn?` | (`a`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `b`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)) => `number` | Function used to determine the order of the elements. It is expected to return  a negative value if the first argument is less than the second argument, zero if they're equal, and a positive  value otherwise. If omitted, the elements are sorted in ascending, ASCII character order.  `ts  [11,2,22,1].sort((a, b) => a - b)  ` |
 
 #### Returns
 
@@ -288,11 +288,11 @@ This method mutates the array and returns a reference to the same array.
 
 Array.sort
 
-___
+***
 
 ### splice
 
-▸ **splice**(`start`, `deleteCount?`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+▸ **splice**(`start`, `deleteCount?`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
 
@@ -305,7 +305,7 @@ Removes elements from an array and, if necessary, inserts new elements in their 
 
 #### Returns
 
-[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 An array containing the elements that were deleted.
 
@@ -313,7 +313,7 @@ An array containing the elements that were deleted.
 
 Array.splice
 
-▸ **splice**(`start`, `deleteCount`, ...`items`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+▸ **splice**(`start`, `deleteCount`, ...`items`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
 
@@ -323,11 +323,11 @@ Removes elements from an array and, if necessary, inserts new elements in their 
 | :------ | :------ | :------ |
 | `start` | `number` | The zero-based location in the array from which to start removing elements. |
 | `deleteCount` | `number` | The number of elements to remove. |
-| `...items` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[] | Elements to insert into the array in place of the deleted elements. |
+| `...items` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[] | Elements to insert into the array in place of the deleted elements. |
 
 #### Returns
 
-[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 An array containing the elements that were deleted.
 
@@ -335,7 +335,7 @@ An array containing the elements that were deleted.
 
 Array.splice
 
-___
+***
 
 ### unshift
 
@@ -347,7 +347,7 @@ Inserts new elements at the start of an array, and returns the new length of the
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `...items` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[] | Elements to insert at the start of the array. |
+| `...items` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[] | Elements to insert at the start of the array. |
 
 #### Returns
 
@@ -357,7 +357,7 @@ Inserts new elements at the start of an array, and returns the new length of the
 
 Array.unshift
 
-___
+***
 
 ### indexOf
 
@@ -380,7 +380,7 @@ Returns the index of the first occurrence of a value in an array, or -1 if it is
 
 Array.indexOf
 
-___
+***
 
 ### lastIndexOf
 
@@ -403,11 +403,11 @@ Returns the index of the last occurrence of a specified value in an array, or -1
 
 Array.lastIndexOf
 
-___
+***
 
 ### every
 
-▸ **every**<`S`\>(`predicate`, `thisArg?`): this is S[]
+▸ **every**<`S`>(`predicate`, `thisArg?`): this is S\[]
 
 Determines whether all the members of an array satisfy the specified test.
 
@@ -421,12 +421,12 @@ Determines whether all the members of an array satisfy the specified test.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => value is S | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
+| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => value is S | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function.  If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
 
-this is S[]
+this is S\[]
 
 #### Inherited from
 
@@ -440,7 +440,7 @@ Determines whether all the members of an array satisfy the specified test.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `unknown` | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
+| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `unknown` | A function that accepts up to three arguments. The every method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value false, or until the end of the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function.  If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -451,7 +451,7 @@ Determines whether all the members of an array satisfy the specified test.
 
 Array.every
 
-___
+***
 
 ### some
 
@@ -463,7 +463,7 @@ Determines whether the specified callback function returns true for any element 
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `unknown` | A function that accepts up to three arguments. The some method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value true, or until the end of the array. |
+| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `unknown` | A function that accepts up to three arguments. The some method calls  the predicate function for each element in the array until the predicate returns a value  which is coercible to the Boolean value true, or until the end of the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function.  If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -474,7 +474,7 @@ Determines whether the specified callback function returns true for any element 
 
 Array.some
 
-___
+***
 
 ### forEach
 
@@ -486,7 +486,7 @@ Performs the specified action for each element in an array.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `void` | A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `void` | A function that accepts up to three arguments. forEach calls the callbackfn function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
@@ -497,11 +497,11 @@ Performs the specified action for each element in an array.
 
 Array.forEach
 
-___
+***
 
 ### map
 
-▸ **map**<`U`\>(`callbackfn`, `thisArg?`): `U`[]
+▸ **map**<`U`>(`callbackfn`, `thisArg?`): `U`\[]
 
 Calls a defined callback function on each element of an array, and returns an array that contains the results.
 
@@ -515,22 +515,22 @@ Calls a defined callback function on each element of an array, and returns an ar
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `U` | A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `U` | A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
 
-`U`[]
+`U`\[]
 
 #### Inherited from
 
 Array.map
 
-___
+***
 
 ### filter
 
-▸ **filter**<`S`\>(`predicate`, `thisArg?`): `S`[]
+▸ **filter**<`S`>(`predicate`, `thisArg?`): `S`\[]
 
 Returns the elements of an array that meet the condition specified in a callback function.
 
@@ -544,18 +544,18 @@ Returns the elements of an array that meet the condition specified in a callback
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => value is S | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
+| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => value is S | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
 
-`S`[]
+`S`\[]
 
 #### Inherited from
 
 Array.filter
 
-▸ **filter**(`predicate`, `thisArg?`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+▸ **filter**(`predicate`, `thisArg?`): [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 Returns the elements of an array that meet the condition specified in a callback function.
 
@@ -563,18 +563,18 @@ Returns the elements of an array that meet the condition specified in a callback
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `unknown` | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
+| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `unknown` | A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array. |
 | `thisArg?` | `any` | An object to which the this keyword can refer in the predicate function. If thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
 
-[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]
+[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]
 
 #### Inherited from
 
 Array.filter
 
-___
+***
 
 ### reduce
 
@@ -586,7 +586,7 @@ Calls the specified callback function for all the elements in an array. The retu
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
 
 #### Returns
 
@@ -602,7 +602,7 @@ Array.reduce
 
 | Name | Type |
 | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) |
+| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) |
 | `initialValue` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) |
 
 #### Returns
@@ -613,7 +613,7 @@ Array.reduce
 
 Array.reduce
 
-▸ **reduce**<`U`\>(`callbackfn`, `initialValue`): `U`
+▸ **reduce**<`U`>(`callbackfn`, `initialValue`): `U`
 
 Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
 
@@ -627,7 +627,7 @@ Calls the specified callback function for all the elements in an array. The retu
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `U` | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `U` | A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array. |
 | `initialValue` | `U` | If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value. |
 
 #### Returns
@@ -638,7 +638,7 @@ Calls the specified callback function for all the elements in an array. The retu
 
 Array.reduce
 
-___
+***
 
 ### reduceRight
 
@@ -650,7 +650,7 @@ Calls the specified callback function for all the elements in an array, in desce
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
 
 #### Returns
 
@@ -666,7 +666,7 @@ Array.reduceRight
 
 | Name | Type |
 | :------ | :------ |
-| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) |
+| `callbackfn` | (`previousValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) |
 | `initialValue` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md) |
 
 #### Returns
@@ -677,7 +677,7 @@ Array.reduceRight
 
 Array.reduceRight
 
-▸ **reduceRight**<`U`\>(`callbackfn`, `initialValue`): `U`
+▸ **reduceRight**<`U`>(`callbackfn`, `initialValue`): `U`
 
 Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
 
@@ -691,7 +691,7 @@ Calls the specified callback function for all the elements in an array, in desce
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `U` | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
+| `callbackfn` | (`previousValue`: `U`, `currentValue`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `currentIndex`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `U` | A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. |
 | `initialValue` | `U` | If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value. |
 
 #### Returns
@@ -702,11 +702,11 @@ Calls the specified callback function for all the elements in an array, in desce
 
 Array.reduceRight
 
-___
+***
 
 ### find
 
-▸ **find**<`S`\>(`predicate`, `thisArg?`): `undefined` \| `S`
+▸ **find**<`S`>(`predicate`, `thisArg?`): `undefined` | `S`
 
 Returns the value of the first element in the array where predicate is true, and undefined
 otherwise.
@@ -721,35 +721,35 @@ otherwise.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`this`: `void`, `value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `obj`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => value is S | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found, find  immediately returns that element value. Otherwise, find returns undefined. |
+| `predicate` | (`this`: `void`, `value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `obj`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => value is S | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found, find  immediately returns that element value. Otherwise, find returns undefined. |
 | `thisArg?` | `any` | If provided, it will be used as the this value for each invocation of  predicate. If it is not provided, undefined is used instead. |
 
 #### Returns
 
-`undefined` \| `S`
+`undefined` | `S`
 
 #### Inherited from
 
 Array.find
 
-▸ **find**(`predicate`, `thisArg?`): `undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+▸ **find**(`predicate`, `thisArg?`): `undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `obj`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `unknown` |
+| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `obj`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `unknown` |
 | `thisArg?` | `any` |
 
 #### Returns
 
-`undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+`undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 #### Inherited from
 
 Array.find
 
-___
+***
 
 ### findIndex
 
@@ -762,7 +762,7 @@ otherwise.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `obj`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `unknown` | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found,  findIndex immediately returns that element index. Otherwise, findIndex returns -1. |
+| `predicate` | (`value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `obj`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `unknown` | find calls predicate once for each element of the array, in ascending  order, until it finds one where predicate returns true. If such an element is found,  findIndex immediately returns that element index. Otherwise, findIndex returns -1. |
 | `thisArg?` | `any` | If provided, it will be used as the this value for each invocation of  predicate. If it is not provided, undefined is used instead. |
 
 #### Returns
@@ -773,7 +773,7 @@ otherwise.
 
 Array.findIndex
 
-___
+***
 
 ### fill
 
@@ -797,7 +797,7 @@ Changes all array elements from `start` to `end` index to a static `value` and r
 
 Array.fill
 
-___
+***
 
 ### copyWithin
 
@@ -822,55 +822,55 @@ to the same array starting at position target
 
 Array.copyWithin
 
-___
+***
 
 ### entries
 
-▸ **entries**(): `IterableIterator`<[`number`, [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)]\>
+▸ **entries**(): `IterableIterator`<\[`number`, [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)]>
 
 Returns an iterable of key, value pairs for every entry in the array
 
 #### Returns
 
-`IterableIterator`<[`number`, [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)]\>
+`IterableIterator`<\[`number`, [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)]>
 
 #### Inherited from
 
 Array.entries
 
-___
+***
 
 ### keys
 
-▸ **keys**(): `IterableIterator`<`number`\>
+▸ **keys**(): `IterableIterator`<`number`>
 
 Returns an iterable of keys in the array
 
 #### Returns
 
-`IterableIterator`<`number`\>
+`IterableIterator`<`number`>
 
 #### Inherited from
 
 Array.keys
 
-___
+***
 
 ### values
 
-▸ **values**(): `IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\>
+▸ **values**(): `IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)>
 
 Returns an iterable of values in the array
 
 #### Returns
 
-`IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\>
+`IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)>
 
 #### Inherited from
 
 Array.values
 
-___
+***
 
 ### includes
 
@@ -893,11 +893,11 @@ Determines whether an array includes a certain element, returning true or false 
 
 Array.includes
 
-___
+***
 
 ### flatMap
 
-▸ **flatMap**<`U`, `This`\>(`callback`, `thisArg?`): `U`[]
+▸ **flatMap**<`U`, `This`>(`callback`, `thisArg?`): `U`\[]
 
 Calls a defined callback function on each element of an array. Then, flattens the result into
 a new array.
@@ -914,22 +914,22 @@ This is identical to a map followed by flat with depth 1.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `callback` | (`this`: `This`, `value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)[]) => `U` \| readonly `U`[] | A function that accepts up to three arguments. The flatMap method calls the  callback function one time for each element in the array. |
+| `callback` | (`this`: `This`, `value`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md), `index`: `number`, `array`: [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\[]) => `U` | readonly `U`\[] | A function that accepts up to three arguments. The flatMap method calls the  callback function one time for each element in the array. |
 | `thisArg?` | `This` | An object to which the this keyword can refer in the callback function. If  thisArg is omitted, undefined is used as the this value. |
 
 #### Returns
 
-`U`[]
+`U`\[]
 
 #### Inherited from
 
 Array.flatMap
 
-___
+***
 
 ### flat
 
-▸ **flat**<`A`, `D`\>(`this`, `depth?`): `FlatArray`<`A`, `D`\>[]
+▸ **flat**<`A`, `D`>(`this`, `depth?`): `FlatArray`<`A`, `D`>\[]
 
 Returns a new array with all sub-array elements concatenated into it recursively up to the
 specified depth.
@@ -939,7 +939,7 @@ specified depth.
 | Name | Type |
 | :------ | :------ |
 | `A` | `A` |
-| `D` | extends `number` = ``1`` |
+| `D` | extends `number` = `1` |
 
 #### Parameters
 
@@ -950,17 +950,17 @@ specified depth.
 
 #### Returns
 
-`FlatArray`<`A`, `D`\>[]
+`FlatArray`<`A`, `D`>\[]
 
 #### Inherited from
 
 Array.flat
 
-___
+***
 
 ### at
 
-▸ **at**(`index`): `undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+▸ **at**(`index`): `undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 Returns the item located at the specified index.
 
@@ -972,33 +972,33 @@ Returns the item located at the specified index.
 
 #### Returns
 
-`undefined` \| [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
+`undefined` | [`SerializedPulse`](x_robot_documentate.SerializedPulse.md)
 
 #### Inherited from
 
 Array.at
 
-___
+***
 
-### [iterator]
+### \[iterator]
 
-▸ **[iterator]**(): `IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\>
+▸ **\[iterator]**(): `IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)>
 
 Iterator
 
 #### Returns
 
-`IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)\>
+`IterableIterator`<[`SerializedPulse`](x_robot_documentate.SerializedPulse.md)>
 
 #### Inherited from
 
 Array.\_\_@iterator@13
 
-___
+***
 
-### [unscopables]
+### \[unscopables]
 
-▸ **[unscopables]**(): `Object`
+▸ **\[unscopables]**(): `Object`
 
 Returns an object whose properties have the value 'true'
 when they will be absent when used in a 'with' statement.

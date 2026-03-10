@@ -41,6 +41,7 @@ title: Counter
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -49,18 +50,17 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state counting
+state "idle" as idle
+state "counting" as counting
 class idle def
 class counting def
 
-counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
+counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 
 [*] --> idle
 idle --> counting: increment
 counting --> idle: idle
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, snapshot, start } from "x-robot";
 

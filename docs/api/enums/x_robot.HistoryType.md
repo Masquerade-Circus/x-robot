@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / HistoryType
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / HistoryType
 
 # Enumeration: HistoryType
 
@@ -8,58 +8,58 @@
 
 ### Enumeration Members
 
-- [Transition](x_robot.HistoryType.md#transition)
-- [Pulse](x_robot.HistoryType.md#pulse)
-- [AsyncPulse](x_robot.HistoryType.md#asyncpulse)
-- [State](x_robot.HistoryType.md#state)
-- [Guard](x_robot.HistoryType.md#guard)
+*   [Transition](x_robot.HistoryType.md#transition)
+*   [Pulse](x_robot.HistoryType.md#pulse)
+*   [AsyncPulse](x_robot.HistoryType.md#asyncpulse)
+*   [State](x_robot.HistoryType.md#state)
+*   [Guard](x_robot.HistoryType.md#guard)
 
 ## Enumeration Members
 
 ### Transition
 
-• **Transition** = ``"Transition"``
+• **Transition** = `"Transition"`
 
 #### Defined in
 
-[lib/machine/interfaces.ts:179](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L179)
+[lib/machine/interfaces.ts:179](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L179)
 
-___
+***
 
 ### Pulse
 
-• **Pulse** = ``"Pulse"``
+• **Pulse** = `"Pulse"`
 
 #### Defined in
 
-[lib/machine/interfaces.ts:180](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L180)
+[lib/machine/interfaces.ts:180](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L180)
 
-___
+***
 
 ### AsyncPulse
 
-• **AsyncPulse** = ``"Async Pulse"``
+• **AsyncPulse** = `"Async Pulse"`
 
 #### Defined in
 
-[lib/machine/interfaces.ts:181](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L181)
+[lib/machine/interfaces.ts:181](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L181)
 
-___
+***
 
 ### State
 
-• **State** = ``"State"``
+• **State** = `"State"`
 
 #### Defined in
 
-[lib/machine/interfaces.ts:182](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L182)
+[lib/machine/interfaces.ts:182](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L182)
 
-___
+***
 
 ### Guard
 
-• **Guard** = ``"Guard"``
+• **Guard** = `"Guard"`
 
 #### Defined in
 
-[lib/machine/interfaces.ts:183](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L183)
+[lib/machine/interfaces.ts:183](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L183)

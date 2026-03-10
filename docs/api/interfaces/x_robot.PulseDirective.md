@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / PulseDirective
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / PulseDirective
 
 # Interface: PulseDirective
 
@@ -8,10 +8,10 @@
 
 ### Properties
 
-- [pulse](x_robot.PulseDirective.md#pulse)
-- [success](x_robot.PulseDirective.md#success)
-- [failure](x_robot.PulseDirective.md#failure)
-- [transition](x_robot.PulseDirective.md#transition)
+*   [pulse](x_robot.PulseDirective.md#pulse)
+*   [success](x_robot.PulseDirective.md#success)
+*   [failure](x_robot.PulseDirective.md#failure)
+*   [transition](x_robot.PulseDirective.md#transition)
 
 ## Properties
 
@@ -21,29 +21,29 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L51)
+[lib/machine/interfaces.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L51)
 
-___
+***
 
 ### success
 
-• `Optional` **success**: `string` \| [`PulseDirective`](x_robot.PulseDirective.md)
+• `Optional` **success**: `string` | [`PulseDirective`](x_robot.PulseDirective.md)
 
 #### Defined in
 
-[lib/machine/interfaces.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L52)
+[lib/machine/interfaces.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L52)
 
-___
+***
 
 ### failure
 
-• `Optional` **failure**: `string` \| [`PulseDirective`](x_robot.PulseDirective.md)
+• `Optional` **failure**: `string` | [`PulseDirective`](x_robot.PulseDirective.md)
 
 #### Defined in
 
-[lib/machine/interfaces.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L53)
+[lib/machine/interfaces.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L53)
 
-___
+***
 
 ### transition
 
@@ -51,4 +51,4 @@ ___
 
 #### Defined in
 
-[lib/machine/interfaces.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/machine/interfaces.ts#L54)
+[lib/machine/interfaces.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/machine/interfaces.ts#L54)

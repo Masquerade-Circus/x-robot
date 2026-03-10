@@ -1,4 +1,4 @@
-[x-robot - v1.0.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / imageFromPlantUmlCodeOptions
+[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / imageFromPlantUmlCodeOptions
 
 # Interface: imageFromPlantUmlCodeOptions
 
@@ -6,16 +6,16 @@
 
 ## Hierarchy
 
-- **`imageFromPlantUmlCodeOptions`**
+*   **`imageFromPlantUmlCodeOptions`**
 
-  ↳ [`imageFromMachineOptions`](x_robot_documentate_visualize.imageFromMachineOptions.md)
+    ↳ [`imageFromMachineOptions`](x_robot_documentate_visualize.imageFromMachineOptions.md)
 
 ## Table of contents
 
 ### Properties
 
-- [outDir](x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md#outdir)
-- [fileName](x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md#filename)
+*   [outDir](x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md#outdir)
+*   [fileName](x_robot_documentate_visualize.imageFromPlantUmlCodeOptions.md#filename)
 
 ## Properties
 
@@ -25,9 +25,9 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L67)
+[lib/documentate/visualize.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/visualize.ts#L67)
 
-___
+***
 
 ### fileName
 
@@ -35,4 +35,4 @@ ___
 
 #### Defined in
 
-[lib/documentate/visualize.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/4451d69/lib/documentate/visualize.ts#L68)
+[lib/documentate/visualize.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/84ba808/lib/documentate/visualize.ts#L68)

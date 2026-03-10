@@ -41,6 +41,7 @@ describe("Mermaid Export", () => {
   it("should generate mermaid code in low level format", async () => {
     const result = await documentate(getMachine(), { format: 'mermaid' });
     expect(result.mermaid).toContain("stateDiagram-v2");
+    expect(result.mermaid).toContain("direction TB");
     expect(result.mermaid).toContain("[*] --> preview");
     expect(result.mermaid).toContain("preview --> editMode: edit");
   });
@@ -48,10 +49,21 @@ describe("Mermaid Export", () => {
   it("should generate mermaid code in high level format", async () => {
     const result = await documentate(getMachine(), { format: 'mermaid', level: 'high' });
     expect(result.mermaid).toContain("title: My machine");
+    expect(result.mermaid).toContain("direction TB");
+    expect(result.mermaid).toContain('state "preview" as preview');
+    expect(result.mermaid).toContain('state "save" as save');
     expect(result.mermaid).toContain("preview: Initial state");
     expect(result.mermaid).toContain("preview: └ En-cacheTitle");
     expect(result.mermaid).toContain("editMode --> save: save<br>└ G-titleIsValid");
     expect(result.mermaid).toContain("save: └┬ AEn-saveTitle");
+  });
+
+  it("should preserve nested tree indentation in high level mermaid state labels", async () => {
+    const result = await documentate(getMachine(), { format: 'mermaid', level: 'high' });
+
+    expect(result.mermaid).toContain(
+      "save: └┬ AEn-saveTitle<br>\u2007├┬ success<br>\u2007│└ T-preview<br>\u2007└┬ failure<br>\u2007\u2007└ T-error"
+    );
   });
 
   it("should allow custom title", async () => {

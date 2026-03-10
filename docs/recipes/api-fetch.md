@@ -14,6 +14,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -22,16 +23,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: fetch
@@ -42,9 +43,17 @@ success --> idle: clear
 error --> loading: retry
 error --> idle: clear
 ```
-
 ```javascript
-import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
+import {
+  machine,
+  state,
+  transition,
+  initial,
+  init,
+  context,
+  invoke,
+  entry
+} from "x-robot";
 
 async function fetchData(ctx, params) {
   const url = params ? `/api/data?${new URLSearchParams(params)}` : "/api/data";
@@ -58,24 +67,15 @@ async function fetchData(ctx, params) {
 
 const fetchMachine = machine(
   "Fetch",
-  init(
-    initial("idle"),
-    context({ data: null, error: null, params: null })
-  ),
-  state("idle", 
-    transition("fetch", "loading")
-  ),
-  state("loading", 
-    entry(fetchData, "success", "error")
-  ),
-  state("success", 
+  init(initial("idle"), context({ data: null, error: null, params: null })),
+  state("idle", transition("fetch", "loading")),
+  state("loading", entry(fetchData, "success", "error")),
+  state(
+    "success",
     transition("refetch", "loading"),
     transition("clear", "idle")
   ),
-  state("error", 
-    transition("retry", "loading"),
-    transition("clear", "idle")
-  )
+  state("error", transition("retry", "loading"), transition("clear", "idle"))
 );
 
 // Usage
@@ -113,7 +113,7 @@ state loading
 state success
 state error
 
-loading:  
+loading:
 
 [*] --> idle
 idle --> loading: fetch
@@ -134,6 +134,7 @@ title: Fetch
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -142,19 +143,19 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state checkingCache
-state loading
-state success
-state error
+state "idle" as idle
+state "checkingCache" as checkingCache
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class checkingCache def
 class loading def
 class success def
 class error def
 
-checkingCache: └┬ En-checkCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-loading
-loading: └┬ AEn-fetchAndCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+checkingCache: └┬ En-checkCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-loading
+loading: └┬ AEn-fetchAndCache<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> checkingCache: fetch
@@ -165,7 +166,6 @@ loading --> error: error
 success --> idle: clear
 error --> loading: retry
 ```
-
 ```javascript
 function checkCache(ctx, params) {
   const nextParams = params ?? ctx.params ?? null;
@@ -173,7 +173,7 @@ function checkCache(ctx, params) {
   if (ctx.cache.has(key)) {
     ctx.params = nextParams;
     ctx.data = ctx.cache.get(key);
-    return; 
+    return;
   }
 }
 
@@ -187,7 +187,10 @@ async function fetchAndCache(ctx, params) {
 
 const fetchMachine = machine(
   "Fetch",
-  init(initial("idle"), context({ data: null, params: null, cache: new Map() })),
+  init(
+    initial("idle"),
+    context({ data: null, params: null, cache: new Map() })
+  ),
   state("idle", transition("fetch", "checkingCache")),
   state("checkingCache", entry(checkCache, "success", "loading")),
   state("loading", entry(fetchAndCache, "success", "error")),
@@ -204,6 +207,7 @@ title: List
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -212,16 +216,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state success
-state error
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
 class idle def
 class loading def
 class success def
 class error def
 
-loading: └┬ AEn-loadPage<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+loading: └┬ AEn-loadPage<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> loading: load
@@ -230,7 +234,6 @@ loading --> error: error
 success --> loading: loadMore
 error --> loading: retry
 ```
-
 ```javascript
 async function loadPage(ctx) {
   const res = await fetch(`/api/items?page=${ctx.page}`);
@@ -244,9 +247,7 @@ const listMachine = machine(
   "List",
   init(initial("idle"), context({ items: [], page: 1, hasMore: true })),
   state("idle", transition("load", "loading")),
-  state("loading", 
-    entry(loadPage, "success", "error")
-  ),
+  state("loading", entry(loadPage, "success", "error")),
   state("success", transition("loadMore", "loading")),
   state("error", transition("retry", "loading"))
 );
@@ -254,5 +255,5 @@ const listMachine = machine(
 
 ## Next Steps
 
-*   [Login Flow](./login-flow.md) — Authentication
-*   [Modal Dialog](./modal-dialog.md) — UI states
+- [Login Flow](./login-flow.md) — Authentication
+- [Modal Dialog](./modal-dialog.md) — UI states

@@ -10,6 +10,7 @@ title: Dog API
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -18,16 +19,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state loading
-state resolved
-state rejected
+state "idle" as idle
+state "loading" as loading
+state "resolved" as resolved
+state "rejected" as rejected
 class idle def
 class loading def
 class resolved def
 class rejected def
 
-loading: └┬ AEn-fetchDog<br> ├┬ success<br> │└ T-resolved<br> └┬ failure<br>  └ T-rejected
+loading: └┬ AEn-fetchDog<br> ├┬ success<br> │└ T-resolved<br> └┬ failure<br>  └ T-rejected
 
 [*] --> idle
 idle --> loading: fetch
@@ -36,7 +37,6 @@ loading --> rejected: rejected
 loading --> idle: cancel
 resolved --> idle: idle
 ```
-
 ```javascript
 import { context, entry, immediate, init, initial, invoke, machine, state, transition } from "x-robot";
 
@@ -110,6 +110,7 @@ title: Workflow
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -118,12 +119,12 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state step1
-state step2
-state step3
-state complete
-state error
+state "idle" as idle
+state "step1" as step1
+state "step2" as step2
+state "step3" as step3
+state "complete" as complete
+state "error" as error
 class idle def
 class step1 def
 class step2 def
@@ -131,9 +132,9 @@ class step3 def
 class complete def
 class error def
 
-step1: └┬ AEn-runStep1<br> ├┬ success<br> │└ T-step2<br> └┬ failure<br>  └ T-error
-step2: └┬ AEn-runStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-error
-step3: └┬ AEn-runStep3<br> ├┬ success<br> │└ T-complete<br> └┬ failure<br>  └ T-error
+step1: └┬ AEn-runStep1<br> ├┬ success<br> │└ T-step2<br> └┬ failure<br>  └ T-error
+step2: └┬ AEn-runStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-error
+step3: └┬ AEn-runStep3<br> ├┬ success<br> │└ T-complete<br> └┬ failure<br>  └ T-error
 
 [*] --> idle
 idle --> step1: start
@@ -144,7 +145,6 @@ step2 --> error: error
 step3 --> complete: complete
 step3 --> error: error
 ```
-
 ```javascript
 async function runStep1(ctx) {
   await step1(ctx);
@@ -178,6 +178,7 @@ title: Retry
 ---
 
 stateDiagram-v2
+direction TB
 
 classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
 classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
@@ -186,16 +187,16 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
-state idle
-state running
-state success
-state failed
+state "idle" as idle
+state "running" as running
+state "success" as success
+state "failed" as failed
 class idle def
 class running def
 class success def
 class failed def
 
-running: └┬ AEn-runWithRetry<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failed
+running: └┬ AEn-runWithRetry<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failed
 
 [*] --> idle
 idle --> running: start
@@ -203,7 +204,6 @@ running --> success: success
 running --> failed: failed
 failed --> running: retry
 ```
-
 ```javascript
 async function runWithRetry(ctx) {
   let attempts = 0;
