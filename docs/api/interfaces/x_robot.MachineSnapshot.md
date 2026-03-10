@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / MachineSnapshot
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / MachineSnapshot
 
 # Interface: MachineSnapshot
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[lib/machine/invoke.ts:888](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/invoke.ts#L888)
+[lib/machine/invoke.ts:888](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/invoke.ts#L888)
 
 ***
 
@@ -38,7 +38,7 @@
 
 #### Defined in
 
-[lib/machine/invoke.ts:889](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/invoke.ts#L889)
+[lib/machine/invoke.ts:889](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/invoke.ts#L889)
 
 ***
 
@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[lib/machine/invoke.ts:890](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/invoke.ts#L890)
+[lib/machine/invoke.ts:890](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/invoke.ts#L890)
 
 ***
 
@@ -58,7 +58,7 @@
 
 #### Defined in
 
-[lib/machine/invoke.ts:891](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/invoke.ts#L891)
+[lib/machine/invoke.ts:891](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/invoke.ts#L891)
 
 ***
 
@@ -68,4 +68,4 @@
 
 #### Defined in
 
-[lib/machine/invoke.ts:892](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/invoke.ts#L892)
+[lib/machine/invoke.ts:892](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/invoke.ts#L892)

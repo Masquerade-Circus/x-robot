@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ImmediateDirective
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ImmediateDirective
 
 # Interface: ImmediateDirective
 
@@ -27,7 +27,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:32](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/interfaces.ts#L32)
+[lib/machine/interfaces.ts:32](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/interfaces.ts#L32)
 
 ***
 
@@ -37,4 +37,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/interfaces.ts#L33)
+[lib/machine/interfaces.ts:33](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/interfaces.ts#L33)

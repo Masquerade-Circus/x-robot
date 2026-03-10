@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelImmediateDirective
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelImmediateDirective
 
 # Interface: ParallelImmediateDirective
 
@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/interfaces.ts#L42)
+[lib/machine/interfaces.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/interfaces.ts#L42)
 
 ***
 
@@ -43,4 +43,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/interfaces.ts#L43)
+[lib/machine/interfaces.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/interfaces.ts#L43)

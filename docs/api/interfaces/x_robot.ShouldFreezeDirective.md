@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ShouldFreezeDirective
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ShouldFreezeDirective
 
 # Interface: ShouldFreezeDirective
 
@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:171](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/interfaces.ts#L171)
+[lib/machine/interfaces.ts:171](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/interfaces.ts#L171)

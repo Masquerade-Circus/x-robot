@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedState
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedState
 
 # Interface: SerializedState
 
@@ -26,7 +26,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:100](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L100)
+[lib/documentate/types.ts:100](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L100)
 
 ***
 
@@ -36,7 +36,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:101](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L101)
+[lib/documentate/types.ts:101](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L101)
 
 ***
 
@@ -46,7 +46,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:102](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L102)
+[lib/documentate/types.ts:102](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L102)
 
 ***
 
@@ -56,7 +56,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:103](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L103)
+[lib/documentate/types.ts:103](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L103)
 
 ***
 
@@ -66,7 +66,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L104)
+[lib/documentate/types.ts:104](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L104)
 
 ***
 
@@ -76,7 +76,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L105)
+[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L105)
 
 ***
 
@@ -86,4 +86,4 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/documentate/types.ts#L106)
+[lib/documentate/types.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/documentate/types.ts#L106)

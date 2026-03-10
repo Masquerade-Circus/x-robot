@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / x-robot/documentate/serialize
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/serialize
 
 # Module: x-robot/documentate/serialize
 

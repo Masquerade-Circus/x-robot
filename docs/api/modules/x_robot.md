@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / x-robot
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / x-robot
 
 # Module: x-robot
 
@@ -701,7 +701,7 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/create.ts#L772)
+[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/create.ts#L772)
 
 ## Variables
 
@@ -711,4 +711,4 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/f19e6ca/lib/machine/interfaces.ts#L186)
+[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/machine/interfaces.ts#L186)

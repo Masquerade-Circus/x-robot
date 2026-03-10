@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot/devtools](../modules/x_robot_devtools.md) / XRobotDevtoolsFatalState
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot/devtools](../modules/x_robot_devtools.md) / XRobotDevtoolsFatalState
 
 # Interface: XRobotDevtoolsFatalState
 
@@ -21,7 +21,7 @@ Serializable fatal error metadata exposed in the devtools snapshot.
 
 #### Defined in
 
-lib/devtools/index.ts:14
+[lib/devtools/index.ts:14](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/devtools/index.ts#L14)
 
 ***
 
@@ -31,4 +31,4 @@ lib/devtools/index.ts:14
 
 #### Defined in
 
-lib/devtools/index.ts:15
+[lib/devtools/index.ts:15](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/devtools/index.ts#L15)

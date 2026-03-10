@@ -1,3 +1,17 @@
+
+
+## [1.1.0](https://github.com/Masquerade-Circus/x-robot/compare/1.0.1...1.1.0) (2026-03-10)
+
+
+### Features
+
+* add dev-tools ([1f61467](https://github.com/Masquerade-Circus/x-robot/commit/1f61467d93abd8b917f41de576811be4a77a1ad3))
+
+
+### Code Refactoring
+
+* improve mermaid code ([f19e6ca](https://github.com/Masquerade-Circus/x-robot/commit/f19e6ca0e1f4b02434a27972811b98342c7ea0a4))
+
 ### [1.0.1](https://github.com/Masquerade-Circus/x-robot/compare/1.0.0...1.0.1) (2026-03-08)
 
 ### Documentation

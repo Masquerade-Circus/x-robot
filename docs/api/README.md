@@ -1,4 +1,4 @@
-x-robot - v1.0.1 / [Modules](modules.md)
+x-robot - v1.1.0 / [Modules](modules.md)
 
 # X-Robot FSM
 

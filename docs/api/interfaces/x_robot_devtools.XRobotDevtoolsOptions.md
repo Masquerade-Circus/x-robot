@@ -1,4 +1,4 @@
-[x-robot - v1.0.1](../README.md) / [Modules](../modules.md) / [x-robot/devtools](../modules/x_robot_devtools.md) / XRobotDevtoolsOptions
+[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot/devtools](../modules/x_robot_devtools.md) / XRobotDevtoolsOptions
 
 # Interface: XRobotDevtoolsOptions
 
@@ -26,4 +26,4 @@ Name shown for this machine connection in the Redux DevTools monitor.
 
 #### Defined in
 
-lib/devtools/index.ts:8
+[lib/devtools/index.ts:8](https://github.com/Masquerade-Circus/x-robot/blob/1f61467/lib/devtools/index.ts#L8)
