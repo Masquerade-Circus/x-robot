@@ -1,14 +1,14 @@
 {
-  "name": "@x-robot/react",
+  "name": "@x-robot/vue",
   "version": "1.1.0",
-  "description": "Official React adapter for x-robot.",
+  "description": "Official Vue adapter for x-robot.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/Masquerade-Circus/x-robot.git",
-    "directory": "packages/react"
+    "directory": "packages/vue"
   },
-  "homepage": "https://github.com/Masquerade-Circus/x-robot/tree/main/packages/react",
+  "homepage": "https://github.com/Masquerade-Circus/x-robot/tree/main/packages/vue",
   "bugs": {
     "url": "https://github.com/Masquerade-Circus/x-robot/issues"
   },
@@ -33,27 +33,24 @@
   ],
   "scripts": {
     "build": "node build.mjs",
-    "test": "mocha --no-timeouts --exit --require ts-node/register --require tsconfig-paths/register --enable-source-maps tests/**/*.test.tsx",
+    "test": "mocha --no-timeouts --exit --require ts-node/register --require tsconfig-paths/register --require tests/setup.ts --enable-source-maps tests/**/*.test.ts",
     "test:smoke": "node scripts/smoke.mjs"
   },
   "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18",
+    "vue": ">=3",
     "x-robot": "*"
   },
   "keywords": [
-    "react",
+    "vue",
     "state machine",
     "fsm",
     "x-robot"
   ],
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
     "@types/mocha": "^9.1.1",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "@types/react-test-renderer": "^18.3.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-test-renderer": "^18.3.1"
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^26.0.0",
+    "vue": "^3.5.13"
   }
 }

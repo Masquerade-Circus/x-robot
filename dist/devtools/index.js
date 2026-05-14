@@ -749,13 +749,19 @@ function getBooleanStatus(payload, currentValue) {
 }
 function connectXRobot(machine, options = {}) {
   const devTools = getDevTools();
-  const name = options.name || machine.title || machine.id || "x-robot";
-  const connection = devTools ? devTools.connect({ name, ...options }) : null;
+  const { name: optionName, onSnapshot, ...devtoolsOptions } = options;
+  const name = optionName || machine.title || machine.id || "x-robot";
+  const connection = devTools ? devTools.connect({ name, ...devtoolsOptions }) : null;
   const initialSnapshot = getXRobotDevtoolsState(machine);
   let isRecordingPaused = false;
   let isChangesLocked = false;
   let unsubscribeListener;
   let isDisconnected = false;
+  function emitSnapshot() {
+    if (onSnapshot) {
+      onSnapshot(getXRobotDevtoolsState(machine));
+    }
+  }
   if (connection) {
     connection.init(initialSnapshot);
   }
@@ -766,6 +772,7 @@ function connectXRobot(machine, options = {}) {
       }
       if (message.payload.type === "JUMP_TO_STATE" || message.payload.type === "JUMP_TO_ACTION") {
         restoreMachineFromDevtoolsState(machine, message.state);
+        emitSnapshot();
         return;
       }
       if (message.payload.type === "COMMIT") {
@@ -775,11 +782,13 @@ function connectXRobot(machine, options = {}) {
       if (message.payload.type === "RESET") {
         restoreMachineFromDevtoolsState(machine, initialSnapshot);
         connection.init(getXRobotDevtoolsState(machine));
+        emitSnapshot();
         return;
       }
       if (message.payload.type === "ROLLBACK") {
         restoreMachineFromDevtoolsState(machine, message.state);
         connection.init(getXRobotDevtoolsState(machine));
+        emitSnapshot();
         return;
       }
       if (message.payload.type === "PAUSE_RECORDING") {
@@ -797,6 +806,7 @@ function connectXRobot(machine, options = {}) {
         const selectedState = typeof currentStateIndex === "number" && computedStates?.[currentStateIndex] ? computedStates[currentStateIndex].state : computedStates?.[computedStates.length - 1]?.state;
         restoreMachineFromDevtoolsState(machine, selectedState);
         connection.send(null, nextLiftedState);
+        emitSnapshot();
       }
     });
   }

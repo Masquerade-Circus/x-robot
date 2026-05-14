@@ -9,6 +9,10 @@ export interface XRobotDevtoolsOptions {
   [key: string]: any;
 }
 
+interface InternalXRobotDevtoolsOptions extends XRobotDevtoolsOptions {
+  onSnapshot?(state: XRobotDevtoolsState): void;
+}
+
 /** Serializable fatal error metadata exposed in the devtools snapshot. */
 export interface XRobotDevtoolsFatalState {
   name: string;
@@ -149,13 +153,20 @@ export function connectXRobot(
   options: XRobotDevtoolsOptions = {}
 ): XRobotDevtoolsConnection {
   const devTools = getDevTools();
-  const name = options.name || machine.title || machine.id || "x-robot";
-  const connection = devTools ? devTools.connect({ name, ...options }) : null;
+  const { name: optionName, onSnapshot, ...devtoolsOptions } = options as InternalXRobotDevtoolsOptions;
+  const name = optionName || machine.title || machine.id || "x-robot";
+  const connection = devTools ? devTools.connect({ name, ...devtoolsOptions }) : null;
   const initialSnapshot = getXRobotDevtoolsState(machine);
   let isRecordingPaused = false;
   let isChangesLocked = false;
   let unsubscribeListener: (() => void) | undefined;
   let isDisconnected = false;
+
+  function emitSnapshot(): void {
+    if (onSnapshot) {
+      onSnapshot(getXRobotDevtoolsState(machine));
+    }
+  }
 
   if (connection) {
     connection.init(initialSnapshot);
@@ -172,6 +183,7 @@ export function connectXRobot(
         message.payload.type === "JUMP_TO_ACTION"
       ) {
         restoreMachineFromDevtoolsState(machine, message.state);
+        emitSnapshot();
         return;
       }
 
@@ -183,12 +195,14 @@ export function connectXRobot(
       if (message.payload.type === "RESET") {
         restoreMachineFromDevtoolsState(machine, initialSnapshot);
         connection.init(getXRobotDevtoolsState(machine));
+        emitSnapshot();
         return;
       }
 
       if (message.payload.type === "ROLLBACK") {
         restoreMachineFromDevtoolsState(machine, message.state);
         connection.init(getXRobotDevtoolsState(machine));
+        emitSnapshot();
         return;
       }
 
@@ -213,6 +227,7 @@ export function connectXRobot(
 
         restoreMachineFromDevtoolsState(machine, selectedState);
         connection.send(null, nextLiftedState);
+        emitSnapshot();
       }
     });
   }

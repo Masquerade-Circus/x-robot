@@ -56,11 +56,17 @@ bun add x-robot
 
 ## Framework Adapters
 
-The first official framework adapter is `@x-robot/react`.
+Official framework adapters:
 
-*   React hook: `useMachine(machine, options?)`
-*   v1 contract: rerenders are guaranteed only for the wrapper methods returned by the hook
-*   Important caveat: direct external `invoke(machine, ...)` calls are not tracked for React rerenders in v1
+*   `@x-robot/react` - React hook: `useMachine(machine, options?)`
+*   `@x-robot/vue` - Vue composable: `useMachine(machine, options?)`
+*   v1 contract: framework updates are guaranteed only for the wrapper methods returned by the adapter (`start`, `invoke`, `invokeAfter`)
+*   Important caveat: direct external `invoke(machine, ...)` calls are not tracked in v1
+
+Adapter docs:
+
+*   React: `packages/react/README.md`
+*   Vue: `packages/vue/README.md`
 
 ## Key Features
 
@@ -114,7 +120,7 @@ See `docs/guides/devtools.md` for setup, supported monitor actions, production e
 
 ## Documentation
 
-`docs/guides/getting-started.md` · `docs/guides/devtools.md` · `docs/guides/publishing-adapters.md` · `packages/react/README.md` · `docs/concepts/` · `docs/api/` · `docs/recipes/` · `docs/performance.md`
+`docs/guides/getting-started.md` · `docs/guides/devtools.md` · `docs/guides/publishing-adapters.md` · `packages/react/README.md` · `packages/vue/README.md` · `docs/concepts/` · `docs/api/` · `docs/recipes/` · `docs/performance.md`
 
 ## License
 

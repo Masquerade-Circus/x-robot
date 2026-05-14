@@ -19,6 +19,19 @@ class green def
 class yellow def
 class red def
 
+state red {
+  state "wait" as RedStopwalkWait
+  state "walk" as RedStopwalkWalk
+
+
+  [*] --> RedStopwalkWait
+  RedStopwalkWait --> RedStopwalkWalk: start
+  RedStopwalkWalk --> RedStopwalkWait: stop
+}
+
+note right of red
+  └ T-stopwalk.start
+end note
 
 [*] --> green
 green --> yellow: next

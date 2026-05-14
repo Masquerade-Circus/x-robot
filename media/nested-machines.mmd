@@ -17,6 +17,18 @@ state "step2" as step2
 class step1 def
 class step2 def
 
+state step1 {
+  state "pending" as Step1OrderPending
+  state "confirmed" as Step1OrderConfirmed
+
+
+  [*] --> Step1OrderPending
+  Step1OrderPending --> Step1OrderConfirmed: confirm
+}
+
+note right of step1
+  └ T-order.confirm
+end note
 
 [*] --> step1
 step1 --> step2: skip

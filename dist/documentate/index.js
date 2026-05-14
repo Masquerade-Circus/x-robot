@@ -1707,6 +1707,7 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
   let mermaidCode = "";
   let { level } = options;
   const isChild = childLevel > 0;
+  const cammelCasedTitle = `${parentName}${toCammelCase2(serializedMachine.title || "")}`;
   const space = Array.from({ length: childLevel }).map(() => "  ").join("");
   if (!isChild) {
     mermaidCode += `${getMermaidClassDefinitions().join("\n")}
@@ -1716,45 +1717,120 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
   const stateNames = {};
   const stateTypes = {};
   for (const stateName in serializedMachine.states) {
-    stateNames[stateName] = isChild ? `${parentName}${stateName}` : stateName;
+    stateNames[stateName] = isChild ? `${cammelCasedTitle}${toCammelCase2(stateName)}` : stateName;
     stateTypes[stateName] = resolveStateStyleRole(serializedMachine.states[stateName].type);
   }
   for (const stateName in serializedMachine.states) {
     const state = serializedMachine.states[stateName];
     const stateId = stateNames[stateName];
-    mermaidCode += `state "${escapeMermaidLabel(stateName)}" as ${stateId}
+    mermaidCode += `${space}state "${escapeMermaidLabel(stateName)}" as ${stateId}
 `;
   }
   if (!isChild) {
     for (const stateName in serializedMachine.states) {
       const stateId = stateNames[stateName];
       const stateType = stateTypes[stateName];
-      mermaidCode += `class ${stateId} ${getMermaidStateClassName(stateType)}
+      mermaidCode += `${space}class ${stateId} ${getMermaidStateClassName(stateType)}
 `;
     }
+  }
+  if (Object.keys(serializedMachine.states).length > 0) {
     mermaidCode += "\n";
+  }
+  let nestedMachines = "";
+  for (const stateName in serializedMachine.states) {
+    const state = serializedMachine.states[stateName];
+    const stateId = stateNames[stateName];
+    if (state.nested) {
+      nestedMachines += `${space}state ${stateId} {
+`;
+      for (let nestedMachine of state.nested) {
+        nestedMachines += getInnerMermaidCode(nestedMachine.machine, options, toCammelCase2(stateId), childLevel + 1);
+        nestedMachines += `${space}  --
+`;
+      }
+      nestedMachines = nestedMachines.replace(/\s+--\n$/, "\n") + `${space}}
+`;
+    }
+  }
+  if (nestedMachines.trim().length > 0) {
+    mermaidCode += `${nestedMachines}
+`;
+  }
+  if (Object.keys(serializedMachine.parallel).length > 0) {
+    const parallelStateId = `${cammelCasedTitle}ParallelStates`;
+    mermaidCode += `${space}state "Parallel states" as ${parallelStateId}
+`;
+    mermaidCode += `${space}state ${parallelStateId} {
+`;
+    for (const parallel in serializedMachine.parallel) {
+      mermaidCode += getInnerMermaidCode(serializedMachine.parallel[parallel], options, cammelCasedTitle, childLevel + 1);
+      mermaidCode += `${space}  --
+`;
+    }
+    mermaidCode = mermaidCode.replace(/\s+--\n$/, "\n") + `${space}}
+
+`;
   }
   if (level === "high") {
     for (const stateName in serializedMachine.states) {
       const state = serializedMachine.states[stateName];
       const stateId = stateNames[stateName];
+      const noteLines = [];
       if (state.description) {
-        mermaidCode += `${stateId}: ${state.description}
-`;
-      }
-      if (state.run && state.run.length > 0) {
-        let asciiTree = getMermaidTreeLabel(state.run, "entry");
-        if (asciiTree.length > 0) {
-          asciiTree = asciiTree.replace(/\\n/g, "<br>");
-          mermaidCode += `${stateId}: ${asciiTree}
+        if (state.nested) {
+          noteLines.push(state.description);
+        } else {
+          mermaidCode += `${space}${stateId}: ${state.description}
 `;
         }
+      }
+      const run = [];
+      if (state.nested) {
+        for (let nestedMachine of state.nested) {
+          if (nestedMachine.transition) {
+            run.push({
+              ...nestedMachine,
+              transition: `${titleToId(nestedMachine.machine.title || "")}.${nestedMachine.transition}`
+            });
+          }
+        }
+      }
+      run.push(...state.run || []);
+      if (state.immediate && state.immediate.length > 0) {
+        for (let immediate of state.immediate) {
+          if (isNestedTransition(immediate.immediate) || isParallelTransition(immediate.immediate)) {
+            run.push(immediate);
+          }
+        }
+      }
+      if (run.length > 0) {
+        let asciiTree = getMermaidTreeLabel(run, "entry");
+        if (asciiTree.length > 0) {
+          if (state.nested) {
+            noteLines.push(...asciiTree.split("\\n"));
+          } else {
+            asciiTree = asciiTree.replace(/\\n/g, "<br>");
+            mermaidCode += `${space}${stateId}: ${asciiTree}
+`;
+          }
+        }
+      }
+      if (noteLines.length > 0) {
+        mermaidCode += `${space}note right of ${stateId}
+`;
+        for (const line of noteLines) {
+          mermaidCode += `${space}  ${line}
+`;
+        }
+        mermaidCode += `${space}end note
+`;
       }
     }
     mermaidCode += "\n";
   }
-  if (serializedMachine.initial && !isChild) {
-    mermaidCode += `[*] --> ${stateNames[serializedMachine.initial] || serializedMachine.initial}
+  if (serializedMachine.initial) {
+    mermaidCode += `${space}[*] --> ${stateNames[serializedMachine.initial] || serializedMachine.initial}
 `;
   }
   for (const stateName in serializedMachine.states) {
@@ -1765,14 +1841,22 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
         const transition = state.on[event];
         const toState = stateNames[transition.target] || transition.target;
         let label = event;
-        if (level === "high" && transition.guards && transition.guards.length > 0) {
-          let guardsTree = getMermaidTreeLabel(transition.guards, "guard");
-          if (guardsTree.length > 0) {
-            guardsTree = guardsTree.replace(/\\n/g, "<br>");
-            label += `<br>${guardsTree}`;
+        if (level === "high") {
+          if (transition.guards && transition.guards.length > 0) {
+            let guardsTree = getMermaidTreeLabel(transition.guards, "guard");
+            if (guardsTree.length > 0) {
+              guardsTree = guardsTree.replace(/\\n/g, "<br>");
+              label += `<br>${guardsTree}`;
+            }
+          }
+          if (transition.exit && transition.exit.length > 0) {
+            const exitNames = transition.exit.map((exitPulse) => exitPulse.pulse).join(", ");
+            if (exitNames.length > 0) {
+              label += `<br>[exit: ${exitNames}]`;
+            }
           }
         }
-        mermaidCode += `${fromState} --> ${toState}: ${label}
+        mermaidCode += `${space}${fromState} --> ${toState}: ${label}
 `;
       }
     }

@@ -21,6 +21,40 @@ class step2 def
 class step3 def
 class complete def
 
+state step1 {
+  state "pending" as Step1Step1Pending
+  state "completed" as Step1Step1Completed
+
+
+  [*] --> Step1Step1Pending
+  Step1Step1Pending --> Step1Step1Completed: next
+}
+state step2 {
+  state "pending" as Step2Step2Pending
+  state "completed" as Step2Step2Completed
+
+
+  [*] --> Step2Step2Pending
+  Step2Step2Pending --> Step2Step2Completed: next
+}
+state step3 {
+  state "pending" as Step3Step3Pending
+  state "completed" as Step3Step3Completed
+
+
+  [*] --> Step3Step3Pending
+  Step3Step3Pending --> Step3Step3Completed: next
+}
+
+note right of step1
+  └ T-step1.next
+end note
+note right of step2
+  └ T-step2.next
+end note
+note right of step3
+  └ T-step3.next
+end note
 complete: └ En-log
 
 [*] --> step1

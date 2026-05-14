@@ -232,6 +232,52 @@ describe("connectXRobot", () => {
     expect(myMachine.history).toEqual(["State: idle"]);
   });
 
+  it("notifies internal snapshot listeners when Redux DevTools restores state", () => {
+    const fakeConnection = createFakeDevToolsConnection();
+    const snapshots: any[] = [];
+
+    (globalThis as any).window = {
+      __REDUX_DEVTOOLS_EXTENSION__: {
+        connect() {
+          return fakeConnection;
+        }
+      }
+    };
+
+    const myMachine = machine(
+      "Checkout",
+      init(initial("idle"), context({ step: 1 })),
+      state("idle", transition("submit", "done")),
+      state("done")
+    );
+
+    const connected = connectXRobot(myMachine, {
+      name: "Checkout",
+      onSnapshot(snapshot: any) {
+        snapshots.push(snapshot);
+      }
+    });
+
+    connected.invoke("submit");
+
+    fakeConnection.dispatch({
+      type: "DISPATCH",
+      payload: { type: "JUMP_TO_STATE" },
+      state: JSON.stringify({
+        ...connected.snapshot(),
+        current: "idle",
+        context: { step: 99 },
+        history: ["State: idle"]
+      })
+    });
+
+    expect(snapshots).toHaveLength(1);
+    expect(snapshots[0]).toMatchObject({
+      current: "idle",
+      context: { step: 99 }
+    });
+  });
+
   it("imports the latest lifted state from Redux DevTools", () => {
     const fakeConnection = createFakeDevToolsConnection();
 
