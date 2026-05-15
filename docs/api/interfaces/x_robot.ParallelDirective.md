@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelDirective
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / ParallelDirective
 
 # Interface: ParallelDirective
 
@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/machine/interfaces.ts#L134)
+[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/interfaces.ts#L134)

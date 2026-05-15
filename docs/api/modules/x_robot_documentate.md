@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / x-robot/documentate
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / x-robot/documentate
 
 # Module: x-robot/documentate
 
@@ -95,13 +95,13 @@ Promise with the generated documentation/converted output
 
 ### OutputFormat
 
-Ƭ **OutputFormat**: `"ts"` | `"mjs"` | `"cjs"` | `"json"` | `"scxml"` | `"plantuml"` | `"mermaid"` | `"svg"` | `"png"` | `"serialized"` | `"all"`
+Ƭ **OutputFormat**: `"ts"` | `"mjs"` | `"cjs"` | `"json"` | `"scxml"` | `"plantuml"` | `"mermaid"` | `"mermaid-sequence"` | `"plantuml-sequence"` | `"mermaid-pulses"` | `"plantuml-pulses"` | `"mermaid-events"` | `"plantuml-events"` | `"mermaid-outcomes"` | `"plantuml-outcomes"` | `"mermaid-immediate"` | `"plantuml-immediate"` | `"mermaid-guards"` | `"plantuml-guards"` | `"mermaid-composition"` | `"plantuml-composition"` | `"mermaid-complexity"` | `"plantuml-complexity"` | `"svg"` | `"png"` | `"svg-sequence"` | `"png-sequence"` | `"svg-pulses"` | `"png-pulses"` | `"svg-events"` | `"png-events"` | `"svg-outcomes"` | `"png-outcomes"` | `"svg-immediate"` | `"png-immediate"` | `"svg-guards"` | `"png-guards"` | `"svg-composition"` | `"png-composition"` | `"svg-complexity"` | `"png-complexity"` | `"serialized"` | `"all"`
 
 Output format options for documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L11)
+[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L11)
 
 ***
 
@@ -113,4 +113,4 @@ Input types accepted by the documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L73)
+[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L105)

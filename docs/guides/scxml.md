@@ -66,6 +66,7 @@ class done def
 idle --> loading: start
 loading --> done: success
 ```
+
 ```javascript
 import { machine, state, transition, initial, init } from "x-robot";
 import { documentate } from "x-robot/documentate";

@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot/validate](../modules/x_robot_validate.md) / Ok
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/validate](../modules/x_robot_validate.md) / Ok
 
 # Class: Ok\<T, E>
 
@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[lib/validate/result.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/validate/result.ts#L10)
+[lib/validate/result.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/validate/result.ts#L10)
 
 ## Methods
 

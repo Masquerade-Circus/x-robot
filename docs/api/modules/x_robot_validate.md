@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / x-robot/validate
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / x-robot/validate
 
 # Module: x-robot/validate
 
@@ -132,7 +132,7 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/validate/result.ts#L5)
+[lib/validate/result.ts:5](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/validate/result.ts#L5)
 
 ***
 
@@ -149,4 +149,4 @@ Void if the machine is valid, throws an error otherwise
 
 #### Defined in
 
-[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/validate/result.ts#L7)
+[lib/validate/result.ts:7](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/validate/result.ts#L7)

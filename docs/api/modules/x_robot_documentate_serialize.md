@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/serialize
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/serialize
 
 # Module: x-robot/documentate/serialize
 
@@ -8,11 +8,28 @@ Serializes a machine to a JSON object
 
 ## Table of contents
 
-### Serialization Functions
+### Functions
 
+*   [getSerializedMachineIdentity](x_robot_documentate_serialize.md#getserializedmachineidentity)
 *   [serialize](x_robot_documentate_serialize.md#serialize)
 
-## Serialization Functions
+## Functions
+
+### getSerializedMachineIdentity
+
+▸ **getSerializedMachineIdentity**(`machine`): `string` | `undefined`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `machine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string` | `undefined`
+
+***
 
 ### serialize
 
@@ -20,12 +37,10 @@ Serializes a machine to a JSON object
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) | The machine to serialize |
+| Name | Type |
+| :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) |
 
 #### Returns
 
 [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md)
-
-SerializedMachine

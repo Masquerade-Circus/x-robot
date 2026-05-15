@@ -28,6 +28,7 @@ class step2 def
 [*] --> step1
 step1 --> step2: next<br>└ G-canProceed
 ```
+
 ```javascript
 import { guard, init, initial, machine, state, transition } from "x-robot";
 
@@ -94,6 +95,7 @@ checked --> submitting: submitting<br>└ G-checkFormErrors
 checked --> invalid: invalid
 invalid --> idle: retry
 ```
+
 ```javascript
 function validateEmail(ctx, email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -160,6 +162,7 @@ class preview def
 locked --> dashboard: enter<br>└ G-isAdmin
 public --> preview: enter<br>└ G-isLoggedIn
 ```
+
 ```javascript
 function isAdmin(ctx) {
   return ctx.user?.role === "admin";

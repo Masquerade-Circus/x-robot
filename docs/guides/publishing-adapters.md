@@ -10,9 +10,9 @@ Each official adapter should be publishable as its own package while still fitti
 
 For users, the rule should stay simple:
 
-- install the core package: `x-robot`
-- install the framework adapter they need
-- do not install private monorepo helpers
+*   install the core package: `x-robot`
+*   install the framework adapter they need
+*   do not install private monorepo helpers
 
 ## Package Boundary
 
@@ -20,17 +20,17 @@ The public adapter package should expose only its own framework-facing API.
 
 For example, `@x-robot/react` publishes `useMachine()` and depends on these public peers:
 
-- `react`
-- `react-dom`
-- `x-robot`
+*   `react`
+*   `react-dom`
+*   `x-robot`
 
 Do not publish monorepo-internal helpers such as `@x-robot/shared` unless you intentionally want to support them as public semver contracts.
 
 Current policy:
 
-- `@x-robot/shared` stays private
-- each published adapter may reuse shared code internally during development
-- the published package must not require users to install private helpers
+*   `@x-robot/shared` stays private
+*   each published adapter may reuse shared code internally during development
+*   the published package must not require users to install private helpers
 
 ## Publish Checklist
 
@@ -38,20 +38,20 @@ Before publishing any adapter, verify all of the following:
 
 ### Package Manifest
 
-- no `private: true`
-- `main`, `module`, `types`, and `exports` point to `dist/`
-- no `file:` dependencies
-- no workspace-only dependency on private packages
-- `peerDependencies` list only public runtime peers
-- package metadata exists: `license`, `repository`, `homepage`, `bugs`, `keywords`
+*   no `private: true`
+*   `main`, `module`, `types`, and `exports` point to `dist/`
+*   no `file:` dependencies
+*   no workspace-only dependency on private packages
+*   `peerDependencies` list only public runtime peers
+*   package metadata exists: `license`, `repository`, `homepage`, `bugs`, `keywords`
 
 ### Build Output
 
 Each package should emit at least:
 
-- `dist/index.js`
-- `dist/index.mjs`
-- `dist/index.d.ts`
+*   `dist/index.js`
+*   `dist/index.mjs`
+*   `dist/index.d.ts`
 
 If the package has internal declaration files needed by the public entrypoint, they may live under `dist/internal/`.
 
@@ -116,27 +116,27 @@ When the core package changes, evaluate every official adapter with this checkli
 
 Use this path when the core change does not affect the adapter contract:
 
-1. Run the adapter build
-2. Run adapter tests
-3. Run smoke test
-4. Update docs only if behavior changed
+1.  Run the adapter build
+2.  Run adapter tests
+3.  Run smoke test
+4.  Update docs only if behavior changed
 
 ### Contract Update
 
 Use this path when the core change affects adapter behavior or types:
 
-1. update the adapter implementation
-2. update package tests
-3. update smoke test
-4. update package README
-5. update publishability checks if manifest/build shape changed
+1.  update the adapter implementation
+2.  update package tests
+3.  update smoke test
+4.  update package README
+5.  update publishability checks if manifest/build shape changed
 
 Examples of contract-affecting changes:
 
-- new machine snapshot shape
-- changed `start()` / `invoke()` behavior
-- new devtools integration path
-- changed cleanup or lifecycle expectations
+*   new machine snapshot shape
+*   changed `start()` / `invoke()` behavior
+*   new devtools integration path
+*   changed cleanup or lifecycle expectations
 
 ## Maintenance Rules for Future Adapters
 
@@ -144,10 +144,10 @@ Every official adapter should follow the same baseline rules:
 
 ### API Shape
 
-- keep the framework API small
-- preserve the X-Robot mental model
-- expose cleanup explicitly
-- document the exact reactivity contract
+*   keep the framework API small
+*   preserve the X-Robot mental model
+*   expose cleanup explicitly
+*   document the exact reactivity contract
 
 ### Reactivity Contract
 
@@ -159,18 +159,18 @@ Do not imply global observation unless the runtime truly supports it.
 
 Use shared code carefully:
 
-- private monorepo sharing is fine
-- public dependency surface should stay minimal
-- if a helper is not meant to be versioned publicly, do not make users install it
+*   private monorepo sharing is fine
+*   public dependency surface should stay minimal
+*   if a helper is not meant to be versioned publicly, do not make users install it
 
 ### Testing
 
 Each adapter should have:
 
-- package-local unit/integration tests
-- at least one realistic example
-- one smoke fixture that exercises the published entrypoint
-- one manifest/publishability assertion test
+*   package-local unit/integration tests
+*   at least one realistic example
+*   one smoke fixture that exercises the published entrypoint
+*   one manifest/publishability assertion test
 
 ## Versioning
 
@@ -178,8 +178,8 @@ At the beginning, keep adapter versions aligned with the core package unless the
 
 That makes support simpler:
 
-- `x-robot@1.1.0`
-- `@x-robot/react@1.1.0`
+*   `x-robot@1.1.0`
+*   `@x-robot/react@1.1.0`
 
 If adapters eventually evolve at different speeds, you can split versioning later, but aligned versioning is easier while the ecosystem is still taking shape.
 
@@ -187,13 +187,13 @@ If adapters eventually evolve at different speeds, you can split versioning late
 
 Every published adapter should ship with:
 
-- package README for external users
-- install command
-- peer dependency list
-- basic example
-- clear reactivity limitations
-- cleanup guidance
-- devtools note if applicable
+*   package README for external users
+*   install command
+*   peer dependency list
+*   basic example
+*   clear reactivity limitations
+*   cleanup guidance
+*   devtools note if applicable
 
 The root docs should also link to the adapter once it is official.
 
@@ -201,13 +201,13 @@ The root docs should also link to the adapter once it is official.
 
 For an adapter release, use this order:
 
-1. build core if needed
-2. build adapter
-3. run adapter tests
-4. run smoke test
-5. run publishability assertions
-6. pack the tarball
-7. only then publish
+1.  build core if needed
+2.  build adapter
+3.  run adapter tests
+4.  run smoke test
+5.  run publishability assertions
+6.  pack the tarball
+7.  only then publish
 
 In command form:
 
@@ -224,9 +224,9 @@ npm pack --workspace <adapter-package>
 
 This guide does not require:
 
-- publishing private helper packages
-- solving global runtime observation first
-- making all framework adapters at once
-- SSR-specific behavior before the basic package is stable
+*   publishing private helper packages
+*   solving global runtime observation first
+*   making all framework adapters at once
+*   SSR-specific behavior before the basic package is stable
 
 Ship one adapter well, then repeat the pattern.

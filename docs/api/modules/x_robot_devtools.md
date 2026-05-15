@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / x-robot/devtools
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / x-robot/devtools
 
 # Module: x-robot/devtools
 

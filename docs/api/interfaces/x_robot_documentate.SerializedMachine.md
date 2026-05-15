@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedMachine
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedMachine
 
 # Interface: SerializedMachine
 
@@ -24,7 +24,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:82](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L82)
+[lib/documentate/types.ts:114](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L114)
 
 ***
 
@@ -34,7 +34,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:83](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L83)
+[lib/documentate/types.ts:115](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L115)
 
 ***
 
@@ -44,7 +44,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:84](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L84)
+[lib/documentate/types.ts:116](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L116)
 
 ***
 
@@ -54,7 +54,7 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:85](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L85)
+[lib/documentate/types.ts:117](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L117)
 
 ***
 
@@ -64,4 +64,4 @@ Serialized representation of a machine
 
 #### Defined in
 
-[lib/documentate/types.ts:86](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/types.ts#L86)
+[lib/documentate/types.ts:118](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L118)

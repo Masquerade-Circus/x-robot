@@ -1,6 +1,6 @@
 {
   "name": "x-robot",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "X-Robot is a finite state machine library for nodejs and for the web.",
   "source": "lib/index.ts",
   "main": "dist/index.min.js",

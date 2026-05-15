@@ -6,9 +6,9 @@ Generate visual diagrams from your machines using `documentate()`. X-Robot can g
 
 Use the format that matches the question you want to answer:
 
-- `mermaid` and `plantuml`: state diagrams that show states and transitions.
-- `mermaid-sequence` and `plantuml-sequence`: sequence diagrams that show structural interactions between the root machine, nested machines, and parallel machines. Use `svg-sequence` or `png-sequence` for PlantUML sequence image files.
-- Additional structural maps: pulse, event, outcome, immediate, guard, composition, and complexity diagrams.
+*   `mermaid` and `plantuml`: state diagrams that show states and transitions.
+*   `mermaid-sequence` and `plantuml-sequence`: sequence diagrams that show structural interactions between the root machine, nested machines, and parallel machines. Use `svg-sequence` or `png-sequence` for PlantUML sequence image files.
+*   Additional structural maps: pulse, event, outcome, immediate, guard, composition, and complexity diagrams.
 
 ## Basic Usage
 
@@ -51,8 +51,8 @@ const { svg } = await documentate(myMachine, {
 
 ### level
 
-- `"low"`: Basic state diagram
-- `"high"` (default): Detailed diagram with all transitions, guards, and actions
+*   `"low"`: Basic state diagram
+*   `"high"` (default): Detailed diagram with all transitions, guards, and actions
 
 ### skinparam
 
@@ -160,8 +160,8 @@ console.log(result.mermaid); // starts with sequenceDiagram
 
 The result uses the same `mermaid` field as the regular Mermaid state-diagram format. Choose the format explicitly:
 
-- `format: "mermaid"` returns a Mermaid state diagram.
-- `format: "mermaid-sequence"` returns a Mermaid sequence diagram.
+*   `format: "mermaid"` returns a Mermaid state diagram.
+*   `format: "mermaid-sequence"` returns a Mermaid sequence diagram.
 
 ### PlantUML Sequence Diagrams
 
@@ -177,16 +177,16 @@ console.log(result.plantuml); // PlantUML sequence diagram code
 
 The result uses the same `plantuml` field as the regular PlantUML state-diagram format. Choose the format explicitly:
 
-- `format: "plantuml"` returns a PlantUML state diagram.
-- `format: "plantuml-sequence"` returns a PlantUML sequence diagram.
+*   `format: "plantuml"` returns a PlantUML state diagram.
+*   `format: "plantuml-sequence"` returns a PlantUML sequence diagram.
 
 ### What gets included
 
 Sequence diagrams include participants for:
 
-- the root machine,
-- nested machines,
-- parallel machines.
+*   the root machine,
+*   nested machines,
+*   parallel machines.
 
 Participant labels use the machine `title` when available. If a machine has no title, X-Robot uses stable default labels so generated diagrams stay readable across runs.
 
@@ -357,9 +357,9 @@ const orderWorkflow = machine(
 
 #### State view
 
-- **Objective:** Review the complete state graph and the transitions that can move the workflow forward, sideways, or into failures.
-- **Shows:** Root states, typed state styling, nested `Payment` states inside `processing`, the parallel `Fulfillment` machine, guards, entry pulses, exit pulses, and automatic transitions.
-- **Useful developer detail:** Use it to spot unreachable-looking states, overloaded states, missing failure paths, and whether nested/parallel work is visible where reviewers expect it.
+*   **Objective:** Review the complete state graph and the transitions that can move the workflow forward, sideways, or into failures.
+*   **Shows:** Root states, typed state styling, nested `Payment` states inside `processing`, the parallel `Fulfillment` machine, guards, entry pulses, exit pulses, and automatic transitions.
+*   **Useful developer detail:** Use it to spot unreachable-looking states, overloaded states, missing failure paths, and whether nested/parallel work is visible where reviewers expect it.
 
 <details>
 <summary>Mermaid output: <code>mermaid</code></summary>
@@ -572,9 +572,9 @@ skinparam state {
 
 #### Sequence view
 
-- **Objective:** Explain how the root machine relates to child machines without reading every state box in the state diagram.
-- **Shows:** Participants for `OrderWorkflow`, nested `Payment`, and parallel `Fulfillment`, plus the transitions each participant owns.
-- **Useful developer detail:** Use it in design reviews when the important question is machine boundaries: which machine emits an outcome, which parent transition consumes it, and which work is parallel.
+*   **Objective:** Explain how the root machine relates to child machines without reading every state box in the state diagram.
+*   **Shows:** Participants for `OrderWorkflow`, nested `Payment`, and parallel `Fulfillment`, plus the transitions each participant owns.
+*   **Useful developer detail:** Use it in design reviews when the important question is machine boundaries: which machine emits an outcome, which parent transition consumes it, and which work is parallel.
 
 <details>
 <summary>Mermaid output: <code>mermaid-sequence</code></summary>
@@ -659,9 +659,9 @@ P0_PAR0 -> P0_PAR0: retry: inventoryIssue -> queued
 
 #### Pulses view
 
-- **Objective:** Audit side-effect hooks declared on entry and exit paths.
-- **Shows:** Entry pulse success and failure branches, plus exit pulses tied to the event that leaves a state.
-- **Useful developer detail:** Use it to confirm that success/failure outcomes are documented and that cleanup pulses such as cancellation or label printing are attached to the intended transition.
+*   **Objective:** Audit side-effect hooks declared on entry and exit paths.
+*   **Shows:** Entry pulse success and failure branches, plus exit pulses tied to the event that leaves a state.
+*   **Useful developer detail:** Use it to confirm that success/failure outcomes are documented and that cleanup pulses such as cancellation or label printing are attached to the intended transition.
 
 <details>
 <summary>Mermaid output: <code>mermaid-pulses</code></summary>
@@ -750,9 +750,9 @@ root_parallel_fulfillment_pack --> root_parallel_fulfillment_shipped : exit: pri
 
 #### Events view
 
-- **Objective:** Find which states accept each event and where repeated event names are reused.
-- **Shows:** Shared event nodes such as `submit`, `cancel`, and `ship`, with edges from every state that can receive them to their targets.
-- **Useful developer detail:** Use it when changing an event contract so you can see every state affected by that event name across root, nested, and parallel machines.
+*   **Objective:** Find which states accept each event and where repeated event names are reused.
+*   **Shows:** Shared event nodes such as `submit`, `cancel`, and `ship`, with edges from every state that can receive them to their targets.
+*   **Useful developer detail:** Use it when changing an event contract so you can see every state affected by that event name across root, nested, and parallel machines.
 
 <details>
 <summary>Mermaid output: <code>mermaid-events</code></summary>
@@ -950,9 +950,9 @@ event_retry --> root_parallel_fulfillment_queued : target
 
 #### Outcomes view
 
-- **Objective:** Trace all declared success, failure, guard-failure, and transition outcomes as a structural map.
-- **Shows:** State types, entry outcomes, event targets, guard failure targets, exit failure targets, and repeated outcome paths.
-- **Useful developer detail:** Use it to verify that failures land in intentional warning/danger states and to compare happy-path outcomes with recovery paths.
+*   **Objective:** Trace all declared success, failure, guard-failure, and transition outcomes as a structural map.
+*   **Shows:** State types, entry outcomes, event targets, guard failure targets, exit failure targets, and repeated outcome paths.
+*   **Useful developer detail:** Use it to verify that failures land in intentional warning/danger states and to compare happy-path outcomes with recovery paths.
 
 <details>
 <summary>Mermaid output: <code>mermaid-outcomes</code></summary>
@@ -1103,9 +1103,9 @@ root_parallel_fulfillment_inventoryIssue --> root_parallel_fulfillment_queued : 
 
 #### Immediate view
 
-- **Objective:** Isolate automatic transitions that can fire without an external event.
-- **Shows:** The parent `processing -> fulfilling` immediate transition guarded by the nested payment result, and the fulfillment `queued -> pick` immediate transition guarded by inventory availability.
-- **Useful developer detail:** Use it to review implicit motion in the workflow before debugging why a state changes immediately after entry.
+*   **Objective:** Isolate automatic transitions that can fire without an external event.
+*   **Shows:** The parent `processing -> fulfilling` immediate transition guarded by the nested payment result, and the fulfillment `queued -> pick` immediate transition guarded by inventory availability.
+*   **Useful developer detail:** Use it to review implicit motion in the workflow before debugging why a state changes immediately after entry.
 
 <details>
 <summary>Mermaid output: <code>mermaid-immediate</code></summary>
@@ -1179,9 +1179,9 @@ root_parallel_fulfillment_queued ..> root_parallel_fulfillment_pick : immediate 
 
 #### Guards view
 
-- **Objective:** Review conditional decision points independently from the full transition graph.
-- **Shows:** Only transitions that use guards, including event-based guards, immediate guards, target branches, and failure-target branches.
-- **Useful developer detail:** Use it to check whether every guard failure has the right recovery state and whether event and immediate guards branch to the expected targets.
+*   **Objective:** Review conditional decision points independently from the full transition graph.
+*   **Shows:** Only transitions that use guards, including event-based guards, immediate guards, target branches, and failure-target branches.
+*   **Useful developer detail:** Use it to check whether every guard failure has the right recovery state and whether event and immediate guards branch to the expected targets.
 
 Guard diagrams are focused review views. They make conditional paths easier to inspect, but they do not replace the full state diagram when you need to understand every state, unguarded transition, pulse, or nested/parallel relationship.
 
@@ -1294,9 +1294,9 @@ stop
 
 #### Composition view
 
-- **Objective:** Show only how the root, nested, and parallel machines are assembled.
-- **Shows:** The root machine, its states, the `Payment` nested machine attached to `processing`, and the `Fulfillment` parallel machine.
-- **Useful developer detail:** Use it as an onboarding map before a developer reads transition details; it keeps composition visible without event noise.
+*   **Objective:** Show only how the root, nested, and parallel machines are assembled.
+*   **Shows:** The root machine, its states, the `Payment` nested machine attached to `processing`, and the `Fulfillment` parallel machine.
+*   **Useful developer detail:** Use it as an onboarding map before a developer reads transition details; it keeps composition visible without event noise.
 
 <details>
 <summary>Mermaid output: <code>mermaid-composition</code></summary>
@@ -1416,15 +1416,15 @@ machine_root_parallel_fulfillment --> root_parallel_fulfillment_inventoryIssue :
 
 #### Complexity view
 
-- **Objective:** Compare states by transition load and action load within the same machine.
-- **Shows:** A quadrant-style map that places each state relative to the busiest state in that same machine.
-- **Useful developer detail:** Use it to spot states worth reviewing. Dense states such as `processing`, `created`, and `pick` may deserve closer tests and review.
+*   **Objective:** Compare states by transition load and action load within the same machine.
+*   **Shows:** A quadrant-style map that places each state relative to the busiest state in that same machine.
+*   **Useful developer detail:** Use it to spot states worth reviewing. Dense states such as `processing`, `created`, and `pick` may deserve closer tests and review.
 
 Complexity diagrams are documentation and audit aids, not runtime profiling output. They compare each state by two visible loads:
 
-- **X axis:** transition load, counted from outgoing, incoming, and immediate transitions. Values are relative to the highest transition load in the same machine, so "few" and "many" are local to that machine.
-- **Y axis:** action load, counted from entry pulses, exit pulses, and pulse failure branches. Values are relative to the highest action load in the same machine.
-- **Quadrants:** low/high X and low/high Y produce the four visual categories: few/many transitions crossed with few/many actions.
+*   **X axis:** transition load, counted from outgoing, incoming, and immediate transitions. Values are relative to the highest transition load in the same machine, so "few" and "many" are local to that machine.
+*   **Y axis:** action load, counted from entry pulses, exit pulses, and pulse failure branches. Values are relative to the highest action load in the same machine.
+*   **Quadrants:** low/high X and low/high Y produce the four visual categories: few/many transitions crossed with few/many actions.
 
 > The generated view includes the maximum transition and action loads so you can interpret what "busy" means for that machine. Dot positions are approximate visual placements for comparison, not exact measurements; use the quadrants and relative position to decide which states are worth reviewing.
 
@@ -1512,15 +1512,15 @@ Mermaid is the easiest option for Markdown-native previews because many renderer
 
 To preview PlantUML blocks in VS Code Markdown without assuming this repository is checked out locally:
 
-1. Install the **Markdown Preview Enhanced** extension in VS Code.
-2. Make sure Java is available on your PATH.
-3. Configure `markdown-preview-enhanced.plantumlJarPath` to an absolute path for a local `plantuml.jar`.
+1.  Install the **Markdown Preview Enhanced** extension in VS Code.
+2.  Make sure Java is available on your PATH.
+3.  Configure `markdown-preview-enhanced.plantumlJarPath` to an absolute path for a local `plantuml.jar`.
 
 Ways to provide the jar:
 
-- Install or download PlantUML locally and point VS Code at that jar.
-- If your project depends on `x-robot` and the published package includes the vendored jar, try an absolute path to `node_modules/x-robot/vendor/plantuml.jar` inside your project.
-- Use a company-managed or global PlantUML jar path if your team already standardizes one.
+*   Install or download PlantUML locally and point VS Code at that jar.
+*   If your project depends on `x-robot` and the published package includes the vendored jar, try an absolute path to `node_modules/x-robot/vendor/plantuml.jar` inside your project.
+*   Use a company-managed or global PlantUML jar path if your team already standardizes one.
 
 Example workspace setting:
 
@@ -1552,10 +1552,10 @@ fs.writeFileSync("diagram.mmd", mermaid);
 
 The Mermaid output includes:
 
-- Color-coded state types (danger, warning, success, primary, info)
-- Base styling for default states through the `def` class
-- Left-aligned text in states
-- Transitions with proper styling
+*   Color-coded state types (danger, warning, success, primary, info)
+*   Base styling for default states through the `def` class
+*   Left-aligned text in states
+*   Transitions with proper styling
 
 ### Example Output
 
@@ -1603,7 +1603,7 @@ loading --> success: done
 
 ## Next Steps
 
-- [Serialization](./serialization.md) — Machine definition format
-- [Code Generation](./code-generation.md) — Generate code
-- [SCXML Import/Export](./scxml.md) — Standard format
-- [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference
+*   [Serialization](./serialization.md) — Machine definition format
+*   [Code Generation](./code-generation.md) — Generate code
+*   [SCXML Import/Export](./scxml.md) — Standard format
+*   [API: documentate()](../api/modules/x_robot_documentate.md) — Full reference

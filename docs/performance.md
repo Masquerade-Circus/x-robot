@@ -2,7 +2,8 @@
 
 Generated: 2026-05-15
 
----
+***
+
 ## How to Run
 
 To regenerate this report, run:
@@ -14,19 +15,19 @@ bun bench:report
 This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 **Requirements:**
-- [bun](https://bun.sh) must be installed
-- Dependencies must be installed: `npm install` or `bun install`
+
+*   [bun](https://bun.sh) must be installed
+*   Dependencies must be installed: `npm install` or `bun install`
 
 **Benchmark files:**
-- `tests-benchmark/performance.test.ts` - Performance benchmarks
-- `tests-benchmark/bundle-size.test.ts` - Bundle size analysis
-- `tests-benchmark/developer-experience.test.ts` - Lines of code comparison
-- `tests-benchmark/memory-usage.test.ts` - Memory usage tests
-- `tests-benchmark/scxml-performance.test.ts` - SCXML import/export performance
 
----
+*   `tests-benchmark/performance.test.ts` - Performance benchmarks
+*   `tests-benchmark/bundle-size.test.ts` - Bundle size analysis
+*   `tests-benchmark/developer-experience.test.ts` - Lines of code comparison
+*   `tests-benchmark/memory-usage.test.ts` - Memory usage tests
+*   `tests-benchmark/scxml-performance.test.ts` - SCXML import/export performance
 
-
+***
 
 ## Bundle Size
 
@@ -48,7 +49,7 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 | + validate (machine validation)                          | +13.67KB     |
 | **Total**                                                | **78.44KB** |
 
----
+***
 
 ## Features Comparison
 
@@ -77,20 +78,20 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 | SCXML import/export | ❌ | ✅ documentate() | ❌ | ❌ | ✅ | ✅ |
 | Actor model | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 
----
+***
 
 ## Performance
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 4.40ms  | 89.29ms | **20.3x faster** |
-| 3k with guards         | 3.71ms  | 34.85ms  | **9.4x faster**  |
-| 10k transitions        | 6.42ms  | 113.52ms | **17.7x faster** |
-| 10k context updates    | 17.26ms | 115.88ms  | **6.7x faster**  |
-| invokeAfter scheduling | 7.89ms  | 15.92ms  | **2.0x faster**  |
-| Delayed transitions    | 56.55ms | 59.98ms  | **1.1x faster**  |
+| 5k transitions         | 4.70ms  | 84.40ms | **18.0x faster** |
+| 3k with guards         | 3.80ms  | 29.66ms  | **7.8x faster**  |
+| 10k transitions        | 3.70ms  | 98.95ms | **26.7x faster** |
+| 10k context updates    | 16.41ms | 91.75ms  | **5.6x faster**  |
+| invokeAfter scheduling | 4.44ms  | 14.50ms  | **3.3x faster**  |
+| Delayed transitions    | 56.31ms | 59.53ms  | **1.1x faster**  |
 
----
+***
 
 ## Developer Experience (Lines of Code)
 
@@ -101,17 +102,17 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 | Guards machine      | 14      | 25     | **1.8x less** |
 | Delayed transitions | 12 | 16     | **1.3x less** |
 
----
+***
 
 ## Why X-Robot?
 
-1. **2.0-3.9x smaller** bundle size (core only)
-2. **1.1-20.3x faster** performance
-3. **1.2-1.8x less code** to write
-4. **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
-5. **Simpler API** - Declarative, functional approach
-6. **Native async guards** - No workarounds needed
-7. **invokeAfter()** - Built-in with cancel functionality
-8. **Better DX** - documentate() for code & diagram generation, validate() for machine validation
-9. **SCXML support** - Import/export machines in standard SCXML format (via documentate())
+1.  **2.0-3.9x smaller** bundle size (core only)
+2.  **1.1-26.7x faster** performance
+3.  **1.2-1.8x less code** to write
+4.  **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
+5.  **Simpler API** - Declarative, functional approach
+6.  **Native async guards** - No workarounds needed
+7.  **invokeAfter()** - Built-in with cancel functionality
+8.  **Better DX** - documentate() for code & diagram generation, validate() for machine validation
+9.  **SCXML support** - Import/export machines in standard SCXML format (via documentate())
 10. **Machine validation** - Built-in validation to catch errors before runtime (via validate())

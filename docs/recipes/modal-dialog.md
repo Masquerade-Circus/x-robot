@@ -52,6 +52,7 @@ confirming --> error: error
 closing --> closed: closed
 error --> closing: close
 ```
+
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 
@@ -182,6 +183,7 @@ opening --> closing: cancel
 open --> closing: close
 closing --> closed: closed
 ```
+
 ```javascript
 function startOpenAnimation(ctx) {
   // Start opening animation
@@ -267,6 +269,7 @@ showing --> hidden: hidden
 visible --> hiding: dismiss
 hiding --> hidden: hidden
 ```
+
 ```javascript
 function showAlert(ctx) {
   // Show alert
@@ -328,6 +331,7 @@ submitting --> error: error
 closing --> closed: closed
 error --> open: retry
 ```
+
 ```javascript
 async function submitFormData(ctx, formData) {
   await submitForm(formData ?? ctx.formData);

@@ -78,6 +78,7 @@ success --> idle: reset
 error --> submitting: retry
 error --> idle: reset
 ```
+
 ```javascript
 const formMachine = machine(
   "Form",

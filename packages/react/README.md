@@ -12,9 +12,9 @@ npm install x-robot @x-robot/react react react-dom
 
 Peer dependencies:
 
-- `react >= 18`
-- `react-dom >= 18`
-- `x-robot`
+*   `react >= 18`
+*   `react-dom >= 18`
+*   `x-robot`
 
 ## Basic Usage
 
@@ -51,9 +51,9 @@ function CheckoutButton() {
 
 `useMachine(machine, options?)` guarantees rerenders for transitions triggered through the wrappers returned by the hook:
 
-- `start()`
-- `invoke()`
-- `invokeAfter()`
+*   `start()`
+*   `invoke()`
+*   `invokeAfter()`
 
 That means this is supported:
 
@@ -99,9 +99,9 @@ const {
 
 Options:
 
-- `autostart?: boolean`
-- `devtools?: boolean | { name?: string }`
-- `startSnapshot?: MachineSnapshot`
+*   `autostart?: boolean`
+*   `devtools?: boolean | { name?: string }`
+*   `startSnapshot?: MachineSnapshot`
 
 ## Devtools
 
@@ -113,8 +113,8 @@ Call `cleanup()` when you need to tear down the adapter manually, or let React l
 
 ## Examples
 
-- Tiny example: `packages/react/examples/basic.tsx`
-- Realistic async example: `packages/react/examples/fetch.tsx`
+*   Tiny example: `packages/react/examples/basic.tsx`
+*   Realistic async example: `packages/react/examples/fetch.tsx`
 
 ## Local Verification
 

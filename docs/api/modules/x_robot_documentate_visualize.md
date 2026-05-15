@@ -1,4 +1,4 @@
-[x-robot - v1.1.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/visualize
+[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/visualize
 
 # Module: x-robot/documentate/visualize
 
@@ -21,6 +21,22 @@ Generate a visual representation of a machine in plant uml format or get a png/s
 ### Other Functions
 
 *   [getMermaidCode](x_robot_documentate_visualize.md#getmermaidcode)
+*   [getMermaidSequenceCode](x_robot_documentate_visualize.md#getmermaidsequencecode)
+*   [getPlantUmlSequenceCode](x_robot_documentate_visualize.md#getplantumlsequencecode)
+*   [getMermaidPulseMapCode](x_robot_documentate_visualize.md#getmermaidpulsemapcode)
+*   [getPlantUmlPulseMapCode](x_robot_documentate_visualize.md#getplantumlpulsemapcode)
+*   [getMermaidEventMapCode](x_robot_documentate_visualize.md#getmermaideventmapcode)
+*   [getPlantUmlEventMapCode](x_robot_documentate_visualize.md#getplantumleventmapcode)
+*   [getMermaidOutcomeMapCode](x_robot_documentate_visualize.md#getmermaidoutcomemapcode)
+*   [getPlantUmlOutcomeMapCode](x_robot_documentate_visualize.md#getplantumloutcomemapcode)
+*   [getMermaidImmediateMapCode](x_robot_documentate_visualize.md#getmermaidimmediatemapcode)
+*   [getPlantUmlImmediateMapCode](x_robot_documentate_visualize.md#getplantumlimmediatemapcode)
+*   [getMermaidGuardDecisionMapCode](x_robot_documentate_visualize.md#getmermaidguarddecisionmapcode)
+*   [getPlantUmlGuardDecisionMapCode](x_robot_documentate_visualize.md#getplantumlguarddecisionmapcode)
+*   [getMermaidCompositionMapCode](x_robot_documentate_visualize.md#getmermaidcompositionmapcode)
+*   [getPlantUmlCompositionMapCode](x_robot_documentate_visualize.md#getplantumlcompositionmapcode)
+*   [getMermaidComplexityMapCode](x_robot_documentate_visualize.md#getmermaidcomplexitymapcode)
+*   [getPlantUmlComplexityMapCode](x_robot_documentate_visualize.md#getplantumlcomplexitymapcode)
 *   [getMermaidCodeFromMachine](x_robot_documentate_visualize.md#getmermaidcodefrommachine)
 *   [getPlantUmlCodeFromMachine](x_robot_documentate_visualize.md#getplantumlcodefrommachine)
 
@@ -205,6 +221,264 @@ The path to the svg file
 
 ***
 
+### getMermaidSequenceCode
+
+▸ **getMermaidSequenceCode**(`serializedMachine`, `optionsOrLevel?`): `string`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` |
+| `optionsOrLevel` | `string` | [`mermaidOptions`](../interfaces/x_robot_documentate_visualize.mermaidOptions.md) | `VISUALIZATION_LEVEL.LOW` |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlSequenceCode
+
+▸ **getPlantUmlSequenceCode**(`serializedMachine`, `optionsOrLevel?`): `string`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) | `undefined` |
+| `optionsOrLevel` | `string` | [`options`](../interfaces/x_robot_documentate_visualize.options.md) | `VISUALIZATION_LEVEL.LOW` |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidPulseMapCode
+
+▸ **getMermaidPulseMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlPulseMapCode
+
+▸ **getPlantUmlPulseMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidEventMapCode
+
+▸ **getMermaidEventMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlEventMapCode
+
+▸ **getPlantUmlEventMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidOutcomeMapCode
+
+▸ **getMermaidOutcomeMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlOutcomeMapCode
+
+▸ **getPlantUmlOutcomeMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidImmediateMapCode
+
+▸ **getMermaidImmediateMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlImmediateMapCode
+
+▸ **getPlantUmlImmediateMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidGuardDecisionMapCode
+
+▸ **getMermaidGuardDecisionMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlGuardDecisionMapCode
+
+▸ **getPlantUmlGuardDecisionMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidCompositionMapCode
+
+▸ **getMermaidCompositionMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlCompositionMapCode
+
+▸ **getPlantUmlCompositionMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getMermaidComplexityMapCode
+
+▸ **getMermaidComplexityMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
+### getPlantUmlComplexityMapCode
+
+▸ **getPlantUmlComplexityMapCode**(`serializedMachine`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serializedMachine` | [`SerializedMachine`](../interfaces/x_robot_documentate.SerializedMachine.md) |
+
+#### Returns
+
+`string`
+
+***
+
 ### getMermaidCodeFromMachine
 
 ▸ **getMermaidCodeFromMachine**(`machine`, `optionsOrLevel?`): `string`
@@ -252,7 +526,7 @@ The path to the svg file
 
 #### Defined in
 
-[lib/documentate/visualize.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L44)
+[lib/documentate/visualize.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/visualize.ts#L52)
 
 ***
 
@@ -270,4 +544,4 @@ The path to the svg file
 
 #### Defined in
 
-[lib/documentate/visualize.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/f8aa666/lib/documentate/visualize.ts#L49)
+[lib/documentate/visualize.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/visualize.ts#L57)

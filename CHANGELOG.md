@@ -1,3 +1,23 @@
+
+
+## [1.2.0](https://github.com/Masquerade-Circus/x-robot/compare/1.1.0...1.2.0) (2026-05-15)
+
+
+### Features
+
+* add @x-robot/react adapter ([147486e](https://github.com/Masquerade-Circus/x-robot/commit/147486e4df7b04f2f36f1a6f972185d08d0d0f0a))
+
+
+### Documentation
+
+* update docs ([f8aa666](https://github.com/Masquerade-Circus/x-robot/commit/f8aa666cd8622473152c12f68877ecc88a6d11e8))
+
+
+### Code Refactoring
+
+* **documentate:** expand documentate diagram exports ([bfae059](https://github.com/Masquerade-Circus/x-robot/commit/bfae059260ef25133b68af0775930355ec9e582b))
+* **mermaid:** make documentate mermaid handle the same amount of context that planuml ([5c45a7a](https://github.com/Masquerade-Circus/x-robot/commit/5c45a7a874267e4c4abb8ad2f88f84c9c1eb4d32))
+
 ## [1.1.0](https://github.com/Masquerade-Circus/x-robot/compare/1.0.1...1.1.0) (2026-03-10)
 
 ### Features

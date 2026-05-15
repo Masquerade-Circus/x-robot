@@ -28,6 +28,7 @@ class active def
 [*] --> idle
 idle --> active: start
 ```
+
 ```javascript
 import { machine, state, transition, initial, init, context } from "x-robot";
 import { documentate } from "x-robot/documentate";
@@ -111,6 +112,7 @@ loading --> error: error
 success --> idle: reset
 error --> idle: reset
 ```
+
 ```javascript
 import { machine, state, transition, initial, init, context, entry } from "x-robot";
 import { documentate } from "x-robot/documentate";

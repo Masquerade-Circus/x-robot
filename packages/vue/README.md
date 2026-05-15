@@ -12,8 +12,8 @@ npm install x-robot @x-robot/vue vue
 
 Peer dependencies:
 
-- `vue >= 3`
-- `x-robot`
+*   `vue >= 3`
+*   `x-robot`
 
 ## Basic Usage
 
@@ -65,18 +65,18 @@ export const LightSwitchExample = defineComponent({
 
 `useMachine(machine, options?)` exposes machine state through Vue refs:
 
-- `current` is a `ref()`
-- `context` is a `shallowRef()`
-- `fatal` is a `shallowRef()`
-- `isAsync` is a `ref()`
+*   `current` is a `ref()`
+*   `context` is a `shallowRef()`
+*   `fatal` is a `shallowRef()`
+*   `isAsync` is a `ref()`
 
 In templates, Vue unwraps these refs automatically. In script code, read and write them through `.value`.
 
 `useMachine(machine, options?)` guarantees reactive updates for transitions triggered through the wrappers returned by the composable:
 
-- `start()`
-- `invoke()`
-- `invokeAfter()`
+*   `start()`
+*   `invoke()`
+*   `invokeAfter()`
 
 That means this is supported:
 
@@ -124,9 +124,9 @@ const {
 
 Options:
 
-- `autostart?: boolean`
-- `devtools?: boolean | { name?: string }`
-- `startSnapshot?: MachineSnapshot`
+*   `autostart?: boolean`
+*   `devtools?: boolean | { name?: string }`
+*   `startSnapshot?: MachineSnapshot`
 
 ## Devtools
 
@@ -138,8 +138,8 @@ Call `cleanup()` when you need to tear down the adapter manually, or let Vue lif
 
 ## Examples
 
-- Tiny example: `packages/vue/examples/basic.ts`
-- Realistic async example: `packages/vue/examples/fetch.ts`
+*   Tiny example: `packages/vue/examples/basic.ts`
+*   Realistic async example: `packages/vue/examples/fetch.ts`
 
 ## Local Verification
 

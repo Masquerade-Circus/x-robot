@@ -47,6 +47,7 @@ class on def
 off --> on: toggle
 on --> off: toggle
 ```
+
 ```javascript
 import { machine, state, transition } from "x-robot";
 
@@ -84,6 +85,7 @@ class idle def
 
 [*] --> idle
 ```
+
 ```javascript
 const myMachine = machine("MyMachine", state("idle"));
 ```
@@ -143,6 +145,7 @@ counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 idle --> counting: increment
 counting --> idle: idle
 ```
+
 ```javascript
 import { context, entry, initial, init } from "x-robot";
 
@@ -199,6 +202,7 @@ idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
+
 ```javascript
 import { entry } from "x-robot";
 
@@ -268,6 +272,7 @@ submitting --> failure: failure
 success --> pristine: reset
 failure --> dirty: retry
 ```
+
 ```javascript
 import { machine, state, transition, invoke, initial, init, context, entry, guard } from "x-robot";
 
