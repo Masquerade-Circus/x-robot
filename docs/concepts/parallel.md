@@ -18,8 +18,26 @@ classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,co
 classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
-```
 
+state "Parallel states" as TextEditorParallelStates
+state TextEditorParallelStates {
+  state "off" as TextEditorBoldOff
+  state "on" as TextEditorBoldOn
+
+
+  [*] --> TextEditorBoldOff
+  TextEditorBoldOff --> TextEditorBoldOn: toggle
+  TextEditorBoldOn --> TextEditorBoldOff: toggle
+  --
+  state "off" as TextEditorItalicOff
+  state "on" as TextEditorItalicOn
+
+
+  [*] --> TextEditorItalicOff
+  TextEditorItalicOff --> TextEditorItalicOn: toggle
+  TextEditorItalicOn --> TextEditorItalicOff: toggle
+}
+```
 ```javascript
 import { init, initial, machine, parallel, state, transition } from "x-robot";
 
@@ -85,11 +103,28 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
+state "Parallel states" as SearchParallelStates
+state SearchParallelStates {
+  state "empty" as SearchQueryEmpty
+  state "typing" as SearchQueryTyping
+
+
+  [*] --> SearchQueryEmpty
+  SearchQueryEmpty --> SearchQueryTyping: input
+  SearchQueryTyping --> SearchQueryEmpty: clear
+  --
+  state "none" as SearchResultsNone
+  state "some" as SearchResultsSome
+
+
+  [*] --> SearchResultsNone
+  SearchResultsNone --> SearchResultsSome: found
+  SearchResultsSome --> SearchResultsNone: clear
+}
 
 
 [*] --> idle
 ```
-
 ```javascript
 const searchMachine = machine(
   "Search",

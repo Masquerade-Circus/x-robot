@@ -78,7 +78,6 @@ success --> idle: reset
 error --> submitting: retry
 error --> idle: reset
 ```
-
 ```javascript
 const formMachine = machine(
   "Form",
@@ -171,12 +170,21 @@ transition("submit", "validating", guard(async (ctx) => {
 ### 4. Small Bundle, High Performance
 
 *   Core: 15.06KB minified
-*   With modules: 57.84KB (`documentate`, `validate`)
-*   Performance: 1.1-26.6x faster than XState
+*   With modules: 78.44KB (`documentate`, `validate`)
+*   Performance: 1.1-20.3x faster than XState
+*   `documentate()` adds generated visual documentation by concept:
+    *   Mermaid: Markdown-friendly source diagrams and previews
+    *   PlantUML: richer source diagrams and preferred visual styling
+    *   SVG formats: explicit `svg-*` exports for sharing, embedding, and vector assets
+    *   PNG formats: explicit `png-*` exports for raster docs, tickets, and slides
 
 ### 5. Built-in Tools
 
-*   `documentate()` — Code generation, Mermaid/PlantUML diagrams, and SCXML via `x-robot/documentate`
+*   `documentate()` — Code generation, SCXML, and visual documentation via `x-robot/documentate`:
+    *   Mermaid: Markdown-friendly state, sequence, and focused structural source diagrams
+    *   PlantUML: richer state, sequence, and focused structural source diagrams
+    *   SVG formats: explicit `svg-*` exports for sharing, embedding, and vector assets
+    *   PNG formats: explicit `png-*` exports for raster docs, tickets, and slides
 *   `validate()` — Machine structure validation via `x-robot/validate`
 *   History tracking — Built-in state history
 

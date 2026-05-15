@@ -18,8 +18,45 @@ classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,co
 classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
-```
 
+state "Parallel states" as WordMachineParallelStates
+state WordMachineParallelStates {
+  state "off" as WordMachineBoldOff
+  state "on" as WordMachineBoldOn
+
+
+  [*] --> WordMachineBoldOff
+  WordMachineBoldOff --> WordMachineBoldOn: on
+  WordMachineBoldOn --> WordMachineBoldOff: off
+  --
+  state "off" as WordMachineUnderlineOff
+  state "on" as WordMachineUnderlineOn
+
+
+  [*] --> WordMachineUnderlineOff
+  WordMachineUnderlineOff --> WordMachineUnderlineOn: on
+  WordMachineUnderlineOn --> WordMachineUnderlineOff: off
+  --
+  state "off" as WordMachineItalicsOff
+  state "on" as WordMachineItalicsOn
+
+
+  [*] --> WordMachineItalicsOff
+  WordMachineItalicsOff --> WordMachineItalicsOn: on
+  WordMachineItalicsOn --> WordMachineItalicsOff: off
+  --
+  state "none" as WordMachineListNone
+  state "bullets" as WordMachineListBullets
+  state "numbers" as WordMachineListNumbers
+
+
+  [*] --> WordMachineListNone
+  WordMachineListNone --> WordMachineListBullets: bullets
+  WordMachineListNone --> WordMachineListNumbers: numbers
+  WordMachineListBullets --> WordMachineListNone: none
+  WordMachineListNumbers --> WordMachineListNone: none
+}
+```
 ```javascript
 import { getState, init, initial, invoke, machine, parallel, state, transition } from "x-robot";
 
@@ -99,8 +136,44 @@ classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,co
 classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
-```
 
+state "Parallel states" as EditorParallelStates
+state EditorParallelStates {
+  state "off" as EditorBoldOff
+  state "on" as EditorBoldOn
+
+
+  [*] --> EditorBoldOff
+  EditorBoldOff --> EditorBoldOn: toggle
+  EditorBoldOn --> EditorBoldOff: toggle
+  --
+  state "off" as EditorItalicOff
+  state "on" as EditorItalicOn
+
+
+  [*] --> EditorItalicOff
+  EditorItalicOff --> EditorItalicOn: toggle
+  EditorItalicOn --> EditorItalicOff: toggle
+  --
+  state "off" as EditorUnderlineOff
+  state "on" as EditorUnderlineOn
+
+
+  [*] --> EditorUnderlineOff
+  EditorUnderlineOff --> EditorUnderlineOn: toggle
+  EditorUnderlineOn --> EditorUnderlineOff: toggle
+  --
+  state "left" as EditorAlignmentLeft
+  state "center" as EditorAlignmentCenter
+  state "right" as EditorAlignmentRight
+
+
+  [*] --> EditorAlignmentLeft
+  EditorAlignmentLeft --> EditorAlignmentCenter: align
+  EditorAlignmentCenter --> EditorAlignmentRight: align
+  EditorAlignmentRight --> EditorAlignmentLeft: align
+}
+```
 ```javascript
 const bold = machine("Bold", init(initial("off")),
   state("off", transition("toggle", "on")),
@@ -146,11 +219,29 @@ classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,co
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
 
+state "Parallel states" as SearchParallelStates
+state SearchParallelStates {
+  state "empty" as SearchQueryEmpty
+  state "active" as SearchQueryActive
+
+
+  [*] --> SearchQueryEmpty
+  SearchQueryEmpty --> SearchQueryActive: type
+  SearchQueryActive --> SearchQueryEmpty: clear
+  SearchQueryActive --> searching: submit
+  --
+  state "none" as SearchResultsNone
+  state "some" as SearchResultsSome
+
+
+  [*] --> SearchResultsNone
+  SearchResultsNone --> SearchResultsSome: found
+  SearchResultsSome --> SearchResultsNone: clear
+}
 
 
 [*] --> ready
 ```
-
 ```javascript
 const search = machine(
   "Search",
@@ -186,8 +277,34 @@ classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,co
 classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
-```
 
+state "Parallel states" as FiltersParallelStates
+state FiltersParallelStates {
+  state "all" as FiltersCategoryAll
+  state "electronics" as FiltersCategoryElectronics
+
+
+  [*] --> FiltersCategoryAll
+  FiltersCategoryAll --> FiltersCategoryElectronics: select
+  FiltersCategoryElectronics --> FiltersCategoryAll: select
+  --
+  state "any" as FiltersPriceRangeAny
+  state "range1" as FiltersPriceRangeRange1
+
+
+  [*] --> FiltersPriceRangeAny
+  FiltersPriceRangeAny --> FiltersPriceRangeRange1: select
+  FiltersPriceRangeRange1 --> FiltersPriceRangeAny: select
+  --
+  state "relevance" as FiltersSortByRelevance
+  state "price" as FiltersSortByPrice
+
+
+  [*] --> FiltersSortByRelevance
+  FiltersSortByRelevance --> FiltersSortByPrice: select
+  FiltersSortByPrice --> FiltersSortByRelevance: select
+}
+```
 ```javascript
 const category = machine("Category", init(initial("all")),
   state("all", transition("select", "electronics")),
@@ -223,8 +340,34 @@ classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,co
 classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
 classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
 classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
-```
 
+state "Parallel states" as DashboardParallelStates
+state DashboardParallelStates {
+  state "expanded" as DashboardSidebarExpanded
+  state "collapsed" as DashboardSidebarCollapsed
+
+
+  [*] --> DashboardSidebarExpanded
+  DashboardSidebarExpanded --> DashboardSidebarCollapsed: toggle
+  DashboardSidebarCollapsed --> DashboardSidebarExpanded: toggle
+  --
+  state "visible" as DashboardHeaderVisible
+  state "hidden" as DashboardHeaderHidden
+
+
+  [*] --> DashboardHeaderVisible
+  DashboardHeaderVisible --> DashboardHeaderHidden: toggle
+  DashboardHeaderHidden --> DashboardHeaderVisible: toggle
+  --
+  state "list" as DashboardContentList
+  state "grid" as DashboardContentGrid
+
+
+  [*] --> DashboardContentList
+  DashboardContentList --> DashboardContentGrid: view
+  DashboardContentGrid --> DashboardContentList: view
+}
+```
 ```javascript
 const sidebar = machine("Sidebar", init(initial("expanded")),
   state("expanded", transition("toggle", "collapsed")),

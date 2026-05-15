@@ -31,7 +31,6 @@ class complete def
 idle --> processing: start
 processing --> complete: complete
 ```
-
 ```javascript
 import { immediate, init, initial, machine, state, transition } from "x-robot";
 
@@ -75,7 +74,6 @@ class unauthenticated def
 checking --> authenticated: authenticated<br>└ G-isAuthenticated
 checking --> unauthenticated: unauthenticated
 ```
-
 ```javascript
 function isAuthenticated(ctx) {
   return ctx.user !== null;
@@ -133,7 +131,6 @@ validating --> valid: valid<br>└ G-isValid
 validating --> invalid: invalid
 valid --> submitting: submit
 ```
-
 ```javascript
 function isValid(ctx) {
   return Object.keys(ctx.errors).length === 0;
@@ -188,7 +185,6 @@ boot --> loading: loading
 loading --> ready: ready
 hasCache --> ready: ready
 ```
-
 ```javascript
 function hasCache(ctx) {
   return !!ctx.cachedData;
@@ -242,7 +238,6 @@ all --> filtering: filter
 filtering --> empty: empty<br>└ G-noResults
 filtering --> results: results
 ```
-
 ```javascript
 function noResults(ctx) {
   return ctx.items.length === 0;
@@ -293,7 +288,6 @@ idle --> processing: start
 processing --> success: success<br>└ G-isSuccess
 processing --> failure: failure
 ```
-
 ```javascript
 function computeResult(ctx) {
   ctx.result = compute(ctx.input);

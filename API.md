@@ -91,7 +91,14 @@ history(5)    // mantener últimas 5 entradas
 history(0)    // desactivar historial
 ```
 
-**Esta es una característica que XState NO tiene.**
+**Comparación con XState:** esta guía documenta `history()` como una capacidad propia de x-robot. Para documentación visual generada, `documentate()` separa los formatos por concepto:
+
+*   Mermaid: diagramas fuente y previews Markdown-friendly para estado, secuencia y vistas enfocadas.
+*   PlantUML: diagramas fuente con estilo visual más rico para estado, secuencia y vistas enfocadas.
+*   Formatos SVG: exportaciones explícitas `svg-*` para compartir, embeber y generar assets vectoriales.
+*   Formatos PNG: exportaciones explícitas `png-*` para imágenes raster en docs, tickets y slides.
+
+Las vistas enfocadas incluyen guards, events, pulses, outcomes, immediate, composition y complexity. Estos formatos son útiles para revisión de PRs, onboarding y debugging conceptual.
 
 ***
 

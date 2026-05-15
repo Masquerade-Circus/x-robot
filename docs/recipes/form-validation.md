@@ -59,7 +59,6 @@ success --> pristine: reset
 error --> valid: retry
 error --> pristine: reset
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry, guard } from "x-robot";
 

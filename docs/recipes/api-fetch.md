@@ -43,7 +43,6 @@ success --> idle: clear
 error --> loading: retry
 error --> idle: clear
 ```
-
 ```javascript
 import {
   machine,
@@ -167,7 +166,6 @@ loading --> error: error
 success --> idle: clear
 error --> loading: retry
 ```
-
 ```javascript
 function checkCache(ctx, params) {
   const nextParams = params ?? ctx.params ?? null;
@@ -236,7 +234,6 @@ loading --> error: error
 success --> loading: loadMore
 error --> loading: retry
 ```
-
 ```javascript
 async function loadPage(ctx) {
   const res = await fetch(`/api/items?page=${ctx.page}`);

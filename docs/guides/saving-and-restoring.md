@@ -61,7 +61,6 @@ counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 idle --> counting: increment
 counting --> idle: idle
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, snapshot, start } from "x-robot";
 

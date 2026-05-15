@@ -89,7 +89,6 @@ idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
 // X-Robot: Single function
 import { machine, state, transition, entry, context, init, initial } from "x-robot";
@@ -164,7 +163,6 @@ idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
 import { machine, state, transition, entry, init, initial } from "x-robot";
 

@@ -28,7 +28,6 @@ class step2 def
 [*] --> step1
 step1 --> step2: next<br>└ G-canProceed
 ```
-
 ```javascript
 import { guard, init, initial, machine, state, transition } from "x-robot";
 
@@ -157,6 +156,15 @@ X-Robot:
 // X-Robot: native async guard
 state("idle", transition("check", "active", guard(asyncCheckPermission)));
 ```
+
+For developer-facing documentation, X-Robot includes `documentate()` views that make guarded flow easier to review without describing internals:
+
+*   Mermaid: Markdown-friendly source diagrams and previews for state, sequence, and focused structural views.
+*   PlantUML: richer source diagrams and the preferred visual style for state, sequence, and focused structural views.
+*   SVG formats: explicit `svg-*` exports, such as `svg-guards` and `svg-sequence`, for sharing, embedding, and vector assets.
+*   PNG formats: explicit `png-*` exports, such as `png-guards` and `png-events`, for raster images in docs, tickets, and slides.
+
+Focused structural views include guards, events, pulses, outcomes, immediate transitions, composition, and complexity. These outputs are useful for PR review, onboarding, conceptual debugging, and living project documentation.
 
 ## Next Steps
 

@@ -372,6 +372,37 @@ function parseScxml(scxmlString) {
 var document = new Document();
 
 // lib/documentate/serialize.ts
+var SERIALIZED_MACHINE_ID_PROPERTY = "__xRobotMachineIdentity";
+function createSerializeContext() {
+  return {
+    identities: /* @__PURE__ */ new WeakMap(),
+    nextIdentity: 0
+  };
+}
+function getMachineIdentity(machine, context) {
+  let identity = context.identities.get(machine);
+  if (!identity) {
+    identity = `m${context.nextIdentity}`;
+    context.nextIdentity += 1;
+    context.identities.set(machine, identity);
+  }
+  return identity;
+}
+function attachMachineIdentity(serialized, identity) {
+  Object.defineProperty(serialized, SERIALIZED_MACHINE_ID_PROPERTY, {
+    value: identity,
+    enumerable: false,
+    configurable: false,
+    writable: false
+  });
+}
+function getSerializedMachineIdentity(machine) {
+  const descriptor = Object.getOwnPropertyDescriptor(machine, SERIALIZED_MACHINE_ID_PROPERTY);
+  if (!descriptor || descriptor.enumerable || typeof descriptor.value !== "string") {
+    return void 0;
+  }
+  return descriptor.value;
+}
 function serializePulse(pulse) {
   const pulseFn = pulse.pulse;
   const serialized = {
@@ -386,7 +417,7 @@ function serializePulse(pulse) {
   }
   return serialized;
 }
-function serializeGuard(guard) {
+function serializeGuard(guard, context) {
   let serialized = {
     guard: guard.guard.name
   };
@@ -394,7 +425,7 @@ function serializeGuard(guard) {
     serialized.failure = guard.failure;
   }
   if ("machine" in guard) {
-    serialized.machine = serialize(guard.machine);
+    serialized.machine = serializeWithContext(guard.machine, context);
   }
   return serialized;
 }
@@ -408,17 +439,17 @@ function serializeRunArguments(run) {
     }
   });
 }
-function serializeGuards(guards) {
+function serializeGuards(guards, context) {
   if (!guards || guards.length === 0) {
     return null;
   }
-  return guards.map((guard) => serializeGuard(guard));
+  return guards.map((guard) => serializeGuard(guard, context));
 }
-function serializeTransition(transition) {
+function serializeTransition(transition, context) {
   let serialized = {
     target: transition.target
   };
-  let guards = serializeGuards(transition.guards);
+  let guards = serializeGuards(transition.guards, context);
   if (guards) {
     serialized.guards = guards;
   }
@@ -428,36 +459,36 @@ function serializeTransition(transition) {
   }
   return serialized;
 }
-function serializeImmediate(immediate) {
+function serializeImmediate(immediate, context) {
   let serialized = {
     immediate: immediate.immediate
   };
-  let guards = serializeGuards(immediate.guards);
+  let guards = serializeGuards(immediate.guards, context);
   if (guards) {
     serialized.guards = guards;
   }
   return serialized;
 }
-function serializeTransitions(events) {
+function serializeTransitions(events, context) {
   if (!events || Object.keys(events).length === 0) {
     return null;
   }
   let serialized = {};
   for (let event in events) {
-    serialized[event] = serializeTransition(events[event]);
+    serialized[event] = serializeTransition(events[event], context);
   }
   return serialized;
 }
 function serializeContext(context) {
   return deepCloneUnfreeze(context);
 }
-function serializeNested(nested) {
+function serializeNested(nested, context) {
   if (!nested || nested.length === 0) {
     return null;
   }
   return nested.map(({ machine, transition }) => {
     let serializedNestedMachine = {
-      machine: serialize(machine)
+      machine: serializeWithContext(machine, context)
     };
     if (transition) {
       serializedNestedMachine.transition = transition;
@@ -465,19 +496,20 @@ function serializeNested(nested) {
     return serializedNestedMachine;
   });
 }
-function serialize(machine) {
+function serializeWithContext(machine, context) {
   let serialized = {
     states: {},
     parallel: {},
     context: serializeContext(machine.context),
     initial: machine.initial
   };
+  attachMachineIdentity(serialized, getMachineIdentity(machine, context));
   if (machine.title) {
     serialized.title = machine.title;
   }
   for (let state in machine.states) {
     serialized.states[state] = {};
-    let nested = serializeNested(machine.states[state].nested);
+    let nested = serializeNested(machine.states[state].nested, context);
     if (nested) {
       serialized.states[state].nested = nested;
     }
@@ -485,7 +517,7 @@ function serialize(machine) {
     if (run) {
       serialized.states[state].run = run;
     }
-    let on = serializeTransitions(machine.states[state].on);
+    let on = serializeTransitions(machine.states[state].on, context);
     if (on) {
       serialized.states[state].on = on;
     }
@@ -493,7 +525,7 @@ function serialize(machine) {
     if (immediate.length) {
       let serializedImmediate = [];
       for (let immediateDirective of immediate) {
-        serializedImmediate.push(serializeImmediate(immediateDirective));
+        serializedImmediate.push(serializeImmediate(immediateDirective, context));
       }
       serialized.states[state].immediate = serializedImmediate;
     }
@@ -505,9 +537,12 @@ function serialize(machine) {
     }
   }
   for (let parallel in machine.parallel) {
-    serialized.parallel[parallel] = serialize(machine.parallel[parallel]);
+    serialized.parallel[parallel] = serializeWithContext(machine.parallel[parallel], context);
   }
   return serialized;
+}
+function serialize(machine) {
+  return serializeWithContext(machine, createSerializeContext());
 }
 
 // lib/documentate/generate.ts
@@ -1345,6 +1380,388 @@ function getPlantUmlStateSkinparamLines() {
   });
 }
 
+// lib/documentate/diagram-model.ts
+function toDiagramAlias(id) {
+  const alias = id.replace(/[^A-Za-z0-9]/g, "_").replace(/^_+|_+$/g, "");
+  return alias.length > 0 ? alias : "node";
+}
+function createAliasRegistry() {
+  const aliases = {};
+  const used = {};
+  function aliasForId(id) {
+    if (aliases[id]) {
+      return aliases[id];
+    }
+    const base = toDiagramAlias(id);
+    let alias = base;
+    let suffix = 2;
+    while (used[alias]) {
+      alias = `${base}_${suffix}`;
+      suffix += 1;
+    }
+    used[alias] = true;
+    aliases[id] = alias;
+    return alias;
+  }
+  return { aliases, aliasForId };
+}
+function escapeDiagramLabel(value) {
+  return value.replace(/[\r\n]+/g, " ").replace(/\\/g, "\uFF3C").replace(/"/g, "\uFF02").replace(/\|/g, "\uFF5C").replace(/\(/g, "\uFF08").replace(/\)/g, "\uFF09").replace(/\[/g, "\uFF3B").replace(/\]/g, "\uFF3D").replace(/\{/g, "\uFF5B").replace(/\}/g, "\uFF5D");
+}
+function stateId(machinePath, stateName) {
+  return `${machinePath}:${stateName}`;
+}
+function machineId(machinePath) {
+  return `machine:${machinePath}`;
+}
+function eventId(eventName) {
+  return `event:${eventName}`;
+}
+function displayStateLabel(machinePath, stateName) {
+  return machinePath === "root" ? stateName : `${machinePath.replace(/^root\.?/, "")}.${stateName}`;
+}
+function complexityMachineLabel(scope) {
+  if (scope.path === "root") {
+    return "root";
+  }
+  if (scope.machine.title) {
+    return scope.machine.title;
+  }
+  const parallelMatch = scope.path.match(/\.parallel\.([^.]+)$/);
+  if (parallelMatch) {
+    return parallelMatch[1];
+  }
+  return scope.path.replace(/^root\.?/, "");
+}
+function resolveState(scope, target) {
+  if (!target) {
+    return;
+  }
+  return scope.byName[target];
+}
+function collectScopes(serializedMachine, aliasForId) {
+  const visits = [];
+  const scopes = [];
+  function visit(machine, path2, parentMachinePath, parentStateId, relation) {
+    visits.push({ machine, path: path2, parentMachinePath, parentStateId, relation });
+    const states = [];
+    const byName = {};
+    for (const name in machine.states) {
+      const current = {
+        id: stateId(path2, name),
+        alias: aliasForId(stateId(path2, name)),
+        label: displayStateLabel(path2, name),
+        name,
+        machinePath: path2,
+        type: machine.states[name].type || "default"
+      };
+      states.push(current);
+      byName[name] = current;
+    }
+    scopes.push({ path: path2, machine, states, byName });
+    for (const name in machine.states) {
+      const state = machine.states[name];
+      if (!state.nested) {
+        continue;
+      }
+      for (let i = 0; i < state.nested.length; i++) {
+        visit(state.nested[i].machine, `${path2}.state.${name}.nested.${i}`, path2, stateId(path2, name), state.nested[i].transition ? `nested outcome: ${state.nested[i].transition}` : "nested");
+      }
+    }
+    for (const key in machine.parallel) {
+      visit(machine.parallel[key], `${path2}.parallel.${key}`, path2, void 0, `parallel: ${key}`);
+    }
+  }
+  visit(serializedMachine, "root");
+  return { visits, scopes };
+}
+function pushOutcome(edges, from, to, label) {
+  if (!to) {
+    return;
+  }
+  edges.push({ from: from.id, to: to.id, label, kind: "outcome" });
+}
+function pushGuardDecision(guardDecisions, outcomeEdges, scope, source, target, guard, triggerLabel, kind) {
+  const failure = resolveState(scope, guard.failure);
+  if (failure) {
+    outcomeEdges.push({
+      from: source.id,
+      to: failure.id,
+      label: `guard failure: ${guard.guard}`,
+      kind: "guard-failure"
+    });
+  }
+  guardDecisions.push({
+    id: `guard:${guardDecisions.length}`,
+    sourceStateId: source.id,
+    sourceLabel: source.label,
+    triggerLabel,
+    guardName: guard.guard,
+    successTargetId: target?.id,
+    successTargetLabel: target?.label,
+    failureTargetId: failure?.id,
+    failureTargetLabel: failure?.label,
+    kind
+  });
+}
+function addIncoming(incoming, state) {
+  if (!state) {
+    return;
+  }
+  incoming[state.id] = (incoming[state.id] || 0) + 1;
+}
+function collectComplexity(scopes) {
+  const outgoing = {};
+  const incoming = {};
+  const immediateCount = {};
+  const entryPulses = {};
+  const exitPulses = {};
+  const pulseFailures = {};
+  const points = [];
+  for (const scope of scopes) {
+    for (const stateInfo of scope.states) {
+      const state = scope.machine.states[stateInfo.name];
+      const transitions = state.on || {};
+      outgoing[stateInfo.id] = Object.keys(transitions).length;
+      immediateCount[stateInfo.id] = state.immediate ? state.immediate.length : 0;
+      entryPulses[stateInfo.id] = state.run ? state.run.length : 0;
+      exitPulses[stateInfo.id] = 0;
+      pulseFailures[stateInfo.id] = 0;
+      if (state.run) {
+        for (const pulse of state.run) {
+          addIncoming(incoming, resolveState(scope, pulse.success));
+          addIncoming(incoming, resolveState(scope, pulse.failure));
+          if (pulse.failure) {
+            pulseFailures[stateInfo.id] += 1;
+          }
+        }
+      }
+      for (const event in transitions) {
+        const transition = transitions[event];
+        addIncoming(incoming, resolveState(scope, transition.target));
+        if (transition.guards) {
+          for (const guard of transition.guards) {
+            addIncoming(incoming, resolveState(scope, guard.failure));
+          }
+        }
+        if (transition.exit) {
+          exitPulses[stateInfo.id] += transition.exit.length;
+          for (const pulse of transition.exit) {
+            addIncoming(incoming, resolveState(scope, pulse.success));
+            addIncoming(incoming, resolveState(scope, pulse.failure));
+            if (pulse.failure) {
+              pulseFailures[stateInfo.id] += 1;
+            }
+          }
+        }
+      }
+      if (state.immediate) {
+        for (const immediate of state.immediate) {
+          addIncoming(incoming, resolveState(scope, immediate.immediate));
+          if (immediate.guards) {
+            for (const guard of immediate.guards) {
+              addIncoming(incoming, resolveState(scope, guard.failure));
+            }
+          }
+        }
+      }
+      if (state.nested) {
+        for (const nested of state.nested) {
+          addIncoming(incoming, resolveState(scope, nested.transition));
+        }
+      }
+    }
+  }
+  for (const scope of scopes) {
+    const machineLabel = complexityMachineLabel(scope);
+    for (const state of scope.states) {
+      points.push({
+        stateId: state.id,
+        label: `${machineLabel}.${state.name}`,
+        transitionLoad: (outgoing[state.id] || 0) + (incoming[state.id] || 0) + (immediateCount[state.id] || 0),
+        actionLoad: (entryPulses[state.id] || 0) + (exitPulses[state.id] || 0) + (pulseFailures[state.id] || 0),
+        x: 0,
+        y: 0
+      });
+    }
+  }
+  let maxTransitionLoad = 1;
+  let maxActionLoad = 1;
+  for (const point of points) {
+    if (point.transitionLoad > maxTransitionLoad) {
+      maxTransitionLoad = point.transitionLoad;
+    }
+    if (point.actionLoad > maxActionLoad) {
+      maxActionLoad = point.actionLoad;
+    }
+  }
+  for (const point of points) {
+    point.x = point.transitionLoad / maxTransitionLoad;
+    point.y = point.actionLoad / maxActionLoad;
+  }
+  return points;
+}
+function collectAdditionalDiagramModel(serializedMachine) {
+  const { aliases, aliasForId } = createAliasRegistry();
+  const { visits, scopes } = collectScopes(serializedMachine, aliasForId);
+  const machines = [];
+  const states = [];
+  const pulseEdges = [];
+  const eventMap = {};
+  const eventEdges = [];
+  const outcomeEdges = [];
+  const immediateEdges = [];
+  const guardDecisions = [];
+  const compositionEdges = [];
+  for (const visit of visits) {
+    machines.push({
+      id: machineId(visit.path),
+      alias: aliasForId(machineId(visit.path)),
+      path: visit.path,
+      label: visit.machine.title || (visit.path === "root" ? "Machine" : visit.path),
+      initial: typeof visit.machine.initial === "string" ? visit.machine.initial : void 0,
+      stateCount: Object.keys(visit.machine.states).length
+    });
+    if (visit.parentMachinePath && visit.relation) {
+      compositionEdges.push({
+        from: visit.parentStateId || machineId(visit.parentMachinePath),
+        to: machineId(visit.path),
+        label: visit.relation,
+        kind: visit.relation.indexOf("parallel") === 0 ? "parallel" : "nested"
+      });
+    }
+  }
+  for (const scope of scopes) {
+    for (const stateInfo of scope.states) {
+      states.push(stateInfo);
+      compositionEdges.push({
+        from: machineId(scope.path),
+        to: stateInfo.id,
+        label: "has state",
+        kind: "state"
+      });
+      const state = scope.machine.states[stateInfo.name];
+      if (state.run) {
+        for (const pulse of state.run) {
+          const success = resolveState(scope, pulse.success);
+          const failure = resolveState(scope, pulse.failure);
+          if (success) {
+            pulseEdges.push({
+              from: stateInfo.id,
+              to: success.id,
+              label: `entry: ${pulse.pulse} \u2713`,
+              kind: "entry-success"
+            });
+            outcomeEdges.push({
+              from: stateInfo.id,
+              to: success.id,
+              label: `entry success: ${pulse.pulse}`,
+              kind: "entry-success"
+            });
+          }
+          if (failure) {
+            pulseEdges.push({
+              from: stateInfo.id,
+              to: failure.id,
+              label: `entry: ${pulse.pulse} \u2717`,
+              kind: "entry-failure"
+            });
+            outcomeEdges.push({
+              from: stateInfo.id,
+              to: failure.id,
+              label: `entry failure: ${pulse.pulse}`,
+              kind: "entry-failure"
+            });
+          }
+        }
+      }
+      const transitions = state.on || {};
+      for (const event in transitions) {
+        const transition = transitions[event];
+        if (!eventMap[event]) {
+          eventMap[event] = {
+            id: eventId(event),
+            alias: aliasForId(eventId(event)),
+            name: event
+          };
+        }
+        const target = resolveState(scope, transition.target);
+        if (target) {
+          let label = "target";
+          if (transition.guards && transition.guards.length > 0) {
+            const guards = transition.guards.map((guard) => guard.failure ? `${guard.guard} -> ${guard.failure}` : guard.guard).join(", ");
+            label += ` [guard: ${guards}]`;
+          }
+          eventEdges.push({
+            event,
+            eventId: eventId(event),
+            from: stateInfo.id,
+            to: target.id,
+            label
+          });
+          outcomeEdges.push({
+            from: stateInfo.id,
+            to: target.id,
+            label: event,
+            kind: "transition"
+          });
+        }
+        if (transition.guards) {
+          for (const guard of transition.guards) {
+            pushGuardDecision(guardDecisions, outcomeEdges, scope, stateInfo, target, guard, `event: ${event}`, "transition");
+          }
+        }
+        if (transition.exit) {
+          for (const pulse of transition.exit) {
+            const to = resolveState(scope, transition.target);
+            if (to) {
+              pulseEdges.push({
+                from: stateInfo.id,
+                to: to.id,
+                label: `exit: ${pulse.pulse} on ${event}`,
+                kind: "exit"
+              });
+            }
+            pushOutcome(outcomeEdges, stateInfo, resolveState(scope, pulse.failure), `exit failure: ${pulse.pulse}`);
+          }
+        }
+      }
+      if (state.immediate) {
+        for (const immediate of state.immediate) {
+          const target = resolveState(scope, immediate.immediate);
+          const guardText = immediate.guards && immediate.guards.length > 0 ? ` [guard: ${immediate.guards.map((guard) => guard.failure ? `${guard.guard}; failure: ${guard.failure}` : guard.guard).join(", ")}]` : "";
+          if (target) {
+            immediateEdges.push({
+              from: stateInfo.id,
+              to: target.id,
+              label: `immediate${guardText}`,
+              kind: "immediate"
+            });
+          }
+          if (immediate.guards) {
+            for (const guard of immediate.guards) {
+              pushGuardDecision(guardDecisions, outcomeEdges, scope, stateInfo, target, guard, "immediate", "immediate");
+            }
+          }
+        }
+      }
+    }
+  }
+  return {
+    machines,
+    states,
+    pulseEdges,
+    events: Object.keys(eventMap).map((name) => eventMap[name]),
+    eventEdges,
+    outcomeEdges,
+    immediateEdges,
+    guardDecisions,
+    compositionEdges,
+    complexityPoints: collectComplexity(scopes),
+    aliases
+  };
+}
+
 // lib/documentate/visualize.ts
 var import_child_process = require("child_process");
 var import_fs = __toESM(require("fs"));
@@ -1676,6 +2093,134 @@ function getMermaidTreeLabel(collection, context) {
 function escapeMermaidLabel(value) {
   return value.replace(/"/g, '\\"');
 }
+function escapeMermaidSequenceText(value) {
+  return value.replace(/[\r\n]+/g, " ").replace(/"/g, "#quot;");
+}
+function escapeMermaidSequenceParticipantText(value) {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/[\r\n]+/g, " ").replace(/"/g, "#quot;");
+}
+function escapePlantUmlSequenceText(value) {
+  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/[\r\n]+/g, " ");
+}
+function toSequenceAliasPart(value, fallback) {
+  const alias = value.replace(/[^A-Za-z0-9]/g, "_").replace(/^_+|_+$/g, "");
+  return alias.length > 0 ? alias : fallback;
+}
+function countMatchingNestedMachines(nested, machine) {
+  const guardMachineIdentity = getSerializedMachineIdentity(machine);
+  if (!guardMachineIdentity) {
+    return 0;
+  }
+  let matches = 0;
+  for (const nestedMachine of nested) {
+    if (getSerializedMachineIdentity(nestedMachine.machine) === guardMachineIdentity) {
+      matches += 1;
+    }
+  }
+  return matches;
+}
+function getNestedOutcomeReactionLabel(nested, nestedMachine, stateImmediate, stateOn) {
+  if (!stateImmediate || !stateOn) {
+    return null;
+  }
+  if (!isValidString(nestedMachine.transition)) {
+    return null;
+  }
+  const nestedMachineIdentity = getSerializedMachineIdentity(nestedMachine.machine);
+  if (!nestedMachineIdentity) {
+    return null;
+  }
+  for (const immediate of stateImmediate) {
+    if (!stateOn[immediate.immediate] || !immediate.guards) {
+      continue;
+    }
+    for (const guard of immediate.guards) {
+      if (!guard.machine) {
+        continue;
+      }
+      if (countMatchingNestedMachines(nested, guard.machine) !== 1) {
+        continue;
+      }
+      if (getSerializedMachineIdentity(guard.machine) === nestedMachineIdentity) {
+        return `outcome captured by ${immediate.immediate}`;
+      }
+    }
+  }
+  return null;
+}
+function collectSequenceDiagramData(serializedMachine) {
+  const participants = [];
+  const relations = [];
+  let nestedCount = 0;
+  function visit(machine, alias, label) {
+    participants.push({ alias, label, machine });
+    let stateIndex = 0;
+    for (const stateName in machine.states) {
+      const currentStateIndex = stateIndex;
+      stateIndex += 1;
+      const state = machine.states[stateName];
+      if (!state.nested) {
+        continue;
+      }
+      for (let i = 0; i < state.nested.length; i++) {
+        const nestedMachine = state.nested[i];
+        nestedCount += 1;
+        const nestedAlias = `${alias}_S${currentStateIndex}_${toSequenceAliasPart(stateName, `state${currentStateIndex}`)}_N${i}`;
+        const nestedLabel = nestedMachine.machine.title || `Nested machine ${nestedCount}`;
+        if (nestedMachine.transition) {
+          relations.push({
+            from: alias,
+            to: nestedAlias,
+            label: `nested ${nestedMachine.transition}`
+          });
+        }
+        const returnLabel = getNestedOutcomeReactionLabel(state.nested, nestedMachine, state.immediate, state.on);
+        if (returnLabel) {
+          relations.push({
+            from: nestedAlias,
+            to: alias,
+            label: returnLabel,
+            isReturn: true
+          });
+        }
+        visit(nestedMachine.machine, nestedAlias, nestedLabel);
+      }
+    }
+    let parallelIndex = 0;
+    for (const parallelKey in machine.parallel) {
+      const parallelMachine = machine.parallel[parallelKey];
+      const parallelAlias = `${alias}_PAR${parallelIndex}`;
+      const parallelLabel = parallelMachine.title || `Parallel machine ${parallelKey || parallelIndex + 1}`;
+      relations.push({
+        from: alias,
+        to: parallelAlias,
+        label: `parallel ${parallelMachine.title || parallelKey || parallelIndex + 1}`
+      });
+      visit(parallelMachine, parallelAlias, parallelLabel);
+      parallelIndex += 1;
+    }
+  }
+  visit(serializedMachine, "P0", serializedMachine.title || "Machine");
+  return { participants, relations };
+}
+function getSequenceTransitionLabel(event, from, transition, level) {
+  let label = `${event}: ${from} -> ${transition.target}`;
+  if (level === VISUALIZATION_LEVEL.HIGH) {
+    if (transition.guards && transition.guards.length > 0) {
+      const guardNames = transition.guards.map((guard) => guard.guard).join(", ");
+      if (guardNames.length > 0) {
+        label += ` [guard: ${guardNames}]`;
+      }
+    }
+    if (transition.exit && transition.exit.length > 0) {
+      const exitNames = transition.exit.map((exitPulse) => exitPulse.pulse).join(", ");
+      if (exitNames.length > 0) {
+        label += ` [exit: ${exitNames}]`;
+      }
+    }
+  }
+  return label;
+}
 async function createImageFromPlantUmlCode(plantUmlCode, type, options = {}) {
   const plantUmlJarPath = import_path.default.resolve(__dirname, "../../vendor/plantuml.jar");
   const extension = type === "png" ? "png" : "svg";
@@ -1722,15 +2267,15 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
   }
   for (const stateName in serializedMachine.states) {
     const state = serializedMachine.states[stateName];
-    const stateId = stateNames[stateName];
-    mermaidCode += `${space}state "${escapeMermaidLabel(stateName)}" as ${stateId}
+    const stateId2 = stateNames[stateName];
+    mermaidCode += `${space}state "${escapeMermaidLabel(stateName)}" as ${stateId2}
 `;
   }
   if (!isChild) {
     for (const stateName in serializedMachine.states) {
-      const stateId = stateNames[stateName];
+      const stateId2 = stateNames[stateName];
       const stateType = stateTypes[stateName];
-      mermaidCode += `${space}class ${stateId} ${getMermaidStateClassName(stateType)}
+      mermaidCode += `${space}class ${stateId2} ${getMermaidStateClassName(stateType)}
 `;
     }
   }
@@ -1740,12 +2285,12 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
   let nestedMachines = "";
   for (const stateName in serializedMachine.states) {
     const state = serializedMachine.states[stateName];
-    const stateId = stateNames[stateName];
+    const stateId2 = stateNames[stateName];
     if (state.nested) {
-      nestedMachines += `${space}state ${stateId} {
+      nestedMachines += `${space}state ${stateId2} {
 `;
       for (let nestedMachine of state.nested) {
-        nestedMachines += getInnerMermaidCode(nestedMachine.machine, options, toCammelCase2(stateId), childLevel + 1);
+        nestedMachines += getInnerMermaidCode(nestedMachine.machine, options, toCammelCase2(stateId2), childLevel + 1);
         nestedMachines += `${space}  --
 `;
       }
@@ -1775,13 +2320,13 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
   if (level === "high") {
     for (const stateName in serializedMachine.states) {
       const state = serializedMachine.states[stateName];
-      const stateId = stateNames[stateName];
+      const stateId2 = stateNames[stateName];
       const noteLines = [];
       if (state.description) {
         if (state.nested) {
           noteLines.push(state.description);
         } else {
-          mermaidCode += `${space}${stateId}: ${state.description}
+          mermaidCode += `${space}${stateId2}: ${state.description}
 `;
         }
       }
@@ -1811,13 +2356,13 @@ function getInnerMermaidCode(serializedMachine, options, parentName = "", childL
             noteLines.push(...asciiTree.split("\\n"));
           } else {
             asciiTree = asciiTree.replace(/\\n/g, "<br>");
-            mermaidCode += `${space}${stateId}: ${asciiTree}
+            mermaidCode += `${space}${stateId2}: ${asciiTree}
 `;
           }
         }
       }
       if (noteLines.length > 0) {
-        mermaidCode += `${space}note right of ${stateId}
+        mermaidCode += `${space}note right of ${stateId2}
 `;
         for (const line of noteLines) {
           mermaidCode += `${space}  ${line}
@@ -1887,6 +2432,586 @@ title: ${serializedMachine.title}
   }
   return mermaidCode;
 }
+function getMermaidSequenceCode(serializedMachine, optionsOrLevel = VISUALIZATION_LEVEL.LOW) {
+  let opts = typeof optionsOrLevel === "string" ? { level: optionsOrLevel } : optionsOrLevel;
+  const data = collectSequenceDiagramData(serializedMachine);
+  let mermaidCode = "sequenceDiagram\n";
+  for (const participant of data.participants) {
+    mermaidCode += `participant ${participant.alias} as ${escapeMermaidSequenceParticipantText(participant.label)}
+`;
+  }
+  for (const relation of data.relations) {
+    const arrow = relation.isReturn ? "-->>" : "->>";
+    mermaidCode += `${relation.from}${arrow}${relation.to}: ${escapeMermaidSequenceText(relation.label)}
+`;
+  }
+  for (const participant of data.participants) {
+    for (const stateName in participant.machine.states) {
+      const state = participant.machine.states[stateName];
+      if (!state.on) {
+        continue;
+      }
+      for (const event in state.on) {
+        const transition = state.on[event];
+        const label = getSequenceTransitionLabel(event, stateName, transition, opts.level);
+        mermaidCode += `${participant.alias}->>${participant.alias}: ${escapeMermaidSequenceText(label)}
+`;
+      }
+    }
+  }
+  return mermaidCode;
+}
+function getPlantUmlSequenceCode(serializedMachine, optionsOrLevel = VISUALIZATION_LEVEL.LOW) {
+  let opts = typeof optionsOrLevel === "string" ? { level: optionsOrLevel } : optionsOrLevel;
+  const data = collectSequenceDiagramData(serializedMachine);
+  let plantUmlCode = "@startuml\n";
+  for (const participant of data.participants) {
+    plantUmlCode += `participant "${escapePlantUmlSequenceText(participant.label)}" as ${participant.alias}
+`;
+  }
+  for (const relation of data.relations) {
+    const arrow = relation.isReturn ? "-->" : "->";
+    plantUmlCode += `${relation.from} ${arrow} ${relation.to}: ${escapePlantUmlSequenceText(relation.label)}
+`;
+  }
+  for (const participant of data.participants) {
+    for (const stateName in participant.machine.states) {
+      const state = participant.machine.states[stateName];
+      if (!state.on) {
+        continue;
+      }
+      for (const event in state.on) {
+        const transition = state.on[event];
+        const label = getSequenceTransitionLabel(event, stateName, transition, opts.level);
+        plantUmlCode += `${participant.alias} -> ${participant.alias}: ${escapePlantUmlSequenceText(label)}
+`;
+      }
+    }
+  }
+  plantUmlCode += "@enduml\n";
+  return plantUmlCode;
+}
+function getAdditionalModel(serializedMachine) {
+  return collectAdditionalDiagramModel(serializedMachine);
+}
+function plantUmlRectangleSkinparam(extra = "") {
+  return `skinparam rectangle {
+  RoundCorner 12
+  Shadowing false${extra}
+}
+`;
+}
+function renderMermaidNodes(model, includeType = false) {
+  let code = "";
+  for (const state of model.states) {
+    const label = includeType ? `${escapeDiagramLabel(state.name)}\\n${escapeDiagramLabel(state.type)}` : escapeDiagramLabel(state.label);
+    const className = includeType ? `:::${state.type}` : "";
+    code += `  ${state.alias}["${label}"]${className}
+`;
+  }
+  return code;
+}
+function renderPlantUmlNodes(model, includeType = false) {
+  let code = "";
+  for (const state of model.states) {
+    const label = includeType ? `${escapeDiagramLabel(state.name)}\\n${escapeDiagramLabel(state.type)}` : escapeDiagramLabel(state.label);
+    const stereotype = includeType && state.type !== "default" ? ` <<${state.type}>>` : "";
+    code += `rectangle "${label}" as ${state.alias}${stereotype}
+`;
+  }
+  return code;
+}
+function modelAlias(model, id) {
+  const alias = model.aliases[id];
+  if (!alias) {
+    throw new Error(`Missing diagram alias for id: ${id}`);
+  }
+  return alias;
+}
+function getMermaidPulseMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = "flowchart TD\n";
+  code += renderMermaidNodes(model);
+  for (const edge of model.pulseEdges) {
+    code += `  ${modelAlias(model, edge.from)} -->|"${escapeDiagramLabel(edge.label)}"| ${modelAlias(model, edge.to)}
+`;
+  }
+  code += "  classDef pulse fill:#eef6ff,stroke:#2f6fed,color:#0b1b3a\n";
+  return code;
+}
+function getPlantUmlPulseMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = `@startuml
+${plantUmlRectangleSkinparam()}
+`;
+  code += renderPlantUmlNodes(model);
+  for (const edge of model.pulseEdges) {
+    code += `${modelAlias(model, edge.from)} --> ${modelAlias(model, edge.to)} : ${escapeDiagramLabel(edge.label)}
+`;
+  }
+  code += "@enduml\n";
+  return code;
+}
+function getMermaidEventMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = "flowchart LR\n";
+  code += renderMermaidNodes(model);
+  for (const event of model.events) {
+    code += `  ${event.alias}{{"event: ${escapeDiagramLabel(event.name)}"}}
+`;
+  }
+  for (const edge of model.eventEdges) {
+    code += `  ${modelAlias(model, edge.from)} --> ${modelAlias(model, edge.eventId)}
+`;
+    code += `  ${modelAlias(model, edge.eventId)} -->|"${escapeDiagramLabel(edge.label)}"| ${modelAlias(model, edge.to)}
+`;
+  }
+  return code;
+}
+function getPlantUmlEventMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = `@startuml
+${plantUmlRectangleSkinparam()}
+`;
+  for (const event of model.events) {
+    code += `rectangle "event: ${escapeDiagramLabel(event.name)}" as ${event.alias}
+`;
+  }
+  code += renderPlantUmlNodes(model);
+  for (const edge of model.eventEdges) {
+    code += `${modelAlias(model, edge.from)} --> ${modelAlias(model, edge.eventId)}
+`;
+    code += `${modelAlias(model, edge.eventId)} --> ${modelAlias(model, edge.to)} : ${escapeDiagramLabel(edge.label)}
+`;
+  }
+  code += "@enduml\n";
+  return code;
+}
+function getMermaidOutcomeMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = "flowchart TD\n";
+  code += renderMermaidNodes(model, true);
+  for (const edge of model.outcomeEdges) {
+    code += `  ${modelAlias(model, edge.from)} -->|"${escapeDiagramLabel(edge.label)}"| ${modelAlias(model, edge.to)}
+`;
+  }
+  code += "  classDef primary fill:#e8f1ff,stroke:#3164d4\n";
+  code += "  classDef warning fill:#fff8db,stroke:#b78b00\n";
+  code += "  classDef success fill:#e8f7ed,stroke:#20834d\n";
+  code += "  classDef danger fill:#ffecef,stroke:#cf2e46\n";
+  code += "  classDef default fill:#f7f7f7,stroke:#777\n";
+  return code;
+}
+function getPlantUmlOutcomeMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = `@startuml
+${plantUmlRectangleSkinparam()}`;
+  code += "skinparam rectangle<<primary>> BackgroundColor #E8F1FF\n";
+  code += "skinparam rectangle<<warning>> BackgroundColor #FFF8DB\n";
+  code += "skinparam rectangle<<success>> BackgroundColor #E8F7ED\n";
+  code += "skinparam rectangle<<danger>> BackgroundColor #FFECEF\n\n";
+  code += renderPlantUmlNodes(model, true);
+  for (const edge of model.outcomeEdges) {
+    code += `${modelAlias(model, edge.from)} --> ${modelAlias(model, edge.to)} : ${escapeDiagramLabel(edge.label)}
+`;
+  }
+  code += "@enduml\n";
+  return code;
+}
+function getMermaidImmediateMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = "flowchart TD\n";
+  code += renderMermaidNodes(model);
+  for (const edge of model.immediateEdges) {
+    code += `  ${modelAlias(model, edge.from)} -. "${escapeDiagramLabel(edge.label)}" .-> ${modelAlias(model, edge.to)}
+`;
+  }
+  return code;
+}
+function getPlantUmlImmediateMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = `@startuml
+${plantUmlRectangleSkinparam()}
+`;
+  code += renderPlantUmlNodes(model);
+  for (const edge of model.immediateEdges) {
+    code += `${modelAlias(model, edge.from)} ..> ${modelAlias(model, edge.to)} : ${escapeDiagramLabel(edge.label)}
+`;
+  }
+  code += "@enduml\n";
+  return code;
+}
+function getGuardDecisionActivitySteps(model) {
+  return model.guardDecisions;
+}
+function getMermaidGuardDecisionMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  const decisions = getGuardDecisionActivitySteps(model);
+  let code = "flowchart TD\n";
+  code += '  guard_start(["start"])\n';
+  code += '  guard_stop(["stop"])\n';
+  for (let i = 0; i < decisions.length; i++) {
+    const decision = decisions[i];
+    const sourceAlias = `guard_${i}_source`;
+    const triggerAlias = `guard_${i}_trigger`;
+    const decisionAlias = `guard_${i}_decision`;
+    const nextAlias = i + 1 < decisions.length ? `guard_${i + 1}_source` : "guard_stop";
+    code += `  ${sourceAlias}["state: ${escapeDiagramLabel(decision.sourceLabel)}"]
+`;
+    code += `  ${triggerAlias}["${escapeDiagramLabel(decision.triggerLabel)}"]
+`;
+    code += `  ${decisionAlias}{"guard: ${escapeDiagramLabel(decision.guardName)}?"}
+`;
+    if (decision.successTargetId) {
+      code += `  guard_${i}_success["${escapeDiagramLabel(decision.successTargetLabel || "target")}"]
+`;
+    }
+    if (decision.failureTargetId) {
+      code += `  guard_${i}_failure["${escapeDiagramLabel(decision.failureTargetLabel || "failure target")}"]
+`;
+    }
+    if (i === 0) {
+      code += `  guard_start --> ${sourceAlias}
+`;
+    }
+    code += `  ${sourceAlias} --> ${triggerAlias}
+`;
+    code += `  ${triggerAlias} --> ${decisionAlias}
+`;
+    if (decision.successTargetId) {
+      code += `  ${decisionAlias} -->|"target"| guard_${i}_success
+`;
+      code += `  guard_${i}_success --> guard_${i}_join(( ))
+`;
+    }
+    if (decision.failureTargetId) {
+      code += `  ${decisionAlias} -->|"failure target"| guard_${i}_failure
+`;
+      code += `  guard_${i}_failure --> guard_${i}_join
+`;
+    }
+    if (!decision.successTargetId && !decision.failureTargetId) {
+      code += `  ${decisionAlias} --> guard_${i}_join(( ))
+`;
+    }
+    code += `  guard_${i}_join --> ${nextAlias}
+`;
+  }
+  if (decisions.length === 0) {
+    code += "  guard_start --> guard_stop\n";
+  }
+  return code;
+}
+function getPlantUmlGuardDecisionMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  const decisions = getGuardDecisionActivitySteps(model);
+  let code = "@startuml\nskinparam activity {\n  RoundCorner 12\n  Shadowing false\n}\n\nstart\n";
+  for (const decision of decisions) {
+    code += `:state: ${escapeDiagramLabel(decision.sourceLabel)};
+`;
+    code += `:${escapeDiagramLabel(decision.triggerLabel)};
+`;
+    code += `if (guard: ${escapeDiagramLabel(decision.guardName)}?) then (target)
+`;
+    if (decision.successTargetLabel) {
+      code += `  :${escapeDiagramLabel(decision.successTargetLabel)};
+`;
+    }
+    if (decision.failureTargetLabel) {
+      code += `else (failure target)
+  :${escapeDiagramLabel(decision.failureTargetLabel)};
+`;
+    }
+    code += "endif\n";
+  }
+  code += "stop\n@enduml\n";
+  return code;
+}
+function getMermaidCompositionMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = "flowchart TD\n";
+  for (const machine of model.machines) {
+    const label = `${escapeDiagramLabel(machine.label)}${machine.initial ? `\\ninitial: ${escapeDiagramLabel(machine.initial)}` : ""}`;
+    code += `  ${machine.alias}[["${label}"]]
+`;
+  }
+  for (const state of model.states) {
+    code += `  ${state.alias}["state: ${escapeDiagramLabel(state.label)}"]
+`;
+  }
+  for (const edge of model.compositionEdges) {
+    code += `  ${modelAlias(model, edge.from)} -->|"${escapeDiagramLabel(edge.label)}"| ${modelAlias(model, edge.to)}
+`;
+  }
+  return code;
+}
+function getPlantUmlCompositionMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  let code = `@startuml
+${plantUmlRectangleSkinparam()}
+`;
+  for (const machine of model.machines) {
+    const label = `${escapeDiagramLabel(machine.label)}${machine.initial ? `\\ninitial: ${escapeDiagramLabel(machine.initial)}` : ""}`;
+    code += `rectangle "${label}" as ${machine.alias}
+`;
+  }
+  for (const state of model.states) {
+    code += `rectangle "state: ${escapeDiagramLabel(state.label)}" as ${state.alias}
+`;
+  }
+  for (const edge of model.compositionEdges) {
+    code += `${modelAlias(model, edge.from)} --> ${modelAlias(model, edge.to)} : ${escapeDiagramLabel(edge.label)}
+`;
+  }
+  code += "@enduml\n";
+  return code;
+}
+function formatPoint(value) {
+  return value.toFixed(2);
+}
+function formatMermaidPoint(value) {
+  return value === 1 ? "1" : formatPoint(value);
+}
+function pointQuadrant(point) {
+  if (point.x >= 0.5 && point.y >= 0.5)
+    return "Q1";
+  if (point.x < 0.5 && point.y >= 0.5)
+    return "Q2";
+  if (point.x < 0.5 && point.y < 0.5)
+    return "Q3";
+  return "Q4";
+}
+function maxComplexityLoads(points) {
+  let transitionLoad = 0;
+  let actionLoad = 0;
+  for (const point of points) {
+    if (point.transitionLoad > transitionLoad) {
+      transitionLoad = point.transitionLoad;
+    }
+    if (point.actionLoad > actionLoad) {
+      actionLoad = point.actionLoad;
+    }
+  }
+  return { transitionLoad, actionLoad };
+}
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+function quadrantBounds(quadrant) {
+  const lowMin = 0.06;
+  const lowMax = 0.44;
+  const highMin = 0.56;
+  const highMax = 0.94;
+  if (quadrant === "Q1")
+    return { minX: highMin, maxX: highMax, minY: highMin, maxY: highMax };
+  if (quadrant === "Q2")
+    return { minX: lowMin, maxX: lowMax, minY: highMin, maxY: highMax };
+  if (quadrant === "Q3")
+    return { minX: lowMin, maxX: lowMax, minY: lowMin, maxY: lowMax };
+  return { minX: highMin, maxX: highMax, minY: lowMin, maxY: lowMax };
+}
+function shortenPointLabel(label) {
+  const escaped = escapeDiagramLabel(label);
+  return escaped.length > 22 ? `${escaped.slice(0, 21)}\u2026` : escaped;
+}
+function pointImportance(point) {
+  return point.transitionLoad + point.actionLoad;
+}
+function sortedComplexityPoints(points) {
+  return points.slice().sort((a, b) => {
+    const importance = pointImportance(b) - pointImportance(a);
+    return importance !== 0 ? importance : a.label.localeCompare(b.label);
+  });
+}
+function sortedComplexityLayoutPoints(points) {
+  return points.slice().sort((a, b) => {
+    const importance = pointImportance(b.point) - pointImportance(a.point);
+    return importance !== 0 ? importance : a.point.label.localeCompare(b.point.label);
+  });
+}
+function localComplexityPosition(point) {
+  return {
+    x: point.quadrant === "Q1" || point.quadrant === "Q4" ? (point.x - 0.5) / 0.5 : point.x / 0.5,
+    y: point.quadrant === "Q1" || point.quadrant === "Q2" ? (point.y - 0.5) / 0.5 : point.y / 0.5
+  };
+}
+function globalComplexityPosition(quadrant, localX, localY) {
+  return {
+    x: quadrant === "Q1" || quadrant === "Q4" ? 0.5 + localX * 0.5 : localX * 0.5,
+    y: quadrant === "Q1" || quadrant === "Q2" ? 0.5 + localY * 0.5 : localY * 0.5
+  };
+}
+function quantizeComplexityPoint(point, quadrantHeight, quadrantWidth) {
+  const local = localComplexityPosition(point);
+  const column = Math.min(quadrantWidth - 2, Math.max(1, Math.round(local.x * (quadrantWidth - 2))));
+  const rowFromBottom = Math.min(quadrantHeight - 1, Math.max(0, Math.round(local.y * (quadrantHeight - 1))));
+  const display = globalComplexityPosition(point.quadrant, column / (quadrantWidth - 2), rowFromBottom / (quadrantHeight - 1));
+  return { ...point, x: display.x, y: display.y };
+}
+function packComplexityRows(points, quadrantHeight, quadrantWidth) {
+  const byQuadrant = { Q1: [], Q2: [], Q3: [], Q4: [] };
+  for (const point of points) {
+    byQuadrant[point.quadrant].push(point);
+  }
+  const byStateId = {};
+  for (const quadrant of ["Q1", "Q2", "Q3", "Q4"]) {
+    const minBulletRow = 1;
+    const usedRows = Array.from({ length: quadrantHeight }).map(() => false);
+    const candidates = byQuadrant[quadrant].map((point) => {
+      const local = localComplexityPosition(point);
+      const preferredRowFromBottom = Math.min(quadrantHeight - 1, Math.max(0, Math.round(local.y * (quadrantHeight - 1))));
+      return {
+        point,
+        preferredRow: Math.min(quadrantHeight - 2, Math.max(minBulletRow, quadrantHeight - 1 - preferredRowFromBottom))
+      };
+    }).sort((a, b) => {
+      if (a.preferredRow !== b.preferredRow)
+        return a.preferredRow - b.preferredRow;
+      const importance = pointImportance(b.point.point) - pointImportance(a.point.point);
+      return importance !== 0 ? importance : a.point.point.label.localeCompare(b.point.point.label);
+    });
+    for (const candidate of candidates) {
+      const point = candidate.point;
+      const local = localComplexityPosition(point);
+      const row = nearestFreeRowPair(candidate.preferredRow, usedRows, quadrantHeight, minBulletRow);
+      const column = Math.min(quadrantWidth - 2, Math.max(1, Math.round(local.x * (quadrantWidth - 2))));
+      if (row === void 0) {
+        byStateId[point.point.stateId] = quantizeComplexityPoint(point, quadrantHeight, quadrantWidth);
+        continue;
+      }
+      usedRows[row] = true;
+      usedRows[row + 1] = true;
+      const localY = (quadrantHeight - 1 - row) / (quadrantHeight - 1);
+      const display = globalComplexityPosition(quadrant, column / (quadrantWidth - 2), localY);
+      byStateId[point.point.stateId] = { ...point, x: display.x, y: display.y };
+    }
+  }
+  return points.map((point) => byStateId[point.point.stateId]);
+}
+function layoutComplexityPoints(points) {
+  const groups = {};
+  for (const point of points) {
+    const key = `${pointQuadrant(point)}:${formatPoint(point.x)},${formatPoint(point.y)}`;
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(point);
+  }
+  const byStateId = {};
+  for (const key in groups) {
+    const collisionGroup = sortedComplexityPoints(groups[key]);
+    for (let index = 0; index < collisionGroup.length; index++) {
+      const point = collisionGroup[index];
+      const quadrant = pointQuadrant(point);
+      const bounds = quadrantBounds(quadrant);
+      let x = clamp(point.x, bounds.minX, bounds.maxX);
+      let y = clamp(point.y, bounds.minY, bounds.maxY);
+      if (collisionGroup.length > 1) {
+        const step = (index + 1) / (collisionGroup.length + 1);
+        x = bounds.minX + (bounds.maxX - bounds.minX) * step;
+        y = bounds.minY + (bounds.maxY - bounds.minY) * step;
+      }
+      byStateId[point.stateId] = { point, x, y, quadrant };
+    }
+  }
+  const layout = points.map((point) => byStateId[point.stateId]);
+  const byQuadrant = { Q1: 0, Q2: 0, Q3: 0, Q4: 0 };
+  for (const point of layout) {
+    byQuadrant[point.quadrant] += 1;
+  }
+  const quadrantHeight = Math.max(5, Math.max(byQuadrant.Q1, byQuadrant.Q2, byQuadrant.Q3, byQuadrant.Q4) * 2 + 2);
+  return packComplexityRows(layout, quadrantHeight, 34);
+}
+function nearestFreeRowPair(preferred, usedRows, rowLimit, minBulletRow = 0) {
+  const maxBulletRow = rowLimit - 2;
+  const clampedPreferred = Math.min(maxBulletRow, Math.max(minBulletRow, preferred));
+  for (let distance = 0; distance < rowLimit; distance++) {
+    const before = clampedPreferred - distance;
+    if (before >= minBulletRow && before < rowLimit - 1 && !usedRows[before] && !usedRows[before + 1]) {
+      return before;
+    }
+    const after = clampedPreferred + distance;
+    if (after < rowLimit - 1 && !usedRows[after] && !usedRows[after + 1]) {
+      return after;
+    }
+  }
+  return void 0;
+}
+function renderQuadrantBox(title, alias, points, height) {
+  const width = 34;
+  const sortedPoints = sortedComplexityLayoutPoints(points);
+  const rows = [];
+  for (let row = 0; row < height; row++) {
+    rows.push(Array.from({ length: width }).map(() => " "));
+  }
+  for (const point of sortedPoints) {
+    const { x: localX, y: localY } = localComplexityPosition(point);
+    let column = Math.min(width - 2, Math.max(1, Math.round(localX * (width - 2))));
+    let rowFromBottom = Math.min(height - 1, Math.max(0, Math.round(localY * (height - 1))));
+    const row = height - 1 - rowFromBottom;
+    if (row < 0 || row >= height - 1) {
+      continue;
+    }
+    const label = shortenPointLabel(point.point.label);
+    const labelColumn = Math.min(width - label.length - 1, Math.max(1, column - Math.floor(label.length / 2)));
+    rows[row][column] = "\u25CF";
+    for (let i = 0; i < label.length && labelColumn + i < width; i++) {
+      rows[row + 1][labelColumn + i] = label[i];
+    }
+  }
+  let box = `${title}\\n\\nActions \u2191\\n`;
+  box += "\u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\n";
+  for (const row of rows) {
+    box += `\u2502${row.join("")}\u2502\\n`;
+  }
+  box += "\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\nTransitions \u2192";
+  return `rectangle "${box}" as ${alias}
+`;
+}
+function getMermaidComplexityMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  const maxLoads = maxComplexityLoads(model.complexityPoints);
+  const points = layoutComplexityPoints(model.complexityPoints);
+  let code = "quadrantChart\n";
+  code += `  title State complexity map (max transitions: ${maxLoads.transitionLoad}, max actions: ${maxLoads.actionLoad})
+`;
+  code += "  x-axis Few transitions --> Many transitions\n";
+  code += "  y-axis Few actions --> Many actions\n";
+  code += "  quadrant-1 Many actions / many transitions\n";
+  code += "  quadrant-2 Many actions / few transitions\n";
+  code += "  quadrant-3 Few actions / few transitions\n";
+  code += "  quadrant-4 Few actions / many transitions\n";
+  for (const point of points) {
+    code += `  ${escapeDiagramLabel(point.point.label)}: [${formatMermaidPoint(point.x)}, ${formatMermaidPoint(point.y)}]
+`;
+  }
+  return code;
+}
+function getPlantUmlComplexityMapCode(serializedMachine) {
+  const model = getAdditionalModel(serializedMachine);
+  const maxLoads = maxComplexityLoads(model.complexityPoints);
+  const groups = { Q1: [], Q2: [], Q3: [], Q4: [] };
+  for (const point of layoutComplexityPoints(model.complexityPoints)) {
+    groups[point.quadrant].push(point);
+  }
+  const tallestQuadrant = Math.max(groups.Q1.length, groups.Q2.length, groups.Q3.length, groups.Q4.length);
+  const quadrantHeight = Math.max(5, tallestQuadrant * 2 + 2);
+  let code = `@startuml
+${plantUmlRectangleSkinparam("\n  FontName Monospaced")}
+`;
+  code += `title State complexity map\\nMax transition load: ${maxLoads.transitionLoad}\\nMax action load: ${maxLoads.actionLoad}
+`;
+  code += renderQuadrantBox("MANY ACTIONS / FEW TRANSITIONS", "Q2", groups.Q2, quadrantHeight);
+  code += renderQuadrantBox("MANY ACTIONS / MANY TRANSITIONS", "Q1", groups.Q1, quadrantHeight);
+  code += renderQuadrantBox("FEW ACTIONS / FEW TRANSITIONS", "Q3", groups.Q3, quadrantHeight);
+  code += renderQuadrantBox("FEW ACTIONS / MANY TRANSITIONS", "Q4", groups.Q4, quadrantHeight);
+  code += "Q2 -[hidden]right- Q1\n";
+  code += "Q3 -[hidden]right- Q4\n";
+  code += "Q2 -[hidden]down- Q3\n";
+  code += "Q1 -[hidden]down- Q4\n";
+  code += "@enduml\n";
+  return code;
+}
 function getPlantUmlCodeFromMachine(machine, optionsOrLevel = VISUALIZATION_LEVEL.LOW) {
   return getPlantUmlCode(serialize(machine), optionsOrLevel);
 }
@@ -1942,6 +3067,26 @@ function stringifyTree(tn, nameFn, childrenFn) {
 }
 
 // lib/documentate/index.ts
+var plantUmlAdditionalRenderers = {
+  sequence: (serialized, options) => getPlantUmlSequenceCode(serialized, options),
+  pulses: (serialized) => getPlantUmlPulseMapCode(serialized),
+  events: (serialized) => getPlantUmlEventMapCode(serialized),
+  outcomes: (serialized) => getPlantUmlOutcomeMapCode(serialized),
+  immediate: (serialized) => getPlantUmlImmediateMapCode(serialized),
+  guards: (serialized) => getPlantUmlGuardDecisionMapCode(serialized),
+  composition: (serialized) => getPlantUmlCompositionMapCode(serialized),
+  complexity: (serialized) => getPlantUmlComplexityMapCode(serialized)
+};
+var mermaidAdditionalRenderers = {
+  sequence: (serialized, options) => getMermaidSequenceCode(serialized, options),
+  pulses: (serialized) => getMermaidPulseMapCode(serialized),
+  events: (serialized) => getMermaidEventMapCode(serialized),
+  outcomes: (serialized) => getMermaidOutcomeMapCode(serialized),
+  immediate: (serialized) => getMermaidImmediateMapCode(serialized),
+  guards: (serialized) => getMermaidGuardDecisionMapCode(serialized),
+  composition: (serialized) => getMermaidCompositionMapCode(serialized),
+  complexity: (serialized) => getMermaidComplexityMapCode(serialized)
+};
 function isSerializedMachine(input) {
   return input && typeof input === "object" && "states" in input;
 }
@@ -1953,6 +3098,14 @@ function isScxml(input) {
 }
 function isPlantUml(input) {
   return input.trim().startsWith("@startuml") || input.trim().startsWith("@enduml");
+}
+function getAdditionalImageDiagram(format) {
+  const match = /^(svg|png)-(sequence|pulses|events|outcomes|immediate|guards|composition|complexity)$/.exec(format);
+  return match ? match[2] : void 0;
+}
+function getAdditionalDiagram(format, prefix) {
+  const match = new RegExp(`^${prefix}-(sequence|pulses|events|outcomes|immediate|guards|composition|complexity)$`).exec(format);
+  return match ? match[1] : void 0;
 }
 async function documentate(input, options) {
   let serialized;
@@ -2019,8 +3172,26 @@ async function documentate(input, options) {
   if (format === "all" || format === "plantuml") {
     result.plantuml = getPlantUmlCode(serialized, { level, skinparam });
   }
+  const plantUmlAdditionalDiagram = getAdditionalDiagram(format, "plantuml");
+  if (plantUmlAdditionalDiagram) {
+    result.plantuml = plantUmlAdditionalRenderers[plantUmlAdditionalDiagram](serialized, { level, skinparam });
+  }
+  const additionalImageDiagram = getAdditionalImageDiagram(format);
+  if (additionalImageDiagram) {
+    const plantUmlCode = plantUmlAdditionalRenderers[additionalImageDiagram](serialized, { level, skinparam });
+    const imageOptions = { level, skinparam, outDir: options.output, fileName: options.fileName };
+    if (format.indexOf("svg-") === 0) {
+      result.svg = await createSvgFromPlantUmlCode(plantUmlCode, imageOptions);
+    } else {
+      result.png = await createPngFromPlantUmlCode(plantUmlCode, imageOptions);
+    }
+  }
   if (format === "all" || format === "mermaid") {
     result.mermaid = getMermaidCode(serialized, { level, skinparam });
+  }
+  const mermaidAdditionalDiagram = getAdditionalDiagram(format, "mermaid");
+  if (mermaidAdditionalDiagram) {
+    result.mermaid = mermaidAdditionalRenderers[mermaidAdditionalDiagram](serialized, { level, skinparam });
   }
   if ((format === "all" || format === "svg") && serialized) {
     if (machine) {

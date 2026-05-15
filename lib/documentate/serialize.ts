@@ -29,6 +29,49 @@ import {
   SerializedNestedMachine,
 } from "./types";
 
+const SERIALIZED_MACHINE_ID_PROPERTY = "__xRobotMachineIdentity";
+
+interface SerializeContext {
+  identities: WeakMap<Machine, string>;
+  nextIdentity: number;
+}
+
+function createSerializeContext(): SerializeContext {
+  return {
+    identities: new WeakMap(),
+    nextIdentity: 0,
+  };
+}
+
+function getMachineIdentity(machine: Machine, context: SerializeContext): string {
+  let identity = context.identities.get(machine);
+  if (!identity) {
+    identity = `m${context.nextIdentity}`;
+    context.nextIdentity += 1;
+    context.identities.set(machine, identity);
+  }
+
+  return identity;
+}
+
+function attachMachineIdentity(serialized: SerializedMachine, identity: string): void {
+  Object.defineProperty(serialized, SERIALIZED_MACHINE_ID_PROPERTY, {
+    value: identity,
+    enumerable: false,
+    configurable: false,
+    writable: false,
+  });
+}
+
+export function getSerializedMachineIdentity(machine: SerializedMachine): string | undefined {
+  const descriptor = Object.getOwnPropertyDescriptor(machine, SERIALIZED_MACHINE_ID_PROPERTY);
+  if (!descriptor || descriptor.enumerable || typeof descriptor.value !== "string") {
+    return undefined;
+  }
+
+  return descriptor.value;
+}
+
 /**
  *
  * @param pulse The pulse to serialize
@@ -58,7 +101,7 @@ function serializePulse(pulse: PulseDirective): SerializedPulse {
  * @param guard The guard to serialize
  * @returns SerializedGuard
  */
-function serializeGuard(guard: GuardDirective | NestedGuardDirective): SerializedGuard {
+function serializeGuard(guard: GuardDirective | NestedGuardDirective, context: SerializeContext): SerializedGuard {
   let serialized: SerializedGuard = {
     guard: guard.guard.name,
   };
@@ -68,7 +111,7 @@ function serializeGuard(guard: GuardDirective | NestedGuardDirective): Serialize
   }
 
   if ("machine" in guard) {
-    serialized.machine = serialize(guard.machine);
+    serialized.machine = serializeWithContext(guard.machine, context);
   }
 
   return serialized;
@@ -96,12 +139,12 @@ function serializeRunArguments(run: RunCollection): SerializedCollection | null 
  * @param guards The guards to serialize
  * @returns SerializedGuard[] or null if empty
  */
-function serializeGuards(guards: GuardsDirective): SerializedGuard[] | null {
+function serializeGuards(guards: GuardsDirective, context: SerializeContext): SerializedGuard[] | null {
   if (!guards || guards.length === 0) {
     return null;
   }
 
-  return guards.map((guard) => serializeGuard(guard));
+  return guards.map((guard) => serializeGuard(guard, context));
 }
 
 /**
@@ -109,12 +152,12 @@ function serializeGuards(guards: GuardsDirective): SerializedGuard[] | null {
  * @param transition The transition to serialize
  * @returns SerializedTransition
  */
-function serializeTransition(transition: TransitionDirective): SerializedTransition {
+function serializeTransition(transition: TransitionDirective, context: SerializeContext): SerializedTransition {
   let serialized: SerializedTransition = {
     target: transition.target,
   };
 
-  let guards = serializeGuards(transition.guards);
+  let guards = serializeGuards(transition.guards, context);
 
   if (guards) {
     serialized.guards = guards;
@@ -135,12 +178,12 @@ function serializeTransition(transition: TransitionDirective): SerializedTransit
  * @param immediate The immediate transition to serialize
  * @returns SerializedImmediate
  */
-function serializeImmediate(immediate: ImmediateDirective): SerializedImmediate {
+function serializeImmediate(immediate: ImmediateDirective, context: SerializeContext): SerializedImmediate {
   let serialized: SerializedImmediate = {
     immediate: immediate.immediate,
   };
 
-  let guards = serializeGuards(immediate.guards);
+  let guards = serializeGuards(immediate.guards, context);
 
   if (guards) {
     serialized.guards = guards;
@@ -154,14 +197,14 @@ function serializeImmediate(immediate: ImmediateDirective): SerializedImmediate 
  * @param events The events to serialize
  * @returns SerializedTransitions or null if empty
  */
-function serializeTransitions(events: TransitionsDirective): SerializedTransitions | null {
+function serializeTransitions(events: TransitionsDirective, context: SerializeContext): SerializedTransitions | null {
   if (!events || Object.keys(events).length === 0) {
     return null;
   }
 
   let serialized: SerializedTransitions = {};
   for (let event in events) {
-    serialized[event] = serializeTransition(events[event]);
+    serialized[event] = serializeTransition(events[event], context);
   }
 
   return serialized;
@@ -181,14 +224,14 @@ function serializeContext(context: any) {
  * @param nested The nested machines to serialize
  * @returns SerializedNestedMachine[] or null if empty
  */
-function serializeNested(nested: NestedMachineDirective[]): SerializedNestedMachine[] | null {
+function serializeNested(nested: NestedMachineDirective[], context: SerializeContext): SerializedNestedMachine[] | null {
   if (!nested || nested.length === 0) {
     return null;
   }
 
   return nested.map(({ machine, transition }) => {
     let serializedNestedMachine: SerializedNestedMachine = {
-      machine: serialize(machine),
+      machine: serializeWithContext(machine, context),
     };
 
     if (transition) {
@@ -205,13 +248,14 @@ function serializeNested(nested: NestedMachineDirective[]): SerializedNestedMach
  * @returns SerializedMachine
  * @category Serialization
  */
-export function serialize(machine: Machine): SerializedMachine {
+function serializeWithContext(machine: Machine, context: SerializeContext): SerializedMachine {
   let serialized: SerializedMachine = {
     states: {},
     parallel: {},
     context: serializeContext(machine.context),
     initial: machine.initial,
   };
+  attachMachineIdentity(serialized, getMachineIdentity(machine, context));
 
   if (machine.title) {
     serialized.title = machine.title;
@@ -220,7 +264,7 @@ export function serialize(machine: Machine): SerializedMachine {
   for (let state in machine.states) {
     serialized.states[state] = {} as SerializedState;
 
-    let nested = serializeNested(machine.states[state].nested);
+    let nested = serializeNested(machine.states[state].nested, context);
     if (nested) {
       serialized.states[state].nested = nested;
     }
@@ -230,7 +274,7 @@ export function serialize(machine: Machine): SerializedMachine {
       serialized.states[state].run = run;
     }
 
-    let on = serializeTransitions(machine.states[state].on);
+    let on = serializeTransitions(machine.states[state].on, context);
     if (on) {
       serialized.states[state].on = on;
     }
@@ -239,7 +283,7 @@ export function serialize(machine: Machine): SerializedMachine {
     if (immediate.length) {
       let serializedImmediate: SerializedImmediate[] = [];
       for (let immediateDirective of immediate) {
-        serializedImmediate.push(serializeImmediate(immediateDirective));
+        serializedImmediate.push(serializeImmediate(immediateDirective, context));
       }
       serialized.states[state].immediate = serializedImmediate;
     }
@@ -254,10 +298,14 @@ export function serialize(machine: Machine): SerializedMachine {
   }
 
   for (let parallel in machine.parallel) {
-    serialized.parallel[parallel] = serialize(machine.parallel[parallel]);
+    serialized.parallel[parallel] = serializeWithContext(machine.parallel[parallel], context);
   }
 
   return serialized;
+}
+
+export function serialize(machine: Machine): SerializedMachine {
+  return serializeWithContext(machine, createSerializeContext());
 }
 
 // Re-export types

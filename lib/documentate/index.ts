@@ -8,9 +8,71 @@ import { isMachine } from "../utils";
 import { serialize } from "./serialize";
 import { generateFromSerializedMachine, Format } from "./generate";
 import { toSCXML, fromSCXML } from "./scxml";
-import { getPlantUmlCode, getMermaidCode, createSvgFromMachine, createPngFromMachine, createSvgFromPlantUmlCode, createPngFromPlantUmlCode, createSvgFromSerializedMachine, createPngFromSerializedMachine } from "./visualize";
+import {
+  getPlantUmlCode,
+  getMermaidCode,
+  getMermaidSequenceCode,
+  getPlantUmlSequenceCode,
+  getMermaidPulseMapCode,
+  getPlantUmlPulseMapCode,
+  getMermaidEventMapCode,
+  getPlantUmlEventMapCode,
+  getMermaidOutcomeMapCode,
+  getPlantUmlOutcomeMapCode,
+  getMermaidImmediateMapCode,
+  getPlantUmlImmediateMapCode,
+  getMermaidGuardDecisionMapCode,
+  getPlantUmlGuardDecisionMapCode,
+  getMermaidCompositionMapCode,
+  getPlantUmlCompositionMapCode,
+  getMermaidComplexityMapCode,
+  getPlantUmlComplexityMapCode,
+  createSvgFromMachine,
+  createPngFromMachine,
+  createSvgFromPlantUmlCode,
+  createPngFromPlantUmlCode,
+  createSvgFromSerializedMachine,
+  createPngFromSerializedMachine
+} from "./visualize";
 import type { DocumentateInput, DocumentateOptions, DocumentateResult } from "./types";
 import type { SerializedMachine } from "./types";
+
+type PlantUmlDiagramName =
+  | "sequence"
+  | "pulses"
+  | "events"
+  | "outcomes"
+  | "immediate"
+  | "guards"
+  | "composition"
+  | "complexity";
+
+type AdditionalDiagramRenderer = (
+  serialized: SerializedMachine,
+  options: { level: string; skinparam?: string }
+) => string;
+
+const plantUmlAdditionalRenderers: Record<PlantUmlDiagramName, AdditionalDiagramRenderer> = {
+  sequence: (serialized, options) => getPlantUmlSequenceCode(serialized, options),
+  pulses: (serialized) => getPlantUmlPulseMapCode(serialized),
+  events: (serialized) => getPlantUmlEventMapCode(serialized),
+  outcomes: (serialized) => getPlantUmlOutcomeMapCode(serialized),
+  immediate: (serialized) => getPlantUmlImmediateMapCode(serialized),
+  guards: (serialized) => getPlantUmlGuardDecisionMapCode(serialized),
+  composition: (serialized) => getPlantUmlCompositionMapCode(serialized),
+  complexity: (serialized) => getPlantUmlComplexityMapCode(serialized)
+};
+
+const mermaidAdditionalRenderers: Record<PlantUmlDiagramName, AdditionalDiagramRenderer> = {
+  sequence: (serialized, options) => getMermaidSequenceCode(serialized, options),
+  pulses: (serialized) => getMermaidPulseMapCode(serialized),
+  events: (serialized) => getMermaidEventMapCode(serialized),
+  outcomes: (serialized) => getMermaidOutcomeMapCode(serialized),
+  immediate: (serialized) => getMermaidImmediateMapCode(serialized),
+  guards: (serialized) => getMermaidGuardDecisionMapCode(serialized),
+  composition: (serialized) => getMermaidCompositionMapCode(serialized),
+  complexity: (serialized) => getMermaidComplexityMapCode(serialized)
+};
 
 function isSerializedMachine(input: any): input is SerializedMachine {
   return input && typeof input === 'object' && 'states' in input;
@@ -26,6 +88,16 @@ function isScxml(input: string): boolean {
 
 function isPlantUml(input: string): boolean {
   return input.trim().startsWith('@startuml') || input.trim().startsWith('@enduml');
+}
+
+function getAdditionalImageDiagram(format: string): PlantUmlDiagramName | undefined {
+  const match = /^(svg|png)-(sequence|pulses|events|outcomes|immediate|guards|composition|complexity)$/.exec(format);
+  return match ? match[2] as PlantUmlDiagramName : undefined;
+}
+
+function getAdditionalDiagram(format: string, prefix: "plantuml" | "mermaid"): PlantUmlDiagramName | undefined {
+  const match = new RegExp(`^${prefix}-(sequence|pulses|events|outcomes|immediate|guards|composition|complexity)$`).exec(format);
+  return match ? match[1] as PlantUmlDiagramName : undefined;
 }
 
 /**
@@ -141,8 +213,29 @@ export async function documentate(
     result.plantuml = getPlantUmlCode(serialized, { level, skinparam });
   }
 
+  const plantUmlAdditionalDiagram = getAdditionalDiagram(format, "plantuml");
+  if (plantUmlAdditionalDiagram) {
+    result.plantuml = plantUmlAdditionalRenderers[plantUmlAdditionalDiagram](serialized, { level, skinparam });
+  }
+
+  const additionalImageDiagram = getAdditionalImageDiagram(format);
+  if (additionalImageDiagram) {
+    const plantUmlCode = plantUmlAdditionalRenderers[additionalImageDiagram](serialized, { level, skinparam });
+    const imageOptions = { level, skinparam, outDir: options.output, fileName: options.fileName };
+    if (format.indexOf("svg-") === 0) {
+      result.svg = await createSvgFromPlantUmlCode(plantUmlCode, imageOptions);
+    } else {
+      result.png = await createPngFromPlantUmlCode(plantUmlCode, imageOptions);
+    }
+  }
+
   if (format === 'all' || format === 'mermaid') {
     result.mermaid = getMermaidCode(serialized, { level, skinparam });
+  }
+
+  const mermaidAdditionalDiagram = getAdditionalDiagram(format, "mermaid");
+  if (mermaidAdditionalDiagram) {
+    result.mermaid = mermaidAdditionalRenderers[mermaidAdditionalDiagram](serialized, { level, skinparam });
   }
 
   if ((format === 'all' || format === 'svg') && serialized) {

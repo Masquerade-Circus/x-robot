@@ -29,7 +29,6 @@ class active def
 idle --> active: next
 active --> idle: next
 ```
-
 ```javascript
 import { history, init, initial, machine, state, transition } from "x-robot";
 
@@ -162,6 +161,15 @@ init(initial("idle"))
 // or explicitly:
 init(initial("idle"), history(10))
 ```
+
+For developer-facing documentation, X-Robot also includes `documentate()` so the same machine can produce living visual docs by concept:
+
+*   Mermaid: Markdown-friendly source diagrams and previews for state, sequence, and focused structural views.
+*   PlantUML: richer source diagrams and the preferred visual style for state, sequence, and focused structural views.
+*   SVG formats: explicit `svg-*` exports, such as `svg-sequence` and `svg-events`, for sharing, embedding, and vector assets.
+*   PNG formats: explicit `png-*` exports, such as `png-guards` and `png-complexity`, for raster images in docs, tickets, and slides.
+
+Focused structural views include guards, events, pulses, outcomes, immediate transitions, composition, and complexity. These outputs are useful for PR review, onboarding, and conceptual debugging.
 
 ## API Reference
 

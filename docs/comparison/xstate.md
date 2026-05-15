@@ -4,18 +4,23 @@ A comparison of two state machine libraries.
 
 ## Quick Comparison
 
-| Feature | X-Robot Core | X-Robot + Modules | XState Interpreter | XState Web | XState Full |
-|---------|--------------|-------------------|-------------------|------------|-------------|
-| Bundle Size | 15.06KB | 57.84KB | 30KB | 47KB | 59KB |
-| Nested States | ✅ | ✅ | ❌ | ✅ | ✅ |
-| Parallel States | ✅ | ✅ | ❌ | ✅ | ✅ |
-| Guards | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Async Guards | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Frozen State | Default | Default | ❌ | ❌ | Optional |
-| Code Generation | ✅ | ✅ | ❌ | ❌ | ❌ |
-| SCXML | ✅ | ✅ | ❌ | ❌ | ✅ |
-| Machine Validation | ❌ | ✅ | ❌ | ❌ | ❌ |
-| Actor Model | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Feature | X-Robot Core | X-Robot + Modules | XState Interpreter | XState Web | XState Full | XState Full + Stately Studio |
+|---------|--------------|-------------------|-------------------|------------|-------------|-------------------------------|
+| Bundle Size / Tooling Size | 15.06KB | 78.44KB | 30.09KB | 46.64KB | 58.80KB | 58.80KB + external web app |
+| Installable / external | npm package | npm packages | npm package | npm package | npm packages | npm packages + external web app |
+| Nested States | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Parallel States | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Guards | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Async Guards | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Frozen State | Default | Default | ❌ | ❌ | Optional | Optional |
+| Code Generation | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Mermaid visual docs | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| PlantUML visual docs | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| SVG image exports | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| PNG image exports | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| SCXML | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| Machine Validation | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Actor Model | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 
 ## Async Guards
 
@@ -48,6 +53,15 @@ XState requires workarounds:
 ```
 
 ## API Comparison
+
+X-Robot's `documentate()` output is part of the developer workflow in these examples. The same machine definition can produce visual documentation by concept:
+
+*   Mermaid: Markdown-friendly source diagrams and previews for state, sequence, and focused structural views.
+*   PlantUML: richer source diagrams and the preferred visual style for state, sequence, and focused structural views.
+*   SVG formats: explicit `svg-*` exports, such as `svg-guards` and `svg-sequence`, for sharing, embedding, and vector assets.
+*   PNG formats: explicit `png-*` exports, such as `png-events` and `png-complexity`, for raster images in docs, tickets, and slides.
+
+Focused structural views include guards, events, pulses, outcomes, immediate transitions, composition, and complexity. These outputs are useful for PR review, onboarding, conceptual debugging, and living project documentation.
 
 ### XState
 
@@ -92,7 +106,6 @@ class on def
 off --> on: toggle
 on --> off: toggle
 ```
-
 ```javascript
 // X-Robot: simpler
 const toggle = machine(
@@ -136,6 +149,12 @@ state("loading", entry(async (ctx) => {
 *   Native async guards needed
 *   Simpler API preferred
 *   Code generation required
+*   Generated visual documentation required:
+    *   Mermaid source diagrams for Markdown-friendly previews
+    *   PlantUML source diagrams for richer visual styling
+    *   Focused views for guards, events, pulses, outcomes, immediate transitions, composition, and complexity
+    *   Explicit `svg-*` exports for sharing, embedding, and vector assets
+    *   Explicit `png-*` exports for raster docs, tickets, and slides
 *   Machine validation needed
 
 ## When to Choose XState

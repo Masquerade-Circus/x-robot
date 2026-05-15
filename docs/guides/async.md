@@ -37,7 +37,6 @@ loading --> rejected: rejected
 loading --> idle: cancel
 resolved --> idle: idle
 ```
-
 ```javascript
 import { context, entry, immediate, init, initial, invoke, machine, state, transition } from "x-robot";
 
@@ -146,7 +145,6 @@ step2 --> error: error
 step3 --> complete: complete
 step3 --> error: error
 ```
-
 ```javascript
 async function runStep1(ctx) {
   await step1(ctx);
@@ -206,7 +204,6 @@ running --> success: success
 running --> failed: failed
 failed --> running: retry
 ```
-
 ```javascript
 async function runWithRetry(ctx) {
   let attempts = 0;

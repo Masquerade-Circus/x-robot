@@ -28,6 +28,22 @@ export interface imageFromMachineOptions extends options, imageFromPlantUmlCodeO
 }
 export declare function getPlantUmlCode(serializedMachine: SerializedMachine, optionsOrLevel?: string | options): string;
 export declare function getMermaidCode(serializedMachine: SerializedMachine, optionsOrLevel?: string | mermaidOptions): string;
+export declare function getMermaidSequenceCode(serializedMachine: SerializedMachine, optionsOrLevel?: string | mermaidOptions): string;
+export declare function getPlantUmlSequenceCode(serializedMachine: SerializedMachine, optionsOrLevel?: string | options): string;
+export declare function getMermaidPulseMapCode(serializedMachine: SerializedMachine): string;
+export declare function getPlantUmlPulseMapCode(serializedMachine: SerializedMachine): string;
+export declare function getMermaidEventMapCode(serializedMachine: SerializedMachine): string;
+export declare function getPlantUmlEventMapCode(serializedMachine: SerializedMachine): string;
+export declare function getMermaidOutcomeMapCode(serializedMachine: SerializedMachine): string;
+export declare function getPlantUmlOutcomeMapCode(serializedMachine: SerializedMachine): string;
+export declare function getMermaidImmediateMapCode(serializedMachine: SerializedMachine): string;
+export declare function getPlantUmlImmediateMapCode(serializedMachine: SerializedMachine): string;
+export declare function getMermaidGuardDecisionMapCode(serializedMachine: SerializedMachine): string;
+export declare function getPlantUmlGuardDecisionMapCode(serializedMachine: SerializedMachine): string;
+export declare function getMermaidCompositionMapCode(serializedMachine: SerializedMachine): string;
+export declare function getPlantUmlCompositionMapCode(serializedMachine: SerializedMachine): string;
+export declare function getMermaidComplexityMapCode(serializedMachine: SerializedMachine): string;
+export declare function getPlantUmlComplexityMapCode(serializedMachine: SerializedMachine): string;
 export declare function getMermaidCodeFromMachine(machine: Machine, optionsOrLevel?: string | mermaidOptions): string;
 export declare function getPlantUmlCodeFromMachine(machine: Machine, optionsOrLevel?: string | options): string;
 export declare function createPngFromPlantUmlCode(plantUmlCode: string, options?: imageFromMachineOptions): Promise<string>;

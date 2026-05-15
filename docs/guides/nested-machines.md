@@ -26,13 +26,25 @@ class green def
 class yellow def
 class red def
 
+state red {
+  state "wait" as RedStopwalkWait
+  state "walk" as RedStopwalkWalk
+
+
+  [*] --> RedStopwalkWait
+  RedStopwalkWait --> RedStopwalkWalk: start
+  RedStopwalkWalk --> RedStopwalkWait: stop
+}
+
+note right of red
+  └ T-stopwalk.start
+end note
 
 [*] --> green
 green --> yellow: next
 yellow --> red: next
 red --> green: green<br>└ G-canGoToGreen
 ```
-
 ```javascript
 import { guard, immediate, init, initial, machine, nested, state, transition } from "x-robot";
 
@@ -98,11 +110,22 @@ class public def
 class private def
 class loggingOut def
 
+state private {
+  state "unauthenticated" as PrivateAuthUnauthenticated
+  state "authenticating" as PrivateAuthAuthenticating
+  state "authenticated" as PrivateAuthAuthenticated
+
+
+  [*] --> PrivateAuthUnauthenticated
+  PrivateAuthUnauthenticated --> PrivateAuthAuthenticating: login
+  PrivateAuthAuthenticating --> PrivateAuthAuthenticated: success
+  PrivateAuthAuthenticated --> PrivateAuthUnauthenticated: logout
+}
+
 
 [*] --> public
 public --> private: login
 ```
-
 ```javascript
 const auth = machine(
   "Auth",
@@ -170,7 +193,19 @@ class loggingIn def
 class authenticated def
 class loggingOut def
 
+state authenticated {
+  state "authenticated" as AuthenticatedAuthAuthenticated
+  state "loggedOut" as AuthenticatedAuthLoggedOut
+
+
+  [*] --> AuthenticatedAuthAuthenticated
+  AuthenticatedAuthAuthenticated --> AuthenticatedAuthLoggedOut: logout
+}
+
 loggingIn: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-guest
+note right of authenticated
+  └ T-auth.logout
+end note
 loggingOut: └┬ AEn-anonymous<br> └┬ success<br>  └ T-guest
 
 [*] --> guest
@@ -179,7 +214,6 @@ loggingIn --> authenticated: authenticated
 loggingIn --> guest: guest
 loggingOut --> guest: guest
 ```
-
 ```javascript
 const auth = machine(
   "Auth",
@@ -227,12 +261,34 @@ class step1 def
 class step2 def
 class complete def
 
+state step1 {
+  state "pending" as Step1Step1Pending
+  state "completed" as Step1Step1Completed
+
+
+  [*] --> Step1Step1Pending
+  Step1Step1Pending --> Step1Step1Completed: next
+}
+state step2 {
+  state "pending" as Step2Step2Pending
+  state "completed" as Step2Step2Completed
+
+
+  [*] --> Step2Step2Pending
+  Step2Step2Pending --> Step2Step2Completed: next
+}
+
+note right of step1
+  └ T-step1.next
+end note
+note right of step2
+  └ T-step2.next
+end note
 
 [*] --> step1
 step1 --> step1: back
 step2 --> step1: back
 ```
-
 ```javascript
 const step1 = machine("Step1", init(initial("pending")),
   state("pending", transition("next", "completed")),

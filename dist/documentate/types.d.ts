@@ -1,5 +1,5 @@
 import { Machine } from "../machine/interfaces";
-export declare type OutputFormat = 'ts' | 'mjs' | 'cjs' | 'json' | 'scxml' | 'plantuml' | 'mermaid' | 'svg' | 'png' | 'serialized' | 'all';
+export declare type OutputFormat = 'ts' | 'mjs' | 'cjs' | 'json' | 'scxml' | 'plantuml' | 'mermaid' | 'mermaid-sequence' | 'plantuml-sequence' | 'mermaid-pulses' | 'plantuml-pulses' | 'mermaid-events' | 'plantuml-events' | 'mermaid-outcomes' | 'plantuml-outcomes' | 'mermaid-immediate' | 'plantuml-immediate' | 'mermaid-guards' | 'plantuml-guards' | 'mermaid-composition' | 'plantuml-composition' | 'mermaid-complexity' | 'plantuml-complexity' | 'svg' | 'png' | 'svg-sequence' | 'png-sequence' | 'svg-pulses' | 'png-pulses' | 'svg-events' | 'png-events' | 'svg-outcomes' | 'png-outcomes' | 'svg-immediate' | 'png-immediate' | 'svg-guards' | 'png-guards' | 'svg-composition' | 'png-composition' | 'svg-complexity' | 'png-complexity' | 'serialized' | 'all';
 export interface DocumentateOptions {
     format: OutputFormat;
     level?: 'low' | 'high';

@@ -4,22 +4,36 @@ A comparison with the minimalist state machine library.
 
 ## Quick Comparison
 
-| Feature | X-Robot Core | X-Robot + Modules | Robot3 |
-|---------|--------------|-------------------|--------|
-| Bundle Size | 15.06KB | 57.84KB | ~1KB |
-| TypeScript | Included | Included | Basic |
-| Nested States | ✅ | ✅ | ❌ |
-| Parallel States | ✅ | ✅ | ❌ |
-| Guards | ✅ | ✅ | Limited |
-| Async Support | ✅ | ✅ | Via callbacks |
-| Code Generation | ✅ | ✅ | ❌ |
-| Serialization | ✅ | ✅ | ❌ |
+| Feature | X-Robot Core | X-Robot + Modules | Robot3 | Robot3 + robot3-viz |
+|---------|--------------|-------------------|--------|----------------------|
+| Bundle Size / Tooling Size | 15.06KB | 78.44KB | ~1KB | ~1KB + 12.77MB npm tree |
+| Installable / external | npm package | npm packages | npm package | npm packages + external visualizer |
+| TypeScript | Included | Included | Basic | Basic |
+| Nested States | ✅ | ✅ | ❌ | ❌ |
+| Parallel States | ✅ | ✅ | ❌ | ❌ |
+| Guards | ✅ | ✅ | Limited | Limited |
+| Async Support | ✅ | ✅ | Via callbacks | Via callbacks |
+| Code Generation | ✅ | ✅ | ❌ | ❌ |
+| Mermaid visual docs | ❌ | ✅ | ❌ | ❌ |
+| PlantUML visual docs | ❌ | ✅ | ❌ | ❌ |
+| SVG image exports | ❌ | ✅ | ❌ | ✅ |
+| PNG image exports | ❌ | ✅ | ❌ | ❌ |
+| Serialization | ✅ | ✅ | ❌ | ❌ |
 
 ## Philosophy
 
 **Robot3** — Extreme minimalism. Core FSM only.
 
-**X-Robot** — Balance of simplicity and capability.
+**X-Robot** — Balance of simplicity and capability, including generated visual documentation through `documentate()` when teams need diagrams that stay close to the machine definition.
+
+`documentate()` can keep visual documentation tied to the machine source by concept:
+
+*   Mermaid: Markdown-friendly source diagrams and previews for state, sequence, and focused structural views.
+*   PlantUML: richer source diagrams and the preferred visual style for state, sequence, and focused structural views.
+*   SVG formats: explicit `svg-*` exports, such as `svg-sequence` and `svg-events`, for sharing, embedding, and vector assets.
+*   PNG formats: explicit `png-*` exports, such as `png-guards` and `png-composition`, for raster images in docs, tickets, and slides.
+
+Focused structural views include guards, events, pulses, outcomes, immediate transitions, composition, and complexity. These outputs help with PR review, onboarding, conceptual debugging, and project documentation.
 
 ## API Comparison
 
@@ -71,7 +85,6 @@ loading --> success: success
 loading --> error: error
 success --> idle: reset
 ```
-
 ```javascript
 import { machine, state, transition, entry } from "x-robot";
 
@@ -99,6 +112,12 @@ const fetchMachine = machine(
 *   TypeScript support with generated code and machine helpers is useful
 *   Guards needed
 *   Code generation required
+*   Generated visual documentation required:
+    *   Mermaid source diagrams for Markdown-friendly previews
+    *   PlantUML source diagrams for richer visual styling
+    *   Sequence diagrams and focused structural views
+    *   Explicit `svg-*` exports for sharing, embedding, and vector assets
+    *   Explicit `png-*` exports for raster docs, tickets, and slides
 *   Serialization needed
 *   More features but still small
 
@@ -160,7 +179,6 @@ idle --> loading: start
 loading --> success: done
 success --> idle: reset
 ```
-
 ```javascript
 import { machine, state, transition } from "x-robot";
 

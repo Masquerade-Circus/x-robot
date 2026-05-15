@@ -42,7 +42,6 @@ authenticated --> idle: logout
 error --> idle: retry
 error --> authenticating: login
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 

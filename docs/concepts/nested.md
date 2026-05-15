@@ -24,11 +24,22 @@ state "step2" as step2
 class step1 def
 class step2 def
 
+state step1 {
+  state "pending" as Step1OrderPending
+  state "confirmed" as Step1OrderConfirmed
+
+
+  [*] --> Step1OrderPending
+  Step1OrderPending --> Step1OrderConfirmed: confirm
+}
+
+note right of step1
+  └ T-order.confirm
+end note
 
 [*] --> step1
 step1 --> step2: skip
 ```
-
 ```javascript
 import { init, initial, machine, nested, state, transition } from "x-robot";
 
@@ -82,11 +93,29 @@ class public def
 class private def
 class loggingOut def
 
+state private {
+  state "unauthenticated" as PrivateAuthUnauthenticated
+  state "authenticating" as PrivateAuthAuthenticating
+  state "authenticated" as PrivateAuthAuthenticated
+  state "failed" as PrivateAuthFailed
+
+  PrivateAuthAuthenticating: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-failed
+
+  [*] --> PrivateAuthUnauthenticated
+  PrivateAuthUnauthenticated --> PrivateAuthAuthenticating: login
+  PrivateAuthAuthenticating --> PrivateAuthAuthenticated: authenticated
+  PrivateAuthAuthenticating --> PrivateAuthFailed: failed
+  PrivateAuthAuthenticated --> PrivateAuthUnauthenticated: logout
+  PrivateAuthFailed --> PrivateAuthAuthenticating: retry
+}
+
+note right of private
+  └ T-auth.logout
+end note
 
 [*] --> public
 public --> private: login
 ```
-
 ```javascript
 const auth = machine(
   "Auth",

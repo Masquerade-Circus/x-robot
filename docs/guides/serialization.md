@@ -36,16 +36,37 @@ const { scxml } = await documentate(serialized, { format: "scxml" });
 
 // Generate PlantUML diagram
 const { plantuml } = await documentate(serialized, { format: "plantuml" });
+
+// Generate Mermaid sequence diagram
+const { mermaid } = await documentate(serialized, { format: "mermaid-sequence" });
+
+// Generate PlantUML sequence diagram
+const { plantuml: sequencePlantuml } = await documentate(serialized, { format: "plantuml-sequence" });
+
+// Generate a structural guard-decision map
+const { mermaid: guardMap } = await documentate(serialized, { format: "mermaid-guards" });
+
+// Generate a structural complexity map
+const { plantuml: complexityMap } = await documentate(serialized, { format: "plantuml-complexity" });
+
+// Generate a PlantUML-backed image for a structural map
+const { svg: guardMapSvg } = await documentate(serialized, { format: "svg-guards" });
 ```
 
 ## Format Interoperability
 
-| Input \ Output | ts | mjs | cjs | json | scxml | plantuml | mermaid | svg | png | serialized |
-|----------------|----|-----|-----|------|-------|----------|---------|-----|-----|------------|
-| Machine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| SerializedMachine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| SCXML | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| PlantUML | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| Input \ Output | ts | mjs | cjs | json | scxml | plantuml | mermaid | plantuml-sequence | mermaid-sequence | svg | png | serialized |
+|----------------|----|-----|-----|------|-------|----------|---------|-------------------|------------------|-----|-----|------------|
+| Machine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SerializedMachine | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SCXML | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| PlantUML | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+
+`mermaid` and `plantuml` generate state diagrams. `mermaid-sequence` and `plantuml-sequence` generate sequence diagrams for the same machine structure, which is especially useful when the serialized machine includes nested or parallel machines. Dashed return arrows for `nestedGuard(...)` reactions require machine identity captured from a `Machine` input; plain serialized data still shows nested and parallel calls, but omits those return arrows when identity cannot be proven.
+
+Additional structural diagram formats are available for serialized metadata audits: `mermaid-pulses`/`plantuml-pulses`, `mermaid-events`/`plantuml-events`, `mermaid-outcomes`/`plantuml-outcomes`, `mermaid-immediate`/`plantuml-immediate`, `mermaid-guards`/`plantuml-guards`, `mermaid-composition`/`plantuml-composition`, and `mermaid-complexity`/`plantuml-complexity`. PlantUML-backed image formats are also available as `svg-*` and `png-*` for `sequence`, `pulses`, `events`, `outcomes`, `immediate`, `guards`, `composition`, and `complexity`; for example, `svg-sequence`, `png-guards`, and `svg-complexity`. These diagrams use safe serialized metadata only; they do not serialize callback bodies, payloads, context values, or runtime traces.
+
+`format: "all"` generates the existing state-diagram outputs, but it does not include `mermaid-sequence`, `plantuml-sequence`, the additional structural diagram maps, or the explicit `svg-*`/`png-*` structural image formats. Request those formats directly when you need them.
 
 ## Use Cases
 

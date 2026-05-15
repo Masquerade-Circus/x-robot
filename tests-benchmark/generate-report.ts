@@ -111,6 +111,10 @@ function parseLOC(output: string) {
   return results;
 }
 
+function renderFeatureRows(rows: string[][]): string {
+  return rows.map((row) => `| ${row.join(" | ")} |`).join("\n");
+}
+
 function generateMarkdown(bundle: any, perf: any, loc: any, distSizes: any) {
   const date = new Date().toISOString().split("T")[0];
 
@@ -177,6 +181,30 @@ This will execute all benchmarks in \`tests-benchmark/\` and generate this file.
   
   const minLOC = Math.min(...locRatios);
   const maxLOC = Math.max(...locRatios);
+  const featureRows = [
+    ["Bundle Size / Tooling Size", formatKB(distSizes.core), formatKB(totalSize), formatKB(distSizes.xstateInterpreter), formatKB(distSizes.xstateWeb), formatKB(distSizes.xstateFull), `${formatKB(distSizes.xstateFull)} + external web app`],
+    ["Installable / external", "npm package", "npm packages", "npm package", "npm package", "npm packages", "npm packages + external web app"],
+    ["Nested states", "✅", "✅", "❌", "✅", "✅", "✅"],
+    ["Parallel states", "✅", "✅", "❌", "✅", "✅", "✅"],
+    ["Guards", "✅", "✅", "✅", "✅", "✅", "✅"],
+    ["Async guards", "✅", "✅", "❌", "❌", "❌", "❌"],
+    ["Entry/Exit actions", "✅", "✅", "✅", "✅", "✅", "✅"],
+    ["Context", "✅", "✅", "✅", "✅", "✅", "✅"],
+    ["Final states", "✅", "✅", "✅", "✅", "✅", "✅"],
+    ["invoke()", "✅", "✅", "✅", "✅", "✅", "✅"],
+    ["Delayed transitions", "✅", "✅", "❌", "✅", "✅", "✅"],
+    ["Immediate transitions", "✅", "✅", "❌", "❌", "❌", "❌"],
+    ["History tracking", "✅", "✅", "❌", "❌", "❌", "❌"],
+    ["Machine validation", "❌", "✅ validate()", "❌", "❌", "❌", "❌"],
+    ["Code generation", "❌", "✅ documentate()", "❌", "❌", "❌", "✅"],
+    ["Mermaid visual docs", "❌", "✅", "❌", "❌", "❌", "❌"],
+    ["PlantUML visual docs", "❌", "✅", "❌", "❌", "❌", "❌"],
+    ["SVG image exports", "❌", "✅", "❌", "❌", "❌", "❌"],
+    ["PNG image exports", "❌", "✅", "❌", "❌", "❌", "❌"],
+    ["JSON serialization", "❌", "✅ documentate()", "❌", "❌", "❌", "❌"],
+    ["SCXML import/export", "❌", "✅ documentate()", "❌", "❌", "✅", "✅"],
+    ["Actor model", "❌", "❌", "❌", "❌", "✅", "✅"]
+  ];
   
   let md = `# X-Robot Performance Report
 
@@ -208,25 +236,9 @@ Generated: ${date}
 
 ## Features Comparison
 
-| Feature             | X-Robot Core (${formatKB(distSizes.core)}) | X-Robot + Modules (${formatKB(totalSize)}) | XState Interpreter (${formatKB(distSizes.xstateInterpreter)}) | XState Web (${formatKB(distSizes.xstateWeb)}) | XState Full (${formatKB(distSizes.xstateFull)}) |
-| ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ |
-| Nested states       | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
-| Parallel states     | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
-| Guards              | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
-| Async guards        | ✅                  | ✅                        | ❌                        | ❌                | ❌                 |
-| Entry/Exit actions  | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
-| Context             | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
-| Final states        | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
-| invoke()            | ✅                  | ✅                        | ✅                        | ✅                | ✅                 |
-| Delayed transitions | ✅                  | ✅                        | ❌                        | ✅                | ✅                 |
-| Immediate transitions | ✅                  | ✅                        | ❌                        | ❌                | ❌                 |
-| History tracking    | ✅                  | ✅                        | ❌                        | ❌                | ❌                 |
-| Machine validation  | ❌                  | ✅ validate()             | ❌                        | ❌                | ❌                 |
-| Code generation     | ❌                  | ✅ documentate()          | ❌                        | ❌                | ❌                 |
-| Diagram generation  | ❌                  | ✅ documentate()          | ❌                        | ❌                | ❌                 |
-| JSON serialization  | ❌                  | ✅ documentate()          | ❌                        | ❌                | ❌                 |
-| SCXML import/export | ❌                  | ✅ documentate()          | ❌                        | ❌                | ✅                 |
-| Actor model         | ❌                  | ❌                        | ❌                        | ❌                | ✅                 |
+| Feature             | X-Robot Core (${formatKB(distSizes.core)}) | X-Robot + Modules (${formatKB(totalSize)}) | XState Interpreter (${formatKB(distSizes.xstateInterpreter)}) | XState Web (${formatKB(distSizes.xstateWeb)}) | XState Full (${formatKB(distSizes.xstateFull)}) | XState Full + Stately Studio |
+| ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ | ----------------------------- |
+${renderFeatureRows(featureRows)}
 
 ---
 
