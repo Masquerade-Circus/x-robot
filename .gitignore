@@ -104,3 +104,5 @@ typings/
 
 TODO.md
 tmp
+.tmp*
+docs/plans/*
