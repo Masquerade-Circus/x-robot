@@ -101,7 +101,7 @@ Output format options for documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L11)
+[lib/documentate/types.ts:11](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L11)
 
 ***
 
@@ -113,4 +113,4 @@ Input types accepted by the documentate function
 
 #### Defined in
 
-[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L105)
+[lib/documentate/types.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L105)

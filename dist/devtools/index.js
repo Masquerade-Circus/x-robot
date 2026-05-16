@@ -239,6 +239,26 @@ function canMakeTransition(machine, currentStateObject, transition) {
 }
 
 // lib/machine/invoke.ts
+var runtimes = /* @__PURE__ */ new WeakMap();
+function getRuntime(machine) {
+  let runtime = runtimes.get(machine);
+  if (!runtime) {
+    runtime = {
+      running: false,
+      activeToken: void 0,
+      nextToken: 0,
+      queue: []
+    };
+    runtimes.set(machine, runtime);
+  }
+  return runtime;
+}
+function isCurrentInvocation(machine, token) {
+  return getRuntime(machine).activeToken === token;
+}
+function isPromiseLike(value) {
+  return !!value && typeof value.then === "function";
+}
 function addToHistory(machine, entry) {
   if (machine.historyLimit === void 0)
     return;
@@ -249,7 +269,7 @@ function addToHistory(machine, entry) {
     machine.history.shift();
   }
 }
-function runPulse(machine, pulse, payload) {
+function runPulse(machine, pulse, payload, token) {
   if (isEntry(pulse)) {
     const isAsync = pulse.pulse.constructor.name === "AsyncFunction";
     addToHistory(machine, isAsync ? `${"Async Pulse" /* AsyncPulse */}: ${pulse.pulse.name}` : `${"Pulse" /* Pulse */}: ${pulse.pulse.name}`);
@@ -257,83 +277,68 @@ function runPulse(machine, pulse, payload) {
     if (machine.frozen) {
       context = deepCloneUnfreeze(context);
     }
-    if (isAsync) {
-      const runPulseFn = () => pulse.pulse(context, payload);
-      return Promise.resolve(runPulseFn()).then((result) => {
-        if (isValidObject(result)) {
-          context = result;
-        }
-        machine.context = context;
-        if (machine.frozen) {
-          deepFreeze(machine.context);
-        }
-        if (pulse.success) {
-          if (isEntry(pulse.success)) {
-            return runPulse(machine, pulse.success);
-          }
-          return invoke(machine, pulse.success);
-        } else if (pulse.transition) {
-          return invoke(machine, pulse.transition);
-        }
-      }).catch((error) => {
-        machine.context = context;
-        if (machine.frozen) {
-          deepFreeze(machine.context);
-        }
-        if (pulse.failure) {
-          if (isEntry(pulse.failure)) {
-            return runPulse(machine, pulse.failure, error);
-          }
-          return invoke(machine, pulse.failure, error);
-        }
-        throw error;
-      });
-    } else {
-      try {
-        const result = pulse.pulse(context, payload);
-        if (isValidObject(result)) {
-          context = result;
-        }
-        machine.context = context;
-        if (machine.frozen) {
-          deepFreeze(machine.context);
-        }
-        if (pulse.success) {
-          if (isEntry(pulse.success)) {
-            return runPulse(machine, pulse.success);
-          }
-          return invoke(machine, pulse.success);
-        } else if (pulse.transition) {
-          return invoke(machine, pulse.transition);
-        }
-      } catch (error) {
-        machine.context = context;
-        if (machine.frozen) {
-          deepFreeze(machine.context);
-        }
-        if (pulse.failure) {
-          if (isEntry(pulse.failure)) {
-            return runPulse(machine, pulse.failure, error);
-          }
-          return invoke(machine, pulse.failure, error);
-        }
-        throw error;
+    const onSuccess = (result) => {
+      if (!isCurrentInvocation(machine, token)) {
+        return;
       }
+      if (isValidObject(result)) {
+        context = result;
+      }
+      machine.context = context;
+      if (machine.frozen) {
+        deepFreeze(machine.context);
+      }
+      if (pulse.success) {
+        if (isEntry(pulse.success)) {
+          return runPulse(machine, pulse.success, void 0, token);
+        }
+        return invokeNow(machine, pulse.success, void 0, token);
+      } else if (pulse.transition) {
+        return invokeNow(machine, pulse.transition, void 0, token);
+      }
+    };
+    const onFailure = (error) => {
+      if (!isCurrentInvocation(machine, token)) {
+        return;
+      }
+      machine.context = context;
+      if (machine.frozen) {
+        deepFreeze(machine.context);
+      }
+      if (pulse.failure) {
+        if (isEntry(pulse.failure)) {
+          return runPulse(machine, pulse.failure, error, token);
+        }
+        return invokeNow(machine, pulse.failure, error, token);
+      }
+      throw error;
+    };
+    try {
+      const result = pulse.pulse(context, payload);
+      if (isPromiseLike(result)) {
+        return Promise.resolve(result).then(onSuccess, onFailure);
+      }
+      return onSuccess(result);
+    } catch (error) {
+      return onFailure(error);
     }
   } else if (isValidString(pulse)) {
-    return invoke(machine, pulse);
+    return invokeNow(machine, pulse, void 0, token);
   }
 }
 function hasFatalError(machine) {
   return machine.fatal instanceof Error;
 }
-function catchError(machine, state, error) {
+function catchError(machine, state, error, token) {
+  if (!isCurrentInvocation(machine, token)) {
+    return;
+  }
   if (machine.frozen) {
     machine.context = deepCloneUnfreeze(machine.context);
   }
   machine.context.error = error;
   if (hasTransition(state, "error")) {
-    return invoke(machine, "error", error);
+    return invokeNow(machine, "error", error, token);
   }
   if ("fatal" in machine.states) {
     machine.current = "fatal";
@@ -343,36 +348,62 @@ function catchError(machine, state, error) {
   machine.fatal = error;
   throw error;
 }
-async function runStatePulsesAsync(machine, state, payload) {
+async function runStatePulsesAsync(machine, state, payload, token) {
   for (let i = 0; i < state.run.length; i++) {
     const item = state.run[i];
     try {
       if (isEntry(item)) {
-        await runPulse(machine, item, payload);
+        await runPulse(machine, item, payload, token);
+        if (!isCurrentInvocation(machine, token)) {
+          return;
+        }
       }
     } catch (error) {
-      await catchError(machine, state, error);
+      await catchError(machine, state, error, token);
       return;
     }
   }
 }
-function runStatePulsesSync(machine, state, payload) {
+function runStatePulsesSync(machine, state, payload, token) {
+  let promise;
   for (let i = 0; i < state.run.length; i++) {
     const item = state.run[i];
-    try {
-      if (isEntry(item)) {
-        runPulse(machine, item, payload);
+    const runItem = () => {
+      try {
+        if (isEntry(item)) {
+          return runPulse(machine, item, payload, token);
+        }
+      } catch (error) {
+        return catchError(machine, state, error, token);
       }
-    } catch (error) {
-      catchError(machine, state, error);
-      break;
+    };
+    if (promise) {
+      promise = promise.then(runItem).catch((error) => catchError(machine, state, error, token));
+    } else {
+      const result = runItem();
+      if (isPromiseLike(result)) {
+        promise = result.catch((error) => catchError(machine, state, error, token));
+      }
     }
   }
+  return promise || void 0;
 }
-function runGuards(machine, state, transition, payload) {
-  return runGuardsFromIndex(machine, state, transition, payload, 0);
+function runGuards(machine, state, transition, payload, token) {
+  return runGuardsFromIndex(machine, state, transition, payload, 0, token);
 }
-function runGuardsFromIndex(machine, state, transition, payload, startIndex) {
+function runGuardFailure(machine, guard, result, token) {
+  if (isValidString(guard.failure)) {
+    return invokeNow(machine, guard.failure, result, token);
+  } else if (isEntry(guard.failure)) {
+    return runPulse(machine, guard.failure, result, token);
+  } else if (isValidString(result)) {
+    if (machine.frozen) {
+      machine.context = deepCloneUnfreeze(machine.context);
+    }
+    machine.context.error = result;
+  }
+}
+function runGuardsFromIndex(machine, state, transition, payload, startIndex, token) {
   for (let i = startIndex; i < transition.guards.length; i++) {
     let guard = transition.guards[i];
     try {
@@ -392,16 +423,13 @@ function runGuardsFromIndex(machine, state, transition, payload, startIndex) {
       }
       if (result instanceof Promise) {
         return result.then((resolvedResult) => {
+          if (!isCurrentInvocation(machine, token)) {
+            return false;
+          }
           if (resolvedResult !== true) {
-            if (isValidString(guard.failure)) {
-              invoke(machine, guard.failure, resolvedResult);
-            } else if (isEntry(guard.failure)) {
-              runPulse(machine, guard.failure, resolvedResult);
-            } else if (isValidString(resolvedResult)) {
-              if (machine.frozen) {
-                machine.context = deepCloneUnfreeze(machine.context);
-              }
-              machine.context.error = resolvedResult;
+            const failureResult = runGuardFailure(machine, guard, resolvedResult, token);
+            if (isPromiseLike(failureResult)) {
+              return failureResult.then(() => false);
             }
             return false;
           }
@@ -409,54 +437,49 @@ function runGuardsFromIndex(machine, state, transition, payload, startIndex) {
             machine.context = guardContext;
             deepFreeze(machine.context);
           }
-          return runGuardsFromIndex(machine, state, transition, payload, i + 1);
+          return runGuardsFromIndex(machine, state, transition, payload, i + 1, token);
         });
       }
       if (result !== true) {
-        if (isValidString(guard.failure)) {
-          invoke(machine, guard.failure, result);
-        } else if (isEntry(guard.failure)) {
-          runPulse(machine, guard.failure, result);
-        } else if (isValidString(result)) {
-          if (machine.frozen) {
-            machine.context = deepCloneUnfreeze(machine.context);
-          }
-          machine.context.error = result;
+        const failureResult = runGuardFailure(machine, guard, result, token);
+        if (isPromiseLike(failureResult)) {
+          return failureResult.then(() => false);
         }
         return false;
       }
     } catch (error) {
-      catchError(machine, state, error);
+      catchError(machine, state, error, token);
       return false;
     }
   }
   return true;
 }
-function runNestedMachines(machine, state, payload) {
+function runNestedMachines(machine, state, payload, token) {
   if (state.nested.length === 0) {
     return;
   }
   let promise;
-  if (machine.isAsync) {
-    promise = Promise.resolve();
-  }
   for (let nestedMachine of state.nested) {
     if (isNestedMachineWithTransitionDirective(nestedMachine)) {
       let transition = nestedMachine.transition;
+      const runNested = () => isCurrentInvocation(machine, token) ? invoke(nestedMachine.machine, transition, payload) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(nestedMachine.machine, transition, payload));
+        promise = promise.then(runNested);
       } else {
-        invoke(nestedMachine.machine, transition, payload);
+        const result = runNested();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
   }
   return promise || void 0;
 }
-function runNestedTransition(machine, transition, payload) {
+function runNestedTransition(machine, transition, payload, token) {
   let nestedTransitionParts = transition.split(".");
   let stateName = nestedTransitionParts.shift();
   let nestedTransition = nestedTransitionParts.join(".");
-  let promise = machine.isAsync ? Promise.resolve() : null;
+  let promise;
   if (!stateName) {
     return;
   }
@@ -465,21 +488,28 @@ function runNestedTransition(machine, transition, payload) {
     let nestedMachine = nestedMachineDirective.machine;
     let currentNestedState = nestedMachine.states[nestedMachine.current];
     if (canMakeTransition(nestedMachine, currentNestedState, nestedTransition)) {
+      const runNested = () => isCurrentInvocation(machine, token) ? invoke(nestedMachine, nestedTransition, payload) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(nestedMachine, nestedTransition, payload));
+        promise = promise.then(runNested);
       } else {
-        invoke(nestedMachine, nestedTransition, payload);
+        const result = runNested();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
   }
   if (promise) {
-    promise = promise.then(() => invokeImmediateDirectives(machine, currentStateObject, payload));
+    promise = promise.then(() => invokeImmediateDirectives(machine, currentStateObject, payload, token));
   } else {
-    invokeImmediateDirectives(machine, currentStateObject, payload);
+    const result = invokeImmediateDirectives(machine, currentStateObject, payload, token);
+    if (isPromiseLike(result)) {
+      promise = result;
+    }
   }
   return promise || void 0;
 }
-function runParallelTransition(machine, transition, payload) {
+function runParallelTransition(machine, transition, payload, token) {
   let parallelTransitionParts = transition.split("/");
   let parallelMachineId = parallelTransitionParts.shift();
   let parallelTransition = parallelTransitionParts.join("/");
@@ -490,14 +520,17 @@ function runParallelTransition(machine, transition, payload) {
   if (!parallelMachine) {
     throw new Error(`Invalid transition ${transition}`);
   }
+  if (!isCurrentInvocation(machine, token)) {
+    return;
+  }
   return invoke(parallelMachine, parallelTransition, payload);
 }
-function invokeImmediateDirectives(machine, state, payload) {
+function invokeImmediateDirectives(machine, state, payload, token) {
   if (state.immediate.length === 0) {
     return;
   }
   let immediate = state.immediate;
-  let promise = machine.isAsync ? Promise.resolve() : null;
+  let promise;
   for (let immediateDirective of immediate) {
     if (hasFatalError(machine)) {
       return;
@@ -507,27 +540,37 @@ function invokeImmediateDirectives(machine, state, payload) {
       let parallelMachineId = transitionParts.shift();
       let parallelTransition = transitionParts.join("/");
       let parallelMachine = machine.parallel[parallelMachineId];
+      const runImmediate = () => isCurrentInvocation(machine, token) ? invoke(parallelMachine, parallelTransition, payload) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(parallelMachine, parallelTransition, payload));
+        promise = promise.then(runImmediate);
       } else {
-        invoke(parallelMachine, parallelTransition, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     } else if (isNestedTransition(immediateDirective.immediate)) {
+      const runImmediate = () => isCurrentInvocation(machine, token) ? invokeNow(machine, immediateDirective.immediate, payload, token) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(machine, immediateDirective.immediate, payload));
+        promise = promise.then(runImmediate);
       } else {
-        invoke(machine, immediateDirective.immediate, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     } else {
+      const runImmediate = () => {
+        if (machine.current === state.name && isCurrentInvocation(machine, token)) {
+          return invokeNow(machine, immediateDirective.immediate, payload, token);
+        }
+      };
       if (promise) {
-        promise = promise.then(async () => {
-          if (machine.current === state.name) {
-            await invoke(machine, immediateDirective.immediate, payload);
-          }
-        });
+        promise = promise.then(runImmediate);
       } else {
-        if (machine.current === state.name) {
-          invoke(machine, immediateDirective.immediate, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
         }
       }
     }
@@ -535,6 +578,59 @@ function invokeImmediateDirectives(machine, state, payload) {
   return promise || void 0;
 }
 function invoke(machine, transition, payload) {
+  const runtime = getRuntime(machine);
+  if (runtime.running || runtime.queue.length > 0) {
+    return new Promise((resolve, reject) => {
+      runtime.queue.push({ transition, payload, resolve, reject });
+    });
+  }
+  return runSerializedInvocation(machine, transition, payload);
+}
+function runSerializedInvocation(machine, transition, payload) {
+  const runtime = getRuntime(machine);
+  runtime.running = true;
+  const token = ++runtime.nextToken;
+  runtime.activeToken = token;
+  try {
+    const result = invokeNow(machine, transition, payload, token);
+    if (result instanceof Promise) {
+      return result.finally(() => {
+        finishInvocation(machine, runtime, token);
+      });
+    }
+    finishInvocation(machine, runtime, token);
+    return result;
+  } catch (error) {
+    finishInvocation(machine, runtime, token);
+    throw error;
+  }
+}
+function finishInvocation(machine, runtime, token) {
+  if (runtime.activeToken === token) {
+    runtime.running = false;
+    runtime.activeToken = void 0;
+    drainQueue(machine);
+  }
+}
+function drainQueue(machine) {
+  const runtime = getRuntime(machine);
+  if (runtime.running)
+    return;
+  const job = runtime.queue.shift();
+  if (!job)
+    return;
+  try {
+    const result = runSerializedInvocation(machine, job.transition, job.payload);
+    if (result instanceof Promise) {
+      result.then(job.resolve, job.reject);
+    } else {
+      job.resolve();
+    }
+  } catch (error) {
+    job.reject(error);
+  }
+}
+function invokeNow(machine, transition, payload, token) {
   if (hasFatalError(machine)) {
     return;
   }
@@ -551,52 +647,67 @@ function invoke(machine, transition, payload) {
     throw new Error(`The transition '${trimmedTransition}' does not exist in the current state '${machine.current}'`);
   }
   if (isParallelTransition(trimmedTransition)) {
-    return runParallelTransition(machine, trimmedTransition, payload);
+    return runParallelTransition(machine, trimmedTransition, payload, token);
   }
   if (isNestedTransition(trimmedTransition)) {
-    return runNestedTransition(machine, trimmedTransition, payload);
+    return runNestedTransition(machine, trimmedTransition, payload, token);
   }
   if (trimmedTransition !== START_EVENT) {
     addToHistory(machine, `${"Transition" /* Transition */}: ${trimmedTransition}`);
     let transitionObject = currentStateObject.on[trimmedTransition];
-    let guardsResult = runGuards(machine, currentStateObject, transitionObject, payload);
+    let guardsResult = runGuards(machine, currentStateObject, transitionObject, payload, token);
     if (guardsResult instanceof Promise) {
       return guardsResult.then((shouldContinue) => {
+        if (!isCurrentInvocation(machine, token)) {
+          return;
+        }
         if (shouldContinue === false) {
           addToHistory(machine, `${"State" /* State */}: ${currentStateObject.name}`);
           return;
         }
-        return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
+        return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload, token);
       });
     }
     if (guardsResult === false) {
       addToHistory(machine, `${"State" /* State */}: ${currentStateObject.name}`);
       return;
     }
-    return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload);
+    return handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload, token);
   }
-  return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+  return continueTransition(machine, currentStateObject, trimmedTransition, payload, token);
 }
-function handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload) {
+function handleExitAndContinue(machine, currentStateObject, transitionObject, trimmedTransition, payload, token) {
   const exitItems = transitionObject.exit;
   if (exitItems && Array.isArray(exitItems)) {
     const pulsesToRun = Array.isArray(exitItems[0]) ? exitItems[0] : exitItems;
+    let promise;
     for (const exitItem of pulsesToRun) {
-      if (machine.isAsync) {
-        let promise = Promise.resolve();
-        promise = promise.then(() => runPulse(machine, exitItem, payload));
-        return promise.then(() => {
-          return continueTransition(machine, currentStateObject, trimmedTransition, payload);
-        });
+      const runExit = () => runPulse(machine, exitItem, payload, token);
+      if (promise) {
+        promise = promise.then(runExit);
       } else {
-        runPulse(machine, exitItem, payload);
+        const result = runExit();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
-    return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+    if (promise) {
+      return promise.then(() => {
+        if (!isCurrentInvocation(machine, token)) {
+          return;
+        }
+        return continueTransition(machine, currentStateObject, trimmedTransition, payload, token);
+      });
+    }
+    return continueTransition(machine, currentStateObject, trimmedTransition, payload, token);
   }
-  return continueTransition(machine, currentStateObject, trimmedTransition, payload);
+  return continueTransition(machine, currentStateObject, trimmedTransition, payload, token);
 }
-function continueTransition(machine, currentStateObject, trimmedTransition, payload) {
+function continueTransition(machine, currentStateObject, trimmedTransition, payload, token) {
+  if (!isCurrentInvocation(machine, token)) {
+    return;
+  }
   let targetState = trimmedTransition === START_EVENT ? machine.initial : currentStateObject.on[trimmedTransition].target;
   if (isValidString(targetState) === false) {
     throw new Error(`Trying to invoke a transition with an invalid target state: ${targetState}`);
@@ -609,16 +720,21 @@ function continueTransition(machine, currentStateObject, trimmedTransition, payl
     machine.current = targetState;
     addToHistory(machine, `${"State" /* State */}: ${targetState}`);
   }
-  if (machine.isAsync) {
-    let promise = Promise.resolve();
-    promise = promise.then(() => runNestedMachines(machine, targetStateObject, payload));
-    promise = promise.then(() => runStatePulsesAsync(machine, targetStateObject, payload));
-    promise = promise.then(() => invokeImmediateDirectives(machine, targetStateObject, payload));
-    return promise;
-  }
-  runNestedMachines(machine, targetStateObject, payload);
-  runStatePulsesSync(machine, targetStateObject, payload);
-  invokeImmediateDirectives(machine, targetStateObject, payload);
+  let promise;
+  const runStep = (step) => {
+    if (promise) {
+      promise = promise.then(step);
+      return;
+    }
+    const result = step();
+    if (isPromiseLike(result)) {
+      promise = result;
+    }
+  };
+  runStep(() => runNestedMachines(machine, targetStateObject, payload, token));
+  runStep(() => machine.isAsync ? runStatePulsesAsync(machine, targetStateObject, payload, token) : runStatePulsesSync(machine, targetStateObject, payload, token));
+  runStep(() => invokeImmediateDirectives(machine, targetStateObject, payload, token));
+  return promise || void 0;
 }
 function start(machine, snapshotOrPayload) {
   if (snapshotOrPayload && typeof snapshotOrPayload === "object" && "current" in snapshotOrPayload) {
@@ -695,7 +811,7 @@ function getDevTools() {
   }
   return null;
 }
-function isPromiseLike(value) {
+function isPromiseLike2(value) {
   return !!value && typeof value.then === "function";
 }
 function isMachineSnapshot(value) {
@@ -830,7 +946,7 @@ function connectXRobot(machine, options = {}) {
       return;
     }
     const result = operation();
-    if (isPromiseLike(result)) {
+    if (isPromiseLike2(result)) {
       return result.then(() => {
         send(action);
       });

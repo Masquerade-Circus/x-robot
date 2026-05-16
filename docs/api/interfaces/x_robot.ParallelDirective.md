@@ -18,4 +18,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/interfaces.ts#L134)
+[lib/machine/interfaces.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L134)

@@ -21,7 +21,7 @@ Serializable fatal error metadata exposed in the devtools snapshot.
 
 #### Defined in
 
-[lib/devtools/index.ts:18](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/devtools/index.ts#L18)
+[lib/devtools/index.ts:18](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L18)
 
 ***
 
@@ -31,4 +31,4 @@ Serializable fatal error metadata exposed in the devtools snapshot.
 
 #### Defined in
 
-[lib/devtools/index.ts:19](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/devtools/index.ts#L19)
+[lib/devtools/index.ts:19](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L19)

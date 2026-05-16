@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide walks through creating your first state machine with X-Robot.
+Start with the [X-Robot Overview](../overview.md) for the product mental model, then use this guide to create your first state machine with the core `x-robot` runtime.
 
 ## Installation
 
@@ -16,11 +16,16 @@ The core package is enough to define and run machines. As your project grows, yo
 
 *   `x-robot/devtools` - connect wrapped machine operations to Redux DevTools during development
 *   `x-robot/documentate` - generate diagrams, serialization, and code output from machines
-*   `x-robot/validate` - validate machine structure before shipping or generating artifacts
+*   `x-robot/validate` - [validate machine structure](./validation.md) before shipping or generating artifacts
+*   `@x-robot/react` and `@x-robot/vue` - [adapt machines to React and Vue](./framework-adapters.md)
 
-You do not need all of them on day one. A common path is: start with the core runtime, add `validate` when your machines become more complex, add `documentate` when you want generated diagrams or exports, and use `devtools` only in development.
+You do not need all of them on day one. A common path is: start with the core runtime, add a framework adapter when UI state must update from machine transitions, add `validate` when your machines become more complex, add `documentate` when you want generated diagrams or exports, and use `devtools` only in development.
+
+For stable import paths and SemVer expectations, read [Public API and Stability](./public-api.md).
 
 ## Your First Machine
+
+This example models one product decision: the toggle can be `off` or `on`. The `toggle` event moves the machine between those two valid states.
 
 ```mermaid
 ---
@@ -47,7 +52,6 @@ class on def
 off --> on: toggle
 on --> off: toggle
 ```
-
 ```javascript
 import { machine, state, transition } from "x-robot";
 
@@ -85,8 +89,9 @@ class idle def
 
 [*] --> idle
 ```
-
 ```javascript
+import { machine, state } from "x-robot";
+
 const myMachine = machine("MyMachine", state("idle"));
 ```
 
@@ -95,6 +100,8 @@ const myMachine = machine("MyMachine", state("idle"));
 Defines a state. Handlers include transitions, pulses, guards, etc.
 
 ```javascript
+import { state, transition } from "x-robot";
+
 state("idle", transition("start", "running"))
 ```
 
@@ -103,6 +110,8 @@ state("idle", transition("start", "running"))
 Defines how the machine responds to events.
 
 ```javascript
+import { guard, transition } from "x-robot";
+
 transition("toggle", "on")           // Simple
 transition("submit", "saving", guard(canSubmit))  // With guard
 ```
@@ -112,6 +121,8 @@ transition("submit", "saving", guard(canSubmit))  // With guard
 Triggers a transition.
 
 ```javascript
+import { invoke } from "x-robot";
+
 invoke(myMachine, "submit", { data: "value" });
 ```
 
@@ -145,9 +156,8 @@ counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 idle --> counting: increment
 counting --> idle: idle
 ```
-
 ```javascript
-import { context, entry, initial, init } from "x-robot";
+import { context, entry, initial, init, invoke, machine, state, transition } from "x-robot";
 
 function incrementCount(ctx) {
   ctx.count += 1;
@@ -202,9 +212,8 @@ idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
-import { entry } from "x-robot";
+import { context, entry, initial, init, invoke, machine, state, transition } from "x-robot";
 
 async function fetchData(ctx) {
   const res = await fetch("/api/data");
@@ -272,7 +281,6 @@ submitting --> failure: failure
 success --> pristine: reset
 failure --> dirty: retry
 ```
-
 ```javascript
 import { machine, state, transition, invoke, initial, init, context, entry, guard } from "x-robot";
 
@@ -311,6 +319,8 @@ const formMachine = machine(
 
 *   [Async Guide](./async.md) — Deep dive into Pulse
 *   [Guards Guide](./guards.md) — Conditional transitions
+*   [Public API and Stability](./public-api.md) — Stable imports, optional modules, and SemVer expectations
+*   [Validation](./validation.md) — Check machine structure before shipping
 *   [Immediate Transitions](./immediate-transitions.md) — Auto-transitioning states
 *   [Devtools Guide](./devtools.md) — Inspect wrapped transitions in Redux DevTools
 *   [Visualization](./visualization.md) — Generate diagrams

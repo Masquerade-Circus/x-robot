@@ -2,7 +2,7 @@
 
 This guide describes how to publish, update, and maintain official framework adapters for X-Robot.
 
-It applies to `@x-robot/react` today and should be the template for future adapters such as `@x-robot/vue`, `@x-robot/svelte`, `@x-robot/solid`, and `@x-robot/valyrian`.
+It applies to the current official adapters, `@x-robot/react` and `@x-robot/vue`, and should be the template for future adapters such as `@x-robot/svelte`, `@x-robot/solid`, and `@x-robot/valyrian`.
 
 ## Goal
 
@@ -22,6 +22,11 @@ For example, `@x-robot/react` publishes `useMachine()` and depends on these publ
 
 *   `react`
 *   `react-dom`
+*   `x-robot`
+
+`@x-robot/vue` also publishes `useMachine()` and depends on these public peers:
+
+*   `vue`
 *   `x-robot`
 
 Do not publish monorepo-internal helpers such as `@x-robot/shared` unless you intentionally want to support them as public semver contracts.
@@ -69,9 +74,10 @@ Then run the repo-level verification for publication:
 
 ```bash
 npm run verify:react:publish
+npm run verify:vue:publish
 ```
 
-Replace the script name with the equivalent for other adapters once those exist.
+Replace the script name with the equivalent for future adapters once those exist.
 
 ### Tarball Verification
 
@@ -180,6 +186,7 @@ That makes support simpler:
 
 *   `x-robot@1.1.0`
 *   `@x-robot/react@1.1.0`
+*   `@x-robot/vue@1.1.0`
 
 If adapters eventually evolve at different speeds, you can split versioning later, but aligned versioning is easier while the ecosystem is still taking shape.
 

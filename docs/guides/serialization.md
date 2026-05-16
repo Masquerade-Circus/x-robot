@@ -4,6 +4,8 @@ Generate a serialized representation of your machine using the `documentate()` f
 
 ## Getting Serialized Output
 
+<!-- x-robot:fragment -->
+
 ```javascript
 import { documentate } from "x-robot/documentate";
 
@@ -23,6 +25,8 @@ The serialized output contains the complete machine definition including states,
 ## Using Serialized as Input
 
 The serialized format can be used as input to generate other formats:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Generate TypeScript from serialized
@@ -73,6 +77,8 @@ Additional structural diagram formats are available for serialized metadata audi
 ### Share Machine Definitions
 
 Export a machine definition to share with other developers:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Generate JSON for sharing

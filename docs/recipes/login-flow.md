@@ -42,7 +42,6 @@ authenticated --> idle: logout
 error --> idle: retry
 error --> authenticating: login
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 
@@ -132,6 +131,8 @@ error --> authenticating: login
 
 ### With Remember Me
 
+<!-- x-robot:fragment -->
+
 ```javascript
 async function authenticateWithRemember(ctx) {
   const res = await fetch("/api/login", {
@@ -146,6 +147,8 @@ state("authenticating",
 ```
 
 ### With Token Refresh
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function refreshAuthToken(ctx) {

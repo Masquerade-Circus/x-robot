@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/interfaces.ts#L67)
+[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L67)
 
 ***
 
@@ -35,4 +35,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/interfaces.ts#L68)
+[lib/machine/interfaces.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L68)

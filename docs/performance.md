@@ -1,6 +1,6 @@
 # X-Robot Performance Report
 
-Generated: 2026-05-15
+Generated: 2026-05-16
 
 ***
 
@@ -35,27 +35,27 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 | Library                 | Size     | vs X-Robot Core |
 | ----------------------- | -------- | --------------- |
-| X-Robot Core (minified) | **15.06KB** | 1x              |
-| XState interpreter      | 30.09KB  | 2.0x            |
-| XState web              | 46.64KB  | 3.1x            |
-| XState full             | 58.80KB   | 3.9x            |
+| X-Robot Core (minified) | **16.55KB** | 1x              |
+| XState interpreter      | 30.09KB  | 1.8x            |
+| XState web              | 46.64KB  | 2.8x            |
+| XState full             | 58.80KB   | 3.6x            |
 
 ### With Modules (x-robot + documentate + validate)
 
 | Module                                                   | Size      |
 | -------------------------------------------------------- | --------- |
-| X-Robot Core                                             | 15.06KB   |
+| X-Robot Core                                             | 16.55KB   |
 | + documentate (code gen, diagrams, serialization, SCXML) | +49.71KB     |
 | + validate (machine validation)                          | +13.67KB     |
-| **Total**                                                | **78.44KB** |
+| **Total**                                                | **79.93KB** |
 
 ***
 
 ## Features Comparison
 
-| Feature             | X-Robot Core (15.06KB) | X-Robot + Modules (78.44KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) | XState Full + Stately Studio |
+| Feature             | X-Robot Core (16.55KB) | X-Robot + Modules (79.93KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) | XState Full + Stately Studio |
 | ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ | ----------------------------- |
-| Bundle Size / Tooling Size | 15.06KB | 78.44KB | 30.09KB | 46.64KB | 58.80KB | 58.80KB + external web app |
+| Bundle Size / Tooling Size | 16.55KB | 79.93KB | 30.09KB | 46.64KB | 58.80KB | 58.80KB + external web app |
 | Installable / external | npm package | npm packages | npm package | npm package | npm packages | npm packages + external web app |
 | Nested states | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
 | Parallel states | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
@@ -84,12 +84,12 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 | Test                   | X-Robot | XState   | Advantage        |
 | ---------------------- | ------- | -------- | ---------------- |
-| 5k transitions         | 4.70ms  | 84.40ms | **18.0x faster** |
-| 3k with guards         | 3.80ms  | 29.66ms  | **7.8x faster**  |
-| 10k transitions        | 3.70ms  | 98.95ms | **26.7x faster** |
-| 10k context updates    | 16.41ms | 91.75ms  | **5.6x faster**  |
-| invokeAfter scheduling | 4.44ms  | 14.50ms  | **3.3x faster**  |
-| Delayed transitions    | 56.31ms | 59.53ms  | **1.1x faster**  |
+| 5k transitions         | 8.93ms  | 98.36ms | **11.0x faster** |
+| 3k with guards         | 4.40ms  | 40.35ms  | **9.2x faster**  |
+| 10k transitions        | 8.27ms  | 124.93ms | **15.1x faster** |
+| 10k context updates    | 32.18ms | 112.41ms  | **3.5x faster**  |
+| invokeAfter scheduling | 7.44ms  | 17.01ms  | **2.3x faster**  |
+| Delayed transitions    | 56.95ms | 60.45ms  | **1.1x faster**  |
 
 ***
 
@@ -106,8 +106,8 @@ This will execute all benchmarks in `tests-benchmark/` and generate this file.
 
 ## Why X-Robot?
 
-1.  **2.0-3.9x smaller** bundle size (core only)
-2.  **1.1-26.7x faster** performance
+1.  **1.8-3.6x smaller** bundle size (core only)
+2.  **1.1-15.1x faster** performance
 3.  **1.2-1.8x less code** to write
 4.  **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
 5.  **Simpler API** - Declarative, functional approach

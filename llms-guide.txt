@@ -1,0 +1,1115 @@
+# X-Robot LLMs Guide Documentation
+
+===== BEGIN DOC: docs/overview.md =====
+
+# X-Robot Overview
+
+## What X-Robot is
+
+X-Robot is a finite state machine library for JavaScript and TypeScript. It helps teams model product flows as named machines with explicit states, events, transitions, guards, pulses, and context.
+
+Use X-Robot when a workflow needs clear allowed states, predictable transitions, async behavior inside the machine, and documentation that stays close to the implementation.
+
+## The mental model
+
+Think in one machine at a time:
+
+*   `machine()` defines the system.
+*   `state()` names valid states.
+*   `transition()` defines allowed events and target states.
+*   `guard()` decides whether an event advances.
+*   `entry()` and `exit()` run pulses when the machine enters or leaves a state.
+*   `context()` stores machine data with frozen state by default.
+
+A machine accepts events through `invoke()`. Each event follows the allowed transition map, runs guards at the transition boundary, executes pulses at entry or exit, and updates the current state and context.
+
+## Core runtime and optional modules
+
+The core `x-robot` package defines and runs machines. Optional modules add focused capabilities when a project needs them:
+
+*   `x-robot/documentate` generates diagrams, serialized machines, code output, and documentation artifacts.
+*   `x-robot/validate` checks machine structure before shipping or generating artifacts. See [Validation](./guides/validation.md).
+*   `x-robot/devtools` connects wrapped operations to Redux DevTools during development.
+*   `@x-robot/react` and `@x-robot/vue` adapt machines to official framework packages. See [Framework Adapters](./guides/framework-adapters.md).
+
+See [Public API and Stability](./guides/public-api.md) for stable import paths, SemVer expectations, and generated API reference boundaries.
+
+## Why teams adopt it
+
+Teams adopt X-Robot to reduce invalid UI states, keep async workflows inside the machine, and turn machine definitions into living documentation. The same model can drive runtime behavior, validation, visual diagrams, and generated output.
+
+For the adoption case, read [Why Finite State Machines?](./why.md). For measured runtime and tooling claims, read [Performance](./performance.md). For a direct library comparison, read [XState vs X-Robot](./comparison/xstate.md).
+
+## Where to go next
+
+*   [Getting Started](./guides/getting-started.md) — Build your first machine.
+*   [Framework Adapters](./guides/framework-adapters.md) — Use machines from React and Vue.
+*   [Public API and Stability](./guides/public-api.md) — Choose stable imports and optional modules.
+*   [Validation](./guides/validation.md) — Check machine structure before shipping.
+*   [Why Finite State Machines?](./why.md) — Understand the adoption value.
+*   [Performance](./performance.md) — Review benchmark and bundle context.
+*   [XState vs X-Robot](./comparison/xstate.md) — Compare the mental model and capabilities.
+
+===== END DOC: docs/overview.md =====
+
+===== BEGIN DOC: docs/guides/getting-started.md =====
+
+# Getting Started
+
+Start with the [X-Robot Overview](../overview.md) for the product mental model, then use this guide to create your first state machine with the core `x-robot` runtime.
+
+## Installation
+
+```bash
+npm install x-robot
+# or
+bun add x-robot
+```
+
+## Optional Modules
+
+The core package is enough to define and run machines. As your project grows, you can opt into these modules:
+
+*   `x-robot/devtools` - connect wrapped machine operations to Redux DevTools during development
+*   `x-robot/documentate` - generate diagrams, serialization, and code output from machines
+*   `x-robot/validate` - [validate machine structure](./validation.md) before shipping or generating artifacts
+*   `@x-robot/react` and `@x-robot/vue` - [adapt machines to React and Vue](./framework-adapters.md)
+
+You do not need all of them on day one. A common path is: start with the core runtime, add a framework adapter when UI state must update from machine transitions, add `validate` when your machines become more complex, add `documentate` when you want generated diagrams or exports, and use `devtools` only in development.
+
+For stable import paths and SemVer expectations, read [Public API and Stability](./public-api.md).
+
+## Your First Machine
+
+This example models one product decision: the toggle can be `off` or `on`. The `toggle` event moves the machine between those two valid states.
+
+```mermaid
+---
+title: Toggle
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "off" as off
+state "on" as on
+class off def
+class on def
+
+
+[*] --> off
+off --> on: toggle
+on --> off: toggle
+```
+```javascript
+import { machine, state, transition } from "x-robot";
+
+const toggle = machine(
+  "Toggle",
+  state("off", transition("toggle", "on")),
+  state("on", transition("toggle", "off"))
+);
+```
+
+## Understanding the Parts
+
+### machine(name, ...states)
+
+Creates a new state machine.
+
+```mermaid
+---
+title: MyMachine
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+class idle def
+
+
+[*] --> idle
+```
+```javascript
+import { machine, state } from "x-robot";
+
+const myMachine = machine("MyMachine", state("idle"));
+```
+
+### state(name, ...handlers)
+
+Defines a state. Handlers include transitions, pulses, guards, etc.
+
+```javascript
+import { state, transition } from "x-robot";
+
+state("idle", transition("start", "running"))
+```
+
+### transition(event, target, ...options)
+
+Defines how the machine responds to events.
+
+```javascript
+import { guard, transition } from "x-robot";
+
+transition("toggle", "on")           // Simple
+transition("submit", "saving", guard(canSubmit))  // With guard
+```
+
+### invoke(machine, event, payload?)
+
+Triggers a transition.
+
+```javascript
+import { invoke } from "x-robot";
+
+invoke(myMachine, "submit", { data: "value" });
+```
+
+## Adding Context
+
+Context stores data associated with the machine:
+
+```mermaid
+---
+title: Counter
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "counting" as counting
+class idle def
+class counting def
+
+counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
+
+[*] --> idle
+idle --> counting: increment
+counting --> idle: idle
+```
+```javascript
+import { context, entry, initial, init, invoke, machine, state, transition } from "x-robot";
+
+function incrementCount(ctx) {
+  ctx.count += 1;
+}
+
+const counter = machine(
+  "Counter",
+  init(
+    initial("idle"),
+    context({ count: 0 })
+  ),
+  state("idle", transition("increment", "counting")),
+  state("counting", entry(incrementCount, "idle"))
+);
+
+invoke(counter, "increment");
+console.log(counter.context.count); // 1
+```
+
+## Working with Async
+
+The Pulse concept handles async operations:
+
+```mermaid
+---
+title: Fetcher
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "loading" as loading
+state "success" as success
+state "error" as error
+class idle def
+class loading def
+class success def
+class error def
+
+loading: └┬ AEn-fetchData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+
+[*] --> idle
+idle --> loading: fetch
+loading --> success: success
+loading --> error: error
+```
+```javascript
+import { context, entry, initial, init, invoke, machine, state, transition } from "x-robot";
+
+async function fetchData(ctx) {
+  const res = await fetch("/api/data");
+  ctx.data = await res.json();
+}
+
+const fetcher = machine(
+  "Fetcher",
+  init(initial("idle"), context({ data: null })),
+  state("idle", transition("fetch", "loading")),
+  state("loading", entry(fetchData, "success", "error")),
+  state("success"),
+  state("error")
+);
+
+await invoke(fetcher, "fetch");
+console.log(fetcher.current); // "success" or "error"
+```
+
+## Complete Example
+
+Here's a form submission machine with validation:
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "pristine" as pristine
+state "dirty" as dirty
+state "validating" as validating
+state "submitting" as submitting
+state "success" as success
+state "failure" as failure
+state "error" as error
+class pristine def
+class dirty def
+class validating def
+class submitting def
+class success def
+class failure def
+class error def
+
+validating: └┬ En-validateFormValues<br> ├┬ success<br> │└ T-dirty<br> └┬ failure<br>  └ T-error
+submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-failure
+
+[*] --> pristine
+pristine --> dirty: change
+dirty --> validating: validate
+dirty --> submitting: submit<br>└ G-canSubmit
+validating --> dirty: dirty
+validating --> error: error
+submitting --> success: success
+submitting --> failure: failure
+success --> pristine: reset
+failure --> dirty: retry
+```
+```javascript
+import { machine, state, transition, invoke, initial, init, context, entry, guard } from "x-robot";
+
+function validateFormValues(ctx) {
+  ctx.errors = validateForm(ctx.values);
+}
+
+async function submitFormData(ctx) {
+  await submitForm(ctx.values);
+}
+
+function canSubmit(ctx) {
+  return Object.keys(ctx.errors).length === 0;
+}
+
+const formMachine = machine(
+  "Form",
+  init(
+    initial("pristine"),
+    context({ values: {}, errors: {} })
+  ),
+  state("pristine", transition("change", "dirty")),
+  state("dirty", 
+    transition("validate", "validating"),
+    transition("submit", "submitting", guard(canSubmit))
+  ),
+  state("validating", entry(validateFormValues, "dirty", "error")),
+  state("submitting", entry(submitFormData, "success", "failure")),
+  state("success", transition("reset", "pristine")),
+  state("failure", transition("retry", "dirty")),
+  state("error")
+);
+```
+
+## Next Steps
+
+*   [Async Guide](./async.md) — Deep dive into Pulse
+*   [Guards Guide](./guards.md) — Conditional transitions
+*   [Public API and Stability](./public-api.md) — Stable imports, optional modules, and SemVer expectations
+*   [Validation](./validation.md) — Check machine structure before shipping
+*   [Immediate Transitions](./immediate-transitions.md) — Auto-transitioning states
+*   [Devtools Guide](./devtools.md) — Inspect wrapped transitions in Redux DevTools
+*   [Visualization](./visualization.md) — Generate diagrams
+*   [Concepts: Pulse](../concepts/pulse.md) — Understand the core concept
+*   [Recipes](../recipes/) — Common patterns
+
+===== END DOC: docs/guides/getting-started.md =====
+
+===== BEGIN DOC: docs/guides/framework-adapters.md =====
+
+# Framework Adapters
+
+Use the official adapters when a React or Vue component needs to rerender from machine state. Keep the machine definition in core `x-robot`, then call the adapter wrapper methods from the framework layer.
+
+## React
+
+Install the core runtime and React adapter:
+
+```bash
+npm install x-robot @x-robot/react react react-dom
+```
+
+Create the machine with `x-robot`, then read and invoke it through `useMachine()`:
+
+```tsx
+import { init, initial, machine, state, transition } from "x-robot";
+import { useMachine } from "@x-robot/react";
+
+const toggleMachine = machine(
+  "Toggle",
+  init(initial("off")),
+  state("off", transition("toggle", "on")),
+  state("on", transition("toggle", "off"))
+);
+
+export function ToggleButton() {
+  const { current, invoke } = useMachine(toggleMachine, {
+    autostart: true
+  });
+
+  return (
+    <button type="button" onClick={() => invoke("toggle")}>
+      {current}
+    </button>
+  );
+}
+```
+
+The React hook also exposes wrappers for manual startup and delayed events:
+
+<!-- x-robot:fragment -->
+
+```tsx
+const { start, invoke, invokeAfter } = useMachine(toggleMachine);
+
+await start();
+await invoke("toggle");
+const cancel = invokeAfter(500, "toggle");
+```
+
+## Vue
+
+Install the core runtime and Vue adapter:
+
+```bash
+npm install x-robot @x-robot/vue vue
+```
+
+Create the machine with `x-robot`, then use the composable in `setup()`:
+
+```ts
+import { defineComponent } from "vue";
+import { init, initial, machine, state, transition } from "x-robot";
+import { useMachine } from "@x-robot/vue";
+
+const toggleMachine = machine(
+  "Toggle",
+  init(initial("off")),
+  state("off", transition("toggle", "on")),
+  state("on", transition("toggle", "off"))
+);
+
+export const ToggleButton = defineComponent({
+  setup() {
+    const { current, invoke } = useMachine(toggleMachine, {
+      autostart: true
+    });
+
+    function toggle() {
+      void invoke("toggle");
+    }
+
+    return { current, toggle };
+  },
+  template: `
+    <button type="button" @click="toggle">
+      {{ current }}
+    </button>
+  `
+});
+```
+
+Vue unwraps `current` in templates. In script code, read refs with `.value` when needed.
+
+The Vue composable exposes the same wrapper methods:
+
+<!-- x-robot:fragment -->
+
+```ts
+const { start, invoke, invokeAfter } = useMachine(toggleMachine);
+
+await start();
+await invoke("toggle");
+const cancel = invokeAfter(500, "toggle");
+```
+
+## v1 reactivity contract
+
+Framework state updates are guaranteed for transitions triggered through the wrappers returned by `useMachine()`:
+
+*   `start()`
+*   `invoke()`
+*   `invokeAfter()`
+
+Direct external calls such as `invoke(machine, "event")` mutate the machine, but are not tracked by the React/Vue adapters in v1 and should not be relied on for framework updates. Use the wrapper methods when UI state must update.
+
+For package-level details, see `packages/react/README.md` and `packages/vue/README.md`.
+
+===== END DOC: docs/guides/framework-adapters.md =====
+
+===== BEGIN DOC: docs/guides/public-api.md =====
+
+# Public API and Stability
+
+## Stable import paths
+
+X-Robot treats the package exports in `package.json` as the stable public import contract:
+
+*   `x-robot`
+*   `x-robot/documentate`
+*   `x-robot/validate`
+*   `x-robot/devtools`
+*   `x-robot/utils`
+
+Official framework adapters publish their own package manifests:
+
+*   `@x-robot/react`
+*   `@x-robot/vue`
+
+See [Framework Adapters](./framework-adapters.md) for short React and Vue usage examples.
+
+## Core runtime
+
+Import the core runtime from `x-robot` when you define and run machines. The core path covers the primary machine API: machines, states, transitions, guards, pulses, context, startup, invocation, history, snapshots, and cancellation.
+
+## Optional modules
+
+Add optional modules when a workflow needs tooling around the core model:
+
+*   `x-robot/documentate` for generated diagrams, serialized machines, SCXML, and code output.
+*   `x-robot/validate` for [structural validation](./validation.md) before release or generation.
+*   `x-robot/devtools` for Redux DevTools integration during development.
+*   `x-robot/utils` for published utility helpers.
+
+## Generated API reference
+
+The generated [API reference](../api/) reflects TypeDoc output from source modules. It can list modules derived from source routes as technical reference material, while the guides in `docs/guides/` define the recommended consumption path.
+
+## SemVer expectations
+
+SemVer applies to the published import paths listed above. Patch and minor releases may improve behavior, documentation, validation, and generated artifacts while keeping the public import contract stable for compatible usage.
+
+## Internal and generated documentation modules
+
+Use guides for adoption decisions and public imports. Use generated API pages for detailed signatures and technical lookup when you need to inspect a specific exported function, type, or module surface.
+
+===== END DOC: docs/guides/public-api.md =====
+
+===== BEGIN DOC: docs/guides/validation.md =====
+
+# Validation
+
+Use `x-robot/validate` to check a machine before you ship it, run generated docs, or accept a complex workflow into a codebase.
+
+## When to use validation
+
+Validation is most useful when a machine has enough states, transitions, nested machines, parallel machines, guards, or pulses that structural mistakes are easy to miss in review.
+
+Use it before release checks, documentation generation, or before accepting a large machine definition into the codebase.
+
+## Basic validation
+
+Import `validate()` from `x-robot/validate` and call it with a machine. The function completes without returning a value when the machine is structurally valid. It throws an error when it finds the first structural problem.
+
+## Example: valid machine
+
+```mermaid
+---
+title: Checkout
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "cart" as cart
+state "paid" as paid
+class cart def
+class paid def
+
+
+[*] --> cart
+cart --> paid: submit
+```
+```javascript
+import { initial, init, machine, state, transition } from "x-robot";
+import { validate } from "x-robot/validate";
+
+const checkout = machine(
+  "Checkout",
+  init(initial("cart")),
+  state("cart", transition("submit", "paid")),
+  state("paid")
+);
+
+validate(checkout);
+console.log("Machine is valid");
+```
+
+`validate(checkout)` completes without throwing because the machine has a title, its initial state exists, and the transition target exists.
+
+## Example: invalid transition target
+
+```mermaid
+---
+title: Checkout
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "cart" as cart
+class cart def
+
+
+[*] --> cart
+cart --> paid: submit
+```
+```javascript
+import { initial, init, machine, state, transition } from "x-robot";
+import { validate } from "x-robot/validate";
+
+const checkout = machine(
+  "Checkout",
+  init(initial("cart")),
+  state("cart", transition("submit", "paid"))
+);
+
+try {
+  validate(checkout);
+} catch (error) {
+  console.error(error.message);
+  // The transition 'submit' of the state 'cart' has a target state 'paid' that does not exists.
+}
+```
+
+This catches a common docs and runtime mistake: the transition points to a state name that is not declared in the machine.
+
+## What validate() checks
+
+`validate()` currently checks the machine structure that X-Robot can inspect directly:
+
+*   The machine has a valid `title`.
+*   `initial` exists when required and points to an existing state.
+*   Each non-initial, non-`fatal` state has a transition or entry pulse target that can reach it.
+*   Normal transitions have string targets and point to existing states.
+*   Immediate transitions point to states, nested machines, or parallel machines that can handle the transition.
+*   Entry pulses use a function, appear before transitions, and have existing success/failure targets when those targets are declared.
+*   Guards are used inside transitions, use a function, and have a valid failure transition when one is declared.
+*   Nested machines and parallel machines are validated recursively.
+*   Exit pulses with a declared failure target point to an existing state.
+
+Validation does not prove that your business rules are correct. Keep domain expectations in unit tests near the machine.
+
+## Practical adoption pattern
+
+1.  Start by validating machines in unit tests.
+2.  Add validation before documentation generation for machines that feed diagrams or serialized output.
+3.  Keep validation near the machine definition when the workflow is business-critical.
+
+## Next steps
+
+*   [Getting Started](./getting-started.md) — Build a first machine before adding validation.
+*   [Order Processing Flow](../recipes/order-flow.md) — Review a larger workflow where validation is useful.
+*   [API: validate()](../api/modules/x_robot_validate.md#validate) — Read the generated API reference.
+
+===== END DOC: docs/guides/validation.md =====
+
+===== BEGIN DOC: docs/performance.md =====
+
+# X-Robot Performance Report
+
+Generated: 2026-05-16
+
+***
+
+## How to Run
+
+To regenerate this report, run:
+
+```bash
+bun bench:report
+```
+
+This will execute all benchmarks in `tests-benchmark/` and generate this file.
+
+**Requirements:**
+
+*   [bun](https://bun.sh) must be installed
+*   Dependencies must be installed: `npm install` or `bun install`
+
+**Benchmark files:**
+
+*   `tests-benchmark/performance.test.ts` - Performance benchmarks
+*   `tests-benchmark/bundle-size.test.ts` - Bundle size analysis
+*   `tests-benchmark/developer-experience.test.ts` - Lines of code comparison
+*   `tests-benchmark/memory-usage.test.ts` - Memory usage tests
+*   `tests-benchmark/scxml-performance.test.ts` - SCXML import/export performance
+
+***
+
+## Bundle Size
+
+### Core (x-robot only)
+
+| Library                 | Size     | vs X-Robot Core |
+| ----------------------- | -------- | --------------- |
+| X-Robot Core (minified) | **16.55KB** | 1x              |
+| XState interpreter      | 30.09KB  | 1.8x            |
+| XState web              | 46.64KB  | 2.8x            |
+| XState full             | 58.80KB   | 3.6x            |
+
+### With Modules (x-robot + documentate + validate)
+
+| Module                                                   | Size      |
+| -------------------------------------------------------- | --------- |
+| X-Robot Core                                             | 16.55KB   |
+| + documentate (code gen, diagrams, serialization, SCXML) | +49.71KB     |
+| + validate (machine validation)                          | +13.67KB     |
+| **Total**                                                | **79.93KB** |
+
+***
+
+## Features Comparison
+
+| Feature             | X-Robot Core (16.55KB) | X-Robot + Modules (79.93KB) | XState Interpreter (30.09KB) | XState Web (46.64KB) | XState Full (58.80KB) | XState Full + Stately Studio |
+| ------------------- | ------------------- | ------------------------- | ------------------------- | ----------------- | ------------------ | ----------------------------- |
+| Bundle Size / Tooling Size | 16.55KB | 79.93KB | 30.09KB | 46.64KB | 58.80KB | 58.80KB + external web app |
+| Installable / external | npm package | npm packages | npm package | npm package | npm packages | npm packages + external web app |
+| Nested states | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Parallel states | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Guards | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Async guards | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Entry/Exit actions | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Context | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Final states | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| invoke() | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Delayed transitions | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Immediate transitions | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| History tracking | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Machine validation | ❌ | ✅ validate() | ❌ | ❌ | ❌ | ❌ |
+| Code generation | ❌ | ✅ documentate() | ❌ | ❌ | ❌ | ✅ |
+| Mermaid visual docs | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| PlantUML visual docs | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| SVG image exports | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| PNG image exports | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| JSON serialization | ❌ | ✅ documentate() | ❌ | ❌ | ❌ | ❌ |
+| SCXML import/export | ❌ | ✅ documentate() | ❌ | ❌ | ✅ | ✅ |
+| Actor model | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+
+***
+
+## Performance
+
+| Test                   | X-Robot | XState   | Advantage        |
+| ---------------------- | ------- | -------- | ---------------- |
+| 5k transitions         | 8.93ms  | 98.36ms | **11.0x faster** |
+| 3k with guards         | 4.40ms  | 40.35ms  | **9.2x faster**  |
+| 10k transitions        | 8.27ms  | 124.93ms | **15.1x faster** |
+| 10k context updates    | 32.18ms | 112.41ms  | **3.5x faster**  |
+| invokeAfter scheduling | 7.44ms  | 17.01ms  | **2.3x faster**  |
+| Delayed transitions    | 56.95ms | 60.45ms  | **1.1x faster**  |
+
+***
+
+## Developer Experience (Lines of Code)
+
+| Example             | X-Robot | XState | Advantage     |
+| ------------------- | ------- | ------ | ------------- |
+| Simple machine      | 9       | 11     | **1.2x less** |
+| Async machine       | 15      | 25     | **1.7x less** |
+| Guards machine      | 14      | 25     | **1.8x less** |
+| Delayed transitions | 12 | 16     | **1.3x less** |
+
+***
+
+## Why X-Robot?
+
+1.  **1.8-3.6x smaller** bundle size (core only)
+2.  **1.1-15.1x faster** performance
+3.  **1.2-1.8x less code** to write
+4.  **More features** - History, validate(), documentate() (code gen, diagrams, serialization, SCXML)
+5.  **Simpler API** - Declarative, functional approach
+6.  **Native async guards** - No workarounds needed
+7.  **invokeAfter()** - Built-in with cancel functionality
+8.  **Better DX** - documentate() for code & diagram generation, validate() for machine validation
+9.  **SCXML support** - Import/export machines in standard SCXML format (via documentate())
+10. **Machine validation** - Built-in validation to catch errors before runtime (via validate())
+
+===== END DOC: docs/performance.md =====
+
+===== BEGIN DOC: docs/comparison/xstate.md =====
+
+# XState vs X-Robot
+
+X-Robot offers native async guards, frozen state by default, validation, and generated documentation through a smaller surface area for teams that want machine behavior, tooling, and adoption docs from one model.
+
+## Read this after the X-Robot overview
+
+Start with the [X-Robot Overview](../overview.md) and [Getting Started](../guides/getting-started.md) to see the core mental model before comparing it with XState. Then use this page to evaluate async guards, frozen context, validation, generated documentation, and bundle shape side by side.
+
+## Quick Comparison
+
+| Feature | X-Robot Core | X-Robot + Modules | XState Interpreter | XState Web | XState Full | XState Full + Stately Studio |
+|---------|--------------|-------------------|-------------------|------------|-------------|-------------------------------|
+| Bundle Size / Tooling Size | 16.55KB | 79.93KB | 30.09KB | 46.64KB | 58.80KB | 58.80KB + external web app |
+| Installable / external | npm package | npm packages | npm package | npm package | npm packages | npm packages + external web app |
+| Nested States | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Parallel States | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| Guards | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Async Guards | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Frozen State | Default | Default | ❌ | ❌ | Optional | Optional |
+| Code Generation | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Mermaid visual docs | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| PlantUML visual docs | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| SVG image exports | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| PNG image exports | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| SCXML | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| Machine Validation | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Actor Model | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+
+## Async Guards
+
+X-Robot supports native async guards:
+
+```javascript
+// X-Robot
+import { transition, guard } from "x-robot";
+
+state("idle", transition("check", "granted", guard(async (ctx) => {
+  const res = await fetch("/api/permission");
+  return (await res.json()).allowed;
+})));
+```
+
+XState requires workarounds\*:
+
+```javascript
+// XState: needs invoke
+{
+  idle: { on: { check: "checking" }},
+  checking: {
+    invoke: {
+      src: async () => await checkPermission(),
+      onDone: { target: "granted" },
+      onError: { target: "denied" }
+    }
+  }
+}
+```
+
+*   In XState, async checks are modeled as invoked actors/operational states. See [Mental model switch](#mental-model-switch-async-preconditions-vs-async-lifecycle) below.
+
+## Mental model switch: async preconditions vs async lifecycle
+
+> Skip to the last part if you only want to compare both code shapes.
+
+Before choosing a machine shape, separate the business rule from the library API.
+
+### Business logic first
+
+For a payment lifecycle, events such as `authorize`, `capture`, `void`, and `refund` are attempts. Each attempt has async preconditions:
+
+*   `authorize`: the payment method exists and can be authorized.
+*   `capture`: the authorization exists and is capturable.
+*   `void`: the authorization exists and can still be voided.
+*   `refund`: the payment was captured and is refundable.
+
+If a precondition fails, the attempt should route to `rejected`. Effects such as reserving, capturing, voiding, or refunding funds should run only after the relevant preconditions pass.
+
+### XState implementation shape
+
+In XState, keep the async check inside the machine instead of running external checks before sending events. Because guards are synchronous, the machine usually models each async check as an invoked actor and an operational state such as `checkingCapture`.
+
+```javascript
+// XState: safe inside the machine, with explicit checking states
+const paymentMachine = createMachine({
+  initial: "authorized",
+  states: {
+    authorized: {
+      on: { capture: "checkingCapture" }
+    },
+    checkingCapture: {
+      invoke: {
+        src: "canCapture",
+        onDone: { target: "capturing" },
+        onError: { target: "rejected" }
+      }
+    },
+    capturing: {
+      invoke: {
+        src: "captureFunds",
+        onDone: { target: "captured" },
+        onError: { target: "rejected" }
+      }
+    },
+    captured: {},
+    rejected: {}
+  }
+});
+```
+
+This is explicit and safe, but it adds operational states for `checking` / `checked` lifecycle steps when the domain question is “may this transition happen?”
+
+### X-Robot implementation shape
+
+In X-Robot, async guards can sit at the transition boundary. Effects then run as entry pulses after the transition has been allowed.
+
+```mermaid
+---
+title: Payment
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "authorized" as authorized
+state "capturing" as capturing
+state "captured" as captured
+state "rejected" as rejected
+class authorized def
+class capturing def
+class captured def
+class rejected def
+
+capturing: └┬ AEn-captureFunds<br> ├┬ success<br> │└ T-captured<br> └┬ failure<br>  └ T-rejected
+
+[*] --> authorized
+authorized --> capturing: capture<br>└┬ G-canCapture<br> └┬ failure<br>  └ T-rejected
+capturing --> captured: captured
+capturing --> rejected: rejected
+```
+```javascript
+// X-Robot: async precondition at the boundary, effect after entry
+import { entry, guard, init, initial, machine, state, transition } from "x-robot";
+
+async function canCapture() {
+  return true;
+}
+
+async function captureFunds() {}
+
+const payment = machine(
+  "Payment",
+  init(initial("authorized")),
+  state("authorized", transition("capture", "capturing", guard(canCapture, "rejected"))),
+  state("capturing", entry(captureFunds, "captured", "rejected")),
+  state("captured"),
+  state("rejected")
+);
+```
+
+X-Robot can also model explicit lifecycle states such as `checkingCapture` when those states are meaningful to the product or UI. The difference is that async preconditions do not require those states just to be expressible.
+
+## API Comparison
+
+X-Robot's `documentate()` output is part of the developer workflow in these examples. The same machine definition can produce visual documentation by concept:
+
+*   Mermaid: Markdown-friendly source diagrams and previews for state, sequence, and focused structural views.
+*   PlantUML: richer source diagrams and the preferred visual style for state, sequence, and focused structural views.
+*   SVG formats: explicit `svg-*` exports, such as `svg-guards` and `svg-sequence`, for sharing, embedding, and vector assets.
+*   PNG formats: explicit `png-*` exports, such as `png-events` and `png-complexity`, for raster images in docs, tickets, and slides.
+
+Focused structural views include guards, events, pulses, outcomes, immediate transitions, composition, and complexity. These outputs are useful for PR review, onboarding, conceptual debugging, and living project documentation.
+
+### XState
+
+```javascript
+// XState
+const toggleMachine = createMachine(
+  "Toggle",
+  {
+    initial: "off",
+    states: {
+      off: { on: { toggle: "on" }},
+      on: { on: { toggle: "off" }}
+    }
+  }
+);
+```
+
+### X-Robot
+
+```mermaid
+---
+title: Toggle
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "off" as off
+state "on" as on
+class off def
+class on def
+
+
+[*] --> off
+off --> on: toggle
+on --> off: toggle
+```
+```javascript
+// X-Robot: simpler
+const toggle = machine(
+  "Toggle",
+  state("off", transition("toggle", "on")),
+  state("on", transition("toggle", "off"))
+);
+```
+
+### Pulse vs Actions
+
+XState requires separate action types:
+
+```javascript
+// XState: action + reducer
+{
+  loading: {
+    invoke: {
+      src: "fetchData",
+      onDone: { target: "success", actions: "assignData" },
+      onError: { target: "error", actions: "assignError" }
+    }
+  }
+}
+```
+
+X-Robot: single function handles both:
+
+```javascript
+// X-Robot: single function
+import { machine, state, transition, entry } from "x-robot";
+
+state("loading", entry(async (ctx) => {
+  ctx.data = await fetchData();
+}, "success", "error"))
+```
+
+## When to Choose X-Robot
+
+*   Bundle size is critical (16.55KB vs 30KB+)
+*   Native async guards needed
+*   Simpler API preferred
+*   Code generation required
+*   Generated visual documentation required:
+    *   Mermaid source diagrams for Markdown-friendly previews
+    *   PlantUML source diagrams for richer visual styling
+    *   Focused views for guards, events, pulses, outcomes, immediate transitions, composition, and complexity
+    *   Explicit `svg-*` exports for sharing, embedding, and vector assets
+    *   Explicit `png-*` exports for raster docs, tickets, and slides
+*   Machine validation needed
+
+## When to Choose XState
+
+*   Actor model required
+*   Larger ecosystem needed
+*   Enterprise support required
+*   Visual editor required
+*   More community resources
+
+## Performance
+
+See [Performance](../performance.md) for benchmarks.
+
+## Migration
+
+X-Robot can import SCXML from XState:
+
+```javascript
+import { documentate } from "x-robot/documentate";
+
+// Convert XState machine to SCXML
+const xstateScxml = convertToScxml(xstateMachine);
+
+// Get serialized representation
+const { serialized } = await documentate(xstateScxml, { format: "serialized" });
+```
+
+===== END DOC: docs/comparison/xstate.md =====

@@ -59,7 +59,6 @@ success --> pristine: reset
 error --> valid: retry
 error --> pristine: reset
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry, guard } from "x-robot";
 
@@ -186,6 +185,8 @@ error --> pristine: reset
 ```
 
 ## With Async Validation
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function validateOnServer(ctx) {

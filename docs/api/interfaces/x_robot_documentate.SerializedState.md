@@ -26,7 +26,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L132)
+[lib/documentate/types.ts:132](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L132)
 
 ***
 
@@ -36,7 +36,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:133](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L133)
+[lib/documentate/types.ts:133](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L133)
 
 ***
 
@@ -46,7 +46,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L134)
+[lib/documentate/types.ts:134](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L134)
 
 ***
 
@@ -56,7 +56,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:135](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L135)
+[lib/documentate/types.ts:135](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L135)
 
 ***
 
@@ -66,7 +66,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:136](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L136)
+[lib/documentate/types.ts:136](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L136)
 
 ***
 
@@ -76,7 +76,7 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:137](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L137)
+[lib/documentate/types.ts:137](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L137)
 
 ***
 
@@ -86,4 +86,4 @@ Serialized state definition
 
 #### Defined in
 
-[lib/documentate/types.ts:138](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/types.ts#L138)
+[lib/documentate/types.ts:138](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L138)

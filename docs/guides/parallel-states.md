@@ -57,7 +57,6 @@ state WordMachineParallelStates {
   WordMachineListNumbers --> WordMachineListNone: none
 }
 ```
-
 ```javascript
 import { getState, init, initial, invoke, machine, parallel, state, transition } from "x-robot";
 
@@ -100,6 +99,8 @@ const wordMachine = machine(
 
 ### getState()
 
+<!-- x-robot:fragment -->
+
 ```javascript
 const state = getState(wordMachine);
 // { bold: "off", underline: "off", italics: "off", list: "none" }
@@ -115,6 +116,8 @@ console.log(italicsMachine.current); // "off"
 ## Invoking Transitions
 
 Target specific regions with slash notation:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 invoke(wordMachine, "bold/on");      // bold: off -> on
@@ -176,7 +179,118 @@ state EditorParallelStates {
 }
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Editor
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as EditorParallelStates
+state EditorParallelStates {
+  state "off" as EditorBoldOff
+  state "on" as EditorBoldOn
+
+
+  [*] --> EditorBoldOff
+  EditorBoldOff --> EditorBoldOn: toggle
+  EditorBoldOn --> EditorBoldOff: toggle
+  --
+  state "off" as EditorItalicOff
+  state "on" as EditorItalicOn
+
+
+  [*] --> EditorItalicOff
+  EditorItalicOff --> EditorItalicOn: toggle
+  EditorItalicOn --> EditorItalicOff: toggle
+  --
+  state "off" as EditorUnderlineOff
+  state "on" as EditorUnderlineOn
+
+
+  [*] --> EditorUnderlineOff
+  EditorUnderlineOff --> EditorUnderlineOn: toggle
+  EditorUnderlineOn --> EditorUnderlineOff: toggle
+  --
+  state "left" as EditorAlignmentLeft
+  state "center" as EditorAlignmentCenter
+  state "right" as EditorAlignmentRight
+
+
+  [*] --> EditorAlignmentLeft
+  EditorAlignmentLeft --> EditorAlignmentCenter: align
+  EditorAlignmentCenter --> EditorAlignmentRight: align
+  EditorAlignmentRight --> EditorAlignmentLeft: align
+}
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Editor
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as EditorParallelStates
+state EditorParallelStates {
+  state "off" as EditorBoldOff
+  state "on" as EditorBoldOn
+
+
+  [*] --> EditorBoldOff
+  EditorBoldOff --> EditorBoldOn: toggle
+  EditorBoldOn --> EditorBoldOff: toggle
+  --
+  state "off" as EditorItalicOff
+  state "on" as EditorItalicOn
+
+
+  [*] --> EditorItalicOff
+  EditorItalicOff --> EditorItalicOn: toggle
+  EditorItalicOn --> EditorItalicOff: toggle
+  --
+  state "off" as EditorUnderlineOff
+  state "on" as EditorUnderlineOn
+
+
+  [*] --> EditorUnderlineOff
+  EditorUnderlineOff --> EditorUnderlineOn: toggle
+  EditorUnderlineOn --> EditorUnderlineOff: toggle
+  --
+  state "left" as EditorAlignmentLeft
+  state "center" as EditorAlignmentCenter
+  state "right" as EditorAlignmentRight
+
+
+  [*] --> EditorAlignmentLeft
+  EditorAlignmentLeft --> EditorAlignmentCenter: align
+  EditorAlignmentCenter --> EditorAlignmentRight: align
+  EditorAlignmentRight --> EditorAlignmentLeft: align
+}
+```
 ```javascript
+import { init, initial, machine, parallel, state, transition } from "x-robot";
+
 const bold = machine("Bold", init(initial("off")),
   state("off", transition("toggle", "on")),
   state("on", transition("toggle", "off"))
@@ -245,6 +359,87 @@ state SearchParallelStates {
 [*] --> ready
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Search
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as SearchParallelStates
+state SearchParallelStates {
+  state "empty" as SearchQueryEmpty
+  state "active" as SearchQueryActive
+
+
+  [*] --> SearchQueryEmpty
+  SearchQueryEmpty --> SearchQueryActive: type
+  SearchQueryActive --> SearchQueryEmpty: clear
+  SearchQueryActive --> searching: submit
+  --
+  state "none" as SearchResultsNone
+  state "some" as SearchResultsSome
+
+
+  [*] --> SearchResultsNone
+  SearchResultsNone --> SearchResultsSome: found
+  SearchResultsSome --> SearchResultsNone: clear
+}
+
+
+[*] --> ready
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Search
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as SearchParallelStates
+state SearchParallelStates {
+  state "empty" as SearchQueryEmpty
+  state "active" as SearchQueryActive
+
+
+  [*] --> SearchQueryEmpty
+  SearchQueryEmpty --> SearchQueryActive: type
+  SearchQueryActive --> SearchQueryEmpty: clear
+  SearchQueryActive --> searching: submit
+  --
+  state "none" as SearchResultsNone
+  state "some" as SearchResultsSome
+
+
+  [*] --> SearchResultsNone
+  SearchResultsNone --> SearchResultsSome: found
+  SearchResultsSome --> SearchResultsNone: clear
+}
+
+
+[*] --> ready
+```
 ```javascript
 const search = machine(
   "Search",
@@ -309,6 +504,95 @@ state FiltersParallelStates {
 }
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Filters
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as FiltersParallelStates
+state FiltersParallelStates {
+  state "all" as FiltersCategoryAll
+  state "electronics" as FiltersCategoryElectronics
+
+
+  [*] --> FiltersCategoryAll
+  FiltersCategoryAll --> FiltersCategoryElectronics: select
+  FiltersCategoryElectronics --> FiltersCategoryAll: select
+  --
+  state "any" as FiltersPriceRangeAny
+  state "range1" as FiltersPriceRangeRange1
+
+
+  [*] --> FiltersPriceRangeAny
+  FiltersPriceRangeAny --> FiltersPriceRangeRange1: select
+  FiltersPriceRangeRange1 --> FiltersPriceRangeAny: select
+  --
+  state "relevance" as FiltersSortByRelevance
+  state "price" as FiltersSortByPrice
+
+
+  [*] --> FiltersSortByRelevance
+  FiltersSortByRelevance --> FiltersSortByPrice: select
+  FiltersSortByPrice --> FiltersSortByRelevance: select
+}
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Filters
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as FiltersParallelStates
+state FiltersParallelStates {
+  state "all" as FiltersCategoryAll
+  state "electronics" as FiltersCategoryElectronics
+
+
+  [*] --> FiltersCategoryAll
+  FiltersCategoryAll --> FiltersCategoryElectronics: select
+  FiltersCategoryElectronics --> FiltersCategoryAll: select
+  --
+  state "any" as FiltersPriceRangeAny
+  state "range1" as FiltersPriceRangeRange1
+
+
+  [*] --> FiltersPriceRangeAny
+  FiltersPriceRangeAny --> FiltersPriceRangeRange1: select
+  FiltersPriceRangeRange1 --> FiltersPriceRangeAny: select
+  --
+  state "relevance" as FiltersSortByRelevance
+  state "price" as FiltersSortByPrice
+
+
+  [*] --> FiltersSortByRelevance
+  FiltersSortByRelevance --> FiltersSortByPrice: select
+  FiltersSortByPrice --> FiltersSortByRelevance: select
+}
+```
 ```javascript
 const category = machine("Category", init(initial("all")),
   state("all", transition("select", "electronics")),
@@ -373,6 +657,95 @@ state DashboardParallelStates {
 }
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Dashboard
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as DashboardParallelStates
+state DashboardParallelStates {
+  state "expanded" as DashboardSidebarExpanded
+  state "collapsed" as DashboardSidebarCollapsed
+
+
+  [*] --> DashboardSidebarExpanded
+  DashboardSidebarExpanded --> DashboardSidebarCollapsed: toggle
+  DashboardSidebarCollapsed --> DashboardSidebarExpanded: toggle
+  --
+  state "visible" as DashboardHeaderVisible
+  state "hidden" as DashboardHeaderHidden
+
+
+  [*] --> DashboardHeaderVisible
+  DashboardHeaderVisible --> DashboardHeaderHidden: toggle
+  DashboardHeaderHidden --> DashboardHeaderVisible: toggle
+  --
+  state "list" as DashboardContentList
+  state "grid" as DashboardContentGrid
+
+
+  [*] --> DashboardContentList
+  DashboardContentList --> DashboardContentGrid: view
+  DashboardContentGrid --> DashboardContentList: view
+}
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Dashboard
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "Parallel states" as DashboardParallelStates
+state DashboardParallelStates {
+  state "expanded" as DashboardSidebarExpanded
+  state "collapsed" as DashboardSidebarCollapsed
+
+
+  [*] --> DashboardSidebarExpanded
+  DashboardSidebarExpanded --> DashboardSidebarCollapsed: toggle
+  DashboardSidebarCollapsed --> DashboardSidebarExpanded: toggle
+  --
+  state "visible" as DashboardHeaderVisible
+  state "hidden" as DashboardHeaderHidden
+
+
+  [*] --> DashboardHeaderVisible
+  DashboardHeaderVisible --> DashboardHeaderHidden: toggle
+  DashboardHeaderHidden --> DashboardHeaderVisible: toggle
+  --
+  state "list" as DashboardContentList
+  state "grid" as DashboardContentGrid
+
+
+  [*] --> DashboardContentList
+  DashboardContentList --> DashboardContentGrid: view
+  DashboardContentGrid --> DashboardContentList: view
+}
+```
 ```javascript
 const sidebar = machine("Sidebar", init(initial("expanded")),
   state("expanded", transition("toggle", "collapsed")),

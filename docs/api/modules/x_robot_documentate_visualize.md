@@ -526,7 +526,7 @@ The path to the svg file
 
 #### Defined in
 
-[lib/documentate/visualize.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/visualize.ts#L52)
+[lib/documentate/visualize.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L52)
 
 ***
 
@@ -544,4 +544,4 @@ The path to the svg file
 
 #### Defined in
 
-[lib/documentate/visualize.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/visualize.ts#L57)
+[lib/documentate/visualize.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L57)

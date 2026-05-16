@@ -22,6 +22,49 @@ import {
   isValidString
 } from "../utils/utils";
 
+interface InvocationJob {
+  transition: string;
+  payload?: any;
+  resolve: () => void;
+  reject: (error: unknown) => void;
+}
+
+interface MachineRuntime {
+  running: boolean;
+  activeToken?: number;
+  nextToken: number;
+  queue: InvocationJob[];
+}
+
+const runtimes = new WeakMap<Machine, MachineRuntime>();
+
+function getRuntime(machine: Machine): MachineRuntime {
+  let runtime = runtimes.get(machine);
+  if (!runtime) {
+    runtime = {
+      running: false,
+      activeToken: undefined,
+      nextToken: 0,
+      queue: []
+    };
+    runtimes.set(machine, runtime);
+  }
+
+  return runtime;
+}
+
+function isCurrentInvocation(machine: Machine, token: number): boolean {
+  return getRuntime(machine).activeToken === token;
+}
+
+function isPromiseLike<T = unknown>(value: unknown): value is Promise<T> {
+  return !!value && typeof (value as Promise<T>).then === "function";
+}
+
+function cancelledInvocationError(): Error {
+  return new Error("Invocation cancelled");
+}
+
 function addToHistory(machine: Machine, entry: string): void {
   if (machine.historyLimit === undefined) return;
   if (machine.historyLimit === 0) return;
@@ -40,8 +83,9 @@ function addToHistory(machine: Machine, entry: string): void {
  */
 function runPulse(
   machine: Machine,
-  pulse?: PulseDirective | string | null,
-  payload?: any
+  pulse: PulseDirective | string | null | undefined,
+  payload: any,
+  token: number
 ): Promise<void> | void {
   if (isEntry(pulse)) {
     const isAsync = pulse.pulse.constructor.name === "AsyncFunction";
@@ -59,82 +103,62 @@ function runPulse(
       context = deepCloneUnfreeze(context);
     }
 
-    if (isAsync) {
-      const runPulseFn = () => pulse.pulse(context, payload);
-      return Promise.resolve(runPulseFn())
-        .then((result: unknown) => {
-          if (isValidObject(result)) {
-            context = result;
-          }
-
-          machine.context = context;
-          if (machine.frozen) {
-            deepFreeze(machine.context);
-          }
-
-          if (pulse.success) {
-            if (isEntry(pulse.success)) {
-              return runPulse(machine, pulse.success);
-            }
-            return invoke(machine, pulse.success);
-          } else if (pulse.transition) {
-            return invoke(machine, pulse.transition);
-          }
-        })
-        .catch((error: unknown) => {
-          machine.context = context;
-          if (machine.frozen) {
-            deepFreeze(machine.context);
-          }
-
-          if (pulse.failure) {
-            if (isEntry(pulse.failure)) {
-              return runPulse(machine, pulse.failure, error);
-            }
-            return invoke(machine, pulse.failure, error);
-          }
-
-          throw error;
-        });
-    } else {
-      try {
-        const result = pulse.pulse(context, payload);
-
-        if (isValidObject(result)) {
-          context = result;
-        }
-
-        machine.context = context;
-        if (machine.frozen) {
-          deepFreeze(machine.context);
-        }
-
-        if (pulse.success) {
-          if (isEntry(pulse.success)) {
-            return runPulse(machine, pulse.success);
-          }
-          return invoke(machine, pulse.success);
-        } else if (pulse.transition) {
-          return invoke(machine, pulse.transition);
-        }
-      } catch (error) {
-        machine.context = context;
-        if (machine.frozen) {
-          deepFreeze(machine.context);
-        }
-
-        if (pulse.failure) {
-          if (isEntry(pulse.failure)) {
-            return runPulse(machine, pulse.failure, error);
-          }
-          return invoke(machine, pulse.failure, error);
-        }
-
-        throw error;
+    const onSuccess = (result: unknown): Promise<void> | void => {
+      if (!isCurrentInvocation(machine, token)) {
+        return;
       }
+
+      if (isValidObject(result)) {
+        context = result;
+      }
+
+      machine.context = context;
+      if (machine.frozen) {
+        deepFreeze(machine.context);
+      }
+
+      if (pulse.success) {
+        if (isEntry(pulse.success)) {
+          return runPulse(machine, pulse.success, undefined, token);
+        }
+        return invokeNow(machine, pulse.success, undefined, token);
+      } else if (pulse.transition) {
+        return invokeNow(machine, pulse.transition, undefined, token);
+      }
+    };
+
+    const onFailure = (error: unknown): Promise<void> | void => {
+      if (!isCurrentInvocation(machine, token)) {
+        return;
+      }
+
+      machine.context = context;
+      if (machine.frozen) {
+        deepFreeze(machine.context);
+      }
+
+      if (pulse.failure) {
+        if (isEntry(pulse.failure)) {
+          return runPulse(machine, pulse.failure, error, token);
+        }
+        return invokeNow(machine, pulse.failure, error, token);
+      }
+
+      throw error;
+    };
+
+    try {
+      const result = pulse.pulse(context, payload);
+      if (isPromiseLike(result)) {
+        return Promise.resolve(result).then(onSuccess, onFailure);
+      }
+
+      return onSuccess(result);
+    } catch (error) {
+      return onFailure(error);
     }
   } else if (isValidString(pulse)) {
-    return invoke(machine, pulse);
+    return invokeNow(machine, pulse, undefined, token);
   }
 }
 
@@ -157,8 +181,13 @@ function hasFatalError(machine: Machine): boolean {
 function catchError(
   machine: Machine,
   state: StateDirective,
-  error: Error
+  error: Error,
+  token: number
 ): Promise<void> | void {
+  if (!isCurrentInvocation(machine, token)) {
+    return;
+  }
+
   // If frozen, we need to clone the context before modifying
   if (machine.frozen) {
     machine.context = deepCloneUnfreeze(machine.context);
@@ -169,7 +198,7 @@ function catchError(
 
   // If there's an error transition, let it handle the error
   if (hasTransition(state, "error")) {
-    return invoke(machine, "error", error);
+    return invokeNow(machine, "error", error, token);
   }
 
   // Check if we have a fatal state and set it as the current state if so
@@ -196,16 +225,20 @@ function catchError(
 async function runStatePulsesAsync(
   machine: Machine,
   state: StateDirective,
-  payload: any
+  payload: any,
+  token: number
 ): Promise<void> {
   for (let i = 0; i < state.run.length; i++) {
     const item = state.run[i];
     try {
       if (isEntry(item)) {
-        await runPulse(machine, item, payload);
+        await runPulse(machine, item, payload, token);
+        if (!isCurrentInvocation(machine, token)) {
+          return;
+        }
       }
     } catch (error) {
-      await catchError(machine, state, error as Error);
+      await catchError(machine, state, error as Error, token);
       return;
     }
   }
@@ -220,19 +253,37 @@ async function runStatePulsesAsync(
 function runStatePulsesSync(
   machine: Machine,
   state: StateDirective,
-  payload: any
-) {
+  payload: any,
+  token: number
+): Promise<void> | void {
+  let promise: Promise<void> | undefined;
   for (let i = 0; i < state.run.length; i++) {
     const item = state.run[i];
-    try {
-      if (isEntry(item)) {
-        runPulse(machine, item, payload);
+    const runItem = () => {
+      try {
+        if (isEntry(item)) {
+          return runPulse(machine, item, payload, token);
+        }
+      } catch (error) {
+        return catchError(machine, state, error as Error, token);
       }
-    } catch (error) {
-      catchError(machine, state, error as Error);
-      break;
+    };
+
+    if (promise) {
+      promise = promise.then(runItem).catch((error) =>
+        catchError(machine, state, error as Error, token)
+      );
+    } else {
+      const result = runItem();
+      if (isPromiseLike(result)) {
+        promise = result.catch((error) =>
+          catchError(machine, state, error as Error, token)
+        );
+      }
     }
   }
+
+  return promise || void 0;
 }
 
 /**
@@ -248,9 +299,28 @@ function runGuards(
   machine: Machine,
   state: StateDirective,
   transition: TransitionDirective,
-  payload: any
+  payload: any,
+  token: number
 ): Promise<boolean> | boolean {
-  return runGuardsFromIndex(machine, state, transition, payload, 0);
+  return runGuardsFromIndex(machine, state, transition, payload, 0, token);
+}
+
+function runGuardFailure(
+  machine: Machine,
+  guard: any,
+  result: any,
+  token: number
+): Promise<void> | void {
+  if (isValidString(guard.failure)) {
+    return invokeNow(machine, guard.failure, result, token);
+  } else if (isEntry(guard.failure)) {
+    return runPulse(machine, guard.failure, result, token);
+  } else if (isValidString(result)) {
+    if (machine.frozen) {
+      machine.context = deepCloneUnfreeze(machine.context);
+    }
+    machine.context.error = result;
+  }
 }
 
 function runGuardsFromIndex(
@@ -258,7 +328,8 @@ function runGuardsFromIndex(
   state: StateDirective,
   transition: TransitionDirective,
   payload: any,
-  startIndex: number
+  startIndex: number,
+  token: number
 ): Promise<boolean> | boolean {
   for (let i = startIndex; i < transition.guards.length; i++) {
     let guard = transition.guards[i];
@@ -285,16 +356,19 @@ function runGuardsFromIndex(
 
       if (result instanceof Promise) {
         return result.then((resolvedResult: any) => {
+          if (!isCurrentInvocation(machine, token)) {
+            return false;
+          }
+
           if (resolvedResult !== true) {
-            if (isValidString(guard.failure)) {
-              invoke(machine, guard.failure, resolvedResult);
-            } else if (isEntry(guard.failure)) {
-              runPulse(machine, guard.failure, resolvedResult);
-            } else if (isValidString(resolvedResult)) {
-              if (machine.frozen) {
-                machine.context = deepCloneUnfreeze(machine.context);
-              }
-              machine.context.error = resolvedResult;
+            const failureResult = runGuardFailure(
+              machine,
+              guard,
+              resolvedResult,
+              token
+            );
+            if (isPromiseLike(failureResult)) {
+              return failureResult.then(() => false);
             }
             return false;
           }
@@ -303,25 +377,19 @@ function runGuardsFromIndex(
             machine.context = guardContext;
             deepFreeze(machine.context);
           }
-          return runGuardsFromIndex(machine, state, transition, payload, i + 1);
+          return runGuardsFromIndex(machine, state, transition, payload, i + 1, token);
         });
       }
 
       if (result !== true) {
-        if (isValidString(guard.failure)) {
-          invoke(machine, guard.failure, result);
-        } else if (isEntry(guard.failure)) {
-          runPulse(machine, guard.failure, result);
-        } else if (isValidString(result)) {
-          if (machine.frozen) {
-            machine.context = deepCloneUnfreeze(machine.context);
-          }
-          machine.context.error = result;
+        const failureResult = runGuardFailure(machine, guard, result, token);
+        if (isPromiseLike(failureResult)) {
+          return failureResult.then(() => false);
         }
         return false;
       }
     } catch (error) {
-      catchError(machine, state, error as Error);
+      catchError(machine, state, error as Error, token);
       return false;
     }
   }
@@ -339,29 +407,32 @@ function runGuardsFromIndex(
 function runNestedMachines(
   machine: Machine,
   state: StateDirective,
-  payload: any
+  payload: any,
+  token: number
 ): Promise<void> | void {
   // If there are no nested machines, we can return
   if (state.nested.length === 0) {
     return;
   }
 
-  let promise;
-  if (machine.isAsync) {
-    promise = Promise.resolve();
-  }
+  let promise: Promise<void> | undefined;
 
   // If the state has a nested machine, we run it
   for (let nestedMachine of state.nested) {
     // If the nested machine is a nested machine with a transition we run the transition on it
     if (isNestedMachineWithTransitionDirective(nestedMachine)) {
       let transition = nestedMachine.transition;
+      const runNested = () =>
+        isCurrentInvocation(machine, token)
+          ? invoke(nestedMachine.machine, transition, payload)
+          : undefined;
       if (promise) {
-        promise = promise.then(() =>
-          invoke(nestedMachine.machine, transition, payload)
-        );
+        promise = promise.then(runNested);
       } else {
-        invoke(nestedMachine.machine, transition, payload);
+        const result = runNested();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
   }
@@ -380,14 +451,15 @@ function runNestedMachines(
 function runNestedTransition(
   machine: Machine,
   transition: string,
-  payload: any
+  payload: any,
+  token: number
 ): Promise<void> | void {
   // We know that we have a nested transition and that the first part is the current state
   // so we get rid of the first part and split the rest
   let nestedTransitionParts = transition.split(".");
   let stateName = nestedTransitionParts.shift();
   let nestedTransition = nestedTransitionParts.join(".");
-  let promise = machine.isAsync ? Promise.resolve() : null;
+  let promise: Promise<void> | undefined;
 
   // If we have no stateName, we can't make a transition
   if (!stateName) {
@@ -403,12 +475,17 @@ function runNestedTransition(
     if (
       canMakeTransition(nestedMachine, currentNestedState, nestedTransition)
     ) {
+      const runNested = () =>
+        isCurrentInvocation(machine, token)
+          ? invoke(nestedMachine, nestedTransition, payload)
+          : undefined;
       if (promise) {
-        promise = promise.then(() =>
-          invoke(nestedMachine, nestedTransition, payload)
-        );
+        promise = promise.then(runNested);
       } else {
-        invoke(nestedMachine, nestedTransition, payload);
+        const result = runNested();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
   }
@@ -416,10 +493,13 @@ function runNestedTransition(
   // If we have an immediate transitions we can run it
   if (promise) {
     promise = promise.then(() =>
-      invokeImmediateDirectives(machine, currentStateObject, payload)
+      invokeImmediateDirectives(machine, currentStateObject, payload, token)
     );
   } else {
-    invokeImmediateDirectives(machine, currentStateObject, payload);
+    const result = invokeImmediateDirectives(machine, currentStateObject, payload, token);
+    if (isPromiseLike(result)) {
+      promise = result;
+    }
   }
 
   return promise || void 0;
@@ -435,7 +515,8 @@ function runNestedTransition(
 function runParallelTransition(
   machine: Machine,
   transition: string,
-  payload: any
+  payload: any,
+  token: number
 ): Promise<void> | void {
   // We know that we have a parallel transition and that the first part is the parallelMachineId
   // so we get rid of the first part and split the rest
@@ -455,6 +536,10 @@ function runParallelTransition(
   }
 
   // If the parallelMachineId is in the parallel object try to run the transition in the parallel machine
+  if (!isCurrentInvocation(machine, token)) {
+    return;
+  }
+
   return invoke(parallelMachine, parallelTransition, payload);
 }
 /**
@@ -467,7 +552,8 @@ function runParallelTransition(
 function invokeImmediateDirectives(
   machine: Machine,
   state: StateDirective,
-  payload: any
+  payload: any,
+  token: number
 ): Promise<void> | void {
   // If there are no immediate directives, we can return
   if (state.immediate.length === 0) {
@@ -475,7 +561,7 @@ function invokeImmediateDirectives(
   }
 
   let immediate = state.immediate;
-  let promise = machine.isAsync ? Promise.resolve() : null;
+  let promise: Promise<void> | undefined;
 
   // For each immediate directive
   for (let immediateDirective of immediate) {
@@ -489,39 +575,50 @@ function invokeImmediateDirectives(
       let parallelMachineId = transitionParts.shift() as string;
       let parallelTransition = transitionParts.join("/");
       let parallelMachine = machine.parallel[parallelMachineId];
+      const runImmediate = () =>
+        isCurrentInvocation(machine, token)
+          ? invoke(parallelMachine, parallelTransition, payload)
+          : undefined;
       if (promise) {
-        promise = promise.then(() =>
-          invoke(parallelMachine, parallelTransition, payload)
-        );
+        promise = promise.then(runImmediate);
       } else {
-        invoke(parallelMachine, parallelTransition, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
 
     // If is a nested transition we run the transition in the nested machine
     else if (isNestedTransition(immediateDirective.immediate)) {
+      const runImmediate = () =>
+        isCurrentInvocation(machine, token)
+          ? invokeNow(machine, immediateDirective.immediate, payload, token)
+          : undefined;
       if (promise) {
-        promise = promise.then(() =>
-          invoke(machine, immediateDirective.immediate, payload)
-        );
+        promise = promise.then(runImmediate);
       } else {
-        invoke(machine, immediateDirective.immediate, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
 
     // If is a transition we run the transition
     else {
-      if (promise) {
-        promise = promise.then(async () => {
+      const runImmediate = () => {
           // Only run the next immediate if the current state is equal to the state we are in now
-          if (machine.current === state.name) {
-            await invoke(machine, immediateDirective.immediate, payload);
+          if (machine.current === state.name && isCurrentInvocation(machine, token)) {
+            return invokeNow(machine, immediateDirective.immediate, payload, token);
           }
-        });
+      };
+      if (promise) {
+        promise = promise.then(runImmediate);
       } else {
-        // Only run the next immediate if the current state is equal to the state we are in now
-        if (machine.current === state.name) {
-          invoke(machine, immediateDirective.immediate, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
         }
       }
     }
@@ -542,6 +639,113 @@ export function invoke(
   machine: Machine,
   transition: string,
   payload?: any
+): Promise<void> | void {
+  const runtime = getRuntime(machine);
+
+  if (runtime.running || runtime.queue.length > 0) {
+    return new Promise<void>((resolve, reject) => {
+      runtime.queue.push({ transition, payload, resolve, reject });
+    });
+  }
+
+  return runSerializedInvocation(machine, transition, payload);
+}
+
+function runSerializedInvocation(
+  machine: Machine,
+  transition: string,
+  payload?: any
+): Promise<void> | void {
+  const runtime = getRuntime(machine);
+  runtime.running = true;
+  const token = ++runtime.nextToken;
+  runtime.activeToken = token;
+
+  try {
+    const result = invokeNow(machine, transition, payload, token);
+
+    if (result instanceof Promise) {
+      return result.finally(() => {
+        finishInvocation(machine, runtime, token);
+      });
+    }
+
+    finishInvocation(machine, runtime, token);
+    return result;
+  } catch (error) {
+    finishInvocation(machine, runtime, token);
+    throw error;
+  }
+}
+
+function finishInvocation(
+  machine: Machine,
+  runtime: MachineRuntime,
+  token: number
+): void {
+  if (runtime.activeToken === token) {
+    runtime.running = false;
+    runtime.activeToken = undefined;
+    drainQueue(machine);
+  }
+}
+
+function drainQueue(machine: Machine): void {
+  const runtime = getRuntime(machine);
+  if (runtime.running) return;
+
+  const job = runtime.queue.shift();
+  if (!job) return;
+
+  try {
+    const result = runSerializedInvocation(machine, job.transition, job.payload);
+    if (result instanceof Promise) {
+      result.then(job.resolve, job.reject);
+    } else {
+      job.resolve();
+    }
+  } catch (error) {
+    job.reject(error);
+  }
+}
+
+export function cancel(machine: Machine): void {
+  cancelMachine(machine, new Set<Machine>());
+}
+
+function cancelMachine(machine: Machine, visited: Set<Machine>): void {
+  if (visited.has(machine)) {
+    return;
+  }
+  visited.add(machine);
+
+  const runtime = getRuntime(machine);
+  runtime.nextToken += 1;
+  runtime.running = false;
+  runtime.activeToken = undefined;
+
+  const queued = runtime.queue.splice(0, runtime.queue.length);
+  for (const job of queued) {
+    job.reject(cancelledInvocationError());
+  }
+
+  const currentState = machine.states[machine.current];
+  if (currentState) {
+    for (const nestedMachine of currentState.nested) {
+      cancelMachine(nestedMachine.machine, visited);
+    }
+  }
+
+  for (const parallelMachine of Object.values(machine.parallel)) {
+    cancelMachine(parallelMachine, visited);
+  }
+}
+
+function invokeNow(
+  machine: Machine,
+  transition: string,
+  payload: any,
+  token: number
 ): Promise<void> | void {
   // If the machine has a fatal error, we will return immediately
   if (hasFatalError(machine)) {
@@ -580,11 +784,11 @@ export function invoke(
 
   // Check if we have a nested or parallel transition
   if (isParallelTransition(trimmedTransition)) {
-    return runParallelTransition(machine, trimmedTransition, payload);
+    return runParallelTransition(machine, trimmedTransition, payload, token);
   }
 
   if (isNestedTransition(trimmedTransition)) {
-    return runNestedTransition(machine, trimmedTransition, payload);
+    return runNestedTransition(machine, trimmedTransition, payload, token);
   }
 
   // Only run guards if the transition is not the START_EVENT
@@ -597,15 +801,20 @@ export function invoke(
 
     // If the transition has guards, run them and decide if we should continue
     let guardsResult = runGuards(
-      machine,
-      currentStateObject,
-      transitionObject,
-      payload
-    );
+        machine,
+        currentStateObject,
+        transitionObject,
+        payload,
+        token
+      );
 
     // Handle async guards
     if (guardsResult instanceof Promise) {
       return guardsResult.then((shouldContinue: boolean) => {
+        if (!isCurrentInvocation(machine, token)) {
+          return;
+        }
+
         if (shouldContinue === false) {
           addToHistory(
             machine,
@@ -619,7 +828,8 @@ export function invoke(
           currentStateObject,
           transitionObject,
           trimmedTransition,
-          payload
+          payload,
+          token
         );
       });
     }
@@ -636,7 +846,8 @@ export function invoke(
       currentStateObject,
       transitionObject,
       trimmedTransition,
-      payload
+      payload,
+      token
     );
   }
 
@@ -645,7 +856,8 @@ export function invoke(
     machine,
     currentStateObject,
     trimmedTransition,
-    payload
+    payload,
+    token
   );
 }
 
@@ -654,7 +866,8 @@ function handleExitAndContinue(
   currentStateObject: StateDirective,
   transitionObject: any,
   trimmedTransition: string,
-  payload?: any
+  payload: any,
+  token: number
 ): Promise<void> | void {
   const exitItems = transitionObject.exit;
   if (exitItems && Array.isArray(exitItems)) {
@@ -662,27 +875,41 @@ function handleExitAndContinue(
       ? exitItems[0]
       : (exitItems as PulseDirective[]);
 
+    let promise: Promise<void> | undefined;
     for (const exitItem of pulsesToRun) {
-      if (machine.isAsync) {
-        let promise = Promise.resolve();
-        promise = promise.then(() => runPulse(machine, exitItem, payload));
-        return promise.then(() => {
-          return continueTransition(
-            machine,
-            currentStateObject,
-            trimmedTransition,
-            payload
-          );
-        });
+      const runExit = () => runPulse(machine, exitItem, payload, token);
+      if (promise) {
+        promise = promise.then(runExit);
       } else {
-        runPulse(machine, exitItem, payload);
+        const result = runExit();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
+
+    if (promise) {
+      return promise.then(() => {
+        if (!isCurrentInvocation(machine, token)) {
+          return;
+        }
+
+        return continueTransition(
+          machine,
+          currentStateObject,
+          trimmedTransition,
+          payload,
+          token
+        );
+      });
+    }
+
     return continueTransition(
       machine,
       currentStateObject,
       trimmedTransition,
-      payload
+      payload,
+      token
     );
   }
 
@@ -690,7 +917,8 @@ function handleExitAndContinue(
     machine,
     currentStateObject,
     trimmedTransition,
-    payload
+    payload,
+    token
   );
 }
 
@@ -698,8 +926,13 @@ function continueTransition(
   machine: Machine,
   currentStateObject: StateDirective,
   trimmedTransition: string,
-  payload?: any
+  payload: any,
+  token: number
 ): Promise<void> | void {
+  if (!isCurrentInvocation(machine, token)) {
+    return;
+  }
+
   let targetState =
     trimmedTransition === START_EVENT
       ? machine.initial
@@ -729,36 +962,28 @@ function continueTransition(
     addToHistory(machine, `${HistoryType.State}: ${targetState}`);
   }
 
-  if (machine.isAsync) {
-    let promise = Promise.resolve();
+  let promise: Promise<void> | undefined;
+  const runStep = (step: () => Promise<void> | void) => {
+    if (promise) {
+      promise = promise.then(step);
+      return;
+    }
 
-    // Try to run nested machines if any
-    promise = promise.then(() =>
-      runNestedMachines(machine, targetStateObject, payload)
-    );
+    const result = step();
+    if (isPromiseLike(result)) {
+      promise = result;
+    }
+  };
 
-    // Run the state entry pulses
-    promise = promise.then(() =>
-      runStatePulsesAsync(machine, targetStateObject, payload)
-    );
+  runStep(() => runNestedMachines(machine, targetStateObject, payload, token));
+  runStep(() =>
+    machine.isAsync
+      ? runStatePulsesAsync(machine, targetStateObject, payload, token)
+      : runStatePulsesSync(machine, targetStateObject, payload, token)
+  );
+  runStep(() => invokeImmediateDirectives(machine, targetStateObject, payload, token));
 
-    // If there are immediate directives, run them
-    promise = promise.then(() =>
-      invokeImmediateDirectives(machine, targetStateObject, payload)
-    );
-
-    // Return the promise
-    return promise;
-  }
-
-  // Try to run nested machines if any
-  runNestedMachines(machine, targetStateObject, payload);
-
-  // Run the state entry pulses of the target state
-  runStatePulsesSync(machine, targetStateObject, payload);
-
-  // If there are immediate directives, run them
-  invokeImmediateDirectives(machine, targetStateObject, payload);
+  return promise || void 0;
 }
 
 /**

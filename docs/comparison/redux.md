@@ -7,7 +7,7 @@ A comparison with the popular state management library.
 | Feature | X-Robot | Redux |
 |---------|---------|-------|
 | Paradigm | State machine | Flux/Redux |
-| Bundle Size | 15.06KB | ~7KB core + middleware |
+| Bundle Size | 16.55KB | ~7KB core + middleware |
 | Boilerplate | Low | High |
 | Type Safety | Included | Manual |
 | Built-in Async | ✅ | Via thunks/sagas |
@@ -20,6 +20,8 @@ A comparison with the popular state management library.
 *   Actions describe what happened
 *   Reducers calculate new state
 *   Store holds single source of truth
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Redux: Multiple functions
@@ -89,7 +91,6 @@ idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
 // X-Robot: Single function
 import { machine, state, transition, entry, context, init, initial } from "x-robot";
@@ -164,7 +165,6 @@ idle --> loading: fetch
 loading --> success: success
 loading --> error: error
 ```
-
 ```javascript
 import { machine, state, transition, entry, init, initial } from "x-robot";
 
@@ -180,6 +180,8 @@ const fetchMachine = machine(
   state("error")
 );
 ```
+
+<!-- x-robot:fragment -->
 
 ```javascript
 import { createStore } from "redux";

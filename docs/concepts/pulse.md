@@ -17,6 +17,8 @@ A pulse is a function that:
 
 Entry pulses are defined with `entry()`, exit pulses with `exit()`:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Synchronous entry pulse
 function updateCounter(ctx) {
@@ -34,6 +36,8 @@ async function fetchData(ctx) {
 
 Entry pulses run when entering a state:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 function markStarted(ctx) {
   ctx.startedAt = Date.now();
@@ -43,6 +47,8 @@ state("active", entry(markStarted))
 ```
 
 With transitions (success/failure):
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function fetchData(ctx) {
@@ -79,7 +85,6 @@ class done def
 [*] --> idle
 idle --> done: next<br>[exit: logExit]
 ```
-
 ```javascript
 import { exit, init, initial, machine, state, transition } from "x-robot";
 
@@ -99,6 +104,8 @@ const exitMachine = machine(
 
 Reducers require returning new state and manual cloning:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Reducer approach
 function reducer(state, action) {
@@ -117,6 +124,8 @@ function reducer(state, action) {
 
 X-Robot entry pulse approach — single function handles everything:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 async function fetchData(ctx) {
   const res = await fetch("/api/data");
@@ -132,6 +141,8 @@ state("loading", entry(fetchData, "success", "error"));
 
 ### Entry Pulse with Transitions
 
+<!-- x-robot:fragment -->
+
 ```javascript
 state("loading", entry(asyncAction, "success", "failure"));
 ```
@@ -142,6 +153,8 @@ state("loading", entry(asyncAction, "success", "failure"));
 
 ### Entry Pulse Without Transitions
 
+<!-- x-robot:fragment -->
+
 ```javascript
 state("active", entry(updateContext));
 ```
@@ -151,6 +164,8 @@ The pulse runs but no transition occurs.
 ### Pulse with Throw
 
 You can throw to trigger the failure transition:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 function validateAndSave(ctx) {
@@ -193,6 +208,61 @@ done: └ En-tryUpdate
 idle --> done: continue
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "done" as done
+class idle def
+class done def
+
+done: └ En-tryUpdate
+
+[*] --> idle
+idle --> done: continue
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "done" as done
+class idle def
+class done def
+
+done: └ En-tryUpdate
+
+[*] --> idle
+idle --> done: continue
+```
 ```javascript
 function tryUpdate(ctx) {
   ctx.value = 42;
@@ -240,6 +310,55 @@ idle: └ En-updateValue
 [*] --> idle
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+class idle def
+
+idle: └ En-updateValue
+
+[*] --> idle
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+class idle def
+
+idle: └ En-updateValue
+
+[*] --> idle
+```
 ```javascript
 function updateValue(ctx) {
   ctx.value = 42; // modifies original
@@ -253,6 +372,19 @@ const myMachine = machine(
 ```
 
 ## Comparison with Other Approaches
+
+## Related state update terms
+
+These terms describe common ways to update state in JavaScript applications. X-Robot uses pulses to reduce the number of concepts you need to combine for one stateful workflow.
+
+| Term | Typical role | Main trade-off |
+| ---- | ------------ | -------------- |
+| Reducers | Synchronous functions that receive state plus an action and return the next state. | Predictable and easy to test, but they require action discrimination, cloning, and explicit returns. |
+| Mutations | Synchronous update functions that directly change a prepared state value. | Less ceremony than reducers, but the caller still needs a safe state-update boundary. |
+| Producers | Synchronous functions that mutate a cloned draft and do not return a new state. | Low boilerplate for simple updates, but usually not enough for async workflows by itself. |
+| Actions | Effect-oriented functions for async work such as requests, timers, or orchestration. | Good for side effects, but often need a second state-update concept to commit results. |
+| Signals | Reactive update hooks that notify observers when state changes. | Flexible, but the exact mutation path can become harder to trace. |
+| Pulses | X-Robot entry and exit functions that can be sync or async, mutate the working context, and transition on success or failure. | One concept covers state updates and effects; the cost is less granular separation than architectures with separate reducers/actions/signals. |
 
 ### The Problem: Too Many Concepts
 
@@ -269,6 +401,8 @@ Each concept requires different patterns, increasing cognitive load.
 ### Reducers
 
 Reducers require returning new state and manual cloning:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Reducer approach
@@ -297,6 +431,8 @@ Problems:
 
 Mutations still require returning new state:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Mutation approach
 function fetchDataMutation(state) {
@@ -307,6 +443,8 @@ function fetchDataMutation(state) {
 ### Actions + Mutations
 
 The classic async pattern combines action + mutation:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Action (async)
@@ -332,6 +470,8 @@ Problems:
 
 Producers receive cloned state (no manual clone needed):
 
+<!-- x-robot:fragment -->
+
 ```javascript
 function updateProducer(state) {
   state.count++;
@@ -347,6 +487,8 @@ Problems:
 ### Actions + Producers
 
 The async version combines action + producer:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function fetchDataAction(context) {
@@ -369,6 +511,8 @@ Problems:
 ### Pulse: The Unified Solution
 
 X-Robot's Pulse unifies all these concepts into one:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function fetchData(ctx) {

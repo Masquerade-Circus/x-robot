@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/visualize.ts#L73)
+[lib/documentate/visualize.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L73)
 
 ***
 
@@ -35,4 +35,4 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:74](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/documentate/visualize.ts#L74)
+[lib/documentate/visualize.ts:74](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L74)

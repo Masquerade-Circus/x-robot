@@ -4,6 +4,8 @@ SCXML (State Chart XML) is a W3C standard for state machines. X-Robot supports i
 
 ## Export to SCXML
 
+<!-- x-robot:fragment -->
+
 ```javascript
 import { documentate } from "x-robot/documentate";
 
@@ -18,6 +20,8 @@ console.log(scxml);
 ```
 
 ## Import from SCXML
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const scxmlString = `<?xml version="1.0"?>
@@ -66,7 +70,6 @@ class done def
 idle --> loading: start
 loading --> done: success
 ```
-
 ```javascript
 import { machine, state, transition, initial, init } from "x-robot";
 import { documentate } from "x-robot/documentate";
@@ -156,6 +159,8 @@ Export to SCXML for tools that understand the standard:
 ### Migration
 
 Import existing SCXML machines:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const legacyScxml = await fetchLegacyMachine();

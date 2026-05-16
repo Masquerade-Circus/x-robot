@@ -147,7 +147,6 @@ completed --> completedCancelledByStore: cancelCompleted
 completed --> cancelledByCustomerSupport: cancelByCustomerSupport
 completedCancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
 ```
-
 ```javascript
 import {
   context,
@@ -547,6 +546,8 @@ validate(orderMachine);
 
 X-Robot provides visual state types that help categorize states in diagrams:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 primaryState("created", ...)   // Blue - main workflow
 warningState("expired", ...)   // Yellow - warnings/cancellations  
@@ -581,6 +582,8 @@ primaryState(
 
 Entry actions can trigger failure transitions when errors occur:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // On success: continues normally
 // On failure: transitions to "authorizationFailure"
@@ -596,6 +599,8 @@ actionVoidOrRefundOrder = entry(voidOrRefundOrder, undefined, "voidOrRefundFailu
 ### 4. Immediate Transitions
 
 States can automatically transition to other states without events:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // After "created" entry actions complete, immediately go to "waitingForStore"
@@ -781,6 +786,7 @@ This generates a comprehensive state diagram showing all 23 states, their transi
 ## Next Steps
 
 *   [Visualization](../guides/visualization.md) — Generate diagrams
+*   [Validation](../guides/validation.md) — Check complex machine structure before shipping
 *   [Guides: Guards](../guides/guards.md) — Add conditional logic
 *   [Guides: Immediate Transitions](../guides/immediate-transitions.md) — Auto-transitions
 *   [Recipes: Wizard](../recipes/wizard.md) — Another complex pattern

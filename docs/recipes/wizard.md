@@ -42,7 +42,6 @@ step2 --> step1: back
 step3 --> complete: next
 step3 --> step2: back
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 
@@ -138,6 +137,87 @@ step3 --> complete: next
 step3 --> step2: back
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Wizard
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "step1" as step1
+state "step2" as step2
+state "validating" as validating
+state "step3" as step3
+state "complete" as complete
+class step1 def
+class step2 def
+class validating def
+class step3 def
+class complete def
+
+validating: └┬ En-validateStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-step2
+
+[*] --> step1
+step1 --> step2: next
+step1 --> step1: back
+step2 --> validating: next
+step2 --> step1: back
+validating --> step3: step3
+validating --> step2: step2
+step3 --> complete: next
+step3 --> step2: back
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Wizard
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "step1" as step1
+state "step2" as step2
+state "validating" as validating
+state "step3" as step3
+state "complete" as complete
+class step1 def
+class step2 def
+class validating def
+class step3 def
+class complete def
+
+validating: └┬ En-validateStep2<br> ├┬ success<br> │└ T-step3<br> └┬ failure<br>  └ T-step2
+
+[*] --> step1
+step1 --> step2: next
+step1 --> step1: back
+step2 --> validating: next
+step2 --> step1: back
+validating --> step3: step3
+validating --> step2: step2
+step3 --> complete: next
+step3 --> step2: back
+```
 ```javascript
 function validateStep(step, data) {
   switch (step) {
@@ -201,6 +281,8 @@ start(wizardMachine, saved);
 
 ### Linear Only
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // No back navigation
 state("step1", transition("next", "step2")),
@@ -209,6 +291,8 @@ state("step3", transition("next", "complete"))
 ```
 
 ### Skippable Steps
+
+<!-- x-robot:fragment -->
 
 ```javascript
 state("step1", 

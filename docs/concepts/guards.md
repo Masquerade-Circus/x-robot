@@ -28,7 +28,6 @@ class step2 def
 [*] --> step1
 step1 --> step2: next<br>└ G-canProceed
 ```
-
 ```javascript
 import { guard, init, initial, machine, state, transition } from "x-robot";
 
@@ -48,6 +47,8 @@ const guardedFlow = machine(
 
 X-Robot supports native async guards — no workarounds required:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 const checkPermission = async (ctx) => {
   const res = await fetch("/api/permission");
@@ -60,6 +61,8 @@ state("idle", transition("proceed", "active", guard(checkPermission)));
 
 When the guard is async, the transition waits for resolution:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 await invoke(machine, "proceed");
 // If checkPermission returns true: transitions to "active"
@@ -69,6 +72,8 @@ await invoke(machine, "proceed");
 ## Guard with Failure Transition
 
 You can specify a failure transition for when the guard does not return `true`:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 state("idle", transition("submit", "success", guard(validateInput, "error")));
@@ -80,6 +85,8 @@ state("idle", transition("submit", "success", guard(validateInput, "error")));
 
 Combine guards with logical operations:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 const allPass = (ctx) => guards.every(g => g(ctx));
 
@@ -89,6 +96,8 @@ state("idle", transition("next", "step2", guard(allPass)));
 ## Guards vs Entry Pulses
 
 Guards run before the transition. Entry pulses run after entering the state where they are defined:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const notify = (ctx) => {
@@ -106,6 +115,8 @@ state("review",
 
 ### Form Validation
 
+<!-- x-robot:fragment -->
+
 ```javascript
 const isValidEmail = (ctx, email) => /@/.test(email);
 const isValidPassword = (ctx, pw) => pw.length >= 8;
@@ -117,6 +128,8 @@ state("idle", transition("submit", "valid", guard((ctx, payload) =>
 
 ### Role-Based Access
 
+<!-- x-robot:fragment -->
+
 ```javascript
 const isAdmin = (ctx) => ctx.user?.role === "admin";
 
@@ -124,6 +137,8 @@ state("settings", transition("delete", "confirm", guard(isAdmin)));
 ```
 
 ### Conditional History
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const shouldSaveHistory = (ctx) => ctx.preferences.saveHistory;
@@ -134,6 +149,8 @@ state("editing", transition("save", "saved", guard(shouldSaveHistory)));
 ## Comparison with XState
 
 XState requires workarounds for async guards:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // XState: uses invoke workaround
@@ -152,6 +169,8 @@ XState requires workarounds for async guards:
 ```
 
 X-Robot:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // X-Robot: native async guard

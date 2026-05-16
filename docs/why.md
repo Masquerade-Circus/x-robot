@@ -1,5 +1,7 @@
 # Why Finite State Machines?
 
+X-Robot reduces invalid states, simplifies async workflows, and generates living documentation from the same machine definitions teams ship.
+
 ```javascript
 import { machine, state, transition, entry, guard } from "x-robot";
 ```
@@ -79,9 +81,89 @@ error --> submitting: retry
 error --> idle: reset
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "submitting" as submitting
+state "success" as success
+state "error" as error
+class idle def
+class submitting def
+class success def
+class error def
+
+submitting: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+
+[*] --> idle
+idle --> submitting: submit
+submitting --> success: success
+submitting --> error: error
+success --> idle: reset
+error --> submitting: retry
+error --> idle: reset
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "submitting" as submitting
+state "success" as success
+state "error" as error
+class idle def
+class submitting def
+class success def
+class error def
+
+submitting: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-success<br> └┬ failure<br>  └ T-error
+
+[*] --> idle
+idle --> submitting: submit
+submitting --> success: success
+submitting --> error: error
+success --> idle: reset
+error --> submitting: retry
+error --> idle: reset
+```
 ```javascript
+import { context, entry, init, initial, machine, state, transition } from "x-robot";
+
+async function submitForm(values) {
+  return { id: "submission-1", ...values };
+}
+
 const formMachine = machine(
   "Form",
+  init(initial("idle"), context({ values: { email: "ada@example.com" }, data: null })),
   state("idle", transition("submit", "submitting")),
   state(
     "submitting",
@@ -107,11 +189,13 @@ Benefits:
 
 ## Why X-Robot?
 
-State machines exist in other libraries. Why choose X-Robot?
+X-Robot focuses on a compact machine API, native async guards, frozen state by default, validation, and generated documentation. For direct comparisons, read [XState vs X-Robot](./comparison/xstate.md), [Robot3 vs X-Robot](./comparison/robot3.md), and [Redux vs X-Robot](./comparison/redux.md).
 
 ### 1. Pulse Makes Async Simple
 
 Traditional approaches require multiple functions:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Redux: action + reducer
@@ -126,6 +210,8 @@ function formReducer(state, action) {
 ```
 
 X-Robot combines action and state update in one function:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // X-Robot: single pulse
@@ -145,6 +231,8 @@ state(
 
 X-Robot clones context before each pulse, preventing accidental mutations:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // In frozen mode (default), this is safe:
 state(
@@ -161,6 +249,8 @@ state(
 
 No workarounds for async validation:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 transition("submit", "validating", guard(async (ctx) => {
   const isValid = await validateEmail(ctx.email);
@@ -170,9 +260,9 @@ transition("submit", "validating", guard(async (ctx) => {
 
 ### 4. Small Bundle, High Performance
 
-*   Core: 15.06KB minified
-*   With modules: 78.44KB (`documentate`, `validate`)
-*   Performance: 1.1-20.3x faster than XState
+*   Core: 16.55KB minified
+*   With modules: 79.93KB (`documentate`, `validate`)
+*   Performance: 1.1-15.1x faster than XState
 *   `documentate()` adds generated visual documentation by concept:
     *   Mermaid: Markdown-friendly source diagrams and previews
     *   PlantUML: richer source diagrams and preferred visual styling
@@ -200,9 +290,9 @@ State machines are ideal for:
 *   **Business logic** — Order processing, approval flows
 *   **Communication protocols** — Connection states, message handling
 
-## When Not to Use
+## Best Fit
 
-State machines add structure. They're overkill for:
+State machines add the most value when a flow has named states, meaningful transitions, and async or validation rules. Keep simpler local state for:
 
 *   Simple toggle states (on/off)
 *   Unrelated pieces of UI state
@@ -212,4 +302,5 @@ State machines add structure. They're overkill for:
 
 *   [Getting Started](./guides/getting-started.md) — Create your first machine
 *   [Concepts](./concepts/pulse.md) — Understand the Pulse concept
+*   [Public API and Stability](./guides/public-api.md) — Choose stable imports and optional modules
 *   [API Reference](./api/) — Explore all functions

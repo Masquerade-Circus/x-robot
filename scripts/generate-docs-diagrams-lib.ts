@@ -473,6 +473,7 @@ const {
   invoke,
   machine,
   nested,
+  nestedGuard,
   parallel,
   primaryState,
   snapshot,

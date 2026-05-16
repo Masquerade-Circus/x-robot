@@ -40,7 +40,6 @@ end note
 [*] --> step1
 step1 --> step2: skip
 ```
-
 ```javascript
 import { init, initial, machine, nested, state, transition } from "x-robot";
 
@@ -60,6 +59,8 @@ const parent = machine(
 ```
 
 ## Invoking Nested Transitions
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Trigger a nested transition from the parent
@@ -118,6 +119,101 @@ end note
 public --> private: login
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: App
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "public" as public
+state "private" as private
+state "loggingOut" as loggingOut
+class public def
+class private def
+class loggingOut def
+
+state private {
+  state "unauthenticated" as PrivateAuthUnauthenticated
+  state "authenticating" as PrivateAuthAuthenticating
+  state "authenticated" as PrivateAuthAuthenticated
+  state "failed" as PrivateAuthFailed
+
+  PrivateAuthAuthenticating: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-failed
+
+  [*] --> PrivateAuthUnauthenticated
+  PrivateAuthUnauthenticated --> PrivateAuthAuthenticating: login
+  PrivateAuthAuthenticating --> PrivateAuthAuthenticated: authenticated
+  PrivateAuthAuthenticating --> PrivateAuthFailed: failed
+  PrivateAuthAuthenticated --> PrivateAuthUnauthenticated: logout
+  PrivateAuthFailed --> PrivateAuthAuthenticating: retry
+}
+
+note right of private
+  └ T-auth.logout
+end note
+
+[*] --> public
+public --> private: login
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: App
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "public" as public
+state "private" as private
+state "loggingOut" as loggingOut
+class public def
+class private def
+class loggingOut def
+
+state private {
+  state "unauthenticated" as PrivateAuthUnauthenticated
+  state "authenticating" as PrivateAuthAuthenticating
+  state "authenticated" as PrivateAuthAuthenticated
+  state "failed" as PrivateAuthFailed
+
+  PrivateAuthAuthenticating: └┬ AEn-anonymous<br> ├┬ success<br> │└ T-authenticated<br> └┬ failure<br>  └ T-failed
+
+  [*] --> PrivateAuthUnauthenticated
+  PrivateAuthUnauthenticated --> PrivateAuthAuthenticating: login
+  PrivateAuthAuthenticating --> PrivateAuthAuthenticated: authenticated
+  PrivateAuthAuthenticating --> PrivateAuthFailed: failed
+  PrivateAuthAuthenticated --> PrivateAuthUnauthenticated: logout
+  PrivateAuthFailed --> PrivateAuthAuthenticating: retry
+}
+
+note right of private
+  └ T-auth.logout
+end note
+
+[*] --> public
+public --> private: login
+```
 ```javascript
 const auth = machine(
   "Auth",
@@ -143,6 +239,8 @@ const app = machine(
 
 Use guards to control when nested machines can transition:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 const canLogout = () => auth.current === "authenticated";
 
@@ -155,6 +253,8 @@ state("private",
 ## Exit from Nested Machine
 
 The parent can invoke child transitions using dot notation:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 state("private", nested(auth));

@@ -44,6 +44,7 @@ X-Robot is a finite state machine library for nodejs and for the web.
 
 ### Other Functions
 
+*   [cancel](x_robot.md#cancel)
 *   [invokeAfter](x_robot.md#invokeafter)
 *   [snapshot](x_robot.md#snapshot)
 
@@ -624,6 +625,22 @@ The current state or null if the path is invalid
 
 ## Other Functions
 
+### cancel
+
+▸ **cancel**(`machine`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `machine` | [`Machine`](../interfaces/x_robot.Machine.md) |
+
+#### Returns
+
+`void`
+
+***
+
 ### invokeAfter
 
 ▸ **invokeAfter**(`machine`, `timeInMilliseconds`, `event`, `payload?`): () => `void`
@@ -701,7 +718,7 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/create.ts#L772)
+[lib/machine/create.ts:772](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/create.ts#L772)
 
 ## Variables
 
@@ -711,4 +728,4 @@ An object containing current state, context, history, and nested/parallel states
 
 #### Defined in
 
-[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/interfaces.ts#L186)
+[lib/machine/interfaces.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L186)

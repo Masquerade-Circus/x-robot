@@ -61,9 +61,8 @@ counting: └┬ En-incrementCount<br> └┬ success<br>  └ T-idle
 idle --> counting: increment
 counting --> idle: idle
 ```
-
 ```javascript
-import { machine, state, transition, initial, init, context, invoke, snapshot, start } from "x-robot";
+import { machine, state, transition, initial, init, context, invoke, snapshot, start, entry } from "x-robot";
 
 function incrementCount(ctx) {
   ctx.count += 1;
@@ -100,6 +99,8 @@ console.log(restoredMachine.context.count); // 2
 
 ### Local Storage (Browser)
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Save to localStorage
 function saveState() {
@@ -117,6 +118,8 @@ function loadState() {
 ```
 
 ### Server-Side Database
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Express route: Save state
@@ -138,6 +141,8 @@ app.get("/api/machine/load", async (req, res) => {
 
 ### Session Persistence
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Express session with store
 app.use(session({
@@ -153,6 +158,8 @@ app.use(session({
 ```
 
 ## Snapshot Structure
+
+<!-- x-robot:fragment -->
 
 ```javascript
 {

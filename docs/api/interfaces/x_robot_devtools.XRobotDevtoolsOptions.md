@@ -26,4 +26,4 @@ Name shown for this machine connection in the Redux DevTools monitor.
 
 #### Defined in
 
-[lib/devtools/index.ts:8](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/devtools/index.ts#L8)
+[lib/devtools/index.ts:8](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L8)

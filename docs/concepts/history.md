@@ -29,7 +29,6 @@ class active def
 idle --> active: next
 active --> idle: next
 ```
-
 ```javascript
 import { history, init, initial, machine, state, transition } from "x-robot";
 
@@ -42,6 +41,8 @@ const historyMachine = machine(
 ```
 
 ## Accessing History
+
+<!-- x-robot:fragment -->
 
 ```javascript
 invoke(myMachine, "next"); // idle -> active
@@ -61,6 +62,8 @@ console.log(myMachine.history);
 
 History entries are strings with the following formats:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // State entry
 "State: idle"
@@ -78,6 +81,8 @@ History entries are strings with the following formats:
 
 By default, history keeps the last 10 entries. You can customize:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Keep only last 5 entries
 init(initial("idle"), history(5))
@@ -88,6 +93,8 @@ init(initial("idle"), history(50))
 
 ## Disable History
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Disable history tracking
 init(initial("idle"), history(0))
@@ -96,6 +103,8 @@ init(initial("idle"), history(0))
 ## Use Cases
 
 ### Undo/Redo
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const canUndo = () => myMachine.history.length > 1;
@@ -115,6 +124,8 @@ console.log(myMachine.history);
 
 ### Analytics
 
+<!-- x-robot:fragment -->
+
 ```javascript
 // Track user journey - filter state entries only
 const journey = myMachine.history
@@ -124,6 +135,8 @@ console.log(journey); // ["idle", "loading", "success", "idle", "loading", "erro
 ```
 
 ### Audit Trail
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Record state changes for compliance
@@ -137,6 +150,8 @@ const auditLog = myMachine.history.map(entry => ({
 ## Comparison with XState
 
 XState does not have built-in history tracking. You would need to implement it manually:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // XState: manual implementation
@@ -155,6 +170,8 @@ XState does not have built-in history tracking. You would need to implement it m
 ```
 
 X-Robot:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // X-Robot: built-in, enabled by default with limit of 10

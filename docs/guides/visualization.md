@@ -12,6 +12,8 @@ Use the format that matches the question you want to answer:
 
 ## Basic Usage
 
+<!-- x-robot:fragment -->
+
 ```javascript
 import { documentate } from "x-robot/documentate";
 
@@ -57,6 +59,8 @@ const { svg } = await documentate(myMachine, {
 ### skinparam
 
 Customize PlantUML styling for `plantuml` and `svg` output. Common options:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 skinparam: `
@@ -105,6 +109,8 @@ console.log(svg); // absolute/relative path to generated SVG file
 ### Debugging
 
 Visualize machine state during development:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function debugDiagram(machine) {
@@ -233,6 +239,97 @@ The outputs are generated from this same machine with `documentate(orderWorkflow
 <details>
 <summary>Example machine used for the gallery</summary>
 
+```mermaid
+---
+title: OrderWorkflow
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "created" as created
+state "ready" as ready
+state "processing" as processing
+state "fulfilling" as fulfilling
+state "paymentRequired" as paymentRequired
+state "invalid" as invalid
+state "archived" as archived
+state "completed" as completed
+state "cancelled" as cancelled
+class created primary
+class ready def
+class processing primary
+class fulfilling primary
+class paymentRequired warning
+class invalid warning
+class archived info
+class completed success
+class cancelled danger
+
+state processing {
+  state "created" as ProcessingPaymentCreated
+  state "authorized" as ProcessingPaymentAuthorized
+  state "captured" as ProcessingPaymentCaptured
+  state "manualReview" as ProcessingPaymentManualReview
+  state "paymentFailed" as ProcessingPaymentPaymentFailed
+  state "cancelled" as ProcessingPaymentCancelled
+
+  ProcessingPaymentCreated: └┬ En-reserveFunds<br> ├┬ success<br> │└ T-authorized<br> └┬ failure<br>  └ T-paymentFailed
+
+  [*] --> ProcessingPaymentCreated
+  ProcessingPaymentCreated --> ProcessingPaymentAuthorized: authorized
+  ProcessingPaymentCreated --> ProcessingPaymentPaymentFailed: paymentFailed
+  ProcessingPaymentCreated --> ProcessingPaymentCancelled: cancel<br>└┬ G-canCancel<br> └┬ failure<br>  └ T-manualReview
+  ProcessingPaymentAuthorized --> ProcessingPaymentCaptured: capture<br>[exit: auditCapture]
+  ProcessingPaymentManualReview --> ProcessingPaymentAuthorized: approve
+  ProcessingPaymentManualReview --> ProcessingPaymentPaymentFailed: reject
+}
+
+state "Parallel states" as OrderWorkflowParallelStates
+state OrderWorkflowParallelStates {
+  state "queued" as OrderWorkflowFulfillmentQueued
+  state "pick" as OrderWorkflowFulfillmentPick
+  state "pack" as OrderWorkflowFulfillmentPack
+  state "shipped" as OrderWorkflowFulfillmentShipped
+  state "inventoryIssue" as OrderWorkflowFulfillmentInventoryIssue
+
+  OrderWorkflowFulfillmentPick: └┬ En-allocateInventory<br> ├┬ success<br> │└ T-pack<br> └┬ failure<br>  └ T-inventoryIssue
+
+  [*] --> OrderWorkflowFulfillmentQueued
+  OrderWorkflowFulfillmentQueued --> OrderWorkflowFulfillmentPick: pick<br>└┬ G-inventoryAvailable<br> └┬ failure<br>  └ T-inventoryIssue
+  OrderWorkflowFulfillmentPick --> OrderWorkflowFulfillmentPack: pack
+  OrderWorkflowFulfillmentPick --> OrderWorkflowFulfillmentInventoryIssue: inventoryIssue
+  OrderWorkflowFulfillmentPack --> OrderWorkflowFulfillmentShipped: ship<br>[exit: printLabel]
+  OrderWorkflowFulfillmentInventoryIssue --> OrderWorkflowFulfillmentQueued: retry
+}
+
+created: └┬ En-hydrateOrder<br> ├┬ success<br> │└ T-ready<br> └┬ failure<br>  └ T-invalid
+note right of processing
+  └ T-payment.captured
+end note
+
+[*] --> created
+created --> ready: ready
+created --> invalid: invalid
+created --> processing: submit<br>└┬ G-hasLineItems<br> └┬ failure<br>  └ T-invalid
+created --> cancelled: cancel
+ready --> processing: submit<br>└┬ G-hasPaymentMethod<br> └┬ failure<br>  └ T-paymentRequired
+ready --> cancelled: cancel
+processing --> fulfilling: fulfilling<br>└ G-paymentCaptured
+processing --> cancelled: cancel<br>[exit: releaseReservation]
+fulfilling --> completed: ship
+fulfilling --> cancelled: cancel
+paymentRequired --> processing: submit
+paymentRequired --> cancelled: cancel
+invalid --> ready: fix
+```
 ```javascript
 import {
   dangerState,

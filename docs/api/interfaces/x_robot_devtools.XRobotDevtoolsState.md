@@ -36,7 +36,7 @@ Stable machine id used by X-Robot internally.
 
 #### Defined in
 
-[lib/devtools/index.ts:25](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/devtools/index.ts#L25)
+[lib/devtools/index.ts:25](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L25)
 
 ***
 
@@ -48,7 +48,7 @@ Optional machine title shown in docs and visual tooling.
 
 #### Defined in
 
-[lib/devtools/index.ts:27](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/devtools/index.ts#L27)
+[lib/devtools/index.ts:27](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L27)
 
 ***
 
@@ -60,7 +60,7 @@ Whether the machine currently runs async transitions or pulses.
 
 #### Defined in
 
-[lib/devtools/index.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/devtools/index.ts#L29)
+[lib/devtools/index.ts:29](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L29)
 
 ***
 
@@ -72,7 +72,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/devtools/index.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/devtools/index.ts#L31)
+[lib/devtools/index.ts:31](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L31)
 
 ***
 
@@ -86,7 +86,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:888](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/invoke.ts#L888)
+[lib/machine/invoke.ts:1113](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/invoke.ts#L1113)
 
 ***
 
@@ -100,7 +100,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:889](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/invoke.ts#L889)
+[lib/machine/invoke.ts:1114](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/invoke.ts#L1114)
 
 ***
 
@@ -114,7 +114,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:890](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/invoke.ts#L890)
+[lib/machine/invoke.ts:1115](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/invoke.ts#L1115)
 
 ***
 
@@ -128,7 +128,7 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:891](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/invoke.ts#L891)
+[lib/machine/invoke.ts:1116](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/invoke.ts#L1116)
 
 ***
 
@@ -142,4 +142,4 @@ Fatal error metadata when the machine is in a fatal condition.
 
 #### Defined in
 
-[lib/machine/invoke.ts:892](https://github.com/Masquerade-Circus/x-robot/blob/bfae059/lib/machine/invoke.ts#L892)
+[lib/machine/invoke.ts:1117](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/invoke.ts#L1117)

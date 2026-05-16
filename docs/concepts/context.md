@@ -29,7 +29,6 @@ class running def
 idle --> running: start
 running --> idle: stop
 ```
-
 ```javascript
 import { context, init, initial, machine, state, transition } from "x-robot";
 
@@ -43,6 +42,8 @@ const counter = machine(
 
 ## Accessing Context
 
+<!-- x-robot:fragment -->
+
 ```javascript
 console.log(myMachine.context.user);  // null
 console.log(myMachine.context.count); // 0
@@ -52,6 +53,8 @@ console.log(myMachine.context.count); // 0
 
 ### With Pulse
 
+<!-- x-robot:fragment -->
+
 ```javascript
 state("idle", entry((ctx) => {
   ctx.count++;
@@ -60,6 +63,8 @@ state("idle", entry((ctx) => {
 ```
 
 ### With Entry/Exit Actions
+
+<!-- x-robot:fragment -->
 
 ```javascript
 state("active", 
@@ -103,6 +108,61 @@ updated: └ En-anonymous
 idle --> updated: update
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "updated" as updated
+class idle def
+class updated def
+
+updated: └ En-anonymous
+
+[*] --> idle
+idle --> updated: update
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Test
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "updated" as updated
+class idle def
+class updated def
+
+updated: └ En-anonymous
+
+[*] --> idle
+idle --> updated: update
+```
 ```javascript
 const myMachine = machine(
   "Test",
@@ -148,7 +208,6 @@ updated: └ En-anonymous
 [*] --> idle
 idle --> updated: update
 ```
-
 ```javascript
 import { shouldFreeze } from "x-robot";
 
@@ -201,6 +260,69 @@ state start {
 [*] --> start
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Parent
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "start" as start
+class start def
+
+state start {
+  state "idle" as StartChildIdle
+
+
+  [*] --> StartChildIdle
+  StartChildIdle --> updated: update
+}
+
+
+[*] --> start
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Parent
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "start" as start
+class start def
+
+state start {
+  state "idle" as StartChildIdle
+
+
+  [*] --> StartChildIdle
+  StartChildIdle --> updated: update
+}
+
+
+[*] --> start
+```
 ```javascript
 const childMachine = machine(
   "Child",
@@ -244,7 +366,6 @@ class active def
 idle --> active: increment
 active --> idle: reset
 ```
-
 ```javascript
 import { context, init, initial, machine, snapshot, start, state, transition } from "x-robot";
 

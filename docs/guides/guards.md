@@ -28,7 +28,6 @@ class step2 def
 [*] --> step1
 step1 --> step2: next<br>└ G-canProceed
 ```
-
 ```javascript
 import { guard, init, initial, machine, state, transition } from "x-robot";
 
@@ -47,6 +46,8 @@ const guardedFlow = machine(
 ## Guard with Failure Transition
 
 Specify what happens when the guard does not return `true`:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 state("input", transition("submit", "valid", guard(isValid, "invalid")));
@@ -96,7 +97,86 @@ checked --> invalid: invalid
 invalid --> idle: retry
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "checking" as checking
+state "checked" as checked
+state "invalid" as invalid
+state "submitting" as submitting
+class idle def
+class checking def
+class checked def
+class invalid def
+class submitting def
+
+checking: └┬ En-validateForm<br> ├┬ success<br> │└ T-checked<br> └┬ failure<br>  └ T-invalid
+
+[*] --> idle
+idle --> checking: submit
+checking --> checked: checked
+checking --> invalid: invalid
+checked --> submitting: submitting<br>└ G-checkFormErrors
+checked --> invalid: invalid
+invalid --> idle: retry
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Form
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "idle" as idle
+state "checking" as checking
+state "checked" as checked
+state "invalid" as invalid
+state "submitting" as submitting
+class idle def
+class checking def
+class checked def
+class invalid def
+class submitting def
+
+checking: └┬ En-validateForm<br> ├┬ success<br> │└ T-checked<br> └┬ failure<br>  └ T-invalid
+
+[*] --> idle
+idle --> checking: submit
+checking --> checked: checked
+checking --> invalid: invalid
+checked --> submitting: submitting<br>└ G-checkFormErrors
+checked --> invalid: invalid
+invalid --> idle: retry
+```
 ```javascript
+import { context, entry, guard, immediate, init, initial, machine, state, transition } from "x-robot";
+
 function validateEmail(ctx, email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -118,7 +198,10 @@ function validateForm(ctx) {
 
 const formMachine = machine(
   "Form",
-  init(initial("idle")),
+  init(
+    initial("idle"),
+    context({ email: "ada@example.com", password: "correct-horse", errors: {} })
+  ),
   state("idle", transition("submit", "checking")),
   state("checking", entry(validateForm, "checked", "invalid")),
   state(
@@ -163,7 +246,72 @@ locked --> dashboard: enter<br>└ G-isAdmin
 public --> preview: enter<br>└ G-isLoggedIn
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Admin
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "locked" as locked
+state "dashboard" as dashboard
+state "public" as public
+state "preview" as preview
+class locked def
+class dashboard def
+class public def
+class preview def
+
+
+[*] --> locked
+locked --> dashboard: enter<br>└ G-isAdmin
+public --> preview: enter<br>└ G-isLoggedIn
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Admin
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "locked" as locked
+state "dashboard" as dashboard
+state "public" as public
+state "preview" as preview
+class locked def
+class dashboard def
+class public def
+class preview def
+
+
+[*] --> locked
+locked --> dashboard: enter<br>└ G-isAdmin
+public --> preview: enter<br>└ G-isLoggedIn
+```
 ```javascript
+import { context, guard, init, initial, machine, state, transition } from "x-robot";
+
 function isAdmin(ctx) {
   return ctx.user?.role === "admin";
 }
@@ -174,7 +322,7 @@ function isLoggedIn(ctx) {
 
 const adminSection = machine(
   "Admin",
-  init(initial("locked")),
+  init(initial("locked"), context({ user: { id: "u_1", role: "admin" } })),
   state("locked", transition("enter", "dashboard", guard(isAdmin))),
   state("dashboard"),
   state("public", transition("enter", "preview", guard(isLoggedIn))),
@@ -183,6 +331,8 @@ const adminSection = machine(
 ```
 
 ### Conditional History
+
+<!-- x-robot:fragment -->
 
 ```javascript
 function shouldSave(ctx) {
@@ -195,6 +345,8 @@ state("editing", transition("save", "saved", guard(shouldSave, "discarded")));
 ## Async Guards
 
 X-Robot supports native async guards:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function checkPermission(ctx) {
@@ -210,6 +362,8 @@ state("idle", transition("check", "granted", guard(checkPermission)));
 
 Chain guards directly - they run in order:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 function guard1(ctx) {
   return ctx.value > 0;
@@ -224,6 +378,8 @@ state("step1", transition("next", "step2", guard(guard1), guard(guard2)));
 ```
 
 With async guards:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 async function asyncGuard1(ctx) {
@@ -241,6 +397,8 @@ state("idle", transition("start", "loading", guard(asyncGuard1), guard(asyncGuar
 
 *   **Guards** run before the transition decision
 *   **Pulse** runs after entering the state where it is defined
+
+<!-- x-robot:fragment -->
 
 ```javascript
 function canApprove(ctx) {

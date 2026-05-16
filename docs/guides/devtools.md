@@ -20,6 +20,8 @@ import { connectXRobot } from "x-robot/devtools";
 
 ## Basic Usage
 
+<!-- x-robot:fragment -->
+
 ```javascript
 import { connectXRobot } from "x-robot/devtools";
 
@@ -38,6 +40,8 @@ await devtools.invoke("submit", { orderId: 1 });
 ### `name`
 
 Use `options.name` to label the connection in Redux DevTools.
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const devtools = connectXRobot(machine, {
@@ -62,6 +66,8 @@ If you do not pass a name, the module falls back to the machine title, machine i
 | `cleanup()` | Alias of `disconnect()` |
 
 The wrappers preserve sync and async behavior. If the underlying `start()` or `invoke()` call is synchronous, the wrapper is synchronous. If it returns a promise, the wrapper returns that promise and sends the update after it resolves.
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const devtools = connectXRobot(machine, { name: "Checkout" });
@@ -96,6 +102,8 @@ In practice, this means time-travel and import actions can move the machine to e
 
 Recommended with a dynamic import when your environment exposes `import.meta.env.DEV`:
 
+<!-- x-robot:fragment -->
+
 ```javascript
 if (import.meta.env.DEV) {
   const { connectXRobot } = await import("x-robot/devtools");
@@ -105,6 +113,8 @@ if (import.meta.env.DEV) {
 ```
 
 If your bundler replaces a compile-time constant such as `__DEV__`, the same pattern works there too:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 if (__DEV__) {
@@ -125,6 +135,8 @@ Other setups may use a bundler alias or a no-op module replacement, but the impo
 ## Cleanup
 
 Disconnect when the host lifecycle ends:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const devtools = connectXRobot(machine, { name: "Checkout" });

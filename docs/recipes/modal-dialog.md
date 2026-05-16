@@ -52,7 +52,6 @@ confirming --> error: error
 closing --> closed: closed
 error --> closing: close
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 
@@ -184,7 +183,94 @@ open --> closing: close
 closing --> closed: closed
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Modal
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "closed" as closed
+state "opening" as opening
+state "open" as open
+state "closing" as closing
+class closed def
+class opening def
+class open def
+class closing def
+
+opening: └┬ En-startOpenAnimation<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
+open: └ En-onOpenComplete
+closing: └┬ En-startCloseAnimation<br> └┬ success<br>  └ T-closed
+
+[*] --> closed
+closed --> opening: open
+opening --> open: open
+opening --> closed: closed
+opening --> closing: cancel
+open --> closing: close
+closing --> closed: closed
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Modal
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "closed" as closed
+state "opening" as opening
+state "open" as open
+state "closing" as closing
+class closed def
+class opening def
+class open def
+class closing def
+
+opening: └┬ En-startOpenAnimation<br> ├┬ success<br> │└ T-open<br> └┬ failure<br>  └ T-closed
+open: └ En-onOpenComplete
+closing: └┬ En-startCloseAnimation<br> └┬ success<br>  └ T-closed
+
+[*] --> closed
+closed --> opening: open
+opening --> open: open
+opening --> closed: closed
+opening --> closing: cancel
+open --> closing: close
+closing --> closed: closed
+```
 ```javascript
+import { entry, init, initial, machine, state, transition } from "x-robot";
+
+function animateOpen() {
+  return undefined;
+}
+
+function animateClose() {
+  return undefined;
+}
+
 function startOpenAnimation(ctx) {
   // Start opening animation
   animateOpen();
@@ -270,7 +356,82 @@ visible --> hiding: dismiss
 hiding --> hidden: hidden
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Alert
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "hidden" as hidden
+state "showing" as showing
+state "visible" as visible
+state "hiding" as hiding
+class hidden def
+class showing def
+class visible def
+class hiding def
+
+showing: └┬ En-showAlert<br> ├┬ success<br> │└ T-visible<br> └┬ failure<br>  └ T-hidden
+hiding: └┬ En-hideAlert<br> └┬ success<br>  └ T-hidden
+
+[*] --> hidden
+hidden --> showing: show
+showing --> visible: visible
+showing --> hidden: hidden
+visible --> hiding: dismiss
+hiding --> hidden: hidden
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: Alert
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "hidden" as hidden
+state "showing" as showing
+state "visible" as visible
+state "hiding" as hiding
+class hidden def
+class showing def
+class visible def
+class hiding def
+
+showing: └┬ En-showAlert<br> ├┬ success<br> │└ T-visible<br> └┬ failure<br>  └ T-hidden
+hiding: └┬ En-hideAlert<br> └┬ success<br>  └ T-hidden
+
+[*] --> hidden
+hidden --> showing: show
+showing --> visible: visible
+showing --> hidden: hidden
+visible --> hiding: dismiss
+hiding --> hidden: hidden
+```
 ```javascript
+import { entry, init, initial, machine, state, transition } from "x-robot";
+
 function showAlert(ctx) {
   // Show alert
 }
@@ -332,7 +493,98 @@ closing --> closed: closed
 error --> open: retry
 ```
 
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: FormModal
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "closed" as closed
+state "opening" as opening
+state "open" as open
+state "submitting" as submitting
+state "closing" as closing
+state "error" as error
+class closed def
+class opening def
+class open def
+class submitting def
+class closing def
+class error def
+
+submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
+
+[*] --> closed
+closed --> opening: open
+opening --> open: ready
+open --> closing: close
+open --> submitting: submit
+submitting --> closed: closed
+submitting --> error: error
+closing --> closed: closed
+error --> open: retry
+```
+
+<!-- x-robot:fragment -->
+
+```mermaid
+---
+title: FormModal
+---
+
+stateDiagram-v2
+direction TB
+
+classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px,text-align:left,color:#721c24
+classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px,text-align:left,color:#856404
+classDef success fill:#d4edda,stroke:#155724,stroke-width:2px,text-align:left,color:#155724
+classDef primary fill:#cce5ff,stroke:#004085,stroke-width:2px,text-align:left,color:#004085
+classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px,text-align:left,color:#0c5460
+classDef def fill:#f8f9fa,stroke:#6c757d,stroke-width:2px,text-align:left,color:#6c757d
+
+state "closed" as closed
+state "opening" as opening
+state "open" as open
+state "submitting" as submitting
+state "closing" as closing
+state "error" as error
+class closed def
+class opening def
+class open def
+class submitting def
+class closing def
+class error def
+
+submitting: └┬ AEn-submitFormData<br> ├┬ success<br> │└ T-closed<br> └┬ failure<br>  └ T-error
+
+[*] --> closed
+closed --> opening: open
+opening --> open: ready
+open --> closing: close
+open --> submitting: submit
+submitting --> closed: closed
+submitting --> error: error
+closing --> closed: closed
+error --> open: retry
+```
 ```javascript
+import { context, entry, init, initial, machine, state, transition } from "x-robot";
+
+async function submitForm(formData) {
+  return { id: "submission-1", ...formData };
+}
+
 async function submitFormData(ctx, formData) {
   await submitForm(formData ?? ctx.formData);
 }

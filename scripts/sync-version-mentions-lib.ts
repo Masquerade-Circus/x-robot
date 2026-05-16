@@ -10,6 +10,19 @@ export interface PackageMetadata {
   version: string;
 }
 
+export interface PerformanceMetrics {
+  coreSize: string;
+  totalModulesSize: string;
+  documentateSize: string;
+  validateSize: string;
+  xstateInterpreterSize: string;
+  xstateWebSize: string;
+  xstateFullSize: string;
+  bundleRange: string;
+  performanceRange: string;
+  locRange: string;
+}
+
 export interface UpdateVersionMentionsResult {
   updatedFiles: string[];
 }
@@ -51,6 +64,74 @@ export function syncVersionMentions(content: string, packageMetadata: PackageMet
   );
 }
 
+function extractFirstMatch(content: string, pattern: RegExp, label: string): string {
+  const match = content.match(pattern);
+
+  if (!match) {
+    throw new Error(`Could not extract ${label} from docs/performance.md`);
+  }
+
+  return match[1];
+}
+
+export function readPerformanceMetricsFromContent(content: string): PerformanceMetrics {
+  const coreSize = extractFirstMatch(content, /X-Robot Core \(minified\)\s+\| \*\*([\d.]+KB)\*\*/, "core size");
+  const totalModulesSize = extractFirstMatch(content, /\| \*\*Total\*\*\s+\| \*\*([\d.]+KB)\*\* \|/, "modules total size");
+  const documentateSize = extractFirstMatch(content, /\+ documentate .*?\| \+([\d.]+KB)\s+\|/, "documentate size");
+  const validateSize = extractFirstMatch(content, /\+ validate .*?\| \+([\d.]+KB)\s+\|/, "validate size");
+  const xstateInterpreterSize = extractFirstMatch(content, /XState interpreter\s+\| ([\d.]+KB)\s+\|/, "XState interpreter size");
+  const xstateWebSize = extractFirstMatch(content, /XState web\s+\| ([\d.]+KB)\s+\|/, "XState web size");
+  const xstateFullSize = extractFirstMatch(content, /XState full\s+\| ([\d.]+KB)\s+\|/, "XState full size");
+  const bundleRange = extractFirstMatch(content, /\*\*([\d.]+-[\d.]+x smaller)\*\* bundle size/, "bundle range");
+  const performanceRange = extractFirstMatch(content, /\*\*([\d.]+-[\d.]+x faster)\*\* performance/, "performance range");
+  const locRange = extractFirstMatch(content, /\*\*([\d.]+-[\d.]+x less) code\*\*/, "LOC range");
+
+  return {
+    coreSize,
+    totalModulesSize,
+    documentateSize,
+    validateSize,
+    xstateInterpreterSize,
+    xstateWebSize,
+    xstateFullSize,
+    bundleRange,
+    performanceRange,
+    locRange,
+  };
+}
+
+export function syncPerformanceMentions(content: string, metrics: PerformanceMetrics): string {
+  let updated = content;
+
+  updated = updated.replace(/Core: [\d.]+KB minified/g, `Core: ${metrics.coreSize} minified`);
+  updated = updated.replace(/With modules: [\d.]+KB \(`documentate`, `validate`\)/g, `With modules: ${metrics.totalModulesSize} (\`documentate\`, \`validate\`)`);
+  updated = updated.replace(/Performance: [\d.]+-[\d.]+x faster than XState/g, `Performance: ${metrics.performanceRange} than XState`);
+  updated = updated.replace(/[\d.]+-[\d.]+x faster/g, metrics.performanceRange);
+  updated = updated.replace(/[\d.]+-[\d.]+x smaller/g, metrics.bundleRange);
+  updated = updated.replace(/[\d.]+-[\d.]+x less code/g, `${metrics.locRange} code`);
+  updated = updated.replace(/\| Bundle Size \| [\d.]+KB \|/g, `| Bundle Size | ${metrics.coreSize} |`);
+  updated = updated.replace(/(^|[^~])[\d.]+KB core/g, `$1${metrics.coreSize} core`);
+  updated = updated.replace(/[\d.]+KB with modules/g, `${metrics.totalModulesSize} with modules`);
+  updated = updated.replace(
+    /\| Bundle Size \/ Tooling Size \| [\d.]+KB \| [\d.]+KB \| [\d.]+KB \| [\d.]+KB \| [\d.]+KB \| [\d.]+KB \+ external web app \|/g,
+    `| Bundle Size / Tooling Size | ${metrics.coreSize} | ${metrics.totalModulesSize} | ${metrics.xstateInterpreterSize} | ${metrics.xstateWebSize} | ${metrics.xstateFullSize} | ${metrics.xstateFullSize} + external web app |`
+  );
+
+  return updated;
+}
+
+function shouldSyncPerformanceMentions(rootDir: string, filePath: string): boolean {
+  const relPath = relative(rootDir, filePath);
+
+  if (relPath === "README.md") return true;
+  if (relPath === `${DOCS_DIR_NAME}/api/README.md`) return true;
+  if (!relPath.startsWith(`${DOCS_DIR_NAME}/`)) return false;
+  if (relPath.startsWith(`${DOCS_DIR_NAME}/api/`)) return false;
+  if (relPath.startsWith(`${DOCS_DIR_NAME}/plans/`)) return false;
+
+  return relPath.endsWith(".md");
+}
+
 export async function getVersionMentionFiles(rootDir = ROOT_DIR): Promise<string[]> {
   const docsDir = join(rootDir, DOCS_DIR_NAME);
   const files: string[] = [];
@@ -89,12 +170,17 @@ export async function getVersionMentionFiles(rootDir = ROOT_DIR): Promise<string
 
 export async function updateVersionMentionsFiles(rootDir = ROOT_DIR): Promise<UpdateVersionMentionsResult> {
   const packageMetadata = await readPackageMetadata(rootDir);
+  const performanceReport = await readFile(join(rootDir, DOCS_DIR_NAME, "performance.md"), "utf-8");
+  const performanceMetrics = readPerformanceMetricsFromContent(performanceReport);
   const files = await getVersionMentionFiles(rootDir);
   const updatedFiles: string[] = [];
 
   for (const filePath of files) {
     const content = await readFile(filePath, "utf-8");
-    const updatedContent = syncVersionMentions(content, packageMetadata);
+    const versionSyncedContent = syncVersionMentions(content, packageMetadata);
+    const updatedContent = shouldSyncPerformanceMentions(rootDir, filePath)
+      ? syncPerformanceMentions(versionSyncedContent, performanceMetrics)
+      : versionSyncedContent;
 
     if (updatedContent !== content) {
       await writeFile(filePath, updatedContent, "utf-8");

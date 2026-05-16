@@ -6,7 +6,7 @@ A comparison with the minimalist state machine library.
 
 | Feature | X-Robot Core | X-Robot + Modules | Robot3 | Robot3 + robot3-viz |
 |---------|--------------|-------------------|--------|----------------------|
-| Bundle Size / Tooling Size | 15.06KB | 78.44KB | ~1KB | ~1KB + 12.77MB npm tree |
+| Bundle Size / Tooling Size | 16.55KB | 79.93KB | ~1KB | ~1KB + 12.77MB npm tree |
 | Installable / external | npm package | npm packages | npm package | npm packages + external visualizer |
 | TypeScript | Included | Included | Basic | Basic |
 | Nested States | ✅ | ✅ | ❌ | ❌ |
@@ -38,6 +38,8 @@ Focused structural views include guards, events, pulses, outcomes, immediate tra
 ## API Comparison
 
 ### Robot3
+
+<!-- x-robot:fragment -->
 
 ```javascript
 import { createMachine } from "robot3";
@@ -85,7 +87,6 @@ loading --> success: success
 loading --> error: error
 success --> idle: reset
 ```
-
 ```javascript
 import { machine, state, transition, entry } from "x-robot";
 
@@ -180,7 +181,6 @@ idle --> loading: start
 loading --> success: done
 success --> idle: reset
 ```
-
 ```javascript
 import { machine, state, transition } from "x-robot";
 

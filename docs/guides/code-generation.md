@@ -28,7 +28,6 @@ class active def
 [*] --> idle
 idle --> active: start
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context } from "x-robot";
 import { documentate } from "x-robot/documentate";
@@ -61,6 +60,8 @@ console.log(mjs);
 ```
 
 ## Generate CommonJS
+
+<!-- x-robot:fragment -->
 
 ```javascript
 const { cjs } = await documentate(myMachine, { format: "cjs" });
@@ -112,7 +113,6 @@ loading --> error: error
 success --> idle: reset
 error --> idle: reset
 ```
-
 ```javascript
 import { machine, state, transition, initial, init, context, entry } from "x-robot";
 import { documentate } from "x-robot/documentate";
@@ -151,6 +151,8 @@ export const fetchMachine = /* ... */;
 
 Generate types for use in your application:
 
+<!-- x-robot:fragment -->
+
 ```typescript
 // types.ts (generated)
 export type FetchStates = "idle" | "loading" | "success" | "error";
@@ -172,6 +174,8 @@ function handleState(machine: { current: FetchStates }) {
 ### Sharing Machine Definitions
 
 Generate shareable code:
+
+<!-- x-robot:fragment -->
 
 ```javascript
 // Share as ESM

@@ -677,6 +677,29 @@ function getState(machine2, path) {
 }
 
 // lib/machine/invoke.ts
+var runtimes = /* @__PURE__ */ new WeakMap();
+function getRuntime(machine2) {
+  let runtime = runtimes.get(machine2);
+  if (!runtime) {
+    runtime = {
+      running: false,
+      activeToken: void 0,
+      nextToken: 0,
+      queue: []
+    };
+    runtimes.set(machine2, runtime);
+  }
+  return runtime;
+}
+function isCurrentInvocation(machine2, token) {
+  return getRuntime(machine2).activeToken === token;
+}
+function isPromiseLike(value) {
+  return !!value && typeof value.then === "function";
+}
+function cancelledInvocationError() {
+  return new Error("Invocation cancelled");
+}
 function addToHistory(machine2, entry2) {
   if (machine2.historyLimit === void 0)
     return;
@@ -687,7 +710,7 @@ function addToHistory(machine2, entry2) {
     machine2.history.shift();
   }
 }
-function runPulse(machine2, pulse, payload) {
+function runPulse(machine2, pulse, payload, token) {
   if (isEntry(pulse)) {
     const isAsync = pulse.pulse.constructor.name === "AsyncFunction";
     addToHistory(machine2, isAsync ? `${"Async Pulse" /* AsyncPulse */}: ${pulse.pulse.name}` : `${"Pulse" /* Pulse */}: ${pulse.pulse.name}`);
@@ -695,83 +718,68 @@ function runPulse(machine2, pulse, payload) {
     if (machine2.frozen) {
       context2 = deepCloneUnfreeze(context2);
     }
-    if (isAsync) {
-      const runPulseFn = () => pulse.pulse(context2, payload);
-      return Promise.resolve(runPulseFn()).then((result) => {
-        if (isValidObject(result)) {
-          context2 = result;
-        }
-        machine2.context = context2;
-        if (machine2.frozen) {
-          deepFreeze(machine2.context);
-        }
-        if (pulse.success) {
-          if (isEntry(pulse.success)) {
-            return runPulse(machine2, pulse.success);
-          }
-          return invoke(machine2, pulse.success);
-        } else if (pulse.transition) {
-          return invoke(machine2, pulse.transition);
-        }
-      }).catch((error) => {
-        machine2.context = context2;
-        if (machine2.frozen) {
-          deepFreeze(machine2.context);
-        }
-        if (pulse.failure) {
-          if (isEntry(pulse.failure)) {
-            return runPulse(machine2, pulse.failure, error);
-          }
-          return invoke(machine2, pulse.failure, error);
-        }
-        throw error;
-      });
-    } else {
-      try {
-        const result = pulse.pulse(context2, payload);
-        if (isValidObject(result)) {
-          context2 = result;
-        }
-        machine2.context = context2;
-        if (machine2.frozen) {
-          deepFreeze(machine2.context);
-        }
-        if (pulse.success) {
-          if (isEntry(pulse.success)) {
-            return runPulse(machine2, pulse.success);
-          }
-          return invoke(machine2, pulse.success);
-        } else if (pulse.transition) {
-          return invoke(machine2, pulse.transition);
-        }
-      } catch (error) {
-        machine2.context = context2;
-        if (machine2.frozen) {
-          deepFreeze(machine2.context);
-        }
-        if (pulse.failure) {
-          if (isEntry(pulse.failure)) {
-            return runPulse(machine2, pulse.failure, error);
-          }
-          return invoke(machine2, pulse.failure, error);
-        }
-        throw error;
+    const onSuccess = (result) => {
+      if (!isCurrentInvocation(machine2, token)) {
+        return;
       }
+      if (isValidObject(result)) {
+        context2 = result;
+      }
+      machine2.context = context2;
+      if (machine2.frozen) {
+        deepFreeze(machine2.context);
+      }
+      if (pulse.success) {
+        if (isEntry(pulse.success)) {
+          return runPulse(machine2, pulse.success, void 0, token);
+        }
+        return invokeNow(machine2, pulse.success, void 0, token);
+      } else if (pulse.transition) {
+        return invokeNow(machine2, pulse.transition, void 0, token);
+      }
+    };
+    const onFailure = (error) => {
+      if (!isCurrentInvocation(machine2, token)) {
+        return;
+      }
+      machine2.context = context2;
+      if (machine2.frozen) {
+        deepFreeze(machine2.context);
+      }
+      if (pulse.failure) {
+        if (isEntry(pulse.failure)) {
+          return runPulse(machine2, pulse.failure, error, token);
+        }
+        return invokeNow(machine2, pulse.failure, error, token);
+      }
+      throw error;
+    };
+    try {
+      const result = pulse.pulse(context2, payload);
+      if (isPromiseLike(result)) {
+        return Promise.resolve(result).then(onSuccess, onFailure);
+      }
+      return onSuccess(result);
+    } catch (error) {
+      return onFailure(error);
     }
   } else if (isValidString(pulse)) {
-    return invoke(machine2, pulse);
+    return invokeNow(machine2, pulse, void 0, token);
   }
 }
 function hasFatalError(machine2) {
   return machine2.fatal instanceof Error;
 }
-function catchError(machine2, state2, error) {
+function catchError(machine2, state2, error, token) {
+  if (!isCurrentInvocation(machine2, token)) {
+    return;
+  }
   if (machine2.frozen) {
     machine2.context = deepCloneUnfreeze(machine2.context);
   }
   machine2.context.error = error;
   if (hasTransition(state2, "error")) {
-    return invoke(machine2, "error", error);
+    return invokeNow(machine2, "error", error, token);
   }
   if ("fatal" in machine2.states) {
     machine2.current = "fatal";
@@ -781,36 +789,62 @@ function catchError(machine2, state2, error) {
   machine2.fatal = error;
   throw error;
 }
-async function runStatePulsesAsync(machine2, state2, payload) {
+async function runStatePulsesAsync(machine2, state2, payload, token) {
   for (let i = 0; i < state2.run.length; i++) {
     const item = state2.run[i];
     try {
       if (isEntry(item)) {
-        await runPulse(machine2, item, payload);
+        await runPulse(machine2, item, payload, token);
+        if (!isCurrentInvocation(machine2, token)) {
+          return;
+        }
       }
     } catch (error) {
-      await catchError(machine2, state2, error);
+      await catchError(machine2, state2, error, token);
       return;
     }
   }
 }
-function runStatePulsesSync(machine2, state2, payload) {
+function runStatePulsesSync(machine2, state2, payload, token) {
+  let promise;
   for (let i = 0; i < state2.run.length; i++) {
     const item = state2.run[i];
-    try {
-      if (isEntry(item)) {
-        runPulse(machine2, item, payload);
+    const runItem = () => {
+      try {
+        if (isEntry(item)) {
+          return runPulse(machine2, item, payload, token);
+        }
+      } catch (error) {
+        return catchError(machine2, state2, error, token);
       }
-    } catch (error) {
-      catchError(machine2, state2, error);
-      break;
+    };
+    if (promise) {
+      promise = promise.then(runItem).catch((error) => catchError(machine2, state2, error, token));
+    } else {
+      const result = runItem();
+      if (isPromiseLike(result)) {
+        promise = result.catch((error) => catchError(machine2, state2, error, token));
+      }
     }
   }
+  return promise || void 0;
 }
-function runGuards(machine2, state2, transition2, payload) {
-  return runGuardsFromIndex(machine2, state2, transition2, payload, 0);
+function runGuards(machine2, state2, transition2, payload, token) {
+  return runGuardsFromIndex(machine2, state2, transition2, payload, 0, token);
 }
-function runGuardsFromIndex(machine2, state2, transition2, payload, startIndex) {
+function runGuardFailure(machine2, guard2, result, token) {
+  if (isValidString(guard2.failure)) {
+    return invokeNow(machine2, guard2.failure, result, token);
+  } else if (isEntry(guard2.failure)) {
+    return runPulse(machine2, guard2.failure, result, token);
+  } else if (isValidString(result)) {
+    if (machine2.frozen) {
+      machine2.context = deepCloneUnfreeze(machine2.context);
+    }
+    machine2.context.error = result;
+  }
+}
+function runGuardsFromIndex(machine2, state2, transition2, payload, startIndex, token) {
   for (let i = startIndex; i < transition2.guards.length; i++) {
     let guard2 = transition2.guards[i];
     try {
@@ -830,16 +864,13 @@ function runGuardsFromIndex(machine2, state2, transition2, payload, startIndex) 
       }
       if (result instanceof Promise) {
         return result.then((resolvedResult) => {
+          if (!isCurrentInvocation(machine2, token)) {
+            return false;
+          }
           if (resolvedResult !== true) {
-            if (isValidString(guard2.failure)) {
-              invoke(machine2, guard2.failure, resolvedResult);
-            } else if (isEntry(guard2.failure)) {
-              runPulse(machine2, guard2.failure, resolvedResult);
-            } else if (isValidString(resolvedResult)) {
-              if (machine2.frozen) {
-                machine2.context = deepCloneUnfreeze(machine2.context);
-              }
-              machine2.context.error = resolvedResult;
+            const failureResult = runGuardFailure(machine2, guard2, resolvedResult, token);
+            if (isPromiseLike(failureResult)) {
+              return failureResult.then(() => false);
             }
             return false;
           }
@@ -847,54 +878,49 @@ function runGuardsFromIndex(machine2, state2, transition2, payload, startIndex) 
             machine2.context = guardContext;
             deepFreeze(machine2.context);
           }
-          return runGuardsFromIndex(machine2, state2, transition2, payload, i + 1);
+          return runGuardsFromIndex(machine2, state2, transition2, payload, i + 1, token);
         });
       }
       if (result !== true) {
-        if (isValidString(guard2.failure)) {
-          invoke(machine2, guard2.failure, result);
-        } else if (isEntry(guard2.failure)) {
-          runPulse(machine2, guard2.failure, result);
-        } else if (isValidString(result)) {
-          if (machine2.frozen) {
-            machine2.context = deepCloneUnfreeze(machine2.context);
-          }
-          machine2.context.error = result;
+        const failureResult = runGuardFailure(machine2, guard2, result, token);
+        if (isPromiseLike(failureResult)) {
+          return failureResult.then(() => false);
         }
         return false;
       }
     } catch (error) {
-      catchError(machine2, state2, error);
+      catchError(machine2, state2, error, token);
       return false;
     }
   }
   return true;
 }
-function runNestedMachines(machine2, state2, payload) {
+function runNestedMachines(machine2, state2, payload, token) {
   if (state2.nested.length === 0) {
     return;
   }
   let promise;
-  if (machine2.isAsync) {
-    promise = Promise.resolve();
-  }
   for (let nestedMachine of state2.nested) {
     if (isNestedMachineWithTransitionDirective(nestedMachine)) {
       let transition2 = nestedMachine.transition;
+      const runNested = () => isCurrentInvocation(machine2, token) ? invoke(nestedMachine.machine, transition2, payload) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(nestedMachine.machine, transition2, payload));
+        promise = promise.then(runNested);
       } else {
-        invoke(nestedMachine.machine, transition2, payload);
+        const result = runNested();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
   }
   return promise || void 0;
 }
-function runNestedTransition(machine2, transition2, payload) {
+function runNestedTransition(machine2, transition2, payload, token) {
   let nestedTransitionParts = transition2.split(".");
   let stateName = nestedTransitionParts.shift();
   let nestedTransition = nestedTransitionParts.join(".");
-  let promise = machine2.isAsync ? Promise.resolve() : null;
+  let promise;
   if (!stateName) {
     return;
   }
@@ -903,21 +929,28 @@ function runNestedTransition(machine2, transition2, payload) {
     let nestedMachine = nestedMachineDirective.machine;
     let currentNestedState = nestedMachine.states[nestedMachine.current];
     if (canMakeTransition(nestedMachine, currentNestedState, nestedTransition)) {
+      const runNested = () => isCurrentInvocation(machine2, token) ? invoke(nestedMachine, nestedTransition, payload) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(nestedMachine, nestedTransition, payload));
+        promise = promise.then(runNested);
       } else {
-        invoke(nestedMachine, nestedTransition, payload);
+        const result = runNested();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
   }
   if (promise) {
-    promise = promise.then(() => invokeImmediateDirectives(machine2, currentStateObject, payload));
+    promise = promise.then(() => invokeImmediateDirectives(machine2, currentStateObject, payload, token));
   } else {
-    invokeImmediateDirectives(machine2, currentStateObject, payload);
+    const result = invokeImmediateDirectives(machine2, currentStateObject, payload, token);
+    if (isPromiseLike(result)) {
+      promise = result;
+    }
   }
   return promise || void 0;
 }
-function runParallelTransition(machine2, transition2, payload) {
+function runParallelTransition(machine2, transition2, payload, token) {
   let parallelTransitionParts = transition2.split("/");
   let parallelMachineId = parallelTransitionParts.shift();
   let parallelTransition = parallelTransitionParts.join("/");
@@ -928,14 +961,17 @@ function runParallelTransition(machine2, transition2, payload) {
   if (!parallelMachine) {
     throw new Error(`Invalid transition ${transition2}`);
   }
+  if (!isCurrentInvocation(machine2, token)) {
+    return;
+  }
   return invoke(parallelMachine, parallelTransition, payload);
 }
-function invokeImmediateDirectives(machine2, state2, payload) {
+function invokeImmediateDirectives(machine2, state2, payload, token) {
   if (state2.immediate.length === 0) {
     return;
   }
   let immediate2 = state2.immediate;
-  let promise = machine2.isAsync ? Promise.resolve() : null;
+  let promise;
   for (let immediateDirective of immediate2) {
     if (hasFatalError(machine2)) {
       return;
@@ -945,27 +981,37 @@ function invokeImmediateDirectives(machine2, state2, payload) {
       let parallelMachineId = transitionParts.shift();
       let parallelTransition = transitionParts.join("/");
       let parallelMachine = machine2.parallel[parallelMachineId];
+      const runImmediate = () => isCurrentInvocation(machine2, token) ? invoke(parallelMachine, parallelTransition, payload) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(parallelMachine, parallelTransition, payload));
+        promise = promise.then(runImmediate);
       } else {
-        invoke(parallelMachine, parallelTransition, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     } else if (isNestedTransition(immediateDirective.immediate)) {
+      const runImmediate = () => isCurrentInvocation(machine2, token) ? invokeNow(machine2, immediateDirective.immediate, payload, token) : void 0;
       if (promise) {
-        promise = promise.then(() => invoke(machine2, immediateDirective.immediate, payload));
+        promise = promise.then(runImmediate);
       } else {
-        invoke(machine2, immediateDirective.immediate, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     } else {
+      const runImmediate = () => {
+        if (machine2.current === state2.name && isCurrentInvocation(machine2, token)) {
+          return invokeNow(machine2, immediateDirective.immediate, payload, token);
+        }
+      };
       if (promise) {
-        promise = promise.then(async () => {
-          if (machine2.current === state2.name) {
-            await invoke(machine2, immediateDirective.immediate, payload);
-          }
-        });
+        promise = promise.then(runImmediate);
       } else {
-        if (machine2.current === state2.name) {
-          invoke(machine2, immediateDirective.immediate, payload);
+        const result = runImmediate();
+        if (isPromiseLike(result)) {
+          promise = result;
         }
       }
     }
@@ -973,6 +1019,85 @@ function invokeImmediateDirectives(machine2, state2, payload) {
   return promise || void 0;
 }
 function invoke(machine2, transition2, payload) {
+  const runtime = getRuntime(machine2);
+  if (runtime.running || runtime.queue.length > 0) {
+    return new Promise((resolve, reject) => {
+      runtime.queue.push({ transition: transition2, payload, resolve, reject });
+    });
+  }
+  return runSerializedInvocation(machine2, transition2, payload);
+}
+function runSerializedInvocation(machine2, transition2, payload) {
+  const runtime = getRuntime(machine2);
+  runtime.running = true;
+  const token = ++runtime.nextToken;
+  runtime.activeToken = token;
+  try {
+    const result = invokeNow(machine2, transition2, payload, token);
+    if (result instanceof Promise) {
+      return result.finally(() => {
+        finishInvocation(machine2, runtime, token);
+      });
+    }
+    finishInvocation(machine2, runtime, token);
+    return result;
+  } catch (error) {
+    finishInvocation(machine2, runtime, token);
+    throw error;
+  }
+}
+function finishInvocation(machine2, runtime, token) {
+  if (runtime.activeToken === token) {
+    runtime.running = false;
+    runtime.activeToken = void 0;
+    drainQueue(machine2);
+  }
+}
+function drainQueue(machine2) {
+  const runtime = getRuntime(machine2);
+  if (runtime.running)
+    return;
+  const job = runtime.queue.shift();
+  if (!job)
+    return;
+  try {
+    const result = runSerializedInvocation(machine2, job.transition, job.payload);
+    if (result instanceof Promise) {
+      result.then(job.resolve, job.reject);
+    } else {
+      job.resolve();
+    }
+  } catch (error) {
+    job.reject(error);
+  }
+}
+function cancel(machine2) {
+  cancelMachine(machine2, /* @__PURE__ */ new Set());
+}
+function cancelMachine(machine2, visited) {
+  if (visited.has(machine2)) {
+    return;
+  }
+  visited.add(machine2);
+  const runtime = getRuntime(machine2);
+  runtime.nextToken += 1;
+  runtime.running = false;
+  runtime.activeToken = void 0;
+  const queued = runtime.queue.splice(0, runtime.queue.length);
+  for (const job of queued) {
+    job.reject(cancelledInvocationError());
+  }
+  const currentState = machine2.states[machine2.current];
+  if (currentState) {
+    for (const nestedMachine of currentState.nested) {
+      cancelMachine(nestedMachine.machine, visited);
+    }
+  }
+  for (const parallelMachine of Object.values(machine2.parallel)) {
+    cancelMachine(parallelMachine, visited);
+  }
+}
+function invokeNow(machine2, transition2, payload, token) {
   if (hasFatalError(machine2)) {
     return;
   }
@@ -989,52 +1114,67 @@ function invoke(machine2, transition2, payload) {
     throw new Error(`The transition '${trimmedTransition}' does not exist in the current state '${machine2.current}'`);
   }
   if (isParallelTransition(trimmedTransition)) {
-    return runParallelTransition(machine2, trimmedTransition, payload);
+    return runParallelTransition(machine2, trimmedTransition, payload, token);
   }
   if (isNestedTransition(trimmedTransition)) {
-    return runNestedTransition(machine2, trimmedTransition, payload);
+    return runNestedTransition(machine2, trimmedTransition, payload, token);
   }
   if (trimmedTransition !== START_EVENT) {
     addToHistory(machine2, `${"Transition" /* Transition */}: ${trimmedTransition}`);
     let transitionObject = currentStateObject.on[trimmedTransition];
-    let guardsResult = runGuards(machine2, currentStateObject, transitionObject, payload);
+    let guardsResult = runGuards(machine2, currentStateObject, transitionObject, payload, token);
     if (guardsResult instanceof Promise) {
       return guardsResult.then((shouldContinue) => {
+        if (!isCurrentInvocation(machine2, token)) {
+          return;
+        }
         if (shouldContinue === false) {
           addToHistory(machine2, `${"State" /* State */}: ${currentStateObject.name}`);
           return;
         }
-        return handleExitAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload);
+        return handleExitAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload, token);
       });
     }
     if (guardsResult === false) {
       addToHistory(machine2, `${"State" /* State */}: ${currentStateObject.name}`);
       return;
     }
-    return handleExitAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload);
+    return handleExitAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload, token);
   }
-  return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
+  return continueTransition(machine2, currentStateObject, trimmedTransition, payload, token);
 }
-function handleExitAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload) {
+function handleExitAndContinue(machine2, currentStateObject, transitionObject, trimmedTransition, payload, token) {
   const exitItems = transitionObject.exit;
   if (exitItems && Array.isArray(exitItems)) {
     const pulsesToRun = Array.isArray(exitItems[0]) ? exitItems[0] : exitItems;
+    let promise;
     for (const exitItem of pulsesToRun) {
-      if (machine2.isAsync) {
-        let promise = Promise.resolve();
-        promise = promise.then(() => runPulse(machine2, exitItem, payload));
-        return promise.then(() => {
-          return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
-        });
+      const runExit = () => runPulse(machine2, exitItem, payload, token);
+      if (promise) {
+        promise = promise.then(runExit);
       } else {
-        runPulse(machine2, exitItem, payload);
+        const result = runExit();
+        if (isPromiseLike(result)) {
+          promise = result;
+        }
       }
     }
-    return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
+    if (promise) {
+      return promise.then(() => {
+        if (!isCurrentInvocation(machine2, token)) {
+          return;
+        }
+        return continueTransition(machine2, currentStateObject, trimmedTransition, payload, token);
+      });
+    }
+    return continueTransition(machine2, currentStateObject, trimmedTransition, payload, token);
   }
-  return continueTransition(machine2, currentStateObject, trimmedTransition, payload);
+  return continueTransition(machine2, currentStateObject, trimmedTransition, payload, token);
 }
-function continueTransition(machine2, currentStateObject, trimmedTransition, payload) {
+function continueTransition(machine2, currentStateObject, trimmedTransition, payload, token) {
+  if (!isCurrentInvocation(machine2, token)) {
+    return;
+  }
   let targetState = trimmedTransition === START_EVENT ? machine2.initial : currentStateObject.on[trimmedTransition].target;
   if (isValidString(targetState) === false) {
     throw new Error(`Trying to invoke a transition with an invalid target state: ${targetState}`);
@@ -1047,16 +1187,21 @@ function continueTransition(machine2, currentStateObject, trimmedTransition, pay
     machine2.current = targetState;
     addToHistory(machine2, `${"State" /* State */}: ${targetState}`);
   }
-  if (machine2.isAsync) {
-    let promise = Promise.resolve();
-    promise = promise.then(() => runNestedMachines(machine2, targetStateObject, payload));
-    promise = promise.then(() => runStatePulsesAsync(machine2, targetStateObject, payload));
-    promise = promise.then(() => invokeImmediateDirectives(machine2, targetStateObject, payload));
-    return promise;
-  }
-  runNestedMachines(machine2, targetStateObject, payload);
-  runStatePulsesSync(machine2, targetStateObject, payload);
-  invokeImmediateDirectives(machine2, targetStateObject, payload);
+  let promise;
+  const runStep = (step) => {
+    if (promise) {
+      promise = promise.then(step);
+      return;
+    }
+    const result = step();
+    if (isPromiseLike(result)) {
+      promise = result;
+    }
+  };
+  runStep(() => runNestedMachines(machine2, targetStateObject, payload, token));
+  runStep(() => machine2.isAsync ? runStatePulsesAsync(machine2, targetStateObject, payload, token) : runStatePulsesSync(machine2, targetStateObject, payload, token));
+  runStep(() => invokeImmediateDirectives(machine2, targetStateObject, payload, token));
+  return promise || void 0;
 }
 function start(machine2, snapshotOrPayload) {
   if (snapshotOrPayload && typeof snapshotOrPayload === "object" && "current" in snapshotOrPayload) {
@@ -1131,6 +1276,7 @@ function snapshot(machine2) {
   return snap;
 }
 export {
+  cancel,
   context,
   dangerState,
   description,
