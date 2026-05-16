@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedPulse
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedPulse
 
 # Interface: SerializedPulse
 
@@ -23,7 +23,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:161](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L161)
+[lib/documentate/types.ts:161](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L161)
 
 ***
 
@@ -33,7 +33,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:162](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L162)
+[lib/documentate/types.ts:162](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L162)
 
 ***
 
@@ -43,7 +43,7 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L163)
+[lib/documentate/types.ts:163](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L163)
 
 ***
 
@@ -53,4 +53,4 @@ Serialized pulse (entry/exit pulse)
 
 #### Defined in
 
-[lib/documentate/types.ts:164](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L164)
+[lib/documentate/types.ts:164](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L164)

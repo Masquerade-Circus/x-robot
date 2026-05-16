@@ -40,6 +40,7 @@ end note
 [*] --> step1
 step1 --> step2: skip
 ```
+
 ```javascript
 import { init, initial, machine, nested, state, transition } from "x-robot";
 
@@ -214,6 +215,7 @@ end note
 [*] --> public
 public --> private: login
 ```
+
 ```javascript
 const auth = machine(
   "Auth",

@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / ComplexityPoint
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / ComplexityPoint
 
 # Interface: ComplexityPoint
 
@@ -23,7 +23,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L61)
+[lib/documentate/diagram-model.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L61)
 
 ***
 
@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:62](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L62)
+[lib/documentate/diagram-model.ts:62](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L62)
 
 ***
 
@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L63)
+[lib/documentate/diagram-model.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L63)
 
 ***
 
@@ -53,7 +53,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:64](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L64)
+[lib/documentate/diagram-model.ts:64](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L64)
 
 ***
 
@@ -63,7 +63,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L65)
+[lib/documentate/diagram-model.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L65)
 
 ***
 
@@ -73,4 +73,4 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L66)
+[lib/documentate/diagram-model.ts:66](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L66)

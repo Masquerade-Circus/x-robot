@@ -144,6 +144,7 @@ authorized --> capturing: capture<br>└┬ G-canCapture<br> └┬ failure<br
 capturing --> captured: captured
 capturing --> rejected: rejected
 ```
+
 ```javascript
 // X-Robot: async precondition at the boundary, effect after entry
 import { entry, guard, init, initial, machine, state, transition } from "x-robot";
@@ -220,6 +221,7 @@ class on def
 off --> on: toggle
 on --> off: toggle
 ```
+
 ```javascript
 // X-Robot: simpler
 const toggle = machine(

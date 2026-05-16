@@ -330,6 +330,7 @@ paymentRequired --> processing: submit
 paymentRequired --> cancelled: cancel
 invalid --> ready: fix
 ```
+
 ```javascript
 import {
   dangerState,

@@ -38,6 +38,7 @@ class paid def
 [*] --> cart
 cart --> paid: submit
 ```
+
 ```javascript
 import { initial, init, machine, state, transition } from "x-robot";
 import { validate } from "x-robot/validate";
@@ -79,6 +80,7 @@ class cart def
 [*] --> cart
 cart --> paid: submit
 ```
+
 ```javascript
 import { initial, init, machine, state, transition } from "x-robot";
 import { validate } from "x-robot/validate";

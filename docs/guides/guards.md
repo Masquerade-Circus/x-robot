@@ -28,6 +28,7 @@ class step2 def
 [*] --> step1
 step1 --> step2: next<br>└ G-canProceed
 ```
+
 ```javascript
 import { guard, init, initial, machine, state, transition } from "x-robot";
 
@@ -174,6 +175,7 @@ checked --> submitting: submitting<br>└ G-checkFormErrors
 checked --> invalid: invalid
 invalid --> idle: retry
 ```
+
 ```javascript
 import { context, entry, guard, immediate, init, initial, machine, state, transition } from "x-robot";
 
@@ -309,6 +311,7 @@ class preview def
 locked --> dashboard: enter<br>└ G-isAdmin
 public --> preview: enter<br>└ G-isLoggedIn
 ```
+
 ```javascript
 import { context, guard, init, initial, machine, state, transition } from "x-robot";
 

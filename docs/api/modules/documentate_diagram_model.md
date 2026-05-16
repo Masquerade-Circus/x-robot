@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / documentate/diagram-model
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / documentate/diagram-model
 
 # Module: documentate/diagram-model
 

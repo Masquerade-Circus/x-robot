@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / DocumentateOptions
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / DocumentateOptions
 
 # Interface: DocumentateOptions
 
@@ -27,7 +27,7 @@ Output format (required)
 
 #### Defined in
 
-[lib/documentate/types.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L61)
+[lib/documentate/types.ts:61](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L61)
 
 ***
 
@@ -39,7 +39,7 @@ Detail level for diagrams
 
 #### Defined in
 
-[lib/documentate/types.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L63)
+[lib/documentate/types.ts:63](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L63)
 
 ***
 
@@ -51,7 +51,7 @@ Output file path
 
 #### Defined in
 
-[lib/documentate/types.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L65)
+[lib/documentate/types.ts:65](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L65)
 
 ***
 
@@ -63,7 +63,7 @@ Output file name
 
 #### Defined in
 
-[lib/documentate/types.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L67)
+[lib/documentate/types.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L67)
 
 ***
 
@@ -75,7 +75,7 @@ PlantUML skinparam customization
 
 #### Defined in
 
-[lib/documentate/types.ts:69](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L69)
+[lib/documentate/types.ts:69](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L69)
 
 ***
 
@@ -87,4 +87,4 @@ Mermaid diagram theme
 
 #### Defined in
 
-[lib/documentate/types.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L71)
+[lib/documentate/types.ts:71](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L71)

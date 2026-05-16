@@ -1,3 +1,18 @@
+
+
+## [1.3.0](https://github.com/Masquerade-Circus/x-robot/compare/1.2.0...1.3.0) (2026-05-16)
+
+
+### Features
+
+* serialize invokes and add runtime cancellation ([5d7d396](https://github.com/Masquerade-Circus/x-robot/commit/5d7d39647d1bb0a85275eb552a08faa613ed46db))
+
+
+### Miscellaneous Chores
+
+* delete unused .tmp-root-types files ([44a94bf](https://github.com/Masquerade-Circus/x-robot/commit/44a94bf17dc0da0f1894f1f142c6e32f1c10188e))
+* update .gitignore ([c68ac33](https://github.com/Masquerade-Circus/x-robot/commit/c68ac3392efd55c5457ffdff872f5386dec52a58))
+
 ## [1.2.0](https://github.com/Masquerade-Circus/x-robot/compare/1.1.0...1.2.0) (2026-05-15)
 
 ### Features

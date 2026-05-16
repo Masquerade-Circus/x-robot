@@ -147,6 +147,7 @@ completed --> completedCancelledByStore: cancelCompleted
 completed --> cancelledByCustomerSupport: cancelByCustomerSupport
 completedCancelledByStore --> voidOrRefundFailure: voidOrRefundFailure
 ```
+
 ```javascript
 import {
   context,

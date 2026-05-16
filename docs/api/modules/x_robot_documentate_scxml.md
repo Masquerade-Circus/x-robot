@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/scxml
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / x-robot/documentate/scxml
 
 # Module: x-robot/documentate/scxml
 

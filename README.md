@@ -8,7 +8,7 @@ X-Robot FSM: A lightweight, developer-friendly finite state machine library for 
 *   **Frozen state by default** — No manual cloning required
 *   **Native async guards** — No workarounds needed
 *   **Small bundle** — 16.55KB core, 79.93KB with `documentate` + `validate`
-*   **Fast** — 1.1-15.1x faster than XState in benchmarks
+*   **Fast** — 1.1-15.4x faster than XState in benchmarks
 *   **TypeScript** — Includes TypeScript types for machine definitions and generated code
 *   **Living visual docs** — `documentate()` separates visual outputs by concept:
     *   Mermaid: Markdown-friendly source diagrams and previews

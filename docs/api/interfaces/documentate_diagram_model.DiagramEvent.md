@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / DiagramEvent
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / DiagramEvent
 
 # Interface: DiagramEvent
 
@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:18](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L18)
+[lib/documentate/diagram-model.ts:18](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L18)
 
 ***
 
@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:19](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L19)
+[lib/documentate/diagram-model.ts:19](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L19)
 
 ***
 
@@ -40,4 +40,4 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:20](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L20)
+[lib/documentate/diagram-model.ts:20](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L20)

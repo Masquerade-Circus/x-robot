@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / AllStates
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / AllStates
 
 # Interface: AllStates
 

@@ -38,6 +38,7 @@ state TextEditorParallelStates {
   TextEditorItalicOn --> TextEditorItalicOff: toggle
 }
 ```
+
 ```javascript
 import { init, initial, machine, parallel, state, transition } from "x-robot";
 
@@ -209,6 +210,7 @@ state SearchParallelStates {
 
 [*] --> idle
 ```
+
 ```javascript
 const searchMachine = machine(
   "Search",

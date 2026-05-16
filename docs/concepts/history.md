@@ -29,6 +29,7 @@ class active def
 idle --> active: next
 active --> idle: next
 ```
+
 ```javascript
 import { history, init, initial, machine, state, transition } from "x-robot";
 

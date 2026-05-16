@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / GuardDecision
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / GuardDecision
 
 # Interface: GuardDecision
 
@@ -27,7 +27,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:48](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L48)
+[lib/documentate/diagram-model.ts:48](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L48)
 
 ***
 
@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L49)
+[lib/documentate/diagram-model.ts:49](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L49)
 
 ***
 
@@ -47,7 +47,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:50](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L50)
+[lib/documentate/diagram-model.ts:50](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L50)
 
 ***
 
@@ -57,7 +57,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L51)
+[lib/documentate/diagram-model.ts:51](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L51)
 
 ***
 
@@ -67,7 +67,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L52)
+[lib/documentate/diagram-model.ts:52](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L52)
 
 ***
 
@@ -77,7 +77,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L53)
+[lib/documentate/diagram-model.ts:53](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L53)
 
 ***
 
@@ -87,7 +87,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L54)
+[lib/documentate/diagram-model.ts:54](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L54)
 
 ***
 
@@ -97,7 +97,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:55](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L55)
+[lib/documentate/diagram-model.ts:55](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L55)
 
 ***
 
@@ -107,7 +107,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L56)
+[lib/documentate/diagram-model.ts:56](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L56)
 
 ***
 
@@ -117,4 +117,4 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L57)
+[lib/documentate/diagram-model.ts:57](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L57)

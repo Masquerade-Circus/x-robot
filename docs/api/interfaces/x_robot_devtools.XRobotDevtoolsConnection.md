@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/devtools](../modules/x_robot_devtools.md) / XRobotDevtoolsConnection
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot/devtools](../modules/x_robot_devtools.md) / XRobotDevtoolsConnection
 
 # Interface: XRobotDevtoolsConnection
 
@@ -31,7 +31,7 @@ The original machine instance bound to this devtools connection.
 
 #### Defined in
 
-[lib/devtools/index.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/devtools/index.ts#L37)
+[lib/devtools/index.ts:37](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/devtools/index.ts#L37)
 
 ## Methods
 

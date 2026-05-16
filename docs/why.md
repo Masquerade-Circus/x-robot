@@ -154,6 +154,7 @@ success --> idle: reset
 error --> submitting: retry
 error --> idle: reset
 ```
+
 ```javascript
 import { context, entry, init, initial, machine, state, transition } from "x-robot";
 
@@ -262,7 +263,7 @@ transition("submit", "validating", guard(async (ctx) => {
 
 *   Core: 16.55KB minified
 *   With modules: 79.93KB (`documentate`, `validate`)
-*   Performance: 1.1-15.1x faster than XState
+*   Performance: 1.1-15.4x faster than XState
 *   `documentate()` adds generated visual documentation by concept:
     *   Mermaid: Markdown-friendly source diagrams and previews
     *   PlantUML: richer source diagrams and preferred visual styling

@@ -37,6 +37,7 @@ loading --> rejected: rejected
 loading --> idle: cancel
 resolved --> idle: idle
 ```
+
 ```javascript
 import { context, entry, immediate, init, initial, invoke, machine, state, transition } from "x-robot";
 
@@ -257,6 +258,7 @@ step2 --> error: error
 step3 --> complete: complete
 step3 --> error: error
 ```
+
 ```javascript
 import { context, entry, init, initial, machine, state, transition } from "x-robot";
 
@@ -400,6 +402,7 @@ running --> success: success
 running --> failed: failed
 failed --> running: retry
 ```
+
 ```javascript
 import { entry, init, initial, machine, state, transition } from "x-robot";
 
@@ -500,6 +503,7 @@ captured --> refunding: refund<br>└┬ G-canRefund<br> └┬ failure<br> 
 refunding --> refunded: refunded
 refunding --> rejected: rejected
 ```
+
 ```javascript
 import { entry, guard, init, initial, machine, state, transition } from "x-robot";
 

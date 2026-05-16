@@ -87,6 +87,7 @@ loading --> success: success
 loading --> error: error
 success --> idle: reset
 ```
+
 ```javascript
 import { machine, state, transition, entry } from "x-robot";
 
@@ -181,6 +182,7 @@ idle --> loading: start
 loading --> success: done
 success --> idle: reset
 ```
+
 ```javascript
 import { machine, state, transition } from "x-robot";
 

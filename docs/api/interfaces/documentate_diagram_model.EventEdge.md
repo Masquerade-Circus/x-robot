@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / EventEdge
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [documentate/diagram-model](../modules/documentate_diagram_model.md) / EventEdge
 
 # Interface: EventEdge
 
@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:40](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L40)
+[lib/documentate/diagram-model.ts:40](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L40)
 
 ***
 
@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:41](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L41)
+[lib/documentate/diagram-model.ts:41](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L41)
 
 ***
 
@@ -42,7 +42,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L42)
+[lib/documentate/diagram-model.ts:42](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L42)
 
 ***
 
@@ -52,7 +52,7 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L43)
+[lib/documentate/diagram-model.ts:43](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L43)
 
 ***
 
@@ -62,4 +62,4 @@
 
 #### Defined in
 
-[lib/documentate/diagram-model.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/diagram-model.ts#L44)
+[lib/documentate/diagram-model.ts:44](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/diagram-model.ts#L44)

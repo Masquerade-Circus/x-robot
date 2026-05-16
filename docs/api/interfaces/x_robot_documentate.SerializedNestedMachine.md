@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedNestedMachine
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedNestedMachine
 
 # Interface: SerializedNestedMachine
 
@@ -21,7 +21,7 @@ Serialized nested machine definition
 
 #### Defined in
 
-[lib/documentate/types.ts:194](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L194)
+[lib/documentate/types.ts:194](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L194)
 
 ***
 
@@ -31,4 +31,4 @@ Serialized nested machine definition
 
 #### Defined in
 
-[lib/documentate/types.ts:195](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L195)
+[lib/documentate/types.ts:195](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L195)

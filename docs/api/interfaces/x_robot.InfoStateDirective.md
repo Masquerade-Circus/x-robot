@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / InfoStateDirective
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / InfoStateDirective
 
 # Interface: InfoStateDirective
 
@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:110](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L110)
+[lib/machine/interfaces.ts:110](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L110)
 
 ***
 
@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L93)
+[lib/machine/interfaces.ts:93](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L93)
 
 ***
 
@@ -63,7 +63,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L94)
+[lib/machine/interfaces.ts:94](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L94)
 
 ***
 
@@ -77,7 +77,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L95)
+[lib/machine/interfaces.ts:95](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L95)
 
 ***
 
@@ -91,7 +91,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L96)
+[lib/machine/interfaces.ts:96](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L96)
 
 ***
 
@@ -105,7 +105,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L97)
+[lib/machine/interfaces.ts:97](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L97)
 
 ***
 
@@ -119,7 +119,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L105)
+[lib/machine/interfaces.ts:105](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L105)
 
 ***
 
@@ -133,4 +133,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L106)
+[lib/machine/interfaces.ts:106](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L106)

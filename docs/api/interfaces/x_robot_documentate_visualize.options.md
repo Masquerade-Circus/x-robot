@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / options
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / options
 
 # Interface: options
 
@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L73)
+[lib/documentate/visualize.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/visualize.ts#L73)
 
 ***
 
@@ -35,4 +35,4 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:74](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L74)
+[lib/documentate/visualize.ts:74](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/visualize.ts#L74)

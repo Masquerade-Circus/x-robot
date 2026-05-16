@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedGuardDirective
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot](../modules/x_robot.md) / NestedGuardDirective
 
 # Interface: NestedGuardDirective
 
@@ -26,7 +26,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:72](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L72)
+[lib/machine/interfaces.ts:72](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L72)
 
 ***
 
@@ -40,7 +40,7 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L73)
+[lib/machine/interfaces.ts:73](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L73)
 
 ***
 
@@ -54,4 +54,4 @@
 
 #### Defined in
 
-[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/machine/interfaces.ts#L67)
+[lib/machine/interfaces.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/machine/interfaces.ts#L67)

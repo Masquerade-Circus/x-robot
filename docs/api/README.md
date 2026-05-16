@@ -1,4 +1,4 @@
-x-robot - v1.2.0 / [Modules](modules.md)
+x-robot - v1.3.0 / [Modules](modules.md)
 
 # X-Robot FSM
 
@@ -10,7 +10,7 @@ X-Robot FSM: A lightweight, developer-friendly finite state machine library for 
 *   **Frozen state by default** — No manual cloning required
 *   **Native async guards** — No workarounds needed
 *   **Small bundle** — 16.55KB core, 79.93KB with `documentate` + `validate`
-*   **Fast** — 1.1-15.1x faster than XState in benchmarks
+*   **Fast** — 1.1-15.4x faster than XState in benchmarks
 *   **TypeScript** — Includes TypeScript types for machine definitions and generated code
 *   **Living visual docs** — `documentate()` separates visual outputs by concept:
     *   Mermaid: Markdown-friendly source diagrams and previews
@@ -72,6 +72,7 @@ Official framework adapters:
 
 Adapter docs:
 
+*   Framework guide: `docs/guides/framework-adapters.md`
 *   React: `packages/react/README.md`
 *   Vue: `packages/vue/README.md`
 
@@ -131,7 +132,7 @@ See `docs/guides/devtools.md` for setup, supported monitor actions, production e
 
 ## Documentation
 
-`docs/guides/getting-started.md` · `docs/guides/visualization.md` · `docs/guides/serialization.md` · `docs/guides/devtools.md` · `docs/guides/publishing-adapters.md` · `packages/react/README.md` · `packages/vue/README.md` · `docs/concepts/` · `docs/api/` · `docs/recipes/` · `docs/performance.md`
+`docs/guides/getting-started.md` · `docs/guides/framework-adapters.md` · `docs/guides/visualization.md` · `docs/guides/serialization.md` · `docs/guides/devtools.md` · `docs/guides/publishing-adapters.md` · `packages/react/README.md` · `packages/vue/README.md` · `docs/concepts/` · `docs/api/` · `docs/recipes/` · `docs/performance.md`
 
 ## License
 

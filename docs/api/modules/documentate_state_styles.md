@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / documentate/state-styles
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / documentate/state-styles
 
 # Module: documentate/state-styles
 
@@ -96,7 +96,7 @@
 
 #### Defined in
 
-[lib/documentate/state-styles.ts:1](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/state-styles.ts#L1)
+[lib/documentate/state-styles.ts:1](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/state-styles.ts#L1)
 
 ## Type Aliases
 
@@ -106,4 +106,4 @@
 
 #### Defined in
 
-[lib/documentate/state-styles.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/state-styles.ts#L10)
+[lib/documentate/state-styles.ts:10](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/state-styles.ts#L10)

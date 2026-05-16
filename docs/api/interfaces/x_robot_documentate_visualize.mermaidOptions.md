@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / mermaidOptions
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate/visualize](../modules/x_robot_documentate_visualize.md) / mermaidOptions
 
 # Interface: mermaidOptions
 
@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L67)
+[lib/documentate/visualize.ts:67](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/visualize.ts#L67)
 
 ***
 
@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L68)
+[lib/documentate/visualize.ts:68](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/visualize.ts#L68)
 
 ***
 
@@ -40,4 +40,4 @@
 
 #### Defined in
 
-[lib/documentate/visualize.ts:69](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/visualize.ts#L69)
+[lib/documentate/visualize.ts:69](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/visualize.ts#L69)

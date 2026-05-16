@@ -57,6 +57,7 @@ state WordMachineParallelStates {
   WordMachineListNumbers --> WordMachineListNone: none
 }
 ```
+
 ```javascript
 import { getState, init, initial, invoke, machine, parallel, state, transition } from "x-robot";
 
@@ -288,6 +289,7 @@ state EditorParallelStates {
   EditorAlignmentRight --> EditorAlignmentLeft: align
 }
 ```
+
 ```javascript
 import { init, initial, machine, parallel, state, transition } from "x-robot";
 
@@ -440,6 +442,7 @@ state SearchParallelStates {
 
 [*] --> ready
 ```
+
 ```javascript
 const search = machine(
   "Search",
@@ -593,6 +596,7 @@ state FiltersParallelStates {
   FiltersSortByPrice --> FiltersSortByRelevance: select
 }
 ```
+
 ```javascript
 const category = machine("Category", init(initial("all")),
   state("all", transition("select", "electronics")),
@@ -746,6 +750,7 @@ state DashboardParallelStates {
   DashboardContentGrid --> DashboardContentList: view
 }
 ```
+
 ```javascript
 const sidebar = machine("Sidebar", init(initial("expanded")),
   state("expanded", transition("toggle", "collapsed")),

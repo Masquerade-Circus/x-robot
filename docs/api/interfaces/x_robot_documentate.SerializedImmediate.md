@@ -1,4 +1,4 @@
-[x-robot - v1.2.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedImmediate
+[x-robot - v1.3.0](../README.md) / [Modules](../modules.md) / [x-robot/documentate](../modules/x_robot_documentate.md) / SerializedImmediate
 
 # Interface: SerializedImmediate
 
@@ -21,7 +21,7 @@ Serialized immediate transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L186)
+[lib/documentate/types.ts:186](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L186)
 
 ***
 
@@ -31,4 +31,4 @@ Serialized immediate transition definition
 
 #### Defined in
 
-[lib/documentate/types.ts:187](https://github.com/Masquerade-Circus/x-robot/blob/483dc91/lib/documentate/types.ts#L187)
+[lib/documentate/types.ts:187](https://github.com/Masquerade-Circus/x-robot/blob/c68ac33/lib/documentate/types.ts#L187)

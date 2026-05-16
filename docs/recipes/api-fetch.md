@@ -43,6 +43,7 @@ success --> idle: clear
 error --> loading: retry
 error --> idle: clear
 ```
+
 ```javascript
 import {
   machine,
@@ -250,6 +251,7 @@ loading --> error: error
 success --> idle: clear
 error --> loading: retry
 ```
+
 ```javascript
 import { context, entry, init, initial, machine, state, transition } from "x-robot";
 
@@ -392,6 +394,7 @@ loading --> error: error
 success --> loading: loadMore
 error --> loading: retry
 ```
+
 ```javascript
 import { context, entry, init, initial, machine, state, transition } from "x-robot";
 

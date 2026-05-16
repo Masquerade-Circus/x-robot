@@ -1,6 +1,6 @@
-[x-robot - v1.2.0](README.md) / Modules
+[x-robot - v1.3.0](README.md) / Modules
 
-# x-robot - v1.2.0
+# x-robot - v1.3.0
 
 ## Table of contents
 

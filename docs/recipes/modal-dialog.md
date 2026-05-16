@@ -52,6 +52,7 @@ confirming --> error: error
 closing --> closed: closed
 error --> closing: close
 ```
+
 ```javascript
 import { machine, state, transition, initial, init, context, invoke, entry } from "x-robot";
 
@@ -260,6 +261,7 @@ opening --> closing: cancel
 open --> closing: close
 closing --> closed: closed
 ```
+
 ```javascript
 import { entry, init, initial, machine, state, transition } from "x-robot";
 
@@ -429,6 +431,7 @@ showing --> hidden: hidden
 visible --> hiding: dismiss
 hiding --> hidden: hidden
 ```
+
 ```javascript
 import { entry, init, initial, machine, state, transition } from "x-robot";
 
@@ -578,6 +581,7 @@ submitting --> error: error
 closing --> closed: closed
 error --> open: retry
 ```
+
 ```javascript
 import { context, entry, init, initial, machine, state, transition } from "x-robot";
 
